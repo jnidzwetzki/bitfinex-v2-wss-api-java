@@ -3,7 +3,7 @@
 <a href="https://travis-ci.org/jnidzwetzki/bitfinex-v2-wss-api-java">
   <img alt="Build Status" src="https://travis-ci.org/jnidzwetzki/bitfinex-v2-wss-api-java.svg?branch=master">
 </a>
-<a href="https://repo1.maven.org/maven2/com/github/jnidzwetzki/"><img alt="Maven Central Version" src="https://maven-badges.herokuapp.com/maven-central/com.github.jnidzwetzki/bitfinex-v2-wss-api-java/badge.svg" />
+<a href="https://repo1.maven.org/maven2/com/github/jnidzwetzki/"><img alt="Maven Central Version" src="https://maven-badges.herokuapp.com/maven-central/com.github.jnidzwetzki/bitfinex-v2-wss-api/badge.svg" />
   </a>
 
 This project contains a client for the Bitfinex WebSocket API (v2). At the moment, historical candles, orders, ticks, and wallets are supported.
