@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.github.jnidzwetzki.bitfinex</groupId>
+	<groupId>com.github.jnidzwetzki</groupId>
 	<artifactId>bitfinex-v2-wss-api</artifactId>
 	<packaging>jar</packaging>
 	<version>0.0.1</version>
