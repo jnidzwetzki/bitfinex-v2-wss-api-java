@@ -7,7 +7,8 @@
 	<packaging>jar</packaging>
 	<version>0.0.1</version>
 
-	<name>Implementation of the Bitfinex v2 websocket API</name>
+	<name>Bitfinex v2 WSS API</name>
+	<description>Implementation of the Bitfinex v2 websocket API</description>
 	<url>https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java</url>
 
 	<properties>
