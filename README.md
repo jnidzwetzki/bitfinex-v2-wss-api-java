@@ -37,7 +37,18 @@ bitfinexApiBroker.connect();
 // For public and private operations (executing orders, read wallets)
 BitfinexApiBroker bitfinexApiBroker = BitfinexApiBroker(apiKey, apiSecret);
 bitfinexApiBroker.connect();
-``` 
+```
+
+## Subscribe candles
+
+```java
+final BiConsumer<String, Tick> callback = (symbol, tick) -> {
+	System.out.println("Got tick for symbol: " + symbol + " / " + tick;
+};
+
+bitfinexApiBroker.getTickerManager().registerTickCallback("tUSDBTC", callback);
+bitfinexApiBroker.sendCommand(new SubscribeCandlesCommand("tUSDBTC", Timeframe.MINUTES_1));
+```
 
 ## Market order
 
