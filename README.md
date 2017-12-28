@@ -80,7 +80,7 @@ final Consumer<ExchangeOrder> ordercallback = (e) -> {
 	}
 };
 
-bitfinexApiBroker.addOrderCallback(ordercallback);
+bitfinexApiBroker.getOrderManager().addOrderCallback(ordercallback);
 
 bitfinexApiBroker.placeOrder(bitfinexOrder1);
 bitfinexApiBroker.placeOrder(bitfinexOrder2);
