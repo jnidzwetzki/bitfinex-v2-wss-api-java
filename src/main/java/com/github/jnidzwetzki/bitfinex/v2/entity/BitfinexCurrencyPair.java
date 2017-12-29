@@ -12,7 +12,7 @@ public enum BitfinexCurrencyPair {
 	LTC_USD("LTC", "USD", 0.2),
 	
 	// Bitcoin Cash
-	BCH_USD("BCH", "USD", 0.2),
+	BCH_USD("BCH", "USD", 0.02),
 	
 	// XRP Cash
 	XRP_USD("XRP", "USD", 22.0),
