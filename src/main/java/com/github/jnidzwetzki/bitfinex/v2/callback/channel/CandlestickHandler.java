@@ -31,10 +31,10 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 		if(jsonArray.get(0) instanceof JSONArray) {
 			for (int pos = 0; pos < jsonArray.length(); pos++) {
 				final JSONArray parts = jsonArray.getJSONArray(pos);	
-				paseCandlestick(ticksBuffer, parts);
+				parseCandlestick(ticksBuffer, parts);
 			}
 		} else {
-			paseCandlestick(ticksBuffer, jsonArray);
+			parseCandlestick(ticksBuffer, jsonArray);
 		}
 		
 		ticksBuffer.sort((t1, t2) -> t1.getEndTime().compareTo(t2.getEndTime()));
@@ -45,7 +45,7 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 	/**
 	 * Parse a candlestick from JSON result
 	 */
-	private void paseCandlestick(final List<Tick> ticksBuffer, final JSONArray parts) {
+	private void parseCandlestick(final List<Tick> ticksBuffer, final JSONArray parts) {
 		// 0 = Timestamp, 1 = Open, 2 = Close, 3 = High, 4 = Low,  5 = Volume
 		final Instant i = Instant.ofEpochMilli(parts.getLong(0));
 		final ZonedDateTime withTimezone = ZonedDateTime.ofInstant(i, Const.BITFINEX_TIMEZONE);
@@ -59,6 +59,4 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 		final Tick tick = new BaseTick(withTimezone, open, high, low, close, volume);
 		ticksBuffer.add(tick);
 	}
-
-
 }
