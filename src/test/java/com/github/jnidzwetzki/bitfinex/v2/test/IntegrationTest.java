@@ -8,7 +8,10 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 
 public class IntegrationTest {
 	
-	@Test(expected=APIException.class)
+	/**
+	 * Try to fetch wallets on an unauthenfiticated connection
+	 */
+	@Test
 	public void testWalletsOnUnauthClient() throws APIException {
 		
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
@@ -16,14 +19,23 @@ public class IntegrationTest {
 		try {
 			bitfinexClient.connect();
 			Assert.assertFalse(bitfinexClient.isAuthenticated());
+			
+			try {
+				bitfinexClient.getWallets();
+				
+				// Should not happen
+				Assert.assertTrue(false);
+			} catch (APIException e) {
+				return;
+			}
+		
 		} catch (Exception e) {
 			
 			// Should not happen
 			e.printStackTrace();
 			Assert.assertTrue(false);
+		} finally {
+			bitfinexClient.close();
 		}
-		
-		bitfinexClient.getWallets();
 	}
-	
 }
