@@ -2,6 +2,7 @@ package com.github.jnidzwetzki.bitfinex.v2.test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.JSONArray;
 import org.junit.Assert;
@@ -28,7 +29,7 @@ public class CandlestickParserTest {
 	@Test
 	public void testCandlestickUpdateAndNotify() throws APIException {
 		
-		final String callbackValue = "[1512684900000,15996,15997,16000,15980,38.51394454]";
+		final String callbackValue = "[15134900000,15996,15997,16000,15980,318.5139342]";
 		final JSONArray jsonArray = new JSONArray(callbackValue);
 		final String symbol = "tUSDBTC";
 		
@@ -41,7 +42,7 @@ public class CandlestickParserTest {
 			Assert.assertEquals(15997, c.getClosePrice().toDouble(), DELTA);
 			Assert.assertEquals(16000, c.getMaxPrice().toDouble(), DELTA);
 			Assert.assertEquals(15980, c.getMinPrice().toDouble(), DELTA);
-			Assert.assertEquals(38.51394454, c.getVolume().toDouble(), DELTA);
+			Assert.assertEquals(318.5139342, c.getVolume().toDouble(), DELTA);
 		});
 		
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
@@ -50,4 +51,49 @@ public class CandlestickParserTest {
 		final CandlestickHandler candlestickHandler = new CandlestickHandler();
 		candlestickHandler.handleChannelData(bitfinexApiBroker, symbol, jsonArray);
 	}
+	
+	
+	/**
+	 * Test the parsing of a candlestick snapshot
+	 * @throws APIException
+	 */
+	@Test
+	public void testCandlestickSnapshotUpdateAndNotify() throws APIException {
+		
+		final String callbackValue = "[[15134900000,15996,15997,16000,15980,318.5139342],[15135100000,15899,15996,16097,15890,1137.180342268]]";
+		final JSONArray jsonArray = new JSONArray(callbackValue);
+		final String symbol = "tUSDBTC";
+		
+		final ExecutorService executorService = Executors.newFixedThreadPool(10);
+		final TickerManager tickerManager = new TickerManager(executorService);
+
+		final AtomicInteger counter = new AtomicInteger(0);
+		
+		tickerManager.registerTickCallback(symbol, (s, c) -> {
+			Assert.assertEquals(symbol, s);
+			final int counterValue = counter.getAndIncrement();
+			if(counterValue == 0) {
+				Assert.assertEquals(15996, c.getOpenPrice().toDouble(), DELTA);
+				Assert.assertEquals(15997, c.getClosePrice().toDouble(), DELTA);
+				Assert.assertEquals(16000, c.getMaxPrice().toDouble(), DELTA);
+				Assert.assertEquals(15980, c.getMinPrice().toDouble(), DELTA);
+				Assert.assertEquals(318.5139342, c.getVolume().toDouble(), DELTA);
+			} else if(counterValue == 1) {
+				Assert.assertEquals(15899, c.getOpenPrice().toDouble(), DELTA);
+				Assert.assertEquals(15996, c.getClosePrice().toDouble(), DELTA);
+				Assert.assertEquals(16097, c.getMaxPrice().toDouble(), DELTA);
+				Assert.assertEquals(15890, c.getMinPrice().toDouble(), DELTA);
+				Assert.assertEquals(1137.180342268, c.getVolume().toDouble(), DELTA);
+			} else {
+				throw new IllegalArgumentException("Illegal call");
+			}
+		});
+		
+		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
+		Mockito.when(bitfinexApiBroker.getTickerManager()).thenReturn(tickerManager);
+		
+		final CandlestickHandler candlestickHandler = new CandlestickHandler();
+		candlestickHandler.handleChannelData(bitfinexApiBroker, symbol, jsonArray);
+	}
+		
 }
