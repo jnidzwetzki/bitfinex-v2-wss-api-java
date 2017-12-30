@@ -6,7 +6,7 @@
 <a href="https://repo1.maven.org/maven2/com/github/jnidzwetzki/"><img alt="Maven Central Version" src="https://maven-badges.herokuapp.com/maven-central/com.github.jnidzwetzki/bitfinex-v2-wss-api/badge.svg" />
   </a>
 
-This project contains a client for the Bitfinex WebSocket API (v2). At the moment, historical candles, orders, ticks, and wallets are supported.
+This project contains a client for the [Bitfinex WebSocket API (v2)](https://docs.bitfinex.com/v2/reference). At the moment, historical candles, orders, ticks, and wallets are supported.
 
 **Warning:** Trading carries significant financial risk; you could lose a lot of money. If you are planning to use this software to trade, you should perform many tests and simulations first. This software is provided 'as is' and released under the _Apache 2.0 license_. 
 
