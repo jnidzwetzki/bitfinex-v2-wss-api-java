@@ -76,7 +76,6 @@ public class WalletHandlerTest {
 		walletHandler.handleChannelData(bitfinexApiBroker, jsonArray);
 		walletLatch.await();
 		
-		System.out.println(walletTable);
 		Assert.assertEquals(9, walletTable.size());
 		
 		Assert.assertEquals(9, walletTable.get("exchange", "ETH").getBalance(), DELTA);
