@@ -180,22 +180,23 @@ public class TickerManager {
 	 * @param tick
 	 */
 	public void handleNewTick(final String symbol, final Tick tick) {
+		
 		synchronized (lastTick) {
 			lastTick.put(symbol, tick);
 			lastTickTimestamp.put(symbol, System.currentTimeMillis());
 		}
 		
 		final List<BiConsumer<String, Tick>> callbacks = channelCallbacks.get(symbol);
-
+		
 		if(callbacks == null) {
 			return;
 		}
-				
+
 		synchronized(callbacks) {
 			if(callbacks.isEmpty()) {
 				return;
 			}
-			
+
 			callbacks.forEach((c) -> {
 				final Runnable runnable = () -> c.accept(symbol, tick);
 				executorService.submit(runnable);
