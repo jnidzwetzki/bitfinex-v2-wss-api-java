@@ -36,7 +36,10 @@ public class CandlestickHandlerTest {
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final TickerManager tickerManager = new TickerManager(executorService);
 		
+		final AtomicInteger counter = new AtomicInteger(0);
+
 		tickerManager.registerTickCallback(symbol, (s, c) -> {
+			counter.incrementAndGet();
 			Assert.assertEquals(symbol, s);
 			Assert.assertEquals(15996, c.getOpenPrice().toDouble(), DELTA);
 			Assert.assertEquals(15997, c.getClosePrice().toDouble(), DELTA);
@@ -44,12 +47,14 @@ public class CandlestickHandlerTest {
 			Assert.assertEquals(15980, c.getMinPrice().toDouble(), DELTA);
 			Assert.assertEquals(318.5139342, c.getVolume().toDouble(), DELTA);
 		});
-		
+				
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		Mockito.when(bitfinexApiBroker.getTickerManager()).thenReturn(tickerManager);
 		
 		final CandlestickHandler candlestickHandler = new CandlestickHandler();
 		candlestickHandler.handleChannelData(bitfinexApiBroker, symbol, jsonArray);
+		
+		Assert.assertEquals(1, counter.get());
 	}
 	
 	
@@ -85,15 +90,17 @@ public class CandlestickHandlerTest {
 				Assert.assertEquals(15890, c.getMinPrice().toDouble(), DELTA);
 				Assert.assertEquals(1137.180342268, c.getVolume().toDouble(), DELTA);
 			} else {
-				throw new IllegalArgumentException("Illegal call");
+				throw new IllegalArgumentException("Illegal call, expected 2 candlesticks");
 			}
 		});
-		
+				
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		Mockito.when(bitfinexApiBroker.getTickerManager()).thenReturn(tickerManager);
 		
 		final CandlestickHandler candlestickHandler = new CandlestickHandler();
 		candlestickHandler.handleChannelData(bitfinexApiBroker, symbol, jsonArray);
+		
+		Assert.assertEquals(2, counter.get());
 	}
 		
 }
