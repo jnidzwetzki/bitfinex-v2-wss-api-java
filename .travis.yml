@@ -11,3 +11,20 @@ cache:
 
 sudo: false
 dist: trusty
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "mbpdZRGI0UK1gutGcJRo91efIGibVXo9ui42HRxn2zOWEAqbFT+SmDnkb4QRXhc+5HHGIpJZ+vAXBOzUJmc8f/tkacCiid6zk19u1wE/TBwj44K4yXPXd3+7JoCJcNxQ0tE/dsrQOSQ2DGHP6Ndjc95kKu4NPlIcqY/18exqj9MT585Ipgq+KCt8hN/82g1k+39rQMZR0zyTJDyEUpRDB6dGXYfML6j7ncjamFdRwDXRoWCdUJcR2N8uRRJawNRA3fs7sJrHp0QwfVowPLgoWs6ZBmCZ7zGl4uvwXkVeLxAuXMvOEpu1zI/b0c7Pnhd2IY4YpqFswgojI2xYdDfk7TOGgWCMjNqLbYW5WB+ufXny4i4LnG7cf5WvRx4RMgr2vJVkj08lCC3mVxJ7iSpoCx28rJVvpWe9RsAqa8fKsG8L4syxZlSgEAZl+MpGveZZGZyNCsj5rSlanaN4VYO+a+1Ao7XNw4yOIXv0Pw/Hnk1tbGxr2aIgayHN/Zt65sXZwILIxCNf+Mbs42yShj1B61n++0nwulmrCJWbHUC1lEpmcP2q2VQK33HH09SVVi56XizNHMRIYIg3S4NLnJre6eTVf0C5EahkaPVaWAgeoIHanQCbFSh4YrstLNzixJ7HE52L1wOSVzEi1LXJlrt3nnn3+Q84XoOBdl2No0YkSmA="
+
+addons:
+  coverity_scan:
+    project:
+      name: "jnidzwetzki/bitfinex-v2-wss-api-java"
+      description: "Build submitted via Travis CI"
+    notification_email: jnidzwetzki@gmx.de
+    build_command_prepend: "mvn clean"
+    build_command:   "mvn -DskipTests=true compile"
+    branch_pattern: coverity_scan
+
