@@ -13,7 +13,7 @@ import org.ta4j.core.Tick;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
 import com.github.jnidzwetzki.bitfinex.v2.util.TickMerger;
 
-public class TestTickMeger {
+public class TickMegerTest {
 	
 	private final static double DELTA = 0.00001;
 

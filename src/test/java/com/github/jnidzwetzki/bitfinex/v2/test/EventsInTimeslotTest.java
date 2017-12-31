@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.util.EventsInTimeslotManager;
 
-public class TestEventsInTimeslot {
+public class EventsInTimeslotTest {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void testConstruct1() {
