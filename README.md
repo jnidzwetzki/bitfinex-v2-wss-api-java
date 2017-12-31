@@ -11,7 +11,7 @@
        src="https://scan.coverity.com/projects/14740/badge.svg"/>
 </a>
 
-This project contains a client for the [Bitfinex WebSocket API (v2)](https://docs.bitfinex.com/v2/reference). At the moment, historical candles, orders, ticks, and wallets are supported.
+This project contains a client for the [Bitfinex WebSocket API (v2)](https://docs.bitfinex.com/v2/reference). At the moment, candles, ticks, orders, and wallets are supported.
 
 **Warning:** Trading carries significant financial risk; you could lose a lot of money. If you are planning to use this software to trade, you should perform many tests and simulations first. This software is provided 'as is' and released under the _Apache 2.0 license_. 
 
@@ -53,6 +53,16 @@ final BiConsumer<String, Tick> callback = (symbol, tick) -> {
 
 bitfinexApiBroker.getTickerManager().registerTickCallback("tUSDBTC", callback);
 bitfinexApiBroker.sendCommand(new SubscribeCandlesCommand("tUSDBTC", Timeframe.MINUTES_1));
+```
+
+## Subscribe ticker
+```java
+final BiConsumer<String, Tick> callback = (symbol, tick) -> {
+	System.out.println("Got tick for symbol: " + symbol + " / " + tick;
+};
+
+bitfinexApiBroker.getTickerManager().registerTickCallback("tUSDBTC", callback);
+bitfinexApiBroker.sendCommand(new SubscribeTickerCommand("tUSDBTC"));
 ```
 
 ## Market order
