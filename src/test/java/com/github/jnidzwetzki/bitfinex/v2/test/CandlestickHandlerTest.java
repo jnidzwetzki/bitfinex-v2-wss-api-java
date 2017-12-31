@@ -15,7 +15,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.channel.CandlestickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 
 
-public class CandlestickParserTest {
+public class CandlestickHandlerTest {
 
 	/**
 	 * The delta for double compares
