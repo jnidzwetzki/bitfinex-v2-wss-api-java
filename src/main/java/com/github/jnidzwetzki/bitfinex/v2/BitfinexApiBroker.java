@@ -171,7 +171,7 @@ public class BitfinexApiBroker implements Closeable {
 	}
 
 	/**
-	 * Setup the chennel handler
+	 * Setup the channel handler
 	 */
 	private void setupChannelHandler() {
 		// Heartbeat
