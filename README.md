@@ -44,8 +44,9 @@ BitfinexApiBroker bitfinexApiBroker = BitfinexApiBroker(apiKey, apiSecret);
 bitfinexApiBroker.connect();
 ```
 
-## Subscribe candles
+## Subscribe candles stream
 ```java
+// The consumer will be called on all received candles for the symbol
 final BiConsumer<String, Tick> callback = (symbol, tick) -> {
 	System.out.println("Got tick for symbol: " + symbol + " / " + tick;
 };
@@ -53,10 +54,17 @@ final BiConsumer<String, Tick> callback = (symbol, tick) -> {
 final TickerManager tickerManager = bitfinexClient.getTickerManager();
 bitfinexApiBroker.getTickerManager().registerTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
 tickerManager.subscribeCandles(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTES_1);
+
+[...]
+
+// To unsubscribe the candles stream
+bitfinexApiBroker.getTickerManager().removeTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
+tickerManager.unsubscribeCandles(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTES_1);
 ```
 
-## Subscribe ticker
+## Subscribe ticker stream
 ```java
+// The consumer will be called on all received ticks for the symbol
 final BiConsumer<String, Tick> callback = (symbol, tick) -> {
 	System.out.println("Got tick for symbol: " + symbol + " / " + tick;
 };
@@ -64,6 +72,12 @@ final BiConsumer<String, Tick> callback = (symbol, tick) -> {
 final TickerManager tickerManager = bitfinexClient.getTickerManager();
 bitfinexApiBroker.getTickerManager().registerTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
 tickerManager.subscribeTicker(BitfinexCurrencyPair.BTC_USD);
+
+[...]
+
+// To unsubscribe the ticker stream
+bitfinexApiBroker.getTickerManager().removeTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
+tickerManager.unsubscribeTicker(BitfinexCurrencyPair.BTC_USD);
 ```
 
 ## Market order
