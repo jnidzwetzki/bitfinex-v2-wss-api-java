@@ -9,7 +9,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 public class IntegrationTest {
 	
 	/**
-	 * Try to fetch wallets on an unauthenfiticated connection
+	 * Try to fetch wallets on an unauthenticated connection
 	 */
 	@Test
 	public void testWalletsOnUnauthClient() throws APIException {
@@ -22,7 +22,7 @@ public class IntegrationTest {
 			
 			try {
 				bitfinexClient.getWallets();
-				
+
 				// Should not happen
 				Assert.assertTrue(false);
 			} catch (APIException e) {
