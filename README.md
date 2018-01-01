@@ -51,7 +51,7 @@ final BiConsumer<String, Tick> callback = (symbol, tick) -> {
 };
 
 final TickerManager tickerManager = bitfinexClient.getTickerManager();
-bitfinexApiBroker.getTickerManager().registerTickCallback(BitfinexCurrencyPair.BCH_USD, callback);
+bitfinexApiBroker.getTickerManager().registerTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
 tickerManager.subscribeCandles(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTES_1);
 ```
 
@@ -62,8 +62,8 @@ final BiConsumer<String, Tick> callback = (symbol, tick) -> {
 };
 
 final TickerManager tickerManager = bitfinexClient.getTickerManager();
-bitfinexApiBroker.getTickerManager().registerTickCallback(BitfinexCurrencyPair.BCH_USD, callback);
-tickerManager.subscribeTicker(BitfinexCurrencyPair.BCH_USD);
+bitfinexApiBroker.getTickerManager().registerTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
+tickerManager.subscribeTicker(BitfinexCurrencyPair.BTC_USD);
 ```
 
 ## Market order
