@@ -1,11 +1,11 @@
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
-public class TradingOrderbookEntry {
+public class OrderbookEntry {
 	private final double price;
 	private final double count;
 	private final double amount;
 	
-	public TradingOrderbookEntry(final double price, final double count, final double amount) {
+	public OrderbookEntry(final double price, final double count, final double amount) {
 		this.price = price;
 		this.count = count;
 		this.amount = amount;

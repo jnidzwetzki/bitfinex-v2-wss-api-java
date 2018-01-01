@@ -35,13 +35,10 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderGroupCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CommandException;
 import com.github.jnidzwetzki.bitfinex.v2.commands.OrderCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -74,9 +71,9 @@ public class BitfinexApiBroker implements Closeable {
 	private final TickerManager tickerManager;
 	
 	/**
-	 * The orderbook manager
+	 * The trading orderbook manager
 	 */
-	private final OrderbookManager orderbookManager;
+	private final TradingOrderbookManager tradingOrderbookManager;
 	
 	/**
 	 * The position manager
@@ -160,7 +157,7 @@ public class BitfinexApiBroker implements Closeable {
 		this.channelIdSymbolMap = new HashMap<>();
 		this.lastHeatbeat = new AtomicLong();
 		this.tickerManager = new TickerManager(this);
-		this.orderbookManager = new OrderbookManager(executorService);
+		this.tradingOrderbookManager = new TradingOrderbookManager(this);
 		this.orderManager = new OrderManager(this);
 		this.positionManager = new PositionManager(executorService);
 		this.walletTable = HashBasedTable.create();
@@ -709,26 +706,6 @@ public class BitfinexApiBroker implements Closeable {
 	}
 	
 	/**
-	 * Subscribe the orderbook
-	 * @param currencyPair
-	 * @param orderBookPrecision
-	 * @param orderBookFrequency
-	 * @param pricePoints
-	 */
-	public void subscribeOrderbook(final BitfinexCurrencyPair currencyPair, 
-			final OrderBookPrecision orderBookPrecision, final OrderBookFrequency orderBookFrequency, 
-			final int pricePoints) {
-		
-		logger.info("Subscribe to orderbook {}", currencyPair);
-		
-		final SubscribeOrderbookCommand subscribeOrderbookCommand = 
-				new SubscribeOrderbookCommand(currencyPair, orderBookPrecision, 
-				orderBookFrequency, pricePoints);
-		
-		sendCommand(subscribeOrderbookCommand);
-	}
-	
-	/**
 	 * Get the last heartbeat value
 	 * @return
 	 */
@@ -834,11 +811,11 @@ public class BitfinexApiBroker implements Closeable {
 	}
 	
 	/**
-	 * Get the orderbook manager
+	 * Get the trading orderbook manager
 	 * @return
 	 */
-	public OrderbookManager getOrderbookManager() {
-		return orderbookManager;
+	public TradingOrderbookManager getTradingOrderbookManager() {
+		return tradingOrderbookManager;
 	}
 
 	/**
