@@ -27,6 +27,9 @@ Add this to your pom.xml
 </dependency>
 ```
 
+# Changelog
+You will find the changelog of the project [here](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/CHANGELOG.md).
+
 # Examples
 
 ## Connecting and authorizing
