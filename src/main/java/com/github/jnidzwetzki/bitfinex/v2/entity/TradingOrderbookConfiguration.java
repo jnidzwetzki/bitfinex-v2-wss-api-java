@@ -104,4 +104,18 @@ public class TradingOrderbookConfiguration {
 				jsonObject.getInt("len"));
 	}
 	
+	/**
+	 * Encode the configuration into a JSON object
+	 * @return
+	 */
+	public JSONObject toJSON() {
+		final JSONObject jsonObject = new JSONObject();
+		jsonObject.put("symbol", currencyPair.toBitfinexString());
+		jsonObject.put("prec", orderBookPrecision.name());
+		jsonObject.put("freq", orderBookFrequency.name());
+		jsonObject.put("len", pricePoints);
+		
+		return jsonObject;
+	}
+	
 }

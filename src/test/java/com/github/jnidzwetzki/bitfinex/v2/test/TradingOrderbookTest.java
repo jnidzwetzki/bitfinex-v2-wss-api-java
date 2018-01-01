@@ -48,4 +48,19 @@ public class TradingOrderbookTest {
 		Assert.assertEquals(OrderBookPrecision.P0, configuration.getOrderBookPrecision());
 		Assert.assertEquals(25, configuration.getPricePoints());
 	}
+	
+	/**
+	 * Test the symbol string encoding and decoding
+	 */
+	@Test
+	public void fromAndToSymbolString() {
+		final TradingOrderbookConfiguration configuration1 = new TradingOrderbookConfiguration(
+				BitfinexCurrencyPair.BCH_USD, OrderBookPrecision.P1, OrderBookFrequency.F1, 50);
+		
+		final JSONObject json = configuration1.toJSON();
+		
+		final TradingOrderbookConfiguration configuration2 = TradingOrderbookConfiguration.fromJSON(json);
+		
+		Assert.assertEquals(configuration1, configuration2);
+	}
 }
