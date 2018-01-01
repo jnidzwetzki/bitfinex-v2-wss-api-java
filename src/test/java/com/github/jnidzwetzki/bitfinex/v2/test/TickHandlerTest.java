@@ -37,7 +37,11 @@ public class TickHandlerTest {
 		final String symbolString = currencyPair.toBitfinexString();
 		
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
-		final TickerManager tickerManager = new TickerManager(executorService);
+		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
+		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
+		final TickerManager tickerManager = new TickerManager(bitfinexApiBroker);
+		Mockito.when(bitfinexApiBroker.getTickerManager()).thenReturn(tickerManager);
+
 		final CountDownLatch latch = new CountDownLatch(1);
 
 		tickerManager.registerTickCallback(symbolString, (s, c) -> {
@@ -57,8 +61,6 @@ public class TickHandlerTest {
 			latch.countDown();
 		});
 		
-		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		Mockito.when(bitfinexApiBroker.getTickerManager()).thenReturn(tickerManager);
 		
 		Assert.assertEquals(-1, tickerManager.getHeartbeatForSymbol(symbolString));
 		Assert.assertEquals(null, tickerManager.getLastTick(symbolString));

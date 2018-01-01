@@ -34,8 +34,11 @@ public class CandlestickHandlerTest {
 		final String symbol = "tUSDBTC";
 		
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
-		final TickerManager tickerManager = new TickerManager(executorService);
-		
+		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
+		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
+		final TickerManager tickerManager = new TickerManager(bitfinexApiBroker);
+		Mockito.when(bitfinexApiBroker.getTickerManager()).thenReturn(tickerManager);
+
 		final AtomicInteger counter = new AtomicInteger(0);
 
 		tickerManager.registerTickCallback(symbol, (s, c) -> {
@@ -47,10 +50,7 @@ public class CandlestickHandlerTest {
 			Assert.assertEquals(15980, c.getMinPrice().toDouble(), DELTA);
 			Assert.assertEquals(318.5139342, c.getVolume().toDouble(), DELTA);
 		});
-				
-		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		Mockito.when(bitfinexApiBroker.getTickerManager()).thenReturn(tickerManager);
-		
+						
 		final CandlestickHandler candlestickHandler = new CandlestickHandler();
 		candlestickHandler.handleChannelData(bitfinexApiBroker, symbol, jsonArray);
 		
@@ -70,7 +70,10 @@ public class CandlestickHandlerTest {
 		final String symbol = "tUSDBTC";
 		
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
-		final TickerManager tickerManager = new TickerManager(executorService);
+		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
+		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
+		final TickerManager tickerManager = new TickerManager(bitfinexApiBroker);
+		Mockito.when(bitfinexApiBroker.getTickerManager()).thenReturn(tickerManager);
 
 		final AtomicInteger counter = new AtomicInteger(0);
 		
@@ -93,10 +96,7 @@ public class CandlestickHandlerTest {
 				throw new IllegalArgumentException("Illegal call, expected 2 candlesticks");
 			}
 		});
-				
-		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		Mockito.when(bitfinexApiBroker.getTickerManager()).thenReturn(tickerManager);
-		
+						
 		final CandlestickHandler candlestickHandler = new CandlestickHandler();
 		candlestickHandler.handleChannelData(bitfinexApiBroker, symbol, jsonArray);
 		

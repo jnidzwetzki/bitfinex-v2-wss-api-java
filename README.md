@@ -45,14 +45,14 @@ bitfinexApiBroker.connect();
 ```
 
 ## Subscribe candles
-
 ```java
 final BiConsumer<String, Tick> callback = (symbol, tick) -> {
 	System.out.println("Got tick for symbol: " + symbol + " / " + tick;
 };
 
-bitfinexApiBroker.getTickerManager().registerTickCallback("tUSDBTC", callback);
-bitfinexApiBroker.sendCommand(new SubscribeCandlesCommand("tUSDBTC", Timeframe.MINUTES_1));
+final TickerManager tickerManager = bitfinexClient.getTickerManager();
+bitfinexApiBroker.getTickerManager().registerTickCallback(BitfinexCurrencyPair.BCH_USD, callback);
+tickerManager.subscribeCandles(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTES_1);
 ```
 
 ## Subscribe ticker
@@ -61,8 +61,9 @@ final BiConsumer<String, Tick> callback = (symbol, tick) -> {
 	System.out.println("Got tick for symbol: " + symbol + " / " + tick;
 };
 
-bitfinexApiBroker.getTickerManager().registerTickCallback("tUSDBTC", callback);
-bitfinexApiBroker.sendCommand(new SubscribeTickerCommand("tUSDBTC"));
+final TickerManager tickerManager = bitfinexClient.getTickerManager();
+bitfinexApiBroker.getTickerManager().registerTickCallback(BitfinexCurrencyPair.BCH_USD, callback);
+tickerManager.subscribeTicker(BitfinexCurrencyPair.BCH_USD);
 ```
 
 ## Market order

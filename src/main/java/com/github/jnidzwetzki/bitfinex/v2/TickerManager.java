@@ -10,8 +10,12 @@ import java.util.function.BiConsumer;
 
 import org.ta4j.core.Tick;
 
+import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
 
 public class TickerManager {
 	
@@ -35,8 +39,14 @@ public class TickerManager {
 	 */
 	private final ExecutorService executorService;
 
-	public TickerManager(final ExecutorService executorService) {
-		this.executorService = executorService;
+	/**
+	 * The bitfinex API
+	 */
+	private final BitfinexApiBroker bitfinexApiBroker;
+
+	public TickerManager(final BitfinexApiBroker bitfinexApiBroker) {
+		this.bitfinexApiBroker = bitfinexApiBroker;
+		this.executorService = bitfinexApiBroker.getExecutorService();
 		this.lastTick = new HashMap<>();
 		this.lastTickTimestamp = new HashMap<>();
 		this.channelCallbacks = new HashMap<>();
@@ -202,6 +212,60 @@ public class TickerManager {
 				executorService.submit(runnable);
 			});
 		}
+	}
+	
+	/**
+	 * Subscribe a ticker
+	 * @param currencyPair
+	 */
+	public void subscribeTicker(final BitfinexCurrencyPair currencyPair) {
+		final SubscribeTickerCommand command = new SubscribeTickerCommand(currencyPair);
+		bitfinexApiBroker.sendCommand(command);
+	}
+	
+	/**
+	 * Unsubscribe a ticker
+	 * @param currencyPair
+	 */
+	public void unsubscribeTicker(final BitfinexCurrencyPair currencyPair) {
+		final String symbol = currencyPair.toBitfinexString();
+		
+		final int channel = bitfinexApiBroker.getChannelForSymbol(symbol);
+		
+		if(channel == -1) {
+			throw new IllegalArgumentException("Unknown symbol: " + symbol);
+		}
+		
+		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
+		bitfinexApiBroker.sendCommand(command);
+	}
+	
+	/**
+	 * Subscribe candles for a symbol
+	 * @param currencyPair
+	 * @param timeframe
+	 */
+	public void subscribeCandles(final BitfinexCurrencyPair currencyPair, final Timeframe timeframe) {
+		final SubscribeCandlesCommand command = new SubscribeCandlesCommand(currencyPair, timeframe);
+		bitfinexApiBroker.sendCommand(command);
+	}
+	
+	/**
+	 * Unsubscribe the candles
+	 * @param currencyPair
+	 * @param timeframe
+	 */
+	public void unsubscribeCandles(final BitfinexCurrencyPair currencyPair, final Timeframe timeframe) {
+		final String symbol = currencyPair.toBifinexCandlestickString(timeframe);
+		
+		final int channel = bitfinexApiBroker.getChannelForSymbol(symbol);
+		
+		if(channel == -1) {
+			throw new IllegalArgumentException("Unknown symbol: " + symbol);
+		}
+		
+		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
+		bitfinexApiBroker.sendCommand(command);
 	}
 	
 }
