@@ -57,41 +57,47 @@ class HeartbeatThread extends ExceptionSafeThread {
 	}
 
 	@Override
-	public void runThread() throws InterruptedException {
+	public void runThread() {
 		
-		while(! Thread.interrupted()) {
-			
-			Thread.sleep(TimeUnit.SECONDS.toMillis(3));
-			
-			final WebsocketClientEndpoint websocketEndpoint = bitfinexApiBroker.getWebsocketEndpoint();
-			
-			if(websocketEndpoint == null) {
-				continue;
-			}
+		try {
+			while(! Thread.interrupted()) {
 				
-			if(! websocketEndpoint.isConnected()) {
-				logger.error("We are not connected, reconnecting");
-				executeReconnect();
-				continue;
-			}
-			
-			sendHeartbeatIfNeeded();
+				Thread.sleep(TimeUnit.SECONDS.toMillis(3));
+				
+				final WebsocketClientEndpoint websocketEndpoint = bitfinexApiBroker.getWebsocketEndpoint();
+				
+				if(websocketEndpoint == null) {
+					continue;
+				}
+					
+				if(! websocketEndpoint.isConnected()) {
+					logger.error("We are not connected, reconnecting");
+					executeReconnect();
+					continue;
+				}
+				
+				sendHeartbeatIfNeeded();
 
-			final boolean tickerUpToDate = checkTickerFreshness();
-			
-			if(! tickerUpToDate) {
-				logger.error("Ticker are outdated, reconnecting");
-				executeReconnect();
-				continue;
+				final boolean tickerUpToDate = checkTickerFreshness();
+				
+				if(! tickerUpToDate) {
+					logger.error("Ticker are outdated, reconnecting");
+					executeReconnect();
+					continue;
+				}
+				
+				final boolean reconnectNeeded = checkConnectionTimeout();
+				
+				if(reconnectNeeded) {
+					logger.error("Global connection heartbeat time out, reconnecting");
+					executeReconnect();
+					continue;
+				}
 			}
-			
-			final boolean reconnectNeeded = checkConnectionTimeout();
-			
-			if(reconnectNeeded) {
-				logger.error("Global connection heartbeat time out, reconnecting");
-				executeReconnect();
-				continue;
-			}
+		} catch (InterruptedException e) {
+			logger.debug("Heartbeat thread was interrupted, exiting");
+			Thread.currentThread().interrupt();
+			return;
 		}
 	}
 
