@@ -553,28 +553,47 @@ public class BitfinexApiBroker implements Closeable {
 	
 	/**
 	 * Test whether the ticker is active or not 
-	 * @param currencyPair
+	 * @param symbol
 	 * @return
 	 */
-	public boolean isTickerActive(final BitfinexCurrencyPair currencyPair) {
-		final String currencyString = currencyPair.toBitfinexString();
+	public boolean isTickerActive(final BitfinexCurrencyPair symbol) {
+		final String currencyString = symbol.toBitfinexString();
 		
 		return getChannelForSymbol(currencyString) != -1;
 	}
 
 	/**
 	 * Find the channel for the given symbol
-	 * @param currencyString
+	 * @param symbol
 	 * @return
 	 */
-	public Integer getChannelForSymbol(final String currencyString) {
+	public int getChannelForSymbol(final String symbol) {
 		synchronized (channelIdSymbolMap) {
 			return channelIdSymbolMap.entrySet()
 					.stream()
-					.filter((v) -> v.getValue().equals(currencyString))
+					.filter((v) -> v.getValue().equals(symbol))
 					.map((v) -> v.getKey())
 					.findAny().orElse(-1);
 		}
+	}
+	
+	/**
+	 * Remove the channel for the given symbol
+	 * @param symbol
+	 * @return
+	 */
+	public boolean removeChannelForSymbol(final String symbol) {
+		final int channel = getChannelForSymbol(symbol);
+		
+		if(channel != -1) {
+			synchronized (channelIdSymbolMap) {
+				channelIdSymbolMap.remove(channel);
+			}
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/**

@@ -238,6 +238,7 @@ public class TickerManager {
 		
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
 		bitfinexApiBroker.sendCommand(command);
+		bitfinexApiBroker.removeChannelForSymbol(symbol);
 	}
 	
 	/**
@@ -266,6 +267,7 @@ public class TickerManager {
 		
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
 		bitfinexApiBroker.sendCommand(command);
+		bitfinexApiBroker.removeChannelForSymbol(symbol);
 	}
 	
 }
