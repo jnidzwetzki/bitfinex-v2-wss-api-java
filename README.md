@@ -15,7 +15,7 @@ This project contains a client for the [Bitfinex WebSocket API (v2)](https://doc
 
 **Warning:** Trading carries significant financial risk; you could lose a lot of money. If you are planning to use this software to trade, you should perform many tests and simulations first. This software is provided 'as is' and released under the _Apache 2.0 license_. 
 
-# Integrating the library into your project
+# Adding the library to your project
 
 Add this to your pom.xml 
 
