@@ -30,6 +30,10 @@ public class TradingOrderbookConfiguration {
 		this.orderBookPrecision = orderBookPrecision;
 		this.orderBookFrequency = orderBookFrequency;
 		this.pricePoints = pricePoints;
+		
+		if(pricePoints < 25 || pricePoints > 100) {
+			throw new IllegalArgumentException("Price points must be between 25 and 100");
+		}
 	}
 
 	@Override
