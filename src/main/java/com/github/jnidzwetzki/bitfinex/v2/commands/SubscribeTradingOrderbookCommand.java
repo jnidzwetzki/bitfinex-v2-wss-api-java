@@ -21,7 +21,7 @@ public class SubscribeTradingOrderbookCommand extends AbstractAPICommand {
 		final JSONObject subscribeJson = new JSONObject();
 		subscribeJson.put("event", "subscribe");
 		subscribeJson.put("channel", "book");
-		subscribeJson.put("symbol", orderbookConfiguration.getCurrencyPair());
+		subscribeJson.put("symbol", orderbookConfiguration.getCurrencyPair().toBitfinexString());
 		subscribeJson.put("prec", orderbookConfiguration.getOrderBookPrecision().toString());
 		subscribeJson.put("freq", orderbookConfiguration.getOrderBookFrequency().toString());
 		subscribeJson.put("len", Integer.toString(orderbookConfiguration.getPricePoints()));
