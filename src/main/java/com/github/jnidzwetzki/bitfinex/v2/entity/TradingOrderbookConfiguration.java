@@ -57,5 +57,36 @@ public class TradingOrderbookConfiguration {
 	public int getPricePoints() {
 		return pricePoints;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((currencyPair == null) ? 0 : currencyPair.hashCode());
+		result = prime * result + ((orderBookFrequency == null) ? 0 : orderBookFrequency.hashCode());
+		result = prime * result + ((orderBookPrecision == null) ? 0 : orderBookPrecision.hashCode());
+		result = prime * result + pricePoints;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TradingOrderbookConfiguration other = (TradingOrderbookConfiguration) obj;
+		if (currencyPair != other.currencyPair)
+			return false;
+		if (orderBookFrequency != other.orderBookFrequency)
+			return false;
+		if (orderBookPrecision != other.orderBookPrecision)
+			return false;
+		if (pricePoints != other.pricePoints)
+			return false;
+		return true;
+	}
 	
 }
