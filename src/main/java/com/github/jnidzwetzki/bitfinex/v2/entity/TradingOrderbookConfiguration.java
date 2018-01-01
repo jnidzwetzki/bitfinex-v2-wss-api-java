@@ -1,5 +1,7 @@
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
+import org.json.JSONObject;
+
 public class TradingOrderbookConfiguration {
 	
 	/**
@@ -87,6 +89,19 @@ public class TradingOrderbookConfiguration {
 		if (pricePoints != other.pricePoints)
 			return false;
 		return true;
+	}
+
+	/**
+	 * Build from JSON Array
+	 * @param jsonObject
+	 * @return
+	 */
+	public static TradingOrderbookConfiguration fromJSON(final JSONObject jsonObject) {
+		return new TradingOrderbookConfiguration(
+				BitfinexCurrencyPair.fromSymbolString(jsonObject.getString("symbol")), 
+				OrderBookPrecision.valueOf(jsonObject.getString("prec")), 
+				OrderBookFrequency.valueOf(jsonObject.getString("freq")), 
+				jsonObject.getInt("len"));
 	}
 	
 }
