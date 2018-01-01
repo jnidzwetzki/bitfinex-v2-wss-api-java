@@ -11,7 +11,7 @@
        src="https://scan.coverity.com/projects/14740/badge.svg"/>
 </a>
 
-This project contains a client for the [Bitfinex WebSocket API (v2)](https://docs.bitfinex.com/v2/reference). At the moment, candles, ticks, orders, and wallets are supported.
+This project contains a client for the [Bitfinex WebSocket API (v2)](https://docs.bitfinex.com/v2/reference). At the moment, candles, ticks and trading orderbook streams are supported. In addition, orders, and wallets are also implemented.
 
 **Warning:** Trading carries significant financial risk; you could lose a lot of money. If you are planning to use this software to trade, you should perform many tests and simulations first. This software is provided 'as is' and released under the _Apache 2.0 license_. 
 
@@ -78,6 +78,28 @@ tickerManager.subscribeTicker(BitfinexCurrencyPair.BTC_USD);
 // To unsubscribe the ticker stream
 bitfinexApiBroker.getTickerManager().removeTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
 tickerManager.unsubscribeTicker(BitfinexCurrencyPair.BTC_USD);
+```
+
+## Subscribe trade orderbook stream
+```java
+final TradeOrderbookConfiguration orderbookConfiguration = new TradeOrderbookConfiguration(
+					BitfinexCurrencyPair.BTC_USD, OrderBookPrecision.P0, OrderBookFrequency.F0, 25);
+			
+final TradingOrderbookManager orderbookManager = bitfinexClient.getTradingOrderbookManager();
+
+final BiConsumer<TradeOrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
+		System.out.println("Got entry for orderbook: " + c + " / " + o;
+};
+
+orderbookManager.registerTradingOrderbookCallback(orderbookConfiguration, callback);
+orderbookManager.subscribeOrderbook(orderbookConfiguration);
+
+[...]
+
+// To unsubscribe the ticker stream
+orderbookManager.removeTradingOrderbookCallback(orderbookConfiguration, callback);
+orderbookManager.unsubscribeOrderbook(orderbookConfiguration);
+
 ```
 
 ## Market order

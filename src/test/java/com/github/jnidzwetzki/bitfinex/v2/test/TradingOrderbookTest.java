@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
-import com.github.jnidzwetzki.bitfinex.v2.entity.TradingOrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
 
 public class TradingOrderbookTest {
 
@@ -17,13 +17,13 @@ public class TradingOrderbookTest {
 	 */
 	@Test
 	public void testTradingOrderbookEquals() {
-		final TradingOrderbookConfiguration configuration1 = new TradingOrderbookConfiguration(
+		final TradeOrderbookConfiguration configuration1 = new TradeOrderbookConfiguration(
 				BitfinexCurrencyPair.BCH_USD, OrderBookPrecision.P1, OrderBookFrequency.F1, 50);
 		
-		final TradingOrderbookConfiguration configuration2 = new TradingOrderbookConfiguration(
+		final TradeOrderbookConfiguration configuration2 = new TradeOrderbookConfiguration(
 				BitfinexCurrencyPair.BCH_USD, OrderBookPrecision.P1, OrderBookFrequency.F1, 50);
 		
-		final TradingOrderbookConfiguration configuration3 = new TradingOrderbookConfiguration(
+		final TradeOrderbookConfiguration configuration3 = new TradeOrderbookConfiguration(
 				BitfinexCurrencyPair.BCH_USD, OrderBookPrecision.P0, OrderBookFrequency.F1, 50);
 		
 		Assert.assertEquals(configuration1.hashCode(), configuration2.hashCode());
@@ -40,8 +40,8 @@ public class TradingOrderbookTest {
 		final JSONTokener tokener = new JSONTokener(message);
 		final JSONObject jsonObject = new JSONObject(tokener);
 
-		final TradingOrderbookConfiguration configuration 
-			= TradingOrderbookConfiguration.fromJSON(jsonObject);
+		final TradeOrderbookConfiguration configuration 
+			= TradeOrderbookConfiguration.fromJSON(jsonObject);
 	
 		Assert.assertEquals(BitfinexCurrencyPair.BTC_USD, configuration.getCurrencyPair());
 		Assert.assertEquals(OrderBookFrequency.F0, configuration.getOrderBookFrequency());
@@ -54,12 +54,12 @@ public class TradingOrderbookTest {
 	 */
 	@Test
 	public void fromAndToSymbolString() {
-		final TradingOrderbookConfiguration configuration1 = new TradingOrderbookConfiguration(
+		final TradeOrderbookConfiguration configuration1 = new TradeOrderbookConfiguration(
 				BitfinexCurrencyPair.BCH_USD, OrderBookPrecision.P1, OrderBookFrequency.F1, 50);
 		
 		final JSONObject json = configuration1.toJSON();
 		
-		final TradingOrderbookConfiguration configuration2 = TradingOrderbookConfiguration.fromJSON(json);
+		final TradeOrderbookConfiguration configuration2 = TradeOrderbookConfiguration.fromJSON(json);
 		
 		Assert.assertEquals(configuration1, configuration2);
 	}

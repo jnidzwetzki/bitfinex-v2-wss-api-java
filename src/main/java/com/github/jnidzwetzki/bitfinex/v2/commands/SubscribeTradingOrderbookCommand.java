@@ -3,16 +3,16 @@ package com.github.jnidzwetzki.bitfinex.v2.commands;
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.entity.TradingOrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
 
 public class SubscribeTradingOrderbookCommand extends AbstractAPICommand {
 
 	/**
 	 * The orderbook configuration
 	 */
-	private TradingOrderbookConfiguration orderbookConfiguration;
+	private TradeOrderbookConfiguration orderbookConfiguration;
 	
-	public SubscribeTradingOrderbookCommand(final TradingOrderbookConfiguration orderbookConfiguration) {
+	public SubscribeTradingOrderbookCommand(final TradeOrderbookConfiguration orderbookConfiguration) {
 		this.orderbookConfiguration = orderbookConfiguration;
 	}
 

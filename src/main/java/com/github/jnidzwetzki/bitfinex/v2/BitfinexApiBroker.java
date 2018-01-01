@@ -29,6 +29,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.api.WalletHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.CandlestickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.TickHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.TradeOrderbookHandler;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AbstractAPICommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AuthCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderCommand;
@@ -39,6 +40,7 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -420,16 +422,21 @@ public class BitfinexApiBroker implements Closeable {
 
 	private void handleSubscribedCallback(final String message, final JSONObject jsonObject) {
 		final String channel = jsonObject.getString("channel");
+		final int channelId = jsonObject.getInt("chanId");
 
 		if (channel.equals("ticker")) {
-			final int channelId = jsonObject.getInt("chanId");
 			final String symbol = jsonObject.getString("symbol");
 			logger.info("Registering symbol {} on channel {}", symbol, channelId);
 			addToChannelSymbolMap(channelId, symbol);
 		} else if (channel.equals("candles")) {
-			final int channelId = jsonObject.getInt("chanId");
 			final String key = jsonObject.getString("key");
 			logger.info("Registering key {} on channel {}", key, channelId);
+			addToChannelSymbolMap(channelId, key);
+		} else if("book".equals(channel)) {
+			final TradeOrderbookConfiguration configuration 
+				= TradeOrderbookConfiguration.fromJSON(jsonObject);
+			final String key = configuration.toJSON().toString();
+			logger.info("Registering book {} on channel {}", key, channelId);
 			addToChannelSymbolMap(channelId, key);
 		} else {
 			logger.error("Unknown subscribed callback {}", message);
@@ -526,6 +533,9 @@ public class BitfinexApiBroker implements Closeable {
 			try {
 				if(channelSymbol.contains("trade")) {
 					final ChannelCallbackHandler handler = new CandlestickHandler();
+					handler.handleChannelData(this, channelSymbol, subarray);
+				} else if(channelSymbol.contains("prec")) {
+					final TradeOrderbookHandler handler = new TradeOrderbookHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
 				} else {
 					final ChannelCallbackHandler handler = new TickHandler();

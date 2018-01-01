@@ -8,19 +8,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradingOrderbookCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
-import com.github.jnidzwetzki.bitfinex.v2.entity.TradingOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookEntry;
+import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
 
 public class TradingOrderbookManager {
 
 	/**
 	 * The channel callbacks
 	 */
-	private final Map<TradingOrderbookConfiguration, List<BiConsumer<TradingOrderbookConfiguration, OrderbookEntry>>> channelCallbacks;
+	private final Map<TradeOrderbookConfiguration, List<BiConsumer<TradeOrderbookConfiguration, OrderbookEntry>>> channelCallbacks;
 	
 	/**
 	 * The executor service
@@ -44,12 +42,12 @@ public class TradingOrderbookManager {
 	 * @param callback
 	 * @throws APIException
 	 */
-	public void registerTradingOrderbookCallback(final TradingOrderbookConfiguration orderbookConfiguration, 
-			final BiConsumer<TradingOrderbookConfiguration, OrderbookEntry> callback) throws APIException {
+	public void registerTradingOrderbookCallback(final TradeOrderbookConfiguration orderbookConfiguration, 
+			final BiConsumer<TradeOrderbookConfiguration, OrderbookEntry> callback) throws APIException {
 		
 		channelCallbacks.putIfAbsent(orderbookConfiguration, new ArrayList<>());
 
-		final List<BiConsumer<TradingOrderbookConfiguration, OrderbookEntry>> callbacks = channelCallbacks.get(orderbookConfiguration);
+		final List<BiConsumer<TradeOrderbookConfiguration, OrderbookEntry>> callbacks = channelCallbacks.get(orderbookConfiguration);
 		
 		synchronized (callbacks) {
 			callbacks.add(callback);	
@@ -63,14 +61,14 @@ public class TradingOrderbookManager {
 	 * @return
 	 * @throws APIException
 	 */
-	public boolean removeTradingOrderbookCallback(final TradingOrderbookConfiguration orderbookConfiguration, 
+	public boolean removeTradingOrderbookCallback(final TradeOrderbookConfiguration orderbookConfiguration, 
 			final BiConsumer<String, OrderbookEntry> callback) throws APIException {
 		
 		if(! channelCallbacks.containsKey(orderbookConfiguration)) {
 			throw new APIException("Unknown orderbook configuration: " + orderbookConfiguration);
 		}
 			
-		final List<BiConsumer<TradingOrderbookConfiguration, OrderbookEntry>> callbacks = channelCallbacks.get(orderbookConfiguration);
+		final List<BiConsumer<TradeOrderbookConfiguration, OrderbookEntry>> callbacks = channelCallbacks.get(orderbookConfiguration);
 		
 		synchronized (callbacks) {
 			return callbacks.remove(callback);
@@ -84,7 +82,7 @@ public class TradingOrderbookManager {
 	 * @param orderBookFrequency
 	 * @param pricePoints
 	 */
-	public void subscribeOrderbook(final TradingOrderbookConfiguration orderbookConfiguration) {
+	public void subscribeOrderbook(final TradeOrderbookConfiguration orderbookConfiguration) {
 		
 		final SubscribeTradingOrderbookCommand subscribeOrderbookCommand 
 			= new SubscribeTradingOrderbookCommand(orderbookConfiguration);
@@ -99,7 +97,43 @@ public class TradingOrderbookManager {
 	 * @param orderBookFrequency
 	 * @param pricePoints
 	 */
-	public void unsubscribeOrderbook(final TradingOrderbookConfiguration orderbookConfiguration) {
+	public void unsubscribeOrderbook(final TradeOrderbookConfiguration orderbookConfiguration) {
+		final String symbol = orderbookConfiguration.toJSON().toString();
 		
+		final int channel = bitfinexApiBroker.getChannelForSymbol(symbol);
+		
+		if(channel == -1) {
+			throw new IllegalArgumentException("Unknown symbol: " + symbol);
+		}
+		
+		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
+		bitfinexApiBroker.sendCommand(command);
+		bitfinexApiBroker.removeChannelForSymbol(symbol);
+	}
+	
+	/**
+	 * Handle a new orderbook entry
+	 * @param symbol
+	 * @param tick
+	 */
+	public void handleNewOrderbookEntry(final TradeOrderbookConfiguration configuration, final OrderbookEntry entry) {
+		
+		final List<BiConsumer<TradeOrderbookConfiguration, OrderbookEntry>> callbacks 
+			= channelCallbacks.get(configuration);
+		
+		if(callbacks == null) {
+			return;
+		}
+
+		synchronized(callbacks) {
+			if(callbacks.isEmpty()) {
+				return;
+			}
+
+			callbacks.forEach((c) -> {
+				final Runnable runnable = () -> c.accept(configuration, entry);
+				executorService.submit(runnable);
+			});
+		}
 	}
 }

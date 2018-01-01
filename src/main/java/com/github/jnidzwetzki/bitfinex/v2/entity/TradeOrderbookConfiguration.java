@@ -2,7 +2,7 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import org.json.JSONObject;
 
-public class TradingOrderbookConfiguration {
+public class TradeOrderbookConfiguration {
 	
 	/**
 	 * The currency pair
@@ -24,7 +24,7 @@ public class TradingOrderbookConfiguration {
 	 */
 	private final int pricePoints;
 	
-	public TradingOrderbookConfiguration(final BitfinexCurrencyPair currencyPair, 
+	public TradeOrderbookConfiguration(final BitfinexCurrencyPair currencyPair, 
 			final OrderBookPrecision orderBookPrecision,
 			final OrderBookFrequency orderBookFrequency, final int pricePoints) {
 		
@@ -79,7 +79,7 @@ public class TradingOrderbookConfiguration {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TradingOrderbookConfiguration other = (TradingOrderbookConfiguration) obj;
+		TradeOrderbookConfiguration other = (TradeOrderbookConfiguration) obj;
 		if (currencyPair != other.currencyPair)
 			return false;
 		if (orderBookFrequency != other.orderBookFrequency)
@@ -96,8 +96,8 @@ public class TradingOrderbookConfiguration {
 	 * @param jsonObject
 	 * @return
 	 */
-	public static TradingOrderbookConfiguration fromJSON(final JSONObject jsonObject) {
-		return new TradingOrderbookConfiguration(
+	public static TradeOrderbookConfiguration fromJSON(final JSONObject jsonObject) {
+		return new TradeOrderbookConfiguration(
 				BitfinexCurrencyPair.fromSymbolString(jsonObject.getString("symbol")), 
 				OrderBookPrecision.valueOf(jsonObject.getString("prec")), 
 				OrderBookFrequency.valueOf(jsonObject.getString("freq")), 
