@@ -53,9 +53,13 @@ public class HeartbeatThread extends ExceptionSafeThread {
 	/**
 	 * @param bitfinexApiBroker
 	 */
-	HeartbeatThread(BitfinexApiBroker bitfinexApiBroker) {
+	public HeartbeatThread(final BitfinexApiBroker bitfinexApiBroker) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
-		this.eventsInTimeslotManager = new EventsInTimeslotManager(MAX_RECONNECTS_IN_TIME, 10, TimeUnit.MINUTES);
+		
+		this.eventsInTimeslotManager = new EventsInTimeslotManager(
+				MAX_RECONNECTS_IN_TIME, 
+				10, 
+				TimeUnit.MINUTES);
 	}
 
 	@Override
