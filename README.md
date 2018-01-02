@@ -13,7 +13,7 @@
 
 This project contains a client for the [Bitfinex WebSocket API (v2)](https://docs.bitfinex.com/v2/reference). At the moment, candles, ticks and trading orderbook streams are supported. In addition, orders, and wallets are also implemented.
 
-In contrast to other implementations, this project uses the WSS-API of Bitfinex (streaming). Most other projects are calling the REST-API periodically (polling), which leads to delays in data streams.
+In contrast to other implementations, this project uses the WSS streaming API of Bitfinex. Most other projects are poll the REST-API periodically, which leads to delays in data processing. In this implementation, you can register callback methods on ticks, candles or orders. The callbacks are executed, as soon as new data is received from Bitfinex (see the examples section for more details).
 
 **Warning:** Trading carries significant financial risk; you could lose a lot of money. If you are planning to use this software to trade, you should perform many tests and simulations first. This software is provided 'as is' and released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0). 
 
