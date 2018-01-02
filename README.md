@@ -53,7 +53,7 @@ bitfinexApiBroker.connect();
 ```java
 
 final BitfinexCandlestickSymbol symbol 
-	= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.SECONDS_30);
+	= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTE_1);
 	
 // The consumer will be called on all received candles for the symbol
 final BiConsumer<BitfinexCandlestickSymbol, Tick> callback = (symbol, tick) -> {
