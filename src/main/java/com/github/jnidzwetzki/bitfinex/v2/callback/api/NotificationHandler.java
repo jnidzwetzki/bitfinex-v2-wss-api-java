@@ -22,7 +22,6 @@ public class NotificationHandler implements APICallbackHandler {
 		
 		logger.debug("Got notification callback {}", jsonArray.toString());
 
-
 		final JSONArray notifificationValue = jsonArray.optJSONArray(2);
 
 		// Test for order error callback
