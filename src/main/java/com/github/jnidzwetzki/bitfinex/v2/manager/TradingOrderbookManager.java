@@ -1,9 +1,5 @@
 package com.github.jnidzwetzki.bitfinex.v2.manager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
@@ -19,8 +15,8 @@ public class TradingOrderbookManager {
 	/**
 	 * The channel callbacks
 	 */
-	private final Map<TradeOrderbookConfiguration, List<BiConsumer<TradeOrderbookConfiguration, OrderbookEntry>>> channelCallbacks;
-	
+	private final BiConsumerCallbackManager<TradeOrderbookConfiguration, OrderbookEntry> channelCallbacks;
+
 	/**
 	 * The executor service
 	 */
@@ -34,7 +30,7 @@ public class TradingOrderbookManager {
 	public TradingOrderbookManager(final BitfinexApiBroker bitfinexApiBroker) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
 		this.executorService = bitfinexApiBroker.getExecutorService();
-		this.channelCallbacks = new HashMap<>();
+		this.channelCallbacks = new BiConsumerCallbackManager<>(executorService);
 	}
 	
 	/**
@@ -46,13 +42,7 @@ public class TradingOrderbookManager {
 	public void registerTradingOrderbookCallback(final TradeOrderbookConfiguration orderbookConfiguration, 
 			final BiConsumer<TradeOrderbookConfiguration, OrderbookEntry> callback) throws APIException {
 		
-		channelCallbacks.putIfAbsent(orderbookConfiguration, new ArrayList<>());
-
-		final List<BiConsumer<TradeOrderbookConfiguration, OrderbookEntry>> callbacks = channelCallbacks.get(orderbookConfiguration);
-		
-		synchronized (callbacks) {
-			callbacks.add(callback);	
-		}
+		channelCallbacks.registerCallback(orderbookConfiguration, callback);
 	}
 	
 	/**
@@ -63,17 +53,9 @@ public class TradingOrderbookManager {
 	 * @throws APIException
 	 */
 	public boolean removeTradingOrderbookCallback(final TradeOrderbookConfiguration orderbookConfiguration, 
-			final BiConsumer<String, OrderbookEntry> callback) throws APIException {
+			final BiConsumer<TradeOrderbookConfiguration, OrderbookEntry> callback) throws APIException {
 		
-		if(! channelCallbacks.containsKey(orderbookConfiguration)) {
-			throw new APIException("Unknown orderbook configuration: " + orderbookConfiguration);
-		}
-			
-		final List<BiConsumer<TradeOrderbookConfiguration, OrderbookEntry>> callbacks = channelCallbacks.get(orderbookConfiguration);
-		
-		synchronized (callbacks) {
-			return callbacks.remove(callback);
-		}
+		return channelCallbacks.removeCallback(orderbookConfiguration, callback);
 	}
 	
 	/**
@@ -116,24 +98,9 @@ public class TradingOrderbookManager {
 	 * @param symbol
 	 * @param tick
 	 */
-	public void handleNewOrderbookEntry(final TradeOrderbookConfiguration configuration, final OrderbookEntry entry) {
+	public void handleNewOrderbookEntry(final TradeOrderbookConfiguration configuration, 
+			final OrderbookEntry entry) {
 		
-		final List<BiConsumer<TradeOrderbookConfiguration, OrderbookEntry>> callbacks 
-			= channelCallbacks.get(configuration);
-		
-		if(callbacks == null) {
-			return;
-		}
-
-		synchronized(callbacks) {
-			if(callbacks.isEmpty()) {
-				return;
-			}
-
-			callbacks.forEach((c) -> {
-				final Runnable runnable = () -> c.accept(configuration, entry);
-				executorService.submit(runnable);
-			});
-		}
+		channelCallbacks.handleEvent(configuration, entry);
 	}
 }

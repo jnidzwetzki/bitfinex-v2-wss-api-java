@@ -1,6 +1,5 @@
 package com.github.jnidzwetzki.bitfinex.v2.manager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,12 +33,12 @@ public class QuoteManager {
 	/**
 	 * The BitfinexCurrencyPair callbacks
 	 */
-	private final Map<BitfinexCurrencyPair, List<BiConsumer<BitfinexCurrencyPair, Tick>>> tickerCallbacks;
+	private final BiConsumerCallbackManager<BitfinexCurrencyPair, Tick> tickerCallbacks;
 
 	/**
 	 * The Bitfinex Candlestick callbacks
 	 */
-	private final Map<BitfinexCandlestickSymbol, List<BiConsumer<BitfinexCandlestickSymbol, Tick>>> candleCallbacks;
+	private final BiConsumerCallbackManager<BitfinexCandlestickSymbol, Tick> candleCallbacks;
 	
 	/**
 	 * The executor service
@@ -56,8 +55,8 @@ public class QuoteManager {
 		this.executorService = bitfinexApiBroker.getExecutorService();
 		this.lastTick = new HashMap<>();
 		this.lastTickTimestamp = new HashMap<>();
-		this.tickerCallbacks = new HashMap<>();
-		this.candleCallbacks = new HashMap<>();
+		this.tickerCallbacks = new BiConsumerCallbackManager<>(executorService);
+		this.candleCallbacks = new BiConsumerCallbackManager<>(executorService);
 	}
 	
 	/**
@@ -127,13 +126,7 @@ public class QuoteManager {
 	public void registerTickCallback(final BitfinexCurrencyPair symbol, 
 			final BiConsumer<BitfinexCurrencyPair, Tick> callback) throws APIException {
 		
-		tickerCallbacks.putIfAbsent(symbol, new ArrayList<>());
-				
-		final List<BiConsumer<BitfinexCurrencyPair, Tick>> callbacks = tickerCallbacks.get(symbol);
-		
-		synchronized (callbacks) {
-			callbacks.add(callback);	
-		}
+		tickerCallbacks.registerCallback(symbol, callback);
 	}
 	
 	/**
@@ -146,15 +139,7 @@ public class QuoteManager {
 	public boolean removeTickCallback(final BitfinexCurrencyPair symbol, 
 			final BiConsumer<BitfinexCurrencyPair, Tick> callback) throws APIException {
 		
-		if(! tickerCallbacks.containsKey(symbol)) {
-			throw new APIException("Unknown ticker string: " + symbol);
-		}
-			
-		final List<BiConsumer<BitfinexCurrencyPair, Tick>> callbacks = tickerCallbacks.get(symbol);
-		
-		synchronized (callbacks) {
-			return callbacks.remove(callback);
-		}
+		return tickerCallbacks.removeCallback(symbol, callback);
 	}
 	
 	/**
@@ -163,25 +148,7 @@ public class QuoteManager {
 	 * @param ticksArray
 	 */
 	public void handleTicksList(final BitfinexCurrencyPair symbol, final List<Tick> ticksBuffer) {
-		
-		// Notify callbacks async
-		final List<BiConsumer<BitfinexCurrencyPair, Tick>> callbacks = tickerCallbacks.get(symbol);
-		
-		if(callbacks == null) {
-			return;
-		}
-				
-		synchronized(callbacks) {
-			if(callbacks.isEmpty()) {
-				return;
-			}
-			
-			for (final Tick tick : ticksBuffer) {
-				callbacks.forEach((c) -> {
-					c.accept(symbol, tick);
-				});
-			}
-		}
+		tickerCallbacks.handleEventsList(symbol, ticksBuffer);
 	}
 	
 	/**
@@ -196,22 +163,7 @@ public class QuoteManager {
 			lastTickTimestamp.put(currencyPair, System.currentTimeMillis());
 		}
 		
-		final List<BiConsumer<BitfinexCurrencyPair, Tick>> callbacks = tickerCallbacks.get(currencyPair);
-		
-		if(callbacks == null) {
-			return;
-		}
-
-		synchronized(callbacks) {
-			if(callbacks.isEmpty()) {
-				return;
-			}
-
-			callbacks.forEach((c) -> {
-				final Runnable runnable = () -> c.accept(currencyPair, tick);
-				executorService.submit(runnable);
-			});
-		}
+		tickerCallbacks.handleEvent(currencyPair, tick);
 	}
 	
 	/**
@@ -248,13 +200,7 @@ public class QuoteManager {
 	public void registerCandlestickCallback(final BitfinexCandlestickSymbol symbol, 
 			final BiConsumer<BitfinexCandlestickSymbol, Tick> callback) throws APIException {
 		
-		candleCallbacks.putIfAbsent(symbol, new ArrayList<>());
-				
-		final List<BiConsumer<BitfinexCandlestickSymbol, Tick>> callbacks = candleCallbacks.get(symbol);
-		
-		synchronized (callbacks) {
-			callbacks.add(callback);	
-		}
+		candleCallbacks.registerCallback(symbol, callback);
 	}
 	
 	/**
@@ -267,15 +213,7 @@ public class QuoteManager {
 	public boolean removeCandlestickCallback(final BitfinexCandlestickSymbol symbol, 
 			final BiConsumer<BitfinexCandlestickSymbol, Tick> callback) throws APIException {
 		
-		if(! candleCallbacks.containsKey(symbol)) {
-			throw new APIException("Unknown ticker string: " + symbol);
-		}
-			
-		final List<BiConsumer<BitfinexCandlestickSymbol, Tick>> callbacks = candleCallbacks.get(symbol);
-		
-		synchronized (callbacks) {
-			return callbacks.remove(callback);
-		}
+		return candleCallbacks.removeCallback(symbol, callback);
 	}
 	
 
@@ -285,25 +223,7 @@ public class QuoteManager {
 	 * @param ticksArray
 	 */
 	public void handleCandlestickList(final BitfinexCandlestickSymbol symbol, final List<Tick> ticksBuffer) {
-		
-		// Notify callbacks async
-		final List<BiConsumer<BitfinexCandlestickSymbol, Tick>> callbacks = candleCallbacks.get(symbol);
-		
-		if(callbacks == null) {
-			return;
-		}
-				
-		synchronized(callbacks) {
-			if(callbacks.isEmpty()) {
-				return;
-			}
-			
-			for (final Tick tick : ticksBuffer) {
-				callbacks.forEach((c) -> {
-					c.accept(symbol, tick);
-				});
-			}
-		}
+		candleCallbacks.handleEventsList(symbol, ticksBuffer);
 	}
 	
 	/**
@@ -318,22 +238,7 @@ public class QuoteManager {
 			lastTickTimestamp.put(currencyPair, System.currentTimeMillis());
 		}
 		
-		final List<BiConsumer<BitfinexCandlestickSymbol, Tick>> callbacks = candleCallbacks.get(currencyPair);
-		
-		if(callbacks == null) {
-			return;
-		}
-
-		synchronized(callbacks) {
-			if(callbacks.isEmpty()) {
-				return;
-			}
-
-			callbacks.forEach((c) -> {
-				final Runnable runnable = () -> c.accept(currencyPair, tick);
-				executorService.submit(runnable);
-			});
-		}
+		candleCallbacks.handleEvent(currencyPair, tick);
 	}
 	
 	/**
