@@ -78,6 +78,9 @@ public class IntegrationTest {
 
 			orderbookManager.unsubscribeOrderbook(orderbookConfiguration);
 			
+			Assert.assertTrue(orderbookManager.removeTradingOrderbookCallback(orderbookConfiguration, callback));
+			Assert.assertFalse(orderbookManager.removeTradingOrderbookCallback(orderbookConfiguration, callback));
+
 		} catch (Exception e) {
 			// Should not happen
 			e.printStackTrace();
@@ -113,6 +116,9 @@ public class IntegrationTest {
 
 			orderbookManager.unsubscribeCandles(symbol);
 			
+			Assert.assertTrue(orderbookManager.removeCandlestickCallback(symbol, callback));
+			Assert.assertFalse(orderbookManager.removeCandlestickCallback(symbol, callback));
+
 		} catch (Exception e) {
 			// Should not happen
 			e.printStackTrace();
@@ -147,6 +153,9 @@ public class IntegrationTest {
 
 			orderbookManager.unsubscribeTicker(symbol);
 			
+			Assert.assertTrue(orderbookManager.removeTickCallback(symbol, callback));
+			Assert.assertFalse(orderbookManager.removeTickCallback(symbol, callback));
+
 		} catch (Exception e) {
 			// Should not happen
 			e.printStackTrace();
