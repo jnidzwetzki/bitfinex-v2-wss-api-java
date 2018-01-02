@@ -1,4 +1,4 @@
-package com.github.jnidzwetzki.bitfinex.v2;
+package com.github.jnidzwetzki.bitfinex.v2.manager;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -9,6 +9,8 @@ import org.ta4j.core.Tick;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.Const;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 
 public class TickHandler implements ChannelCallbackHandler {
 
@@ -19,8 +21,10 @@ public class TickHandler implements ChannelCallbackHandler {
 	 */
 	@Override
 	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker, 
-			final String channelSymbol, final JSONArray jsonArray) throws APIException {
+			final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
 
+		final BitfinexCurrencyPair currencyPair = (BitfinexCurrencyPair) channelSymbol;
+		
 		// 0 = BID
 		// 2 = ASK
 		// 6 = Price
@@ -30,6 +34,6 @@ public class TickHandler implements ChannelCallbackHandler {
 		final Tick tick = new BaseTick(ZonedDateTime.now(Const.BITFINEX_TIMEZONE), price, price, 
 				price, price, 0);
 		
-		bitfinexApiBroker.getTickerManager().handleNewTick(channelSymbol, tick);
+		bitfinexApiBroker.getquoteManager().handleNewTick(currencyPair, tick);
 	}
 }

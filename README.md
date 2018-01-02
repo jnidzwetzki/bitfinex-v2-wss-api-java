@@ -51,37 +51,41 @@ bitfinexApiBroker.connect();
 
 ## Subscribe candles stream
 ```java
+
+final BitfinexCandlestickSymbol symbol 
+	= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.SECONDS_30);
+	
 // The consumer will be called on all received candles for the symbol
-final BiConsumer<String, Tick> callback = (symbol, tick) -> {
+final BiConsumer<BitfinexCandlestickSymbol, Tick> callback = (symbol, tick) -> {
 	System.out.println("Got tick for symbol: " + symbol + " / " + tick;
 };
 
-final TickerManager tickerManager = bitfinexClient.getTickerManager();
-bitfinexApiBroker.getTickerManager().registerTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
-tickerManager.subscribeCandles(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTES_1);
+final QuoteManager quoteManager = bitfinexClient.getQuoteManager();
+quoteManager.registerCandlestickCallback(symbol, callback);
+tickerManager.subscribeCandles(symbol);
 
 [...]
 
 // To unsubscribe the candles stream
-bitfinexApiBroker.getTickerManager().removeTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
-tickerManager.unsubscribeCandles(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTES_1);
+quoteManager.removeCandlestickCallback(symbol, callback);
+tickerManager.unsubscribeCandles(symbol);
 ```
 
 ## Subscribe ticker stream
 ```java
 // The consumer will be called on all received ticks for the symbol
-final BiConsumer<String, Tick> callback = (symbol, tick) -> {
+final BiConsumer<BitfinexCurrencyPair, Tick> callback = (symbol, tick) -> {
 	System.out.println("Got tick for symbol: " + symbol + " / " + tick;
 };
 
-final TickerManager tickerManager = bitfinexClient.getTickerManager();
-bitfinexApiBroker.getTickerManager().registerTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
+final QuoteManager quoteManager = bitfinexClient.getQuoteManager();
+quoteManager.registerTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
 tickerManager.subscribeTicker(BitfinexCurrencyPair.BTC_USD);
 
 [...]
 
 // To unsubscribe the ticker stream
-bitfinexApiBroker.getTickerManager().removeTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
+quoteManager.removeTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
 tickerManager.unsubscribeTicker(BitfinexCurrencyPair.BTC_USD);
 ```
 

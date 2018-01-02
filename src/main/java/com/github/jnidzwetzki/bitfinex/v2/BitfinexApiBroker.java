@@ -36,12 +36,20 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderGroupCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CommandException;
 import com.github.jnidzwetzki.bitfinex.v2.commands.OrderCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradingOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
+import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
+import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
+import com.github.jnidzwetzki.bitfinex.v2.manager.TradingOrderbookManager;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -65,12 +73,12 @@ public class BitfinexApiBroker implements Closeable {
 	/**
 	 * The channel map
 	 */
-	private final Map<Integer, String> channelIdSymbolMap;
+	private final Map<Integer, BitfinexStreamSymbol> channelIdSymbolMap;
 	
 	/**
 	 * The tick manager
 	 */
-	private final TickerManager tickerManager;
+	private final QuoteManager quoteManager;
 	
 	/**
 	 * The trading orderbook manager
@@ -158,7 +166,7 @@ public class BitfinexApiBroker implements Closeable {
 		this.executorService = Executors.newFixedThreadPool(10);
 		this.channelIdSymbolMap = new HashMap<>();
 		this.lastHeatbeat = new AtomicLong();
-		this.tickerManager = new TickerManager(this);
+		this.quoteManager = new QuoteManager(this);
 		this.tradingOrderbookManager = new TradingOrderbookManager(this);
 		this.orderManager = new OrderManager(this);
 		this.positionManager = new PositionManager(executorService);
@@ -406,7 +414,7 @@ public class BitfinexApiBroker implements Closeable {
 	private void handleUnsubscribedCallback(final JSONObject jsonObject) {
 		synchronized (channelIdSymbolMap) {
 			final int channelId = jsonObject.getInt("chanId");
-			final String symbol = getFromChannelSymbolMap(channelId);
+			final BitfinexStreamSymbol symbol = getFromChannelSymbolMap(channelId);
 			logger.info("Channel {} ({}) is unsubscribed", channelId, symbol);
 			channelIdSymbolMap.remove(channelId);
 			channelIdSymbolMap.notifyAll();
@@ -426,18 +434,19 @@ public class BitfinexApiBroker implements Closeable {
 
 		if (channel.equals("ticker")) {
 			final String symbol = jsonObject.getString("symbol");
-			logger.info("Registering symbol {} on channel {}", symbol, channelId);
-			addToChannelSymbolMap(channelId, symbol);
+			final BitfinexCurrencyPair currencyPair = BitfinexCurrencyPair.fromSymbolString(symbol);
+			logger.info("Registering symbol {} on channel {}", currencyPair, channelId);
+			addToChannelSymbolMap(channelId, currencyPair);
 		} else if (channel.equals("candles")) {
 			final String key = jsonObject.getString("key");
 			logger.info("Registering key {} on channel {}", key, channelId);
-			addToChannelSymbolMap(channelId, key);
+			final BitfinexCandlestickSymbol symbol = BitfinexCandlestickSymbol.fromBitfinexString(key);
+			addToChannelSymbolMap(channelId, symbol);
 		} else if("book".equals(channel)) {
 			final TradeOrderbookConfiguration configuration 
 				= TradeOrderbookConfiguration.fromJSON(jsonObject);
-			final String key = configuration.toJSON().toString();
-			logger.info("Registering book {} on channel {}", key, channelId);
-			addToChannelSymbolMap(channelId, key);
+			logger.info("Registering book {} on channel {}", jsonObject, channelId);
+			addToChannelSymbolMap(channelId, configuration);
 		} else {
 			logger.error("Unknown subscribed callback {}", message);
 		}
@@ -448,7 +457,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * @param channelId
 	 * @param symbol
 	 */
-	private void addToChannelSymbolMap(final int channelId, final String symbol) {
+	private void addToChannelSymbolMap(final int channelId, final BitfinexStreamSymbol symbol) {
 		synchronized (channelIdSymbolMap) {
 			channelIdSymbolMap.put(channelId, symbol);
 			channelIdSymbolMap.notifyAll();
@@ -511,7 +520,7 @@ public class BitfinexApiBroker implements Closeable {
 	 */
 	private void handleChannelData(final JSONArray jsonArray) {
 		final int channel = jsonArray.getInt(0);
-		final String channelSymbol = getFromChannelSymbolMap(channel);
+		final BitfinexStreamSymbol channelSymbol = getFromChannelSymbolMap(channel);
 
 		if(channelSymbol == null) {
 			logger.error("Unable to determine symbol for channel {}", channel);
@@ -523,7 +532,7 @@ public class BitfinexApiBroker implements Closeable {
 			final String value = jsonArray.getString(1);
 			
 			if("hb".equals(value)) {
-				tickerManager.updateChannelHeartbeat(channelSymbol);		
+				quoteManager.updateChannelHeartbeat(channelSymbol);		
 			} else {
 				logger.error("Unable to process: {}", jsonArray);
 			}
@@ -531,15 +540,17 @@ public class BitfinexApiBroker implements Closeable {
 			final JSONArray subarray = jsonArray.getJSONArray(1);			
 
 			try {
-				if(channelSymbol.contains("trade")) {
+				if(channelSymbol instanceof BitfinexCandlestickSymbol) {
 					final ChannelCallbackHandler handler = new CandlestickHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
-				} else if(channelSymbol.contains("prec")) {
+				} else if(channelSymbol instanceof TradeOrderbookConfiguration) {
 					final TradeOrderbookHandler handler = new TradeOrderbookHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
-				} else {
+				} else if(channelSymbol instanceof BitfinexCurrencyPair) {
 					final ChannelCallbackHandler handler = new TickHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
+				} else {
+					logger.error("Unknown stream type: {}", channelSymbol);
 				}
 			} catch (APIException e) {
 				logger.error("Got exception while handling callback", e);
@@ -552,7 +563,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * @param channel
 	 * @return
 	 */
-	public String getFromChannelSymbolMap(final int channel) {
+	public BitfinexStreamSymbol getFromChannelSymbolMap(final int channel) {
 		synchronized (channelIdSymbolMap) {
 			return channelIdSymbolMap.get(channel);
 		}
@@ -564,9 +575,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * @return
 	 */
 	public boolean isTickerActive(final BitfinexCurrencyPair symbol) {
-		final String currencyString = symbol.toBitfinexString();
-		
-		return getChannelForSymbol(currencyString) != -1;
+		return getChannelForSymbol(symbol) != -1;
 	}
 
 	/**
@@ -574,7 +583,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * @param symbol
 	 * @return
 	 */
-	public int getChannelForSymbol(final String symbol) {
+	public int getChannelForSymbol(final BitfinexStreamSymbol symbol) {
 		synchronized (channelIdSymbolMap) {
 			return channelIdSymbolMap.entrySet()
 					.stream()
@@ -589,7 +598,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * @param symbol
 	 * @return
 	 */
-	public boolean removeChannelForSymbol(final String symbol) {
+	public boolean removeChannelForSymbol(final BitfinexStreamSymbol symbol) {
 		final int channel = getChannelForSymbol(symbol);
 		
 		if(channel != -1) {
@@ -613,7 +622,7 @@ public class BitfinexApiBroker implements Closeable {
 			authenticated = false;
 			
 			// Invalidate old data
-			tickerManager.invalidateTickerHeartbeat();
+			quoteManager.invalidateTickerHeartbeat();
 			orderManager.clear();
 			positionManager.clear();
 			
@@ -639,7 +648,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * @throws APIException
 	 */
 	private void resubscribeChannels() throws InterruptedException, APIException {
-		final Map<Integer, String> oldChannelIdSymbolMap = new HashMap<>();
+		final Map<Integer, BitfinexStreamSymbol> oldChannelIdSymbolMap = new HashMap<>();
 
 		synchronized (channelIdSymbolMap) {
 			oldChannelIdSymbolMap.putAll(channelIdSymbolMap);
@@ -647,9 +656,20 @@ public class BitfinexApiBroker implements Closeable {
 			channelIdSymbolMap.notifyAll();
 		}
 		
-		oldChannelIdSymbolMap.entrySet().forEach((e) -> sendCommand(new SubscribeTickerCommand(e.getValue())));
+		// Resubscribe channels
+		for(BitfinexStreamSymbol symbol : oldChannelIdSymbolMap.values()) {
+			if(symbol instanceof BitfinexCurrencyPair) {
+				sendCommand(new SubscribeTickerCommand((BitfinexCurrencyPair) symbol));
+			} else if(symbol instanceof BitfinexCandlestickSymbol) {
+				sendCommand(new SubscribeCandlesCommand((BitfinexCandlestickSymbol) symbol));
+			} else if(symbol instanceof TradeOrderbookConfiguration) {
+				sendCommand(new SubscribeTradingOrderbookCommand((TradeOrderbookConfiguration) symbol));
+			} else {
+				logger.error("Unknown stream symbol: {}", symbol);
+			}
+		}
 		
-		logger.info("Waiting for ticker to resubscribe");
+		logger.info("Waiting for streams to resubscribe");
 		int execution = 0;
 		
 		synchronized (channelIdSymbolMap) {		
@@ -776,8 +796,8 @@ public class BitfinexApiBroker implements Closeable {
 	 * Get the ticker manager
 	 * @return
 	 */
-	public TickerManager getTickerManager() {
-		return tickerManager;
+	public QuoteManager getquoteManager() {
+		return quoteManager;
 	}
 
 	/**

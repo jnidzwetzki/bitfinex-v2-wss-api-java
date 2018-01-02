@@ -1,4 +1,4 @@
-package com.github.jnidzwetzki.bitfinex.v2;
+package com.github.jnidzwetzki.bitfinex.v2.manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradingOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
@@ -98,17 +99,16 @@ public class TradingOrderbookManager {
 	 * @param pricePoints
 	 */
 	public void unsubscribeOrderbook(final TradeOrderbookConfiguration orderbookConfiguration) {
-		final String symbol = orderbookConfiguration.toJSON().toString();
 		
-		final int channel = bitfinexApiBroker.getChannelForSymbol(symbol);
+		final int channel = bitfinexApiBroker.getChannelForSymbol(orderbookConfiguration);
 		
 		if(channel == -1) {
-			throw new IllegalArgumentException("Unknown symbol: " + symbol);
+			throw new IllegalArgumentException("Unknown symbol: " + orderbookConfiguration);
 		}
 		
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
 		bitfinexApiBroker.sendCommand(command);
-		bitfinexApiBroker.removeChannelForSymbol(symbol);
+		bitfinexApiBroker.removeChannelForSymbol(orderbookConfiguration);
 	}
 	
 	/**

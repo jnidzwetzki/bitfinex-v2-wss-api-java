@@ -4,6 +4,7 @@ import org.json.JSONArray;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 
 public interface ChannelCallbackHandler {
 	
@@ -14,7 +15,7 @@ public interface ChannelCallbackHandler {
 	 * @throws APIException 
 	 */
 	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker,  
-			final String channelSymbol, final JSONArray jsonArray) 
+			final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) 
 			throws APIException;
 
 }

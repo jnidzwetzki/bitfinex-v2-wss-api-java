@@ -4,7 +4,6 @@ import java.util.concurrent.TimeUnit;
 
 public enum Timeframe {
 
-	SECONDS_30(TimeUnit.SECONDS.toMillis(30), null),
 	MINUTES_1(TimeUnit.MINUTES.toMillis(1), "1m"),
 	MINUTES_5(TimeUnit.MINUTES.toMillis(5), "5m"),
 	MINUTES_15(TimeUnit.MINUTES.toMillis(15), "15m"),
@@ -26,5 +25,19 @@ public enum Timeframe {
 	
 	public String getBitfinexString() {
 		return bitfinexString;
+	}
+	
+	/**
+	 * Construct from symbol string
+	 * @param symbolString
+	 * @return
+	 */
+	public static Timeframe fromSymbolString(final String symbolString) {
+		for (final Timeframe timeframe : Timeframe.values()) {
+			if (timeframe.getBitfinexString().equalsIgnoreCase(symbolString)) {
+				return timeframe;
+			}
+		}
+		throw new IllegalArgumentException("Unable to find timeframe for: " + symbolString);
 	}
 }

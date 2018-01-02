@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.commands.PingCommand;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.util.EventsInTimeslotManager;
 
 class HeartbeatThread extends ExceptionSafeThread {
@@ -108,10 +110,10 @@ class HeartbeatThread extends ExceptionSafeThread {
 	private boolean checkTickerFreshness() {
 		
 		final long currentTime = System.currentTimeMillis();
-		final TickerManager tickerManager = bitfinexApiBroker.getTickerManager();
-		final Set<String> activeSymbols = tickerManager.getActiveSymbols();
+		final QuoteManager tickerManager = bitfinexApiBroker.getquoteManager();
+		final Set<BitfinexStreamSymbol> activeSymbols = tickerManager.getActiveSymbols();
 		
-		for(final String symbol : activeSymbols) {
+		for(final BitfinexStreamSymbol symbol : activeSymbols) {
 			final long lastHeatbeat = tickerManager.getHeartbeatForSymbol(symbol);
 			
 			if(lastHeatbeat == -1) {

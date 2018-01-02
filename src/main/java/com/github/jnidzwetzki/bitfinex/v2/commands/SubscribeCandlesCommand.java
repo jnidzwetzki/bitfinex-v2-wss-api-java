@@ -3,18 +3,14 @@ package com.github.jnidzwetzki.bitfinex.v2.commands;
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 
 public class SubscribeCandlesCommand extends AbstractAPICommand {
 
-	private BitfinexCurrencyPair currencyPair;
+	private final BitfinexCandlestickSymbol symbol;
 
-	private Timeframe timeframe;
-
-	public SubscribeCandlesCommand(final BitfinexCurrencyPair currencyPair, final Timeframe timeframe) {
-		this.currencyPair = currencyPair;
-		this.timeframe = timeframe;
+	public SubscribeCandlesCommand(final BitfinexCandlestickSymbol symbol) {
+		this.symbol = symbol;
 	}
 
 	@Override
@@ -22,10 +18,8 @@ public class SubscribeCandlesCommand extends AbstractAPICommand {
 		final JSONObject subscribeJson = new JSONObject();
 		subscribeJson.put("event", "subscribe");
 		subscribeJson.put("channel", "candles");
-		subscribeJson.put("key", "trade:" + timeframe.getBitfinexString() + ":" + currencyPair.toBitfinexString());
-		
-		System.out.println(subscribeJson.toString());
-		
+		subscribeJson.put("key", symbol.toBifinexCandlestickString());
+				
 		return subscribeJson.toString();
 	}
 

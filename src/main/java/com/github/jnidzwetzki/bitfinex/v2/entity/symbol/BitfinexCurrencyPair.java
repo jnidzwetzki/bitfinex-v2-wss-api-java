@@ -1,6 +1,6 @@
-package com.github.jnidzwetzki.bitfinex.v2.entity;
+package com.github.jnidzwetzki.bitfinex.v2.entity.symbol;
 
-public enum BitfinexCurrencyPair {
+public enum BitfinexCurrencyPair implements BitfinexStreamSymbol {
 
 	// Ethereum
 	ETH_USD("ETH", "USD", 0.04),
@@ -51,10 +51,6 @@ public enum BitfinexCurrencyPair {
 		return "t" + currency1 + currency2;
 	}
 	
-	public String toBifinexCandlestickString(final Timeframe timeframe) {
-		return "trade:" + timeframe.getBitfinexString() + ":" + toBitfinexString();
-	}
-	
 	public double getMinimalOrderSize() {
 		return minimalOrderSize;
 	}
@@ -65,7 +61,7 @@ public enum BitfinexCurrencyPair {
 				return curency;
 			}
 		}
-		throw new IllegalArgumentException("Unable to find order type for: " + symbolString);
+		throw new IllegalArgumentException("Unable to find currency pair for: " + symbolString);
 	}
 
 	public String getCurrency1() {

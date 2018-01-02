@@ -22,7 +22,7 @@ public class TickMegerTest {
 	 * @throws IOException
 	 */
 	public void testEmptyTickMerger() throws IOException {
-		final TickMerger tickMerger = new TickMerger("abc", Timeframe.SECONDS_30, (s, t) -> {});
+		final TickMerger tickMerger = new TickMerger("abc", Timeframe.MINUTES_1, (s, t) -> {});
 		tickMerger.close();
 	}
 	
@@ -40,7 +40,7 @@ public class TickMegerTest {
 			latch.countDown();
 		};
 		
-		final TickMerger tickMerger = new TickMerger("abc", Timeframe.SECONDS_30, tickConsumer);
+		final TickMerger tickMerger = new TickMerger("abc", Timeframe.MINUTES_1, tickConsumer);
 		tickMerger.addNewPrice(1000000, 1.0, 5.0);
 		tickMerger.close();
 		
@@ -67,7 +67,7 @@ public class TickMegerTest {
 			latch.countDown();
 		};
 		
-		final TickMerger tickMerger = new TickMerger("abc", Timeframe.SECONDS_30, tickConsumer);
+		final TickMerger tickMerger = new TickMerger("abc", Timeframe.MINUTES_1, tickConsumer);
 		tickMerger.addNewPrice(parser.parse("01:01:13").getTime(), 1.0, 5.0);
 		tickMerger.addNewPrice(parser.parse("01:01:23").getTime(), 2.0, 5.0);
 		tickMerger.close();
@@ -92,10 +92,10 @@ public class TickMegerTest {
 			latch.countDown();
 		};
 		
-		final TickMerger tickMerger = new TickMerger("abc", Timeframe.SECONDS_30, tickConsumer);
+		final TickMerger tickMerger = new TickMerger("abc", Timeframe.MINUTES_1, tickConsumer);
 		tickMerger.addNewPrice(parser.parse("01:01:23").getTime(), 1.0, 5.0);
 		tickMerger.addNewPrice(parser.parse("01:01:33").getTime(), 2.0, 5.0);
-		tickMerger.addNewPrice(parser.parse("01:01:53").getTime(), 2.0, 5.0);
+		tickMerger.addNewPrice(parser.parse("01:02:53").getTime(), 2.0, 5.0);
 
 		tickMerger.close();
 		
@@ -119,10 +119,10 @@ public class TickMegerTest {
 			latch.countDown();
 		};
 		
-		final TickMerger tickMerger = new TickMerger("abc", Timeframe.SECONDS_30, tickConsumer);
+		final TickMerger tickMerger = new TickMerger("abc", Timeframe.MINUTES_1, tickConsumer);
 		tickMerger.addNewPrice(parser.parse("01:01:23").getTime(), 1.0, 5.0);
 		tickMerger.addNewPrice(parser.parse("01:01:33").getTime(), 2.0, 5.0);
-		tickMerger.addNewPrice(parser.parse("02:01:53").getTime(), 2.0, 5.0);
+		tickMerger.addNewPrice(parser.parse("02:02:53").getTime(), 2.0, 5.0);
 
 		tickMerger.close();
 		
@@ -150,7 +150,7 @@ public class TickMegerTest {
 			latch.countDown();
 		};
 		
-		final TickMerger tickMerger = new TickMerger("abc", Timeframe.SECONDS_30, tickConsumer);
+		final TickMerger tickMerger = new TickMerger("abc", Timeframe.MINUTES_1, tickConsumer);
 		tickMerger.addNewPrice(parser.parse("01:01:01").getTime(), 3.0, 5.0);
 		tickMerger.addNewPrice(parser.parse("01:01:02").getTime(), 2.0, 5.0);
 		tickMerger.addNewPrice(parser.parse("01:01:03").getTime(), 8.0, 5.0);
@@ -178,14 +178,14 @@ public class TickMegerTest {
 		final CountDownLatch latch = new CountDownLatch(3);
 		
 		final BiConsumer<String, Tick> tickConsumer = (s, t) -> {
-			Assert.assertTrue(t.getEndTime().getSecond() == 29 || t.getEndTime().getSecond() == 59);
+			Assert.assertTrue(t.getEndTime().getSecond() == 59);
 			latch.countDown();
 		};
 		
-		final TickMerger tickMerger = new TickMerger("abc", Timeframe.SECONDS_30, tickConsumer);
+		final TickMerger tickMerger = new TickMerger("abc", Timeframe.MINUTES_1, tickConsumer);
 		tickMerger.addNewPrice(parser.parse("01:01:23").getTime(), 1.0, 5.0);
-		tickMerger.addNewPrice(parser.parse("01:01:33").getTime(), 2.0, 5.0);
-		tickMerger.addNewPrice(parser.parse("02:01:53").getTime(), 2.0, 5.0);
+		tickMerger.addNewPrice(parser.parse("01:02:33").getTime(), 2.0, 5.0);
+		tickMerger.addNewPrice(parser.parse("02:03:53").getTime(), 2.0, 5.0);
 		tickMerger.addNewPrice(parser.parse("22:22:53").getTime(), 2.0, 5.0);
 
 		tickMerger.close();

@@ -12,6 +12,8 @@ import org.ta4j.core.Tick;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.Const;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 
 public class CandlestickHandler implements ChannelCallbackHandler {
 
@@ -22,7 +24,7 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 	 */
 	@Override
 	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker, 
-			final String channelSymbol, final JSONArray jsonArray) throws APIException {
+			final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
 
 		// channel symbol trade:1m:tLTCUSD
 		final List<Tick> ticksBuffer = new ArrayList<>();
@@ -39,7 +41,8 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 		
 		ticksBuffer.sort((t1, t2) -> t1.getEndTime().compareTo(t2.getEndTime()));
 
-		bitfinexApiBroker.getTickerManager().handleTicksList(channelSymbol, ticksBuffer);
+		final BitfinexCandlestickSymbol candlestickSymbol = (BitfinexCandlestickSymbol) channelSymbol;
+		bitfinexApiBroker.getquoteManager().handleCandlestickList(candlestickSymbol, ticksBuffer);
 	}
 
 	/**

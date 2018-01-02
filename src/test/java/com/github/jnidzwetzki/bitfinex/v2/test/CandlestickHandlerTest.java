@@ -10,9 +10,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.TickerManager;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.CandlestickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 
 
 public class CandlestickHandlerTest {
@@ -31,17 +34,19 @@ public class CandlestickHandlerTest {
 		
 		final String callbackValue = "[15134900000,15996,15997,16000,15980,318.5139342]";
 		final JSONArray jsonArray = new JSONArray(callbackValue);
-		final String symbol = "tUSDBTC";
+		
+		final BitfinexCandlestickSymbol symbol 
+			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTES_1);
 		
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
-		final TickerManager tickerManager = new TickerManager(bitfinexApiBroker);
-		Mockito.when(bitfinexApiBroker.getTickerManager()).thenReturn(tickerManager);
+		final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker);
+		Mockito.when(bitfinexApiBroker.getquoteManager()).thenReturn(tickerManager);
 
 		final AtomicInteger counter = new AtomicInteger(0);
 
-		tickerManager.registerTickCallback(symbol, (s, c) -> {
+		tickerManager.registerCandlestickCallback(symbol, (s, c) -> {
 			counter.incrementAndGet();
 			Assert.assertEquals(symbol, s);
 			Assert.assertEquals(15996, c.getOpenPrice().toDouble(), DELTA);
@@ -67,17 +72,19 @@ public class CandlestickHandlerTest {
 		
 		final String callbackValue = "[[15134900000,15996,15997,16000,15980,318.5139342],[15135100000,15899,15996,16097,15890,1137.180342268]]";
 		final JSONArray jsonArray = new JSONArray(callbackValue);
-		final String symbol = "tUSDBTC";
 		
+		final BitfinexCandlestickSymbol symbol 
+			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTES_1);
+			
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
-		final TickerManager tickerManager = new TickerManager(bitfinexApiBroker);
-		Mockito.when(bitfinexApiBroker.getTickerManager()).thenReturn(tickerManager);
+		final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker);
+		Mockito.when(bitfinexApiBroker.getquoteManager()).thenReturn(tickerManager);
 
 		final AtomicInteger counter = new AtomicInteger(0);
 		
-		tickerManager.registerTickCallback(symbol, (s, c) -> {
+		tickerManager.registerCandlestickCallback(symbol, (s, c) -> {
 			Assert.assertEquals(symbol, s);
 			final int counterValue = counter.getAndIncrement();
 			if(counterValue == 0) {
@@ -102,5 +109,42 @@ public class CandlestickHandlerTest {
 		
 		Assert.assertEquals(2, counter.get());
 	}
+	
+	/**
+	 * Test the symbol encoding and decoding
+	 */
+	@Test
+	public void testCandlestickSymbolEncoding1() {
+		final BitfinexCandlestickSymbol symbol1 
+			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BCH_USD, Timeframe.MINUTES_15);
 		
+		final BitfinexCandlestickSymbol symbol2
+			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTES_15);
+	
+		Assert.assertFalse(symbol1.equals(symbol2));
+		
+		final String symbol1String = symbol1.toBifinexCandlestickString();
+		final String symbol2String = symbol2.toBifinexCandlestickString();
+		
+		Assert.assertEquals(symbol1, BitfinexCandlestickSymbol.fromBitfinexString(symbol1String));
+		Assert.assertEquals(symbol2, BitfinexCandlestickSymbol.fromBitfinexString(symbol2String));
+	}
+		
+	/**
+	 * Test the symbol encoding and decoding
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testCandlestickSymbolEncoding2() {
+		final String symbol = "dffdsf:dfsfd:dsdfd";
+		BitfinexCandlestickSymbol.fromBitfinexString(symbol);
+	}
+	
+	/**
+	 * Test the symbol encoding and decoding
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testCandlestickSymbolEncoding3() {
+		final String symbol = "trading:";
+		BitfinexCandlestickSymbol.fromBitfinexString(symbol);
+	}
 }
