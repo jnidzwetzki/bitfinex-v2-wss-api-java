@@ -34,6 +34,6 @@ public class TickHandler implements ChannelCallbackHandler {
 		final Tick tick = new BaseTick(ZonedDateTime.now(Const.BITFINEX_TIMEZONE), price, price, 
 				price, price, 0);
 		
-		bitfinexApiBroker.getquoteManager().handleNewTick(currencyPair, tick);
+		bitfinexApiBroker.getQuoteManager().handleNewTick(currencyPair, tick);
 	}
 }

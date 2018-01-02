@@ -796,7 +796,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * Get the ticker manager
 	 * @return
 	 */
-	public QuoteManager getquoteManager() {
+	public QuoteManager getQuoteManager() {
 		return quoteManager;
 	}
 

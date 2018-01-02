@@ -42,7 +42,7 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 		ticksBuffer.sort((t1, t2) -> t1.getEndTime().compareTo(t2.getEndTime()));
 
 		final BitfinexCandlestickSymbol candlestickSymbol = (BitfinexCandlestickSymbol) channelSymbol;
-		bitfinexApiBroker.getquoteManager().handleCandlestickList(candlestickSymbol, ticksBuffer);
+		bitfinexApiBroker.getQuoteManager().handleCandlestickList(candlestickSymbol, ticksBuffer);
 	}
 
 	/**

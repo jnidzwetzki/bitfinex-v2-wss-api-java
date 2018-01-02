@@ -39,7 +39,7 @@ public class TickHandlerTest {
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
 		final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker);
-		Mockito.when(bitfinexApiBroker.getquoteManager()).thenReturn(tickerManager);
+		Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(tickerManager);
 
 		final CountDownLatch latch = new CountDownLatch(1);
 

@@ -42,7 +42,7 @@ public class CandlestickHandlerTest {
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
 		final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker);
-		Mockito.when(bitfinexApiBroker.getquoteManager()).thenReturn(tickerManager);
+		Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(tickerManager);
 
 		final AtomicInteger counter = new AtomicInteger(0);
 
@@ -80,7 +80,7 @@ public class CandlestickHandlerTest {
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
 		final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker);
-		Mockito.when(bitfinexApiBroker.getquoteManager()).thenReturn(tickerManager);
+		Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(tickerManager);
 
 		final AtomicInteger counter = new AtomicInteger(0);
 		
