@@ -116,24 +116,18 @@ public class BitfinexApiBroker implements Closeable {
 	private String apiSecret;
 	
 	/**
-	 * The authentification latch
+	 * The connection ready latch
 	 */
-	private CountDownLatch authenticatedLatch;
+	private CountDownLatch connectionReadyLatch;
 	
 	/**
-	 * The oder snapshot latch
+	 * Event on the latch until the connection is ready
+	 * - Authenticated
+	 * - Order snapshots read
+	 * - Wallet snapshot read
+	 * - Position snapshot read
 	 */
-	private CountDownLatch orderSnapshotLatch;
-	
-	/**
-	 * The wallet snapshot latch
-	 */
-	private CountDownLatch walletSnapshotLatch;
-	
-	/**
-	 * The position snapshot latch
-	 */
-	private CountDownLatch positionSnapshotLatch;
+	private final static int CONNECTION_READY_EVENTS = 4;
 	
 	/**
 	 * Is the connection authenticated?
@@ -248,31 +242,16 @@ public class BitfinexApiBroker implements Closeable {
 	 * @throws APIException 
 	 */
 	private void executeAuthentification() throws InterruptedException, APIException {
-		authenticatedLatch = new CountDownLatch(1);
-		orderSnapshotLatch = new CountDownLatch(1);
-		positionSnapshotLatch = new CountDownLatch(1);
-		walletSnapshotLatch = new CountDownLatch(1);
+		connectionReadyLatch = new CountDownLatch(CONNECTION_READY_EVENTS);
 
 		if(isAuthenticatedConnection()) {
 			sendCommand(new AuthCommand());
-			logger.info("Waiting for authentification");
-			authenticatedLatch.await(10, TimeUnit.SECONDS);
+			logger.info("Waiting for connection ready events");
+			connectionReadyLatch.await(10, TimeUnit.SECONDS);
 			
 			if(! authenticated) {
 				throw new APIException("Unable to perform authentification");
 			}
-			
-			// Wait for order snapshot
-			logger.info("Waiting for order snapshot");
-			orderSnapshotLatch.await(10, TimeUnit.SECONDS);
-			
-			// Wait for position snapshot
-			logger.info("Waiting for position snapshot");
-			positionSnapshotLatch.await(10, TimeUnit.SECONDS);
-			
-			// Wait for wallet snapshot
-			logger.info("Waiting for wallet snapshot");
-			walletSnapshotLatch.await(10, TimeUnit.SECONDS);
 		}
 	}
 
@@ -402,8 +381,8 @@ public class BitfinexApiBroker implements Closeable {
 			logger.error("Unable to authenticate: {}", jsonObject.toString());
 		}
 		
-		if(authenticatedLatch != null) {
-			authenticatedLatch.countDown();
+		if(connectionReadyLatch != null) {
+			connectionReadyLatch.countDown();
 		}
 	}
 
@@ -799,31 +778,15 @@ public class BitfinexApiBroker implements Closeable {
 	public QuoteManager getQuoteManager() {
 		return quoteManager;
 	}
+	
+	/**
+	 * Get the connection ready latch
+	 * @return
+	 */
+	public CountDownLatch getConnectionReadyLatch() {
+		return connectionReadyLatch;
+	}
 
-	/**
-	 * Get the snapshot latch
-	 * @return
-	 */
-	public CountDownLatch getOrderSnapshotLatch() {
-		return orderSnapshotLatch;
-	}
-	
-	/**
-	 * Get the position snapshot latch
-	 * @return
-	 */
-	public CountDownLatch getPositionSnapshotLatch() {
-		return positionSnapshotLatch;
-	}
-	
-	/**
-	 * Get the wallet snapshot latch
-	 * @return
-	 */
-	public CountDownLatch getWalletSnapshotLatch() {
-		return walletSnapshotLatch;
-	}
-	
 	/**
 	 * Get the executor service
 	 * @return

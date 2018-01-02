@@ -36,10 +36,10 @@ public class WalletHandler implements APICallbackHandler {
 	 */
 	private void notifyLatch(final BitfinexApiBroker bitfinexApiBroker) {
 		
-		final CountDownLatch walletSnapshotLatch = bitfinexApiBroker.getWalletSnapshotLatch();
+		final CountDownLatch connectionReadyLatch = bitfinexApiBroker.getConnectionReadyLatch();
 		
-		if(walletSnapshotLatch != null) {
-			walletSnapshotLatch.countDown();
+		if(connectionReadyLatch != null) {
+			connectionReadyLatch.countDown();
 		}
 	}
 

@@ -51,11 +51,11 @@ public class PositionHandler implements APICallbackHandler {
 	 */
 	private void notifyLatch(final BitfinexApiBroker bitfinexApiBroker) {
 		
-		// All snapshots are completes
-		final CountDownLatch positionSnapshotLatch = bitfinexApiBroker.getPositionSnapshotLatch();
+		// All snapshots are completed
+		final CountDownLatch connectionReadyLatch = bitfinexApiBroker.getConnectionReadyLatch();
 		
-		if(positionSnapshotLatch != null) {
-			positionSnapshotLatch.countDown();
+		if(connectionReadyLatch != null) {
+			connectionReadyLatch.countDown();
 		}
 	}
 

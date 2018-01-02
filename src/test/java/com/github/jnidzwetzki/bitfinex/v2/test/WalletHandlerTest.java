@@ -38,7 +38,7 @@ public class WalletHandlerTest {
 
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		Mockito.when(bitfinexApiBroker.getWalletTable()).thenReturn(walletTable);
-		Mockito.when(bitfinexApiBroker.getWalletSnapshotLatch()).thenReturn(walletLatch);
+		Mockito.when(bitfinexApiBroker.getConnectionReadyLatch()).thenReturn(walletLatch);
 		
 		Assert.assertTrue(walletTable.isEmpty());
 		
@@ -68,7 +68,7 @@ public class WalletHandlerTest {
 
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		Mockito.when(bitfinexApiBroker.getWalletTable()).thenReturn(walletTable);
-		Mockito.when(bitfinexApiBroker.getWalletSnapshotLatch()).thenReturn(walletLatch);
+		Mockito.when(bitfinexApiBroker.getConnectionReadyLatch()).thenReturn(walletLatch);
 		
 		Assert.assertTrue(walletTable.isEmpty());
 		

@@ -29,7 +29,7 @@ public class OrderHandler implements APICallbackHandler {
 		
 		// No orders active
 		if(orders.length() == 0) {
-			notifyOrdetLatch(bitfinexApiBroker);
+			notifyOrderLatch(bitfinexApiBroker);
 			return;
 		}
 		
@@ -42,7 +42,7 @@ public class OrderHandler implements APICallbackHandler {
 				handleOrderCallback(bitfinexApiBroker, orderArray);
 			}
 			
-			notifyOrdetLatch(bitfinexApiBroker);
+			notifyOrderLatch(bitfinexApiBroker);
 		}
 	}
 
@@ -50,13 +50,13 @@ public class OrderHandler implements APICallbackHandler {
 	 * Notify the order latch
 	 * @param bitfinexApiBroker
 	 */
-	private void notifyOrdetLatch(final BitfinexApiBroker bitfinexApiBroker) {
+	private void notifyOrderLatch(final BitfinexApiBroker bitfinexApiBroker) {
 		
-		// All snapshots are completes
-		final CountDownLatch orderSnapshotLatch = bitfinexApiBroker.getOrderSnapshotLatch();
+		// All snapshots are completed
+		final CountDownLatch connectionReadyLatch = bitfinexApiBroker.getConnectionReadyLatch();
 		
-		if(orderSnapshotLatch != null) {
-			orderSnapshotLatch.countDown();
+		if(connectionReadyLatch != null) {
+			connectionReadyLatch.countDown();
 		}
 	}
 
