@@ -12,7 +12,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.util.EventsInTimeslotManager;
 
-class HeartbeatThread extends ExceptionSafeThread {
+public class HeartbeatThread extends ExceptionSafeThread {
 
 	/**
 	 * The ticker timeout
