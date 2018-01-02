@@ -1,4 +1,4 @@
-# Version 0.0.2 (TBA)
+# Version 0.5.0 (TBA)
 * New feature: Support trade orderbooks
 * Improvement: Added unit tests
 * Improvement: Added subscribe / unsubsbscribe methods for candles and ticker to the ticker manager
