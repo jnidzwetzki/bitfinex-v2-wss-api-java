@@ -27,6 +27,8 @@ import org.mockito.stubbing.Answer;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.HeartbeatThread;
 import com.github.jnidzwetzki.bitfinex.v2.WebsocketClientEndpoint;
+import com.github.jnidzwetzki.bitfinex.v2.callback.api.HeartbeatHandler;
+import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 
 
 public class HeartbeatManagerTest {
@@ -69,5 +71,17 @@ public class HeartbeatManagerTest {
 		} finally {
 			heartbeatThread.interrupt();
 		}
+	}
+	
+	/**
+	 * Test the heartbeart handler
+	 * @throws APIException 
+	 */
+	@Test
+	public void testHeartbeatHandler() throws APIException {
+		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
+		final HeartbeatHandler handler = new HeartbeatHandler();
+		handler.handleChannelData(bitfinexApiBroker, null);
+		Mockito.verify(bitfinexApiBroker, Mockito.times(1)).updateConnectionHeartbeat();
 	}
 }
