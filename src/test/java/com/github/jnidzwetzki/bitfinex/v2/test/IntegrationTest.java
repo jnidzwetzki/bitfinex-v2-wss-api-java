@@ -86,6 +86,10 @@ public class IntegrationTest {
 			final TradingOrderbookManager orderbookManager = bitfinexClient.getTradingOrderbookManager();
 			
 			final BiConsumer<TradeOrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
+				Assert.assertTrue(o.getAmount() != 0);
+				Assert.assertTrue(o.getPrice() != 0);
+				Assert.assertTrue(o.getCount() != 0);
+				Assert.assertTrue(o.toString().length() > 0);
 				latch.countDown();
 			};
 			
