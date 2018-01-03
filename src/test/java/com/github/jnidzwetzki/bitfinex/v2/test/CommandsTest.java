@@ -60,14 +60,48 @@ public class CommandsTest {
 				new SubscribeTradingOrderbookCommand(orderbookConfiguration),
 				new UnsubscribeChannelCommand(12));
 		
-		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		Mockito.when(bitfinexApiBroker.getApiKey()).thenReturn("abc");
-		Mockito.when(bitfinexApiBroker.getApiSecret()).thenReturn("123");
+		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
 		
 		for(final AbstractAPICommand command : commands) {
 			final String commandValue = command.getCommand(bitfinexApiBroker);
 			Assert.assertNotNull(commandValue);
 			Assert.assertTrue(commandValue.length() > 10);
 		}
+	}
+	
+	/**
+	 * Test the order command
+	 * @throws CommandException 
+	 */
+	@Test
+	public void testOrderCommand() throws CommandException {
+		final BitfinexOrder order 
+			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.BCH_USD, BitfinexOrderType.EXCHANGE_STOP, 2)
+			.setHidden()
+			.setPostOnly()
+			.withPrice(12)
+			.withPriceAuxLimit(23)
+			.withPriceTrailing(23)
+			.withGroupId(4)
+			.build();
+		
+		final OrderCommand command = new OrderCommand(order);
+		
+		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		
+		final String commandValue = command.getCommand(bitfinexApiBroker);
+		Assert.assertNotNull(commandValue);
+		Assert.assertTrue(commandValue.length() > 10);
+	}
+	
+	/**
+	 *  Build the bitfinex connection
+	 * @return
+	 */
+	private BitfinexApiBroker buildMockedBitfinexConnection() {
+		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
+		Mockito.when(bitfinexApiBroker.getApiKey()).thenReturn("abc");
+		Mockito.when(bitfinexApiBroker.getApiSecret()).thenReturn("123");
+		return bitfinexApiBroker;
 	}
 }
