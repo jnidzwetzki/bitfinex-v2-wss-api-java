@@ -19,11 +19,11 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 public class Wallet {
 
-	private String walletType;
-	private String curreny;
-	private double balance;
-	private double unsettledInterest;
-	private double balanceAvailable;
+	private final String walletType;
+	private final String curreny;
+	private final double balance;
+	private final double unsettledInterest;
+	private final double balanceAvailable;
 	
 	public final static String WALLET_TYPE_EXCHANGE = "exchange";
 	
@@ -31,8 +31,9 @@ public class Wallet {
 	
 	public final static String WALLET_TYPE_FUNDING = "funding";
 
-	public Wallet(final String walletType, final String curreny, final double balance, final double unsettledInterest,
-			final double balanceAvailable) {
+	public Wallet(final String walletType, final String curreny, final double balance, 
+			final double unsettledInterest, final double balanceAvailable) {
+		
 		this.walletType = walletType;
 		this.curreny = curreny;
 		this.balance = balance;
@@ -49,40 +50,21 @@ public class Wallet {
 	public String getWalletType() {
 		return walletType;
 	}
-
-	public void setWalletType(final String walletType) {
-		this.walletType = walletType;
-	}
-
+	
 	public String getCurreny() {
 		return curreny;
-	}
-
-	public void setCurreny(final String curreny) {
-		this.curreny = curreny;
 	}
 
 	public double getBalance() {
 		return balance;
 	}
 
-	public void setBalance(final double balance) {
-		this.balance = balance;
-	}
-
 	public double getUnsettledInterest() {
 		return unsettledInterest;
-	}
-
-	public void setUnsettledInterest(final double unsettledInterest) {
-		this.unsettledInterest = unsettledInterest;
 	}
 
 	public double getBalanceAvailable() {
 		return balanceAvailable;
 	}
 
-	public void setBalanceAvailable(final double balanceAvailable) {
-		this.balanceAvailable = balanceAvailable;
-	}
 }
