@@ -109,6 +109,9 @@ public class OrderManagerTest {
 		Assert.assertTrue(orderManager.getOrders().isEmpty());
 		orderHandler.handleChannelData(bitfinexApiBroker, jsonArray);
 		Assert.assertEquals(2, orderManager.getOrders().size());	
+		
+		orderManager.clear();
+		Assert.assertTrue(orderManager.getOrders().isEmpty());
 	}
 	
 	/**
