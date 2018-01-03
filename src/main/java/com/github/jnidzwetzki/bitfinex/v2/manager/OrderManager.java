@@ -123,8 +123,7 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 	public void placeOrderAndWaitUntilActive(final BitfinexOrder order) throws APIException, InterruptedException {
 		
 		if(! bitfinexApiBroker.isAuthenticated()) {
-			logger.error("Unable to wait for order {}, connection is not authenticated", order);
-			return;
+			throw new APIException("Unable to wait for order " + order + " connection is not authenticated");
 		}
 		
 		order.setApikey(bitfinexApiBroker.getApiKey());
@@ -208,8 +207,7 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 	public void cancelOrderAndWaitForCompletion(final long id) throws APIException, InterruptedException {
 		
 		if(! bitfinexApiBroker.isAuthenticated()) {
-			logger.error("Unable to cancel order {}, connection is not authenticated", id);
-			return;
+			throw new APIException("Unable to cancel order " + id + " connection is not authenticated");
 		}
 		
 		final Callable<Boolean> orderCallable = () -> cancelOrderOnAPI(id);
