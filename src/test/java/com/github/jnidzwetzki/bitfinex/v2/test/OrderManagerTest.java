@@ -29,6 +29,7 @@ import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.NotificationHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.api.OrderHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrderState;
@@ -72,6 +73,40 @@ public class OrderManagerTest {
 		notificationHandler.handleChannelData(bitfinexApiBroker, jsonArray);
 		latch.await();
 	}
+	
+	/**
+	 * Test the order channel handler - single order
+	 * @throws APIException 
+	 */
+	@Test
+	public void testOrderChannelHandler1() throws APIException {
+		final String jsonString = "[0,\"on\",[6784335053,null,1514956504945000,\"tIOTUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0]]";
+		final JSONArray jsonArray = new JSONArray(jsonString);
+		final OrderHandler orderHandler = new OrderHandler();
+		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		
+		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
+		Assert.assertTrue(orderManager.getOrders().isEmpty());
+		orderHandler.handleChannelData(bitfinexApiBroker, jsonArray);
+		Assert.assertEquals(1, orderManager.getOrders().size());	
+	}
+	
+	/**
+	 * Test the order channel handler - snapshot
+	 * @throws APIException 
+	 */
+	@Test
+	public void testOrderChannelHandler2() throws APIException {
+		final String jsonString = "[0,\"on\",[[6784335053,null,1514956504945000,\"tIOTUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0], [67843353243,null,1514956234945000,\"tBTCUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0]]]";
+		final JSONArray jsonArray = new JSONArray(jsonString);
+		final OrderHandler orderHandler = new OrderHandler();
+		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		
+		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
+		Assert.assertTrue(orderManager.getOrders().isEmpty());
+		orderHandler.handleChannelData(bitfinexApiBroker, jsonArray);
+		Assert.assertEquals(2, orderManager.getOrders().size());	
+	}
 
 	/**
 	 * Build a mocked bitfinex connection
@@ -90,4 +125,5 @@ public class OrderManagerTest {
 		
 		return bitfinexApiBroker;
 	}
+	
 }
