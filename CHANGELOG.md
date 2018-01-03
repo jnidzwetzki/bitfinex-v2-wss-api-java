@@ -6,6 +6,7 @@
 * Bugfix: The ticks now a volume of 0
 * Bugfix: Remove ticker / candle streams from ticker map on unsubscribe
 * Bugfix: Fixed the re-subscription of candles on reconnect
+* Bugfix: Positions are now available in the position manager
 
 # Version 0.0.1 (27.12.2017)
 * First version of this project 

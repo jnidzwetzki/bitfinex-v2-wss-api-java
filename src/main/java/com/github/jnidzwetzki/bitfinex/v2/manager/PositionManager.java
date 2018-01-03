@@ -53,6 +53,7 @@ public class PositionManager extends AbstractSimpleCallbackManager<Position> {
 		synchronized (positions) {
 			// Replace position
 			positions.removeIf(p -> p.getCurreny() == position.getCurreny());
+			positions.add(position);
 			positions.notifyAll();
 		}
 		

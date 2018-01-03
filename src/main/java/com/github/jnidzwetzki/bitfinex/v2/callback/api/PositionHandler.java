@@ -95,7 +95,7 @@ public class PositionHandler implements APICallbackHandler {
 		position.setPlPercent(positions.optDouble(7, -1));
 		position.setPriceLiquidation(positions.optDouble(8, -1));
 		position.setLeverage(positions.optDouble(9, -1));
-		
+				
 		bitfinexApiBroker.getPositionManager().updatePosition(position);
 	}
 
