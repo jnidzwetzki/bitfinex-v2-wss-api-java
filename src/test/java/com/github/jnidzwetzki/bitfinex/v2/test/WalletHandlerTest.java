@@ -106,6 +106,8 @@ public class WalletHandlerTest {
 		Assert.assertEquals(0, walletTable.get("margin", "USD").getBalance(), DELTA);
 		Assert.assertEquals(-1, walletTable.get("margin", "USD").getBalanceAvailable(), DELTA);
 		Assert.assertEquals(0, walletTable.get("margin", "USD").getUnsettledInterest(), DELTA);
+		
+		Assert.assertTrue(walletTable.get("margin", "USD").toString().length() > 0);
 	}
 	
 }
