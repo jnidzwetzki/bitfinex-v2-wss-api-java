@@ -48,15 +48,4 @@ public class MicroSecondTimestampProvider {
 		
 		return resultValue;
 	}
-	
-	/**
-	 * Main * Main * Main * Main * Main
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		for(int i = 0; i < 10000; i++) {
-			System.out.println(MicroSecondTimestampProvider.getNewTimestamp());
-		}
-	}
-
 }
