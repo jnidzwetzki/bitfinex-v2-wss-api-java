@@ -49,6 +49,17 @@ BitfinexApiBroker bitfinexApiBroker = BitfinexApiBroker(apiKey, apiSecret);
 bitfinexApiBroker.connect();
 ```
 
+## Working with capabilities
+```java
+final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
+
+if(! capabilities.isHavingOrdersWriteCapability()) {
+	System.err.println("This API key does not allow the placement of orders");
+} else {
+	// Trade
+)
+```
+
 ## Subscribe candles stream
 ```java
 
