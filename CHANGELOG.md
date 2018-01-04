@@ -1,4 +1,5 @@
 # Version 0.5.1 (TBA)
+* Improvement: Added more unit tests
 * Bugfix: Fixed the parsing of orders without a cid
 
 # Version 0.5.0 (04.01.2018)
