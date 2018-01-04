@@ -118,7 +118,7 @@ final BitfinexOrder order = BitfinexOrderBuilder
 		.create(currency, BitfinexOrderType.MARKET, 0.002)
 		.build();
 		
-bitfinexApiBroker.placeOrder(order);
+bitfinexApiBroker.getOrderManager().placeOrder(order);
 ```
 
 ## Order group
@@ -152,8 +152,9 @@ final Consumer<ExchangeOrder> ordercallback = (e) -> {
 	}
 };
 
-bitfinexApiBroker.getOrderManager().addOrderCallback(ordercallback);
+final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 
-bitfinexApiBroker.placeOrder(bitfinexOrder1);
-bitfinexApiBroker.placeOrder(bitfinexOrder2);
+orderManager.addOrderCallback(ordercallback);
+orderManager.placeOrder(bitfinexOrder1);
+orderManager.placeOrder(bitfinexOrder2);
 ```
