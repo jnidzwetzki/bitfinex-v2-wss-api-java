@@ -21,11 +21,16 @@ public class ConnectionCapabilities {
 	private final boolean havingWithdrawWriteCapability;
 	private final boolean havingPositionReadCapability;
 	private final boolean havingPositionWriteCapability;
-
+	
+	/**
+	 * All capabilities set
+	 */
+	public static ConnectionCapabilities NO_CAPABILITIES = new ConnectionCapabilities(false, false, false, false, false, false, false,false, false, false, false, false, false, false);
+	
 	/**
 	 * No capabilities set
 	 */
-	public static ConnectionCapabilities NO_CAPABILITIES = new ConnectionCapabilities(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+	public static ConnectionCapabilities ALL_CAPABILITIES = new ConnectionCapabilities(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 	
 	public ConnectionCapabilities(final boolean havingOrdersReadCapability, final boolean havingOrdersWriteCapability,
 			final boolean havingAccountReadCapability, final boolean havingAccountWriteCapability,
