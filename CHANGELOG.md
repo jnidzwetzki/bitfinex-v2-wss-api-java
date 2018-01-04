@@ -1,3 +1,5 @@
+# Version 0.5.1 (TBA)
+
 # Version 0.5.0 (04.01.2018)
 * New feature: Support trade orderbooks
 * Improvement: Added unit tests
