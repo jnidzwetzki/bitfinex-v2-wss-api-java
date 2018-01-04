@@ -1,4 +1,5 @@
 # Version 0.5.1 (TBA)
+* Bugfix: Fixed the parsing of orders without a cid
 
 # Version 0.5.0 (04.01.2018)
 * New feature: Support trade orderbooks

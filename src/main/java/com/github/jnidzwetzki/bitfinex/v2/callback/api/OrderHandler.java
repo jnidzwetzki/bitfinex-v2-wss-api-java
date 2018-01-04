@@ -88,7 +88,7 @@ public class OrderHandler implements APICallbackHandler {
 		exchangeOrder.setApikey(bitfinexApiBroker.getApiKey());
 		exchangeOrder.setOrderId(order.getLong(0));
 		exchangeOrder.setGroupId(order.optInt(1, -1));
-		exchangeOrder.setCid(order.getLong(2));
+		exchangeOrder.setCid(order.optLong(2, -1));
 		exchangeOrder.setSymbol(order.getString(3));
 		exchangeOrder.setCreated(order.getLong(4));
 		exchangeOrder.setUpdated(order.getLong(5));

@@ -115,6 +115,24 @@ public class OrderManagerTest {
 	}
 	
 	/**
+	 * Test the order channel handler - posclose order
+	 * @throws APIException 
+	 */
+	@Test
+	public void testOrderChannelHandler3() throws APIException {
+		final String jsonString = "[0,\"on\",[6827301913,null,null,\"tXRPUSD\",1515069803530,1515069803530,-60,-60,\"MARKET\",null,null,null,0,\"ACTIVE (note:POSCLOSE)\",null,null,0,3.2041,null,null,null,null,null,0,0,0]]";
+		
+		final JSONArray jsonArray = new JSONArray(jsonString);
+		final OrderHandler orderHandler = new OrderHandler();
+		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		
+		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
+		Assert.assertTrue(orderManager.getOrders().isEmpty());
+		orderHandler.handleChannelData(bitfinexApiBroker, jsonArray);
+		Assert.assertEquals(1, orderManager.getOrders().size());	
+	}
+	
+	/**
 	 * Test the cancelation of an order
 	 * @throws InterruptedException 
 	 * @throws APIException 
