@@ -39,7 +39,7 @@ public class CommandsCallbackTest {
 	@Test
 	public void testAuthCommandCallback1() throws APIException {
 		final String authCallback = "{\"event\":\"auth\",\"status\":\"OK\",\"chanId\":0,\"userId\":1015301,\"auth_id\":\"d5c6a71c-6164-40dd-b57a-92fb59d42975\",\"caps\":{\"orders\":{\"read\":1,\"write\":1},\"account\":{\"read\":1,\"write\":0},\"funding\":{\"read\":1,\"write\":1},\"history\":{\"read\":1,\"write\":0},\"wallets\":{\"read\":1,\"write\":1},\"withdraw\":{\"read\":0,\"write\":0},\"positions\":{\"read\":1,\"write\":1}}}";
-		final BitfinexApiBroker bitfinexApiBroker = Mockito.spy(BitfinexApiBroker.class);
+		final BitfinexApiBroker bitfinexApiBroker = new BitfinexApiBroker();
 		final JSONObject jsonObject = new JSONObject(authCallback);
 		
 		final AuthCallbackHandler authCallbackHandler = new AuthCallbackHandler();
