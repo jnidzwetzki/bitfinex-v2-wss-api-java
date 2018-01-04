@@ -49,7 +49,7 @@ BitfinexApiBroker bitfinexApiBroker = BitfinexApiBroker(apiKey, apiSecret);
 bitfinexApiBroker.connect();
 ```
 
-## Working with capabilities
+## Working with connection capabilities
 ```java
 final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
 
