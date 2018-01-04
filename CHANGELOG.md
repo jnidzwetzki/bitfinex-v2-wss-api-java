@@ -1,6 +1,7 @@
 # Version 0.5.1 (TBA)
 * New Feature: Added connection capabilities
 * Improvement: Added more unit tests
+* Improvement: Moved order functions from connection to order manager
 * Bugfix: Fixed the parsing of orders without a cid
 
 # Version 0.5.0 (04.01.2018)

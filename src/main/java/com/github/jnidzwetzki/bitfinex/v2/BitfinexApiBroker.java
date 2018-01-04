@@ -55,15 +55,11 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.command.SubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.UnsubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AbstractAPICommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AuthCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderGroupCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CommandException;
-import com.github.jnidzwetzki.bitfinex.v2.commands.OrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradingOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
 import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
@@ -658,40 +654,6 @@ public class BitfinexApiBroker implements Closeable {
 				execution++;	
 			}
 		}
-	}
-	
-	/**
-	 * Place a new order
-	 * @throws APIException 
-	 */
-	public void placeOrder(final BitfinexOrder order) throws APIException {		
-		logger.info("Executing new order {}", order);
-		final OrderCommand orderCommand = new OrderCommand(order);
-		sendCommand(orderCommand);
-	}
-	
-	/**
-	 * Cancel the given order
-	 * @param cid
-	 * @param date
-	 * @throws APIException 
-	 */
-	public void cancelOrder(final long id) throws APIException {		
-		logger.info("Cancel order with id {}", id);
-		final CancelOrderCommand cancelOrder = new CancelOrderCommand(id);
-		sendCommand(cancelOrder);
-	}
-	
-	/**
-	 * Cancel the given order group
-	 * @param cid
-	 * @param date
-	 * @throws APIException 
-	 */
-	public void cancelOrderGroup(final int id) throws APIException {		
-		logger.info("Cancel order group {}", id);
-		final CancelOrderGroupCommand cancelOrder = new CancelOrderGroupCommand(id);
-		sendCommand(cancelOrder);
 	}
 	
 	/**

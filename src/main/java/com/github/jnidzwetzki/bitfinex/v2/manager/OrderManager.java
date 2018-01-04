@@ -29,6 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderGroupCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.OrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
@@ -174,7 +177,7 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 		bitfinexApiBroker.getOrderManager().registerCallback(ordercallback);
 		
 		try {
-			bitfinexApiBroker.placeOrder(order);
+			placeOrder(order);
 			
 			waitLatch.await(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 
@@ -256,7 +259,7 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 		
 		try {
 			logger.info("Cancel order: {}", id);
-			bitfinexApiBroker.cancelOrder(id);
+			cancelOrder(id);
 			waitLatch.await(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 			
 			if(waitLatch.getCount() != 0) {
@@ -270,4 +273,40 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 			bitfinexApiBroker.getOrderManager().removeCallback(ordercallback);
 		}
 	}
+	
+
+	/**
+	 * Place a new order
+	 * @throws APIException 
+	 */
+	public void placeOrder(final BitfinexOrder order) throws APIException {		
+		logger.info("Executing new order {}", order);
+		final OrderCommand orderCommand = new OrderCommand(order);
+		bitfinexApiBroker.sendCommand(orderCommand);
+	}
+	
+	/**
+	 * Cancel the given order
+	 * @param cid
+	 * @param date
+	 * @throws APIException 
+	 */
+	public void cancelOrder(final long id) throws APIException {		
+		logger.info("Cancel order with id {}", id);
+		final CancelOrderCommand cancelOrder = new CancelOrderCommand(id);
+		bitfinexApiBroker.sendCommand(cancelOrder);
+	}
+	
+	/**
+	 * Cancel the given order group
+	 * @param cid
+	 * @param date
+	 * @throws APIException 
+	 */
+	public void cancelOrderGroup(final int id) throws APIException {		
+		logger.info("Cancel order group {}", id);
+		final CancelOrderGroupCommand cancelOrder = new CancelOrderGroupCommand(id);
+		bitfinexApiBroker.sendCommand(cancelOrder);
+	}
+	
 }
