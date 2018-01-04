@@ -279,7 +279,14 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 	 * Place a new order
 	 * @throws APIException 
 	 */
-	public void placeOrder(final BitfinexOrder order) throws APIException {		
+	public void placeOrder(final BitfinexOrder order) throws APIException {	
+		
+		final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
+		
+		if(! capabilities.isHavingOrdersWriteCapability()) {
+			throw new APIException("Unable to place order " + order + " connection has not enough capabilities: " + capabilities);
+		}
+		
 		logger.info("Executing new order {}", order);
 		final OrderCommand orderCommand = new OrderCommand(order);
 		bitfinexApiBroker.sendCommand(orderCommand);
@@ -291,7 +298,14 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 	 * @param date
 	 * @throws APIException 
 	 */
-	public void cancelOrder(final long id) throws APIException {		
+	public void cancelOrder(final long id) throws APIException {	
+		
+		final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
+		
+		if(! capabilities.isHavingOrdersWriteCapability()) {
+			throw new APIException("Unable to cancel order " + id + " connection has not enough capabilities: " + capabilities);
+		}
+		
 		logger.info("Cancel order with id {}", id);
 		final CancelOrderCommand cancelOrder = new CancelOrderCommand(id);
 		bitfinexApiBroker.sendCommand(cancelOrder);
@@ -304,9 +318,15 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 	 * @throws APIException 
 	 */
 	public void cancelOrderGroup(final int id) throws APIException {		
+		
+		final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
+		
+		if(! capabilities.isHavingOrdersWriteCapability()) {
+			throw new APIException("Unable to cancel order group " + id + " connection has not enough capabilities: " + capabilities);
+		}
+		
 		logger.info("Cancel order group {}", id);
 		final CancelOrderGroupCommand cancelOrder = new CancelOrderGroupCommand(id);
 		bitfinexApiBroker.sendCommand(cancelOrder);
 	}
-	
 }
