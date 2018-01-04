@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrderState;
 
@@ -122,8 +123,10 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 	 */
 	public void placeOrderAndWaitUntilActive(final BitfinexOrder order) throws APIException, InterruptedException {
 		
-		if(! bitfinexApiBroker.isAuthenticated()) {
-			throw new APIException("Unable to wait for order " + order + " connection is not authenticated");
+		final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
+		
+		if(! capabilities.isHavingOrdersWriteCapability()) {
+			throw new APIException("Unable to wait for order " + order + " connection has not enough capabilities: " + capabilities);
 		}
 		
 		order.setApikey(bitfinexApiBroker.getApiKey());
@@ -206,8 +209,10 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 	 */
 	public void cancelOrderAndWaitForCompletion(final long id) throws APIException, InterruptedException {
 		
-		if(! bitfinexApiBroker.isAuthenticated()) {
-			throw new APIException("Unable to cancel order " + id + " connection is not authenticated");
+		final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
+		
+		if(! capabilities.isHavingOrdersWriteCapability()) {
+			throw new APIException("Unable to cancel order " + id + " connection has not enough capabilities: " + capabilities);
 		}
 		
 		final Callable<Boolean> orderCallable = () -> cancelOrderOnAPI(id);

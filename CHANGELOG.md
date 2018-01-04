@@ -1,4 +1,5 @@
 # Version 0.5.1 (TBA)
+* New Feature: Added connection capabilities
 * Improvement: Added more unit tests
 * Bugfix: Fixed the parsing of orders without a cid
 

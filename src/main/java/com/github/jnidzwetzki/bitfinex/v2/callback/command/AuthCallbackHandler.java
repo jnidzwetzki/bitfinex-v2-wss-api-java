@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
 
 public class AuthCallbackHandler implements CommandCallbackHandler {
 
@@ -43,6 +44,8 @@ public class AuthCallbackHandler implements CommandCallbackHandler {
 		
 		if(status.equals("OK")) {
 			bitfinexApiBroker.setAuthenticated(true);
+			final ConnectionCapabilities capabilities = new ConnectionCapabilities(jsonObject);
+			bitfinexApiBroker.setCapabilities(capabilities);
 		} else {
 			bitfinexApiBroker.setAuthenticated(false);
 			logger.error("Unable to authenticate: {}", jsonObject.toString());

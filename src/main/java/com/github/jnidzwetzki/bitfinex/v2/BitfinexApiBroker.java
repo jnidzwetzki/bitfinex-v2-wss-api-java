@@ -64,6 +64,7 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradingOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
 import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
@@ -153,6 +154,11 @@ public class BitfinexApiBroker implements Closeable {
 	private final static int CONNECTION_READY_EVENTS = 4;
 	
 	/**
+	 * The capabilities of the connection
+	 */
+	private ConnectionCapabilities capabilities = ConnectionCapabilities.NO_CAPABILITIES;
+	
+	/**
 	 * Is the connection authenticated?
 	 */
 	private boolean authenticated;
@@ -200,6 +206,7 @@ public class BitfinexApiBroker implements Closeable {
 		this.orderManager = new OrderManager(this);
 		this.positionManager = new PositionManager(executorService);
 		this.walletTable = HashBasedTable.create();
+		this.capabilities = ConnectionCapabilities.NO_CAPABILITIES;
 		this.authenticated = false;
 		this.channelHandler = new HashMap<>();
 
@@ -296,27 +303,19 @@ public class BitfinexApiBroker implements Closeable {
 			connectionReadyLatch.await(10, TimeUnit.SECONDS);
 			
 			if(! authenticated) {
-				throw new APIException("Unable to perform authentification");
+				throw new APIException("Unable to perform authentification, capabilities are: " + capabilities);
 			}
 		}
 	}
 
 	/**
-	 * Is the connection to be authentificated
+	 * Is the connection to be authenticated
 	 * @return
 	 */
 	private boolean isAuthenticatedConnection() {
 		return apiKey != null && apiSecret != null;
 	}
-	
-	/**
-	 * Was after the connect the authentification successfully?
-	 * @return
-	 */
-	public boolean isAuthenticated() {
-		return authenticated;
-	}
-	
+
 	/**
 	 * Disconnect the websocket
 	 */
@@ -587,6 +586,7 @@ public class BitfinexApiBroker implements Closeable {
 	public synchronized boolean reconnect() {
 		try {
 			logger.info("Performing reconnect");
+			capabilities = ConnectionCapabilities.NO_CAPABILITIES;
 			authenticated = false;
 			
 			// Invalidate old data
@@ -664,10 +664,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * Place a new order
 	 * @throws APIException 
 	 */
-	public void placeOrder(final BitfinexOrder order) throws APIException {
-		
-		throwExceptionIfUnauthenticated();
-		
+	public void placeOrder(final BitfinexOrder order) throws APIException {		
 		logger.info("Executing new order {}", order);
 		final OrderCommand orderCommand = new OrderCommand(order);
 		sendCommand(orderCommand);
@@ -679,10 +676,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * @param date
 	 * @throws APIException 
 	 */
-	public void cancelOrder(final long id) throws APIException {
-		
-		throwExceptionIfUnauthenticated();
-		
+	public void cancelOrder(final long id) throws APIException {		
 		logger.info("Cancel order with id {}", id);
 		final CancelOrderCommand cancelOrder = new CancelOrderCommand(id);
 		sendCommand(cancelOrder);
@@ -694,10 +688,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * @param date
 	 * @throws APIException 
 	 */
-	public void cancelOrderGroup(final int id) throws APIException {
-		
-		throwExceptionIfUnauthenticated();
-		
+	public void cancelOrderGroup(final int id) throws APIException {		
 		logger.info("Cancel order group {}", id);
 		final CancelOrderGroupCommand cancelOrder = new CancelOrderGroupCommand(id);
 		sendCommand(cancelOrder);
@@ -732,7 +723,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * @return 
 	 * @throws APIException 
 	 */
-	public Collection<Wallet> getWallets() throws APIException {
+	public Collection<Wallet> getWallets() throws APIException {		
 		
 		throwExceptionIfUnauthenticated();
 		
@@ -759,7 +750,7 @@ public class BitfinexApiBroker implements Closeable {
 			throw new APIException("Unable to perform operation on an unauthenticated connection");
 		}
 	}
-	
+
 	/**
 	 * Get the ticker manager
 	 * @return
@@ -809,7 +800,31 @@ public class BitfinexApiBroker implements Closeable {
 	}
 	
 	/**
-	 * Set is the connection authenticated or not
+	 * Set new connection capabilities
+	 * @param capabilities
+	 */
+	public void setCapabilities(final ConnectionCapabilities capabilities) {
+		this.capabilities = capabilities;
+	}
+	
+	/**
+	 * Get the connection capabilities
+	 * @return
+	 */
+	public ConnectionCapabilities getCapabilities() {
+		return capabilities;
+	}
+	
+	/**
+	 * Is the connection authenticated
+	 * @return
+	 */
+	public boolean isAuthenticated() {
+		return authenticated;
+	}
+	
+	/**
+	 * Set connection auth status
 	 * @param authenticated
 	 */
 	public void setAuthenticated(final boolean authenticated) {

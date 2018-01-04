@@ -28,6 +28,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.command.ConnectionHeartbeatCa
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.SubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.UnsubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 
 public class CommandsCallbackTest {
@@ -44,8 +45,28 @@ public class CommandsCallbackTest {
 		
 		final AuthCallbackHandler authCallbackHandler = new AuthCallbackHandler();
 		Assert.assertFalse(bitfinexApiBroker.isAuthenticated());
+		Assert.assertEquals(ConnectionCapabilities.NO_CAPABILITIES, bitfinexApiBroker.getCapabilities());
 		authCallbackHandler.handleChannelData(bitfinexApiBroker, jsonObject);
 		Assert.assertTrue(bitfinexApiBroker.isAuthenticated());
+		
+		final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
+
+		Assert.assertTrue(capabilities.isHavingOrdersReadCapability());
+		Assert.assertTrue(capabilities.isHavingOrdersWriteCapability());
+		Assert.assertTrue(capabilities.isHavingAccountReadCapability());
+		Assert.assertFalse(capabilities.isHavingAccountWriteCapability());
+		Assert.assertTrue(capabilities.isHavingFoundingReadCapability());
+		Assert.assertTrue(capabilities.isHavingFoundingWriteCapability());
+		Assert.assertTrue(capabilities.isHavingHistoryReadCapability());
+		Assert.assertFalse(capabilities.isHavingHistoryWriteCapability());
+		Assert.assertTrue(capabilities.isHavingWalletsReadCapability());
+		Assert.assertTrue(capabilities.isHavingWalletsWriteCapability());
+		Assert.assertFalse(capabilities.isHavingWithdrawReadCapability());
+		Assert.assertFalse(capabilities.isHavingWithdrawWriteCapability());
+		Assert.assertTrue(capabilities.isHavingPositionReadCapability());
+		Assert.assertTrue(capabilities.isHavingPositionWriteCapability());
+		
+		Assert.assertTrue(capabilities.toString().length() > 10);
 	}
 	
 	/**
