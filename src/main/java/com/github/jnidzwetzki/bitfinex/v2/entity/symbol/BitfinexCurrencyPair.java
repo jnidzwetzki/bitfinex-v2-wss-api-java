@@ -70,7 +70,17 @@ public enum BitfinexCurrencyPair implements BitfinexStreamSymbol {
 	// NEO
 	NEO_USD("NEO", "USD", 0.2),
 	NEO_BTC("NEO", "BTC", 0.2),
-	NEO_ETH("NEO", "ETH", 0.2);
+	NEO_ETH("NEO", "ETH", 0.2),
+	
+	// Eidoo
+	EDO_USD("EDO", "USD", 0.2),
+	EDO_BTC("EDO", "BTC", 0.2),
+	EDO_ETH("EDO", "ETH", 0.2),
+	
+	// Santiment Network Token
+	SAN_USD("SAN", "USD", 0.2),
+	SAN_BTC("SAN", "BTC", 0.2),
+	SAN_ETH("SAN", "ETH", 0.2);
 
 	/**
 	 * The name of the first currency 
