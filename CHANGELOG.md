@@ -2,6 +2,7 @@
 * New Feature: Added connection capabilities
 * Improvement: Added more unit tests
 * Improvement: Moved order functions from connection to order manager
+* Improvement: Added further currencies
 * Bugfix: Fixed the parsing of orders without a cid
 
 # Version 0.5.0 (04.01.2018)
