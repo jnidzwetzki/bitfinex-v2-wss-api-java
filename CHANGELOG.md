@@ -1,3 +1,5 @@
+# Version 0.5.2 (TBA)
+
 # Version 0.5.1 (06.01.2018)
 * New Feature: Added connection capabilities
 * Improvement: Added more unit tests
