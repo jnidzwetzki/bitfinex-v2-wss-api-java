@@ -55,8 +55,8 @@ public class CommandsCallbackTest {
 		Assert.assertTrue(capabilities.isHavingOrdersWriteCapability());
 		Assert.assertTrue(capabilities.isHavingAccountReadCapability());
 		Assert.assertFalse(capabilities.isHavingAccountWriteCapability());
-		Assert.assertTrue(capabilities.isHavingFoundingReadCapability());
-		Assert.assertTrue(capabilities.isHavingFoundingWriteCapability());
+		Assert.assertTrue(capabilities.isHavingFundingReadCapability());
+		Assert.assertTrue(capabilities.isHavingFundingWriteCapability());
 		Assert.assertTrue(capabilities.isHavingHistoryReadCapability());
 		Assert.assertFalse(capabilities.isHavingHistoryWriteCapability());
 		Assert.assertTrue(capabilities.isHavingWalletsReadCapability());

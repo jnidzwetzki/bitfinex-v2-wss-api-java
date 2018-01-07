@@ -1,4 +1,5 @@
 # Version 0.5.2 (TBA)
+* Bugfix: Fixed typo in funding capability (closes #1)
 
 # Version 0.5.1 (06.01.2018)
 * New Feature: Added connection capabilities

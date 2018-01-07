@@ -11,8 +11,8 @@ public class ConnectionCapabilities {
 	private final boolean havingOrdersWriteCapability;
 	private final boolean havingAccountReadCapability;
 	private final boolean havingAccountWriteCapability;
-	private final boolean havingFoundingReadCapability;
-	private final boolean havingFoundingWriteCapability;
+	private final boolean havingFundingReadCapability;
+	private final boolean havingFundingWriteCapability;
 	private final boolean havingHistoryReadCapability;
 	private final boolean havingHistoryWriteCapability;
 	private final boolean havingWalletsReadCapability;
@@ -34,7 +34,7 @@ public class ConnectionCapabilities {
 	
 	public ConnectionCapabilities(final boolean havingOrdersReadCapability, final boolean havingOrdersWriteCapability,
 			final boolean havingAccountReadCapability, final boolean havingAccountWriteCapability,
-			final boolean havingFoundingReadCapability, final boolean havingFoundingWriteCapability,
+			final boolean havingFundingReadCapability, final boolean havingFundingWriteCapability,
 			final boolean havingHistoryReadCapability, final boolean havingHistoryWriteCapability,
 			final boolean havingWalletsReadCapability, final boolean havingWalletsWriteCapability,
 			final boolean havingWithdrawReadCapability, final boolean havingWithdeawWriteCapability,
@@ -44,8 +44,8 @@ public class ConnectionCapabilities {
 		this.havingOrdersWriteCapability = havingOrdersWriteCapability;
 		this.havingAccountReadCapability = havingAccountReadCapability;
 		this.havingAccountWriteCapability = havingAccountWriteCapability;
-		this.havingFoundingReadCapability = havingFoundingReadCapability;
-		this.havingFoundingWriteCapability = havingFoundingWriteCapability;
+		this.havingFundingReadCapability = havingFundingReadCapability;
+		this.havingFundingWriteCapability = havingFundingWriteCapability;
 		this.havingHistoryReadCapability = havingHistoryReadCapability;
 		this.havingHistoryWriteCapability = havingHistoryWriteCapability;
 		this.havingWalletsReadCapability = havingWalletsReadCapability;
@@ -62,8 +62,8 @@ public class ConnectionCapabilities {
 		this.havingOrdersWriteCapability = caps.getJSONObject("orders").getInt("write") == 1;
 		this.havingAccountReadCapability = caps.getJSONObject("account").getInt("read") == 1;
 		this.havingAccountWriteCapability = caps.getJSONObject("account").getInt("write") == 1;
-		this.havingFoundingReadCapability = caps.getJSONObject("funding").getInt("read") == 1;
-		this.havingFoundingWriteCapability = caps.getJSONObject("funding").getInt("write") == 1;
+		this.havingFundingReadCapability = caps.getJSONObject("funding").getInt("read") == 1;
+		this.havingFundingWriteCapability = caps.getJSONObject("funding").getInt("write") == 1;
 		this.havingHistoryReadCapability = caps.getJSONObject("history").getInt("read") == 1;
 		this.havingHistoryWriteCapability = caps.getJSONObject("history").getInt("write") == 1;
 		this.havingWalletsReadCapability = caps.getJSONObject("wallets").getInt("read") == 1;
@@ -79,8 +79,8 @@ public class ConnectionCapabilities {
 		return "ConnectionCapabilities [havingOrdersReadCapability=" + havingOrdersReadCapability
 				+ ", havingOrdersWriteCapability=" + havingOrdersWriteCapability + ", havingAccountReadCapability="
 				+ havingAccountReadCapability + ", havingAccountWriteCapability=" + havingAccountWriteCapability
-				+ ", havingFoundingReadCapability=" + havingFoundingReadCapability + ", havingFoundingWriteCapability="
-				+ havingFoundingWriteCapability + ", havingHistoryReadCapability=" + havingHistoryReadCapability
+				+ ", havingFundingReadCapability=" + havingFundingReadCapability + ", havingFundingWriteCapability="
+				+ havingFundingWriteCapability + ", havingHistoryReadCapability=" + havingHistoryReadCapability
 				+ ", havingHistoryWriteCapability=" + havingHistoryWriteCapability + ", havingWalletsReadCapability="
 				+ havingWalletsReadCapability + ", havingWalletsWriteCapability=" + havingWalletsWriteCapability
 				+ ", havingWithdrawReadCapability=" + havingWithdrawReadCapability + ", havingWithdrawWriteCapability="
@@ -104,12 +104,12 @@ public class ConnectionCapabilities {
 		return havingAccountWriteCapability;
 	}
 
-	public boolean isHavingFoundingReadCapability() {
-		return havingFoundingReadCapability;
+	public boolean isHavingFundingReadCapability() {
+		return havingFundingReadCapability;
 	}
 
-	public boolean isHavingFoundingWriteCapability() {
-		return havingFoundingWriteCapability;
+	public boolean isHavingFundingWriteCapability() {
+		return havingFundingWriteCapability;
 	}
 
 	public boolean isHavingHistoryReadCapability() {
