@@ -61,7 +61,7 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradingOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
-import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
@@ -506,7 +506,7 @@ public class BitfinexApiBroker implements Closeable {
 				if(channelSymbol instanceof BitfinexCandlestickSymbol) {
 					final ChannelCallbackHandler handler = new CandlestickHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
-				} else if(channelSymbol instanceof TradeOrderbookConfiguration) {
+				} else if(channelSymbol instanceof OrderbookConfiguration) {
 					final TradeOrderbookHandler handler = new TradeOrderbookHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
 				} else if(channelSymbol instanceof BitfinexCurrencyPair) {
@@ -626,8 +626,8 @@ public class BitfinexApiBroker implements Closeable {
 				sendCommand(new SubscribeTickerCommand((BitfinexCurrencyPair) symbol));
 			} else if(symbol instanceof BitfinexCandlestickSymbol) {
 				sendCommand(new SubscribeCandlesCommand((BitfinexCandlestickSymbol) symbol));
-			} else if(symbol instanceof TradeOrderbookConfiguration) {
-				sendCommand(new SubscribeTradingOrderbookCommand((TradeOrderbookConfiguration) symbol));
+			} else if(symbol instanceof OrderbookConfiguration) {
+				sendCommand(new SubscribeTradingOrderbookCommand((OrderbookConfiguration) symbol));
 			} else {
 				logger.error("Unknown stream symbol: {}", symbol);
 			}

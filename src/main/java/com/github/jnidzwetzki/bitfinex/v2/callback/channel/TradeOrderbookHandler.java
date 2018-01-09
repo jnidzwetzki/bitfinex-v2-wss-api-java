@@ -23,7 +23,7 @@ import org.json.JSONException;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookEntry;
-import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 
 public class TradeOrderbookHandler implements ChannelCallbackHandler {
@@ -32,7 +32,7 @@ public class TradeOrderbookHandler implements ChannelCallbackHandler {
 	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker, 
 			final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
 		
-		final TradeOrderbookConfiguration configuration = (TradeOrderbookConfiguration) channelSymbol;
+		final OrderbookConfiguration configuration = (OrderbookConfiguration) channelSymbol;
 		
 		// Example: [13182,1,-0.1]
 		try {
@@ -58,7 +58,7 @@ public class TradeOrderbookHandler implements ChannelCallbackHandler {
 	 * @param jsonArray
 	 */
 	private void handleEntry(final BitfinexApiBroker bitfinexApiBroker, 
-			final TradeOrderbookConfiguration configuration,
+			final OrderbookConfiguration configuration,
 			final JSONArray jsonArray) {
 		
 		final double price = jsonArray.getNumber(0).doubleValue();

@@ -30,7 +30,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
-import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
@@ -80,12 +80,12 @@ public class IntegrationTest {
 		final CountDownLatch latch = new CountDownLatch(10);
 		try {
 			bitfinexClient.connect();
-			final TradeOrderbookConfiguration orderbookConfiguration = new TradeOrderbookConfiguration(
+			final OrderbookConfiguration orderbookConfiguration = new OrderbookConfiguration(
 					BitfinexCurrencyPair.BTC_USD, OrderBookPrecision.P0, OrderBookFrequency.F0, 25);
 			
 			final OrderbookManager orderbookManager = bitfinexClient.getOrderbookManager();
 			
-			final BiConsumer<TradeOrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
+			final BiConsumer<OrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
 				Assert.assertTrue(o.getAmount() != 0);
 				Assert.assertTrue(o.getPrice() != 0);
 				Assert.assertTrue(o.getCount() != 0);

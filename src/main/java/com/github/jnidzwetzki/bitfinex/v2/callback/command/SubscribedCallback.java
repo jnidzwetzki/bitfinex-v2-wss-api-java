@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 
@@ -52,8 +52,8 @@ public class SubscribedCallback implements CommandCallbackHandler {
 			final BitfinexCandlestickSymbol symbol = BitfinexCandlestickSymbol.fromBitfinexString(key);
 			bitfinexApiBroker.addToChannelSymbolMap(channelId, symbol);
 		} else if("book".equals(channel)) {
-			final TradeOrderbookConfiguration configuration 
-				= TradeOrderbookConfiguration.fromJSON(jsonObject);
+			final OrderbookConfiguration configuration 
+				= OrderbookConfiguration.fromJSON(jsonObject);
 			logger.info("Registering book {} on channel {}", jsonObject, channelId);
 			bitfinexApiBroker.addToChannelSymbolMap(channelId, configuration);
 		} else {

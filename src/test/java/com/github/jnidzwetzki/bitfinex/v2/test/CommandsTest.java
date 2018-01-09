@@ -25,7 +25,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
-import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 
@@ -45,8 +45,8 @@ public class CommandsTest {
 		final BitfinexCandlestickSymbol candleSymbol 
 			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BCH_USD, Timeframe.HOUR_1);
 		
-		final TradeOrderbookConfiguration orderbookConfiguration 
-			= new TradeOrderbookConfiguration(BitfinexCurrencyPair.BCH_USD, 
+		final OrderbookConfiguration orderbookConfiguration 
+			= new OrderbookConfiguration(BitfinexCurrencyPair.BCH_USD, 
 					OrderBookPrecision.P0, OrderBookFrequency.F0	, 50);
 		
 		final List<AbstractAPICommand> commands = Arrays.asList(

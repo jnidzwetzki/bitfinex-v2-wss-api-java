@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 
-public class TradeOrderbookConfiguration implements BitfinexStreamSymbol {
+public class OrderbookConfiguration implements BitfinexStreamSymbol {
 	
 	/**
 	 * The currency pair
@@ -44,7 +44,7 @@ public class TradeOrderbookConfiguration implements BitfinexStreamSymbol {
 	 */
 	private final int pricePoints;
 	
-	public TradeOrderbookConfiguration(final BitfinexCurrencyPair currencyPair, 
+	public OrderbookConfiguration(final BitfinexCurrencyPair currencyPair, 
 			final OrderBookPrecision orderBookPrecision,
 			final OrderBookFrequency orderBookFrequency, final int pricePoints) {
 		
@@ -99,7 +99,7 @@ public class TradeOrderbookConfiguration implements BitfinexStreamSymbol {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TradeOrderbookConfiguration other = (TradeOrderbookConfiguration) obj;
+		OrderbookConfiguration other = (OrderbookConfiguration) obj;
 		if (currencyPair != other.currencyPair)
 			return false;
 		if (orderBookFrequency != other.orderBookFrequency)
@@ -116,8 +116,8 @@ public class TradeOrderbookConfiguration implements BitfinexStreamSymbol {
 	 * @param jsonObject
 	 * @return
 	 */
-	public static TradeOrderbookConfiguration fromJSON(final JSONObject jsonObject) {
-		return new TradeOrderbookConfiguration(
+	public static OrderbookConfiguration fromJSON(final JSONObject jsonObject) {
+		return new OrderbookConfiguration(
 				BitfinexCurrencyPair.fromSymbolString(jsonObject.getString("symbol")), 
 				OrderBookPrecision.valueOf(jsonObject.getString("prec")), 
 				OrderBookFrequency.valueOf(jsonObject.getString("freq")), 
