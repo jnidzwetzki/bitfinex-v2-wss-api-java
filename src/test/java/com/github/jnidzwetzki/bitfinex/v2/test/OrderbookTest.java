@@ -25,6 +25,7 @@ import org.junit.Test;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 
 public class OrderbookTest {
@@ -52,7 +53,7 @@ public class OrderbookTest {
 	 * Test the build from JSON array
 	 */
 	@Test
-	public void createTradingOrderbookConfigurationFromJSON() {
+	public void createOrderbookConfigurationFromJSON() {
 		final String message = "{\"event\":\"subscribed\",\"channel\":\"book\",\"chanId\":3829,\"symbol\":\"tBTCUSD\",\"prec\":\"P0\",\"freq\":\"F0\",\"len\":\"25\",\"pair\":\"BTCUSD\"}";
 		final JSONTokener tokener = new JSONTokener(message);
 		final JSONObject jsonObject = new JSONObject(tokener);
@@ -64,5 +65,20 @@ public class OrderbookTest {
 		Assert.assertEquals(OrderBookFrequency.F0, configuration.getOrderBookFrequency());
 		Assert.assertEquals(OrderBookPrecision.P0, configuration.getOrderBookPrecision());
 		Assert.assertEquals(25, configuration.getPricePoints());
+	}
+	
+	/**
+	 * Test the build from JSON array
+	 */
+	@Test
+	public void createRawOrderbookConfigurationFromJSON() {
+		final String message = "{\"event\":\"subscribed\",\"channel\":\"book\",\"chanId\":3829,\"symbol\":\"tBTCUSD\",\"prec\":\"R0\",\"pair\":\"BTCUSD\"}";
+		final JSONTokener tokener = new JSONTokener(message);
+		final JSONObject jsonObject = new JSONObject(tokener);
+
+		final RawOrderbookConfiguration configuration 
+			= RawOrderbookConfiguration.fromJSON(jsonObject);
+	
+		Assert.assertEquals(BitfinexCurrencyPair.BTC_USD, configuration.getCurrencyPair());
 	}
 }

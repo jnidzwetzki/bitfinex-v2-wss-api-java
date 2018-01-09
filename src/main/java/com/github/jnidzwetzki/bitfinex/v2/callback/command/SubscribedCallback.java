@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 
@@ -41,25 +42,35 @@ public class SubscribedCallback implements CommandCallbackHandler {
 		final String channel = jsonObject.getString("channel");
 		final int channelId = jsonObject.getInt("chanId");
 
-		if (channel.equals("ticker")) {
+		switch(channel) {
+		case "ticker":
 			final String symbol = jsonObject.getString("symbol");
 			final BitfinexCurrencyPair currencyPair = BitfinexCurrencyPair.fromSymbolString(symbol);
 			logger.info("Registering symbol {} on channel {}", currencyPair, channelId);
 			bitfinexApiBroker.addToChannelSymbolMap(channelId, currencyPair);
-		} else if (channel.equals("candles")) {
+			break;
+		case "candles":
 			final String key = jsonObject.getString("key");
 			logger.info("Registering key {} on channel {}", key, channelId);
-			final BitfinexCandlestickSymbol symbol = BitfinexCandlestickSymbol.fromBitfinexString(key);
-			bitfinexApiBroker.addToChannelSymbolMap(channelId, symbol);
-		} else if("book".equals(channel)) {
-			final OrderbookConfiguration configuration 
-				= OrderbookConfiguration.fromJSON(jsonObject);
-			logger.info("Registering book {} on channel {}", jsonObject, channelId);
-			bitfinexApiBroker.addToChannelSymbolMap(channelId, configuration);
-		} else {
+			final BitfinexCandlestickSymbol candleStickSymbol = BitfinexCandlestickSymbol.fromBitfinexString(key);
+			bitfinexApiBroker.addToChannelSymbolMap(channelId, candleStickSymbol);
+			break;
+		case "book":
+			if("R0".equals(jsonObject.getString("prec"))) {
+				final RawOrderbookConfiguration configuration 
+					= RawOrderbookConfiguration.fromJSON(jsonObject);
+				logger.info("Registering raw book {} on channel {}", jsonObject, channelId);
+				bitfinexApiBroker.addToChannelSymbolMap(channelId, configuration);
+			} else {
+				final OrderbookConfiguration configuration 
+					= OrderbookConfiguration.fromJSON(jsonObject);
+				logger.info("Registering book {} on channel {}", jsonObject, channelId);
+				bitfinexApiBroker.addToChannelSymbolMap(channelId, configuration);
+			}
+			break;
+		default:
 			logger.error("Unknown subscribed callback {}", jsonObject.toString());
 		}
-	
-	}
 
+	}
 }

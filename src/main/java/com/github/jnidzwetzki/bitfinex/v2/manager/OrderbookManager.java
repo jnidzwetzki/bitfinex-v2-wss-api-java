@@ -21,18 +21,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradingOrderbookCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookEntry;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
 
 public class OrderbookManager {
 
 	/**
 	 * The channel callbacks
 	 */
-	private final BiConsumerCallbackManager<OrderbookConfiguration, OrderbookEntry> channelCallbacks;
+	private final BiConsumerCallbackManager<RawOrderbookConfiguration, OrderbookEntry> channelCallbacks;
 
 	/**
 	 * The executor service
@@ -56,8 +56,8 @@ public class OrderbookManager {
 	 * @param callback
 	 * @throws APIException
 	 */
-	public void registerOrderbookCallback(final OrderbookConfiguration orderbookConfiguration, 
-			final BiConsumer<OrderbookConfiguration, OrderbookEntry> callback) throws APIException {
+	public void registerOrderbookCallback(final RawOrderbookConfiguration orderbookConfiguration, 
+			final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback) throws APIException {
 		
 		channelCallbacks.registerCallback(orderbookConfiguration, callback);
 	}
@@ -69,8 +69,8 @@ public class OrderbookManager {
 	 * @return
 	 * @throws APIException
 	 */
-	public boolean removeOrderbookCallback(final OrderbookConfiguration orderbookConfiguration, 
-			final BiConsumer<OrderbookConfiguration, OrderbookEntry> callback) throws APIException {
+	public boolean removeOrderbookCallback(final RawOrderbookConfiguration orderbookConfiguration, 
+			final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback) throws APIException {
 		
 		return channelCallbacks.removeCallback(orderbookConfiguration, callback);
 	}
@@ -82,10 +82,10 @@ public class OrderbookManager {
 	 * @param orderBookFrequency
 	 * @param pricePoints
 	 */
-	public void subscribeOrderbook(final OrderbookConfiguration orderbookConfiguration) {
+	public void subscribeOrderbook(final RawOrderbookConfiguration orderbookConfiguration) {
 		
-		final SubscribeTradingOrderbookCommand subscribeOrderbookCommand 
-			= new SubscribeTradingOrderbookCommand(orderbookConfiguration);
+		final SubscribeOrderbookCommand subscribeOrderbookCommand 
+			= new SubscribeOrderbookCommand(orderbookConfiguration);
 		
 		bitfinexApiBroker.sendCommand(subscribeOrderbookCommand);
 	}
@@ -97,7 +97,7 @@ public class OrderbookManager {
 	 * @param orderBookFrequency
 	 * @param pricePoints
 	 */
-	public void unsubscribeOrderbook(final OrderbookConfiguration orderbookConfiguration) {
+	public void unsubscribeOrderbook(final RawOrderbookConfiguration orderbookConfiguration) {
 		
 		final int channel = bitfinexApiBroker.getChannelForSymbol(orderbookConfiguration);
 		
@@ -115,7 +115,7 @@ public class OrderbookManager {
 	 * @param symbol
 	 * @param tick
 	 */
-	public void handleNewOrderbookEntry(final OrderbookConfiguration configuration, 
+	public void handleNewOrderbookEntry(final RawOrderbookConfiguration configuration, 
 			final OrderbookEntry entry) {
 		
 		channelCallbacks.handleEvent(configuration, entry);

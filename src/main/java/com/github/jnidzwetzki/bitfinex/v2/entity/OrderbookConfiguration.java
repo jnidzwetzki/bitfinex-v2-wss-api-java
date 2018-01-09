@@ -20,14 +20,8 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 
-public class OrderbookConfiguration implements BitfinexStreamSymbol {
-	
-	/**
-	 * The currency pair
-	 */
-	private final BitfinexCurrencyPair currencyPair;
+public class OrderbookConfiguration extends RawOrderbookConfiguration {
 	
 	/**
 	 * The orderbook precision
@@ -48,7 +42,8 @@ public class OrderbookConfiguration implements BitfinexStreamSymbol {
 			final OrderBookPrecision orderBookPrecision,
 			final OrderBookFrequency orderBookFrequency, final int pricePoints) {
 		
-		this.currencyPair = currencyPair;
+		super(currencyPair);
+		
 		this.orderBookPrecision = orderBookPrecision;
 		this.orderBookFrequency = orderBookFrequency;
 		this.pricePoints = pricePoints;

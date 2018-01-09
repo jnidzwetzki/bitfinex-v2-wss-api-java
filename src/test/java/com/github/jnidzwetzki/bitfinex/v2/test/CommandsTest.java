@@ -18,7 +18,7 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.OrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.PingCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradingOrderbookCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
@@ -57,7 +57,7 @@ public class CommandsTest {
 				new PingCommand(), 
 				new SubscribeCandlesCommand(candleSymbol),
 				new SubscribeTickerCommand(BitfinexCurrencyPair.BCH_USD),
-				new SubscribeTradingOrderbookCommand(orderbookConfiguration),
+				new SubscribeOrderbookCommand(orderbookConfiguration),
 				new UnsubscribeChannelCommand(12));
 		
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();

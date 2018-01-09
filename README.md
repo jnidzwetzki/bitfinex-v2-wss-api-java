@@ -11,7 +11,7 @@
        src="https://scan.coverity.com/projects/14740/badge.svg"/>
 </a>
 
-This project contains a client for the [Bitfinex WebSocket API (v2)](https://docs.bitfinex.com/v2/reference). At the moment, candles, ticks and trading orderbook streams are supported. In addition, orders, and wallets are also implemented.
+This project contains a client for the [Bitfinex WebSocket API (v2)](https://docs.bitfinex.com/v2/reference). At the moment, candles, ticks and (raw) orderbook streams are supported. In addition, orders, and wallets are also implemented.
 
 In contrast to other implementations, this project uses the WSS streaming API of Bitfinex. Most other projects are poll the REST-API periodically, which leads to delays in data processing. In this implementation, you can register callback methods on ticks, candles or orders. The callbacks are executed, as soon as new data is received from Bitfinex (see the examples section for more details).
 
@@ -100,14 +100,14 @@ quoteManager.removeTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
 tickerManager.unsubscribeTicker(BitfinexCurrencyPair.BTC_USD);
 ```
 
-## Subscribe trade orderbook stream
+## Subscribe orderbook stream
 ```java
-final TradeOrderbookConfiguration orderbookConfiguration = new TradeOrderbookConfiguration(
+final OrderbookConfiguration orderbookConfiguration = new OrderbookConfiguration(
 					BitfinexCurrencyPair.BTC_USD, OrderBookPrecision.P0, OrderBookFrequency.F0, 25);
 			
-final TradingOrderbookManager orderbookManager = bitfinexClient.getTradingOrderbookManager();
+final OrderbookManager orderbookManager = bitfinexClient.getOrderbookManager();
 
-final BiConsumer<TradeOrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
+final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
 		System.out.println("Got entry for orderbook: " + c + " / " + o;
 };
 
@@ -116,10 +116,30 @@ orderbookManager.subscribeOrderbook(orderbookConfiguration);
 
 [...]
 
-// To unsubscribe the ticker stream
-orderbookManager.removeTradingOrderbookCallback(orderbookConfiguration, callback);
+// To unsubscribe the orderbook stream
+orderbookManager.removeOrderbookCallback(orderbookConfiguration, callback);
 orderbookManager.unsubscribeOrderbook(orderbookConfiguration);
+```
 
+## Subscribe raw orderbook stream
+```java
+final RawOrderbookConfiguration orderbookConfiguration = new RawOrderbookConfiguration(
+					BitfinexCurrencyPair.BTC_USD);
+			
+final OrderbookManager orderbookManager = bitfinexClient.getOrderbookManager();
+
+final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
+		System.out.println("Got entry for orderbook: " + c + " / " + o;
+};
+
+orderbookManager.registerTradingOrderbookCallback(orderbookConfiguration, callback);
+orderbookManager.subscribeOrderbook(orderbookConfiguration);
+
+[...]
+
+// To unsubscribe the raw orderbook stream
+orderbookManager.removeOrderbookCallback(orderbookConfiguration, callback);
+orderbookManager.unsubscribeOrderbook(orderbookConfiguration);
 ```
 
 ## Market order
