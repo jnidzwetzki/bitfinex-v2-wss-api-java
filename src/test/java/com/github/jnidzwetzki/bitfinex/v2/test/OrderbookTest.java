@@ -27,7 +27,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 
-public class TradingOrderbookTest {
+public class OrderbookTest {
 
 	/**
 	 * Test the equals method
@@ -64,20 +64,5 @@ public class TradingOrderbookTest {
 		Assert.assertEquals(OrderBookFrequency.F0, configuration.getOrderBookFrequency());
 		Assert.assertEquals(OrderBookPrecision.P0, configuration.getOrderBookPrecision());
 		Assert.assertEquals(25, configuration.getPricePoints());
-	}
-	
-	/**
-	 * Test the symbol string encoding and decoding
-	 */
-	@Test
-	public void fromAndToSymbolString() {
-		final OrderbookConfiguration configuration1 = new OrderbookConfiguration(
-				BitfinexCurrencyPair.BCH_USD, OrderBookPrecision.P1, OrderBookFrequency.F1, 50);
-		
-		final JSONObject json = configuration1.toJSON();
-		
-		final OrderbookConfiguration configuration2 = OrderbookConfiguration.fromJSON(json);
-		
-		Assert.assertEquals(configuration1, configuration2);
 	}
 }
