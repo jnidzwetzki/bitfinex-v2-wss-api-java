@@ -27,7 +27,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
 
-public class TradingOrderbookManager {
+public class OrderbookManager {
 
 	/**
 	 * The channel callbacks
@@ -44,7 +44,7 @@ public class TradingOrderbookManager {
 	 */
 	private final BitfinexApiBroker bitfinexApiBroker;
 
-	public TradingOrderbookManager(final BitfinexApiBroker bitfinexApiBroker) {
+	public OrderbookManager(final BitfinexApiBroker bitfinexApiBroker) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
 		this.executorService = bitfinexApiBroker.getExecutorService();
 		this.channelCallbacks = new BiConsumerCallbackManager<>(executorService);
@@ -56,7 +56,7 @@ public class TradingOrderbookManager {
 	 * @param callback
 	 * @throws APIException
 	 */
-	public void registerTradingOrderbookCallback(final TradeOrderbookConfiguration orderbookConfiguration, 
+	public void registerOrderbookCallback(final TradeOrderbookConfiguration orderbookConfiguration, 
 			final BiConsumer<TradeOrderbookConfiguration, OrderbookEntry> callback) throws APIException {
 		
 		channelCallbacks.registerCallback(orderbookConfiguration, callback);
@@ -69,7 +69,7 @@ public class TradingOrderbookManager {
 	 * @return
 	 * @throws APIException
 	 */
-	public boolean removeTradingOrderbookCallback(final TradeOrderbookConfiguration orderbookConfiguration, 
+	public boolean removeOrderbookCallback(final TradeOrderbookConfiguration orderbookConfiguration, 
 			final BiConsumer<TradeOrderbookConfiguration, OrderbookEntry> callback) throws APIException {
 		
 		return channelCallbacks.removeCallback(orderbookConfiguration, callback);

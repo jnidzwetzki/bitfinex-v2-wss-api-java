@@ -34,7 +34,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.TradeOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
-import com.github.jnidzwetzki.bitfinex.v2.manager.TradingOrderbookManager;
+import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 
 public class IntegrationTest {
 	
@@ -83,7 +83,7 @@ public class IntegrationTest {
 			final TradeOrderbookConfiguration orderbookConfiguration = new TradeOrderbookConfiguration(
 					BitfinexCurrencyPair.BTC_USD, OrderBookPrecision.P0, OrderBookFrequency.F0, 25);
 			
-			final TradingOrderbookManager orderbookManager = bitfinexClient.getTradingOrderbookManager();
+			final OrderbookManager orderbookManager = bitfinexClient.getOrderbookManager();
 			
 			final BiConsumer<TradeOrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
 				Assert.assertTrue(o.getAmount() != 0);
@@ -93,14 +93,14 @@ public class IntegrationTest {
 				latch.countDown();
 			};
 			
-			orderbookManager.registerTradingOrderbookCallback(orderbookConfiguration, callback);
+			orderbookManager.registerOrderbookCallback(orderbookConfiguration, callback);
 			orderbookManager.subscribeOrderbook(orderbookConfiguration);
 			latch.await();
 
 			orderbookManager.unsubscribeOrderbook(orderbookConfiguration);
 			
-			Assert.assertTrue(orderbookManager.removeTradingOrderbookCallback(orderbookConfiguration, callback));
-			Assert.assertFalse(orderbookManager.removeTradingOrderbookCallback(orderbookConfiguration, callback));
+			Assert.assertTrue(orderbookManager.removeOrderbookCallback(orderbookConfiguration, callback));
+			Assert.assertFalse(orderbookManager.removeOrderbookCallback(orderbookConfiguration, callback));
 
 		} catch (Exception e) {
 			// Should not happen

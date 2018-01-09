@@ -69,7 +69,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
-import com.github.jnidzwetzki.bitfinex.v2.manager.TradingOrderbookManager;
+import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -103,7 +103,7 @@ public class BitfinexApiBroker implements Closeable {
 	/**
 	 * The trading orderbook manager
 	 */
-	private final TradingOrderbookManager tradingOrderbookManager;
+	private final OrderbookManager orderbookManager;
 	
 	/**
 	 * The position manager
@@ -198,7 +198,7 @@ public class BitfinexApiBroker implements Closeable {
 		this.channelIdSymbolMap = new HashMap<>();
 		this.lastHeatbeat = new AtomicLong();
 		this.quoteManager = new QuoteManager(this);
-		this.tradingOrderbookManager = new TradingOrderbookManager(this);
+		this.orderbookManager = new OrderbookManager(this);
 		this.orderManager = new OrderManager(this);
 		this.positionManager = new PositionManager(executorService);
 		this.walletTable = HashBasedTable.create();
@@ -746,11 +746,11 @@ public class BitfinexApiBroker implements Closeable {
 	}
 	
 	/**
-	 * Get the trading orderbook manager
+	 * Get the orderbook manager
 	 * @return
 	 */
-	public TradingOrderbookManager getTradingOrderbookManager() {
-		return tradingOrderbookManager;
+	public OrderbookManager getOrderbookManager() {
+		return orderbookManager;
 	}
 
 	/**

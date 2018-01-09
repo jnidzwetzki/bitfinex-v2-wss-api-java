@@ -67,7 +67,7 @@ public class TradeOrderbookHandler implements ChannelCallbackHandler {
 		
 		final OrderbookEntry orderbookEntry = new OrderbookEntry(price, count, amount);
 		
-		bitfinexApiBroker.getTradingOrderbookManager().handleNewOrderbookEntry(configuration, orderbookEntry);
+		bitfinexApiBroker.getOrderbookManager().handleNewOrderbookEntry(configuration, orderbookEntry);
 	}
 
 }
