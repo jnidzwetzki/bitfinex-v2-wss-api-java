@@ -1,4 +1,4 @@
-# Version 0.5.2 (TBA)
+# Version 0.5.2 (11.01.2018)
 * New Feature: Support raw orderbooks
 * Improvement: Renamed trading orderbook to orderbook
 * Bugfix: Fixed typo in funding capability (closes #1)
