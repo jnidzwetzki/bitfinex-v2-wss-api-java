@@ -127,8 +127,8 @@ public enum BitfinexCurrencyPair implements BitfinexStreamSymbol {
 	GNT_ETH("GNT", "ETH", 14),
 	
 	// SpankChain
-	SPK_USD("SPK", "USD", 26);
-	SPK_BTC("SPK", "BTC", 26);
+	SPK_USD("SPK", "USD", 26),
+	SPK_BTC("SPK", "BTC", 26),
 	SPK_ETH("SPK", "ETH", 26);
 
 	/**
