@@ -134,7 +134,7 @@ public enum BitfinexCurrencyPair implements BitfinexStreamSymbol {
 	SNT_BTC("SNT", "BTC", 38.0),
 	SNT_ETH("SNT", "ETH", 38.0),
 	
-	// Basic Attention coin
+	// Basic Attention Token
 	BAT_USD("BAT", "USD", 12.0),
 	BAT_BTC("BAT", "BTC", 12.0),
 	BAT_ETH("BAT", "ETH", 12.0),
