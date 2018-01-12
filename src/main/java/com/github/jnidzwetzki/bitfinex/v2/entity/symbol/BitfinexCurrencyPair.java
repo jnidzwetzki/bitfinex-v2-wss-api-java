@@ -80,7 +80,19 @@ public enum BitfinexCurrencyPair implements BitfinexStreamSymbol {
 	// Santiment Network Token
 	SAN_USD("SAN", "USD", 0.2),
 	SAN_BTC("SAN", "BTC", 0.2),
-	SAN_ETH("SAN", "ETH", 0.2);
+	SAN_ETH("SAN", "ETH", 0.2),
+	
+	// Recovery Right Tokens
+	RRT_USD("RRT", "USD", 74),
+	
+	// FunFair
+	FUN_USD("FUN", "USD", 64),
+	
+	// Streamr
+	DATA_USD("DATA", "USD", 74),
+	
+	// SpankChain
+	SPK_USD("SPK", "USD", 26);
 
 	/**
 	 * The name of the first currency 
