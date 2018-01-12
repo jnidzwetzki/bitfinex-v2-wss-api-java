@@ -1,4 +1,5 @@
 # Version 0.5.3 (TBA)
+* Improvement: Added further currencies (thanks to Flexz9)
 
 # Version 0.5.2 (11.01.2018)
 * New Feature: Support raw orderbooks
