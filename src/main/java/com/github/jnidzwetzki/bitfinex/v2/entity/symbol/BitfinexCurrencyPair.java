@@ -83,16 +83,53 @@ public enum BitfinexCurrencyPair implements BitfinexStreamSymbol {
 	SAN_ETH("SAN", "ETH", 0.2),
 	
 	// Recovery Right Tokens
-	RRT_USD("RRT", "USD", 74),
+	RRT_USD("RRT", "USD", 72),
+	RRT_BTC("RRT", "BTC", 72),
 	
 	// FunFair
 	FUN_USD("FUN", "USD", 64),
+	FUN_BTC("FUN", "BTC", 64),
+	FUN_ETH("FUN", "ETH", 64),
 	
 	// Streamr
 	DATA_USD("DATA", "USD", 74),
+	DATA_BTC("DATA", "BTC", 74),
+	DATA_ETH("DATA", "ETH", 74),
+	
+	// Time New Bank
+	TNB_USD("TNB", "USD", 46),
+	TNB_BTC("TNB", "BTC", 46),
+	TNB_ETH("TNB", "ETH", 46),
+	
+	// Decentraland
+	MNA_USD("MNA", "USD", 80),
+	MNA_BTC("MNA", "BTC", 80),
+	MNA_ETH("MNA", "ETH", 80),
+	
+	// YOYOW
+	YYW_USD("YYW", "USD", 48),
+	YYW_BTC("YYW", "BTC", 48),
+	YYW_ETH("YYW", "ETH", 48),
+	
+	// Status
+	SNT_USD("SNT", "USD", 38),
+	SNT_BTC("SNT", "BTC", 38),
+	SNT_ETH("SNT", "ETH", 38),
+	
+	// Basic Attention Token
+	BAT_USD("BAT", "USD", 12),
+	BAT_BTC("BAT", "BTC", 12),
+	BAT_ETH("BAT", "ETH", 12),
+	
+	// Golem
+	GNT_USD("GNT", "USD", 14),
+	GNT_BTC("GNT", "BTC", 14),
+	GNT_ETH("GNT", "ETH", 14),
 	
 	// SpankChain
 	SPK_USD("SPK", "USD", 26);
+	SPK_BTC("SPK", "BTC", 26);
+	SPK_ETH("SPK", "ETH", 26);
 
 	/**
 	 * The name of the first currency 
