@@ -68,7 +68,7 @@ final BitfinexCandlestickSymbol symbol
 	
 // The consumer will be called on all received candles for the symbol
 final BiConsumer<BitfinexCandlestickSymbol, Tick> callback = (symbol, tick) -> {
-	System.out.println("Got tick for symbol: " + symbol + " / " + tick);
+	System.out.format("Got tick (%s) for symbol (%s)\n", tick, symbol);
 };
 
 final QuoteManager quoteManager = bitfinexApiBroker.getQuoteManager();
@@ -86,7 +86,7 @@ tickerManager.unsubscribeCandles(symbol);
 ```java
 // The consumer will be called on all received ticks for the symbol
 final BiConsumer<BitfinexCurrencyPair, Tick> callback = (symbol, tick) -> {
-	System.out.println("Got tick for symbol: " + symbol + " / " + tick);
+	System.out.format("Got tick (%s) for symbol (%s)\n", tick, symbol);
 };
 
 final QuoteManager quoteManager = bitfinexApiBroker.getQuoteManager();
@@ -107,8 +107,8 @@ final OrderbookConfiguration orderbookConfiguration = new OrderbookConfiguration
 			
 final OrderbookManager orderbookManager = bitfinexApiBroker.getOrderbookManager();
 
-final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
-		System.out.println("Got entry for orderbook: " + c + " / " + o);
+final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (orderbookConfig, entry) -> {
+		System.out.format("Got entry (%s) for orderbook (%s)\n", entry, orderbookConfig);
 };
 
 orderbookManager.registerOrderbookCallback(orderbookConfiguration, callback);
@@ -128,8 +128,8 @@ final RawOrderbookConfiguration orderbookConfiguration = new RawOrderbookConfigu
 			
 final OrderbookManager orderbookManager = bitfinexApiBroker.getOrderbookManager();
 
-final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
-		System.out.println("Got entry for orderbook: " + c + " / " + o);
+final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (orderbookConfig, entry) -> {
+		System.out.format("Got entry (%s) for orderbook (%s)\n", entry, orderbookConfig);
 };
 
 orderbookManager.registerOrderbookCallback(orderbookConfiguration, callback);
