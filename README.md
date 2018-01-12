@@ -103,12 +103,12 @@ tickerManager.unsubscribeTicker(BitfinexCurrencyPair.BTC_USD);
 ## Subscribe orderbook stream
 ```java
 final OrderbookConfiguration orderbookConfiguration = new OrderbookConfiguration(
-					BitfinexCurrencyPair.BTC_USD, OrderBookPrecision.P0, OrderBookFrequency.F0, 25);
+			BitfinexCurrencyPair.BTC_USD, OrderBookPrecision.P0, OrderBookFrequency.F0, 25);
 			
 final OrderbookManager orderbookManager = bitfinexApiBroker.getOrderbookManager();
 
 final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (orderbookConfig, entry) -> {
-		System.out.format("Got entry (%s) for orderbook (%s)\n", entry, orderbookConfig);
+	System.out.format("Got entry (%s) for orderbook (%s)\n", entry, orderbookConfig);
 };
 
 orderbookManager.registerOrderbookCallback(orderbookConfiguration, callback);
@@ -124,12 +124,12 @@ orderbookManager.unsubscribeOrderbook(orderbookConfiguration);
 ## Subscribe raw orderbook stream
 ```java
 final RawOrderbookConfiguration orderbookConfiguration = new RawOrderbookConfiguration(
-					BitfinexCurrencyPair.BTC_USD);
+			BitfinexCurrencyPair.BTC_USD);
 			
 final OrderbookManager orderbookManager = bitfinexApiBroker.getOrderbookManager();
 
 final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (orderbookConfig, entry) -> {
-		System.out.format("Got entry (%s) for orderbook (%s)\n", entry, orderbookConfig);
+	System.out.format("Got entry (%s) for orderbook (%s)\n", entry, orderbookConfig);
 };
 
 orderbookManager.registerOrderbookCallback(orderbookConfiguration, callback);
