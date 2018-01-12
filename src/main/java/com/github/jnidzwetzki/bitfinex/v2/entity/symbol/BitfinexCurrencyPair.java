@@ -162,7 +162,7 @@ public enum BitfinexCurrencyPair implements BitfinexStreamSymbol {
 	// SpankChain
 	SPK_USD("SPK", "USD", 26.0),
 	SPK_BTC("SPK", "BTC", 26.0),
-	SPK_ETH("SPK", "ETH", 26.0),
+	SPK_ETH("SPK", "ETH", 26.0);
 
 	/**
 	 * The name of the first currency 
