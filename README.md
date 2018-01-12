@@ -68,10 +68,10 @@ final BitfinexCandlestickSymbol symbol
 	
 // The consumer will be called on all received candles for the symbol
 final BiConsumer<BitfinexCandlestickSymbol, Tick> callback = (symbol, tick) -> {
-	System.out.println("Got tick for symbol: " + symbol + " / " + tick;
+	System.out.println("Got tick for symbol: " + symbol + " / " + tick);
 };
 
-final QuoteManager quoteManager = bitfinexClient.getQuoteManager();
+final QuoteManager quoteManager = bitfinexApiBroker.getQuoteManager();
 quoteManager.registerCandlestickCallback(symbol, callback);
 tickerManager.subscribeCandles(symbol);
 
@@ -86,10 +86,10 @@ tickerManager.unsubscribeCandles(symbol);
 ```java
 // The consumer will be called on all received ticks for the symbol
 final BiConsumer<BitfinexCurrencyPair, Tick> callback = (symbol, tick) -> {
-	System.out.println("Got tick for symbol: " + symbol + " / " + tick;
+	System.out.println("Got tick for symbol: " + symbol + " / " + tick);
 };
 
-final QuoteManager quoteManager = bitfinexClient.getQuoteManager();
+final QuoteManager quoteManager = bitfinexApiBroker.getQuoteManager();
 quoteManager.registerTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
 tickerManager.subscribeTicker(BitfinexCurrencyPair.BTC_USD);
 
@@ -105,13 +105,13 @@ tickerManager.unsubscribeTicker(BitfinexCurrencyPair.BTC_USD);
 final OrderbookConfiguration orderbookConfiguration = new OrderbookConfiguration(
 					BitfinexCurrencyPair.BTC_USD, OrderBookPrecision.P0, OrderBookFrequency.F0, 25);
 			
-final OrderbookManager orderbookManager = bitfinexClient.getOrderbookManager();
+final OrderbookManager orderbookManager = bitfinexApiBroker.getOrderbookManager();
 
 final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
-		System.out.println("Got entry for orderbook: " + c + " / " + o;
+		System.out.println("Got entry for orderbook: " + c + " / " + o);
 };
 
-orderbookManager.registerTradingOrderbookCallback(orderbookConfiguration, callback);
+orderbookManager.registerOrderbookCallback(orderbookConfiguration, callback);
 orderbookManager.subscribeOrderbook(orderbookConfiguration);
 
 [...]
@@ -126,13 +126,13 @@ orderbookManager.unsubscribeOrderbook(orderbookConfiguration);
 final RawOrderbookConfiguration orderbookConfiguration = new RawOrderbookConfiguration(
 					BitfinexCurrencyPair.BTC_USD);
 			
-final OrderbookManager orderbookManager = bitfinexClient.getOrderbookManager();
+final OrderbookManager orderbookManager = bitfinexApiBroker.getOrderbookManager();
 
 final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
-		System.out.println("Got entry for orderbook: " + c + " / " + o;
+		System.out.println("Got entry for orderbook: " + c + " / " + o);
 };
 
-orderbookManager.registerTradingOrderbookCallback(orderbookConfiguration, callback);
+orderbookManager.registerOrderbookCallback(orderbookConfiguration, callback);
 orderbookManager.subscribeOrderbook(orderbookConfiguration);
 
 [...]
