@@ -18,118 +18,151 @@
 package com.github.jnidzwetzki.bitfinex.v2.entity.symbol;
 
 public enum BitfinexCurrencyPair implements BitfinexStreamSymbol {
-
 	// Bitcoin
 	BTC_USD("BTC", "USD", 0.002),
 	BTC_EUR("BTC", "EUR", 0.002),
 	
 	// Litecoin
-	LTC_USD("LTC", "USD", 0.2),
-	LTC_BTC("LTC", "BTC", 0.2),
+	LTC_USD("LTC", "USD", 0.08),
+	LTC_BTC("LTC", "BTC", 0.08),
 	
-	// Ethereum
-	ETH_USD("ETH", "USD", 0.04),
-	ETH_BTC("ETH", "BTC", 0.04),
+	// Etherium
+	ETH_USD("ETH", "USD", 0.02),
+	ETH_BTC("ETH", "BTC", 0.02),
 	
-	// Ethereum classic
-	ETC_BTC("ETC", "BTC", 0.2),
-	ETC_BCH("ETC", "BCH", 0.2),
+	//Etherium classic
+	ETC_BTC("ETC", "BTC", 0.6),
+	ETC_USD("ETC", "USD", 0.6),
 	
-	// ZCash
-	ZEC_USD("ZEC", "USD", 0.2),
-	ZEC_BTC("ZEC", "BTC", 0.2),
+	// Recovery Right Token
+	RRT_USD("RRT", "USD", 72.0),
+	RRT_BTC("RRT", "BTC", 72.0),
 	
-	// Monero
-	XMR_USD("XMR", "USD", 0.2),
-	XMR_BTC("XMR", "BTC", 0.2),
+	// Zcash
+	ZEC_USD("ZEC", "USD", 0.04),
+	ZEC_BTC("ZEC", "BTC", 0.04),
+	
+	//Monero
+	XMR_USD("XMR", "USD", 0.06),
+	XMR_BTC("XMR", "BTC", 0.06),
 	
 	// Dash
-	DCH_USD("DCH", "USD", 0.2),
-	DCH_BTC("DCH", "BTC", 0.2),
+	DSH_USD("DSH", "USD", 0.02),
+	DSH_BTC("DSH", "BTC", 0.02),
 	
-	// XRP 
-	XRP_USD("XRP", "USD", 22.0),
-	XRP_BTC("XRP", "BTC", 0.2),
+	// Ripple
+	XRP_USD("XRP", "USD", 10.0),
+	XRP_BTC("XRP", "BTC", 10.0),
 	
-	// IOTA
-	IOTA_USD("IOT", "USD", 6.0),
-	IOTA_BTC("IOT", "BTC", 0.2),
-	IOTA_ETH("IOT", "ETH", 0.2),
-	IOTA_EUR("IOT", "EUR", 5.0),
+	// Iota
+	IOT_USD("IOT", "USD", 6.0),
+	IOT_EUR("IOT", "EUR", 4.0),
+	IOT_BTC("IOT", "BTC", 6.0),
+	IOT_ETH("IOT", "ETH", 6.0),
 	
 	// EOS
-	EOS_USD("EOS", "USD", 0.2),
-	EOS_BTC("EOS", "BTC", 0.2),
-	EOS_BHC("EOS", "BCH", 0.2),
+	EOS_USD("EOS", "USD", 2.0),
+	EOS_BTC("EOS", "BTC", 2.0),
+	EOS_ETH("EOS", "ETH", 2.0),
+	
+	// Santiment
+	SAN_USD("SAN", "USD", 4.0),
+	SAN_BTC("SAN", "BTC", 4.0),
+	SAN_ETH("SAN", "ETH", 4.0),
+	
+	// OmiseGO
+	OMG_USD("OMG", "USD", 2.0),
+	OMG_BTC("OMG", "BTC", 2.0),
+	OMG_ETH("OMG", "ETH", 2.0),
 	
 	// Bitcoin Cash
-	BCH_USD("BCH", "USD", 0.02),
-	BCH_BTC("BCH", "BTC", 0.02),
-	BCH_ETH("BCH", "ETH", 0.02),
-
+	BCH_USD("BCH", "USD", 0.006),
+	BCH_BTC("BCH", "BTC", 0.006),
+	BCH_ETH("BCH", "ETH", 0.006),
+	
 	// NEO
 	NEO_USD("NEO", "USD", 0.2),
 	NEO_BTC("NEO", "BTC", 0.2),
 	NEO_ETH("NEO", "ETH", 0.2),
 	
+	// ETP
+	ETP_USD("ETP", "USD", 4.0),
+	ETP_BTC("ETP", "BTC", 4.0),
+	ETP_ETH("ETP", "ETH", 4.0),
+	
+	// Qtum
+	QTM_USD("QTM", "USD", 0.4),
+	QTM_BTC("QTM", "BTC", 0.4),
+	QTM_ETH("QTM", "ETH", 0.4),
+	
+	// Aventus
+	AVT_USD("AVT", "USD", 4.0),
+	AVT_BTC("AVT", "BTC", 4.0),
+	AVT_ETH("AVT", "ETH", 4.0),
+	
 	// Eidoo
-	EDO_USD("EDO", "USD", 0.2),
-	EDO_BTC("EDO", "BTC", 0.2),
-	EDO_ETH("EDO", "ETH", 0.2),
+	EDO_USD("EDO", "USD", 4.0),
+	EDO_BTC("EDO", "BTC", 4.0),
+	EDO_ETH("EDO", "ETH", 4.0),
 	
-	// Santiment Network Token
-	SAN_USD("SAN", "USD", 0.2),
-	SAN_BTC("SAN", "BTC", 0.2),
-	SAN_ETH("SAN", "ETH", 0.2),
+	// BTG
+	BTG_USD("BTG", "USD", 0.06),
+	BTG_BTC("BTG", "BTC", 0.06),
 	
-	// Recovery Right Tokens
-	RRT_USD("RRT", "USD", 72),
-	RRT_BTC("RRT", "BTC", 72),
+	// Streamer
+	DAT_USD("DAT", "USD", 74.0),
+	DAT_BTC("DAT", "BTC", 74.0),
+	DAT_ETH("DAT", "ETH", 74.0),
 	
-	// FunFair
-	FUN_USD("FUN", "USD", 64),
-	FUN_BTC("FUN", "BTC", 64),
-	FUN_ETH("FUN", "ETH", 64),
-	
-	// Streamr
-	DATA_USD("DATA", "USD", 74),
-	DATA_BTC("DATA", "BTC", 74),
-	DATA_ETH("DATA", "ETH", 74),
-	
-	// Time New Bank
-	TNB_USD("TNB", "USD", 46),
-	TNB_BTC("TNB", "BTC", 46),
-	TNB_ETH("TNB", "ETH", 46),
-	
-	// Decentraland
-	MNA_USD("MNA", "USD", 80),
-	MNA_BTC("MNA", "BTC", 80),
-	MNA_ETH("MNA", "ETH", 80),
+	// QASH
+	QSH_USD("QSH", "USD", 12.0),
+	QSH_BTC("QSH", "BTC", 12.0),
+	QSH_ETH("QSH", "ETH", 12.0),
 	
 	// YOYOW
-	YYW_USD("YYW", "USD", 48),
-	YYW_BTC("YYW", "BTC", 48),
-	YYW_ETH("YYW", "ETH", 48),
-	
-	// Status
-	SNT_USD("SNT", "USD", 38),
-	SNT_BTC("SNT", "BTC", 38),
-	SNT_ETH("SNT", "ETH", 38),
-	
-	// Basic Attention Token
-	BAT_USD("BAT", "USD", 12),
-	BAT_BTC("BAT", "BTC", 12),
-	BAT_ETH("BAT", "ETH", 12),
+	YYW_USD("YYW", "USD", 48.0),
+	YYW_BTC("YYW", "BTC", 48.0),
+	YYW_ETH("YYW", "ETH", 48.0),
 	
 	// Golem
-	GNT_USD("GNT", "USD", 14),
-	GNT_BTC("GNT", "BTC", 14),
-	GNT_ETH("GNT", "ETH", 14),
+	GNT_USD("GNT", "USD", 14.0),
+	GNT_BTC("GNT", "BTC", 14.0),
+	GNT_ETH("GNT", "ETH", 14.0),
+	
+	// Status
+	SNT_USD("SNT", "USD", 38.0),
+	SNT_BTC("SNT", "BTC", 38.0),
+	SNT_ETH("SNT", "ETH", 38.0),
+	
+	// Basic Attention coin
+	BAT_USD("BAT", "USD", 12.0),
+	BAT_BTC("BAT", "BTC", 12.0),
+	BAT_ETH("BAT", "ETH", 12.0),
+	
+	// Decentraland
+	MNA_USD("MNA", "USD", 80.0),
+	MNA_BTC("MNA", "BTC", 80.0),
+	MNA_ETH("MNA", "ETH", 80.0),
+	
+	// FunFair
+	FUN_USD("FUN", "USD", 64.0),
+	FUN_BTC("FUN", "BTC", 64.0),
+	FUN_ETH("FUN", "ETH", 64.0),
+	
+	// 0x
+	ZRX_USD("ZRX", "USD", 6.0),
+	ZRX_BTC("ZRX", "BTC", 6.0),
+	ZRX_ETH("ZRX", "ETH", 6.0),
+	
+	// Time New Bank
+	TNB_USD("TNB", "USD", 46.0),
+	TNB_BTC("TNB", "BTC", 46.0),
+	TNB_ETH("TNB", "ETH", 46.0),
 	
 	// SpankChain
-	SPK_USD("SPK", "USD", 26),
-	SPK_BTC("SPK", "BTC", 26),
-	SPK_ETH("SPK", "ETH", 26);
+	SPK_USD("SPK", "USD", 26.0),
+	SPK_BTC("SPK", "BTC", 26.0),
+	SPK_ETH("SPK", "ETH", 26.0),
 
 	/**
 	 * The name of the first currency 
