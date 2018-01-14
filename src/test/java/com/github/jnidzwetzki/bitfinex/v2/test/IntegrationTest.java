@@ -217,9 +217,11 @@ public class IntegrationTest {
 			orderbookManager.registerTickCallback(symbol, callback);
 			orderbookManager.subscribeTicker(symbol);
 			latch.await();
+			Assert.assertTrue(bitfinexClient.isTickerActive(symbol));
 
 			orderbookManager.unsubscribeTicker(symbol);
-			
+			Assert.assertFalse(bitfinexClient.isTickerActive(symbol));
+
 			Assert.assertTrue(orderbookManager.removeTickCallback(symbol, callback));
 			Assert.assertFalse(orderbookManager.removeTickCallback(symbol, callback));
 
@@ -251,6 +253,40 @@ public class IntegrationTest {
 		
 		// Should not be reached
 		Assert.assertTrue(false);
+		bitfinexClient.close();
+	}
+	
+	/**
+	 * Test the session reconnect
+	 * @throws APIException 
+	 * @throws InterruptedException 
+	 */
+	@Test
+	public void testReconnect() throws APIException, InterruptedException {
+		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
+		bitfinexClient.connect();
+		
+		final BitfinexCurrencyPair symbol = BitfinexCurrencyPair.BTC_USD;
+		final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
+		
+		orderbookManager.subscribeTicker(symbol);
+		Thread.sleep(1000);
+		bitfinexClient.reconnect();
+		
+		// Await at least 2 callbacks
+		final CountDownLatch latch = new CountDownLatch(2);
+		
+		final BiConsumer<BitfinexCurrencyPair, Tick> callback = (c, o) -> {
+			latch.countDown();
+		};
+		
+		orderbookManager.registerTickCallback(symbol, callback);
+		latch.await();
+		Assert.assertTrue(bitfinexClient.isTickerActive(symbol));
+
+		orderbookManager.unsubscribeTicker(symbol);
+		Assert.assertFalse(bitfinexClient.isTickerActive(symbol));
+		
 		bitfinexClient.close();
 	}
 }
