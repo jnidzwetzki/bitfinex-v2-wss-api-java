@@ -22,12 +22,10 @@ In contrast to other implementations, this project uses the WSS streaming API of
 
 ## Contact / Stay informed
 * You need help or do you have questions? Join our chat at [gitter](https://gitter.im/bitfinex-v2-wss-api-java/Lobby)
-* Visit our [bug tracking system](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/issues)
-* Read the [source code](https://github.com/bitfinex-v2-wss-api-java/bboxdb)
+* For reporting issues, visit our [bug tracking system](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/issues)
 * For contributing, see our [contributing guide](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/CONTRIBUTING.md)
 
 # Adding the library to your project
-
 Add this to your pom.xml 
 
 ```xml
