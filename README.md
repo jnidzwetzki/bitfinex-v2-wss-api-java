@@ -1,5 +1,7 @@
 # crypto-bot
 
+[![Join the chat at https://gitter.im/bitfinex-v2-wss-api-java/Lobby](https://badges.gitter.im/bitfinex-v2-wss-api-java/Lobby.svg)](https://gitter.im/bitfinex-v2-wss-api-java/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 <a href="https://travis-ci.org/jnidzwetzki/bitfinex-v2-wss-api-java">
   <img alt="Build Status" src="https://travis-ci.org/jnidzwetzki/bitfinex-v2-wss-api-java.svg?branch=master">
 </a>
