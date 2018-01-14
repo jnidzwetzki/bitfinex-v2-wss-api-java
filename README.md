@@ -19,6 +19,13 @@ In contrast to other implementations, this project uses the WSS streaming API of
 
 **Warning:** Trading carries significant financial risk; you could lose a lot of money. If you are planning to use this software to trade, you should perform many tests and simulations first. This software is provided 'as is' and released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0). 
 
+
+## Contact / Stay informed
+* You need help or do you have questions? Join our chat at [gitter](https://gitter.im/bitfinex-v2-wss-api-java/Lobby)
+* Visit our [bug tracking system](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/issues)
+* Read the [source code](https://github.com/bitfinex-v2-wss-api-java/bboxdb)
+* For contributing, see our [contributing guide](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/CONTRIBUTING.md)
+
 # Adding the library to your project
 
 Add this to your pom.xml 
