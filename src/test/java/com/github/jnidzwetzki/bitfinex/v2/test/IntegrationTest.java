@@ -231,4 +231,26 @@ public class IntegrationTest {
 			bitfinexClient.close();
 		}
 	}
+	
+	/**
+	 * Test auth failed
+	 * @throws APIException 
+	 */
+	@Test(expected=APIException.class, timeout=10000)
+	public void testAuthFailed() throws APIException {
+		final String KEY = "key";
+		final String SECRET = "secret";
+		
+		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(KEY, SECRET);
+		Assert.assertEquals(KEY, bitfinexClient.getApiKey());
+		Assert.assertEquals(SECRET, bitfinexClient.getApiSecret());
+		
+		Assert.assertFalse(bitfinexClient.isAuthenticated());
+		
+		bitfinexClient.connect();
+		
+		// Should not be reached
+		Assert.assertTrue(false);
+		bitfinexClient.close();
+	}
 }

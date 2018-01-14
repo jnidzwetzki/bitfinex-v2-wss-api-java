@@ -40,22 +40,29 @@ public class AuthCallbackHandler implements CommandCallbackHandler {
 
 		final String status = jsonObject.getString("status");
 		
+		final CountDownLatch connectionReadyLatch = bitfinexApiBroker.getConnectionReadyLatch();
+		
 		logger.info("Authentification callback state {}", status);
 		
 		if(status.equals("OK")) {
 			bitfinexApiBroker.setAuthenticated(true);
 			final ConnectionCapabilities capabilities = new ConnectionCapabilities(jsonObject);
 			bitfinexApiBroker.setCapabilities(capabilities);
+			
+			if(connectionReadyLatch != null) {
+				connectionReadyLatch.countDown();
+			}
+			
 		} else {
 			bitfinexApiBroker.setAuthenticated(false);
 			logger.error("Unable to authenticate: {}", jsonObject.toString());
-		}
-		
-		final CountDownLatch connectionReadyLatch = bitfinexApiBroker.getConnectionReadyLatch();
-		
-		if(connectionReadyLatch != null) {
-			connectionReadyLatch.countDown();
+			
+			if(connectionReadyLatch != null) {
+				// No other callbacks are send from the server after a failed auth call
+				while(connectionReadyLatch.getCount() != 0) {
+					connectionReadyLatch.countDown();
+				}
+			}
 		}
 	}
-
 }

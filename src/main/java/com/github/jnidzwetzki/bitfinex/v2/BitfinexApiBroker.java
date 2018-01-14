@@ -287,7 +287,7 @@ public class BitfinexApiBroker implements Closeable {
 	}
 
 	/**
-	 * Execute the authentification and wait until the socket is ready
+	 * Execute the authentication and wait until the socket is ready
 	 * @throws InterruptedException
 	 * @throws APIException 
 	 */

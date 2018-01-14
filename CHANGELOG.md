@@ -1,5 +1,6 @@
 # Version 0.5.3 (TBA)
 * Improvement: Added further currencies (thanks to Flexz9)
+* Improvement: A APIException is thrown immediately after an authentication failure occurred
 
 # Version 0.5.2 (11.01.2018)
 * New Feature: Support raw orderbooks
