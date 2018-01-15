@@ -91,8 +91,7 @@ orderbookManager.unsubscribeOrderbook(orderbookConfiguration);
 ```java
 final RawOrderbookConfiguration orderbookConfiguration = new RawOrderbookConfiguration(
 			BitfinexCurrencyPair.BTC_USD);
-			
-			
+
 final RawOrderbookManager rawOrderbookManager = bitfinexClient.getRawOrderbookManager();
 			
 final BiConsumer<RawOrderbookConfiguration, RawOrderbookEntry> callback = (orderbookConfig, entry) -> {
