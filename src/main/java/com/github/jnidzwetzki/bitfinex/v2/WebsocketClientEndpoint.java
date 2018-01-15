@@ -100,7 +100,7 @@ public class WebsocketClientEndpoint implements Closeable {
 		this.userSession = null;
 	}
 
-	@OnMessage
+	@OnMessage(maxMessageSize=1048576)
 	public void onMessage(final String message) {
 		
 		// Execute callbacks in another thread
