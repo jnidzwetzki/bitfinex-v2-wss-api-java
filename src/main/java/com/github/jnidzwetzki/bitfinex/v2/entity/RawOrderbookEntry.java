@@ -19,11 +19,11 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 public class RawOrderbookEntry {
 
-	private final double orderId;
+	private final long orderId;
 	private final double price;
 	private final double amount;
 
-	public RawOrderbookEntry(final double orderId, final double price, final double amount) {
+	public RawOrderbookEntry(final long orderId, final double price, final double amount) {
 		this.orderId = orderId;
 		this.price = price;
 		this.amount = amount;

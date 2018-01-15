@@ -121,8 +121,8 @@ public class IntegrationTest {
 	public void testRawOrderbookStream() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
 	
-		// Await at least 10 callbacks
-		final CountDownLatch latch = new CountDownLatch(10);
+		// Await at least 20 callbacks
+		final CountDownLatch latch = new CountDownLatch(20);
 		try {
 			bitfinexClient.connect();
 			final RawOrderbookConfiguration orderbookConfiguration = new RawOrderbookConfiguration(

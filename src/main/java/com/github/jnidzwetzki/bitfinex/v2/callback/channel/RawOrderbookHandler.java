@@ -61,7 +61,7 @@ public class RawOrderbookHandler implements ChannelCallbackHandler {
 			final RawOrderbookConfiguration configuration,
 			final JSONArray jsonArray) {
 		
-		final double orderId = jsonArray.getNumber(0).doubleValue();
+		final long orderId = jsonArray.getNumber(0).longValue();
 		final double price = jsonArray.getNumber(1).doubleValue();
 		final double amount = jsonArray.getNumber(2).doubleValue();
 		
