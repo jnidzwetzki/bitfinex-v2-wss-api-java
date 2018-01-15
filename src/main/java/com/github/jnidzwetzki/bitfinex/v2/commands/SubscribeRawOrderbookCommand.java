@@ -20,17 +20,17 @@ package com.github.jnidzwetzki.bitfinex.v2.commands;
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
 
-public class SubscribeOrderbookCommand extends AbstractAPICommand {
+public class SubscribeRawOrderbookCommand extends AbstractAPICommand {
 
 	/**
 	 * The orderbook configuration
 	 */
-	private OrderbookConfiguration orderbookConfiguration;
+	private RawOrderbookConfiguration rawOrderbookConfiguration;
 	
-	public SubscribeOrderbookCommand(final OrderbookConfiguration orderbookConfiguration) {
-		this.orderbookConfiguration = orderbookConfiguration;
+	public SubscribeRawOrderbookCommand(final RawOrderbookConfiguration orderbookConfiguration) {
+		this.rawOrderbookConfiguration = orderbookConfiguration;
 	}
 
 	@Override
@@ -38,11 +38,9 @@ public class SubscribeOrderbookCommand extends AbstractAPICommand {
 		final JSONObject subscribeJson = new JSONObject();
 		subscribeJson.put("event", "subscribe");
 		subscribeJson.put("channel", "book");
-		subscribeJson.put("symbol", orderbookConfiguration.getCurrencyPair().toBitfinexString());	
-		subscribeJson.put("prec", orderbookConfiguration.getOrderBookPrecision().toString());
-		subscribeJson.put("freq", orderbookConfiguration.getOrderBookFrequency().toString());
-		subscribeJson.put("len", Integer.toString(orderbookConfiguration.getPricePoints()));
-	
+		subscribeJson.put("symbol", rawOrderbookConfiguration.getCurrencyPair().toBitfinexString());
+		subscribeJson.put("prec", "R0");
+		
 		return subscribeJson.toString();
 	}
 

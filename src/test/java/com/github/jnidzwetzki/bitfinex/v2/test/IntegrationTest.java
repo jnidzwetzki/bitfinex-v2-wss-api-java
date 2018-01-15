@@ -30,11 +30,13 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
+import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 
 public class IntegrationTest {
@@ -86,9 +88,7 @@ public class IntegrationTest {
 			
 			final OrderbookManager orderbookManager = bitfinexClient.getOrderbookManager();
 			
-			final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
-				Assert.assertTrue(c instanceof OrderbookConfiguration);
-
+			final BiConsumer<OrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
 				Assert.assertTrue(o.getAmount() != 0);
 				Assert.assertTrue(o.getPrice() != 0);
 				Assert.assertTrue(o.getCount() != 0);
@@ -128,25 +128,24 @@ public class IntegrationTest {
 			final RawOrderbookConfiguration orderbookConfiguration = new RawOrderbookConfiguration(
 					BitfinexCurrencyPair.BTC_USD);
 			
-			final OrderbookManager orderbookManager = bitfinexClient.getOrderbookManager();
+			final RawOrderbookManager rawOrderbookManager = bitfinexClient.getRawOrderbookManager();
 			
-			final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
-				Assert.assertTrue(c instanceof RawOrderbookConfiguration);
+			final BiConsumer<RawOrderbookConfiguration, RawOrderbookEntry> callback = (c, o) -> {
 				Assert.assertTrue(o.getAmount() != 0);
 				Assert.assertTrue(o.getPrice() != 0);
-				Assert.assertTrue(o.getCount() != 0);
+				Assert.assertTrue(o.getOrderId() >= 0);
 				Assert.assertTrue(o.toString().length() > 0);
 				latch.countDown();
 			};
 			
-			orderbookManager.registerOrderbookCallback(orderbookConfiguration, callback);
-			orderbookManager.subscribeOrderbook(orderbookConfiguration);
+			rawOrderbookManager.registerOrderbookCallback(orderbookConfiguration, callback);
+			rawOrderbookManager.subscribeOrderbook(orderbookConfiguration);
 			latch.await();
 
-			orderbookManager.unsubscribeOrderbook(orderbookConfiguration);
+			rawOrderbookManager.unsubscribeOrderbook(orderbookConfiguration);
 			
-			Assert.assertTrue(orderbookManager.removeOrderbookCallback(orderbookConfiguration, callback));
-			Assert.assertFalse(orderbookManager.removeOrderbookCallback(orderbookConfiguration, callback));
+			Assert.assertTrue(rawOrderbookManager.removeOrderbookCallback(orderbookConfiguration, callback));
+			Assert.assertFalse(rawOrderbookManager.removeOrderbookCallback(orderbookConfiguration, callback));
 
 		} catch (Exception e) {
 			// Should not happen

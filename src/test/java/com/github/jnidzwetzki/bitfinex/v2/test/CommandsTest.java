@@ -19,6 +19,7 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.PingCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeOrderbookCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeRawOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
@@ -26,6 +27,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 
@@ -49,6 +51,9 @@ public class CommandsTest {
 			= new OrderbookConfiguration(BitfinexCurrencyPair.BCH_USD, 
 					OrderBookPrecision.P0, OrderBookFrequency.F0	, 50);
 		
+		final RawOrderbookConfiguration rawOrderbookConfiguration 
+			= new RawOrderbookConfiguration(BitfinexCurrencyPair.BAT_BTC);
+		
 		final List<AbstractAPICommand> commands = Arrays.asList(
 				new AuthCommand(), 
 				new CancelOrderCommand(123),
@@ -58,6 +63,7 @@ public class CommandsTest {
 				new SubscribeCandlesCommand(candleSymbol),
 				new SubscribeTickerCommand(BitfinexCurrencyPair.BCH_USD),
 				new SubscribeOrderbookCommand(orderbookConfiguration),
+				new SubscribeRawOrderbookCommand(rawOrderbookConfiguration),
 				new UnsubscribeChannelCommand(12));
 		
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();

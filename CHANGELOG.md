@@ -1,4 +1,5 @@
 # Version 0.5.3 (TBA)
+* New Feature: Introduced the RawOrderBook Manager
 * Improvement: Added further currencies (thanks to Flexz9)
 * Improvement: A APIException is thrown immediately after an authentication failure occurred
 

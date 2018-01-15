@@ -22,17 +22,17 @@ import org.json.JSONException;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookEntry;
+import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 
-public class OrderbookHandler implements ChannelCallbackHandler {
+public class RawOrderbookHandler implements ChannelCallbackHandler {
 
 	@Override
 	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker, 
 			final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
 		
-		final OrderbookConfiguration configuration = (OrderbookConfiguration) channelSymbol;
+		final RawOrderbookConfiguration configuration = (RawOrderbookConfiguration) channelSymbol;
 		
 		// Example: [13182,1,-0.1]
 		try {
@@ -58,16 +58,16 @@ public class OrderbookHandler implements ChannelCallbackHandler {
 	 * @param jsonArray
 	 */
 	private void handleEntry(final BitfinexApiBroker bitfinexApiBroker, 
-			final OrderbookConfiguration configuration,
+			final RawOrderbookConfiguration configuration,
 			final JSONArray jsonArray) {
 		
-		final double price = jsonArray.getNumber(0).doubleValue();
-		final double count = jsonArray.getNumber(1).doubleValue();
+		final double orderId = jsonArray.getNumber(0).doubleValue();
+		final double price = jsonArray.getNumber(1).doubleValue();
 		final double amount = jsonArray.getNumber(2).doubleValue();
 		
-		final OrderbookEntry orderbookEntry = new OrderbookEntry(price, count, amount);
+		final RawOrderbookEntry orderbookEntry = new RawOrderbookEntry(orderId, price, amount);
 		
-		bitfinexApiBroker.getOrderbookManager().handleNewOrderbookEntry(configuration, orderbookEntry);
+		bitfinexApiBroker.getRawOrderbookManager().handleNewOrderbookEntry(configuration, orderbookEntry);
 	}
 
 }

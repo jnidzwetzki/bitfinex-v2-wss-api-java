@@ -73,7 +73,7 @@ final OrderbookConfiguration orderbookConfiguration = new OrderbookConfiguration
 			
 final OrderbookManager orderbookManager = bitfinexApiBroker.getOrderbookManager();
 
-final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (orderbookConfig, entry) -> {
+final BiConsumer<OrderbookConfiguration, OrderbookEntry> callback = (orderbookConfig, entry) -> {
 	System.out.format("Got entry (%s) for orderbook (%s)\n", entry, orderbookConfig);
 };
 
@@ -92,20 +92,21 @@ orderbookManager.unsubscribeOrderbook(orderbookConfiguration);
 final RawOrderbookConfiguration orderbookConfiguration = new RawOrderbookConfiguration(
 			BitfinexCurrencyPair.BTC_USD);
 			
-final OrderbookManager orderbookManager = bitfinexApiBroker.getOrderbookManager();
-
-final BiConsumer<RawOrderbookConfiguration, OrderbookEntry> callback = (orderbookConfig, entry) -> {
+			
+final RawOrderbookManager rawOrderbookManager = bitfinexClient.getRawOrderbookManager();
+			
+final BiConsumer<RawOrderbookConfiguration, RawOrderbookEntry> callback = (orderbookConfig, entry) -> {
 	System.out.format("Got entry (%s) for orderbook (%s)\n", entry, orderbookConfig);
 };
 
-orderbookManager.registerOrderbookCallback(orderbookConfiguration, callback);
-orderbookManager.subscribeOrderbook(orderbookConfiguration);
+rawOrderbookManager.registerOrderbookCallback(orderbookConfiguration, callback);
+rawOrderbookManager.subscribeOrderbook(orderbookConfiguration);
 
 [...]
 
 // To unsubscribe the raw orderbook stream
-orderbookManager.removeOrderbookCallback(orderbookConfiguration, callback);
-orderbookManager.unsubscribeOrderbook(orderbookConfiguration);
+rawOrderbookManager.removeOrderbookCallback(orderbookConfiguration, callback);
+rawOrderbookManager.unsubscribeOrderbook(orderbookConfiguration);
 ```
 
 ## Market order

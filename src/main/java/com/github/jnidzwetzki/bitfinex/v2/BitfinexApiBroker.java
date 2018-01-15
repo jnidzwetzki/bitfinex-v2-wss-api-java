@@ -45,8 +45,9 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.api.PositionHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.WalletHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.CandlestickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandler;
-import com.github.jnidzwetzki.bitfinex.v2.callback.channel.TickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.OrderbookHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.RawOrderbookHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.TickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.AuthCallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.CommandCallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.ConnectionHeartbeatCallback;
@@ -57,8 +58,9 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.AbstractAPICommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AuthCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CommandException;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeOrderbookCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeRawOrderbookCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
@@ -68,9 +70,10 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbo
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
+import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
-import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
+import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -105,6 +108,11 @@ public class BitfinexApiBroker implements Closeable {
 	 * The trading orderbook manager
 	 */
 	private final OrderbookManager orderbookManager;
+	
+	/**
+	 * The trading RAW orderbook manager
+	 */
+	private final RawOrderbookManager rawOrderbookManager;
 	
 	/**
 	 * The position manager
@@ -200,6 +208,7 @@ public class BitfinexApiBroker implements Closeable {
 		this.lastHeatbeat = new AtomicLong();
 		this.quoteManager = new QuoteManager(this);
 		this.orderbookManager = new OrderbookManager(this);
+		this.rawOrderbookManager = new RawOrderbookManager(this);
 		this.orderManager = new OrderManager(this);
 		this.positionManager = new PositionManager(executorService);
 		this.walletTable = HashBasedTable.create();
@@ -508,7 +517,7 @@ public class BitfinexApiBroker implements Closeable {
 					final ChannelCallbackHandler handler = new CandlestickHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
 				} else if(channelSymbol instanceof RawOrderbookConfiguration) {
-					final OrderbookHandler handler = new OrderbookHandler();
+					final RawOrderbookHandler handler = new RawOrderbookHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
 				} else if(channelSymbol instanceof OrderbookConfiguration) {
 					final OrderbookHandler handler = new OrderbookHandler();
@@ -632,6 +641,8 @@ public class BitfinexApiBroker implements Closeable {
 				sendCommand(new SubscribeCandlesCommand((BitfinexCandlestickSymbol) symbol));
 			} else if(symbol instanceof OrderbookConfiguration) {
 				sendCommand(new SubscribeOrderbookCommand((OrderbookConfiguration) symbol));
+			} else if(symbol instanceof RawOrderbookConfiguration) {
+				sendCommand(new SubscribeRawOrderbookCommand((RawOrderbookConfiguration) symbol));
 			} else {
 				logger.error("Unknown stream symbol: {}", symbol);
 			}
@@ -757,6 +768,14 @@ public class BitfinexApiBroker implements Closeable {
 		return orderbookManager;
 	}
 
+	/**
+	 * Get the raw orderbook manager
+	 * @return
+	 */
+	public RawOrderbookManager getRawOrderbookManager() {
+		return rawOrderbookManager;
+	}
+	
 	/**
 	 * Get the position manager
 	 * @return
