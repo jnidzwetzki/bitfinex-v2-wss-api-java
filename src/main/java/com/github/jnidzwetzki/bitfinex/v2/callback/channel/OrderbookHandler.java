@@ -26,7 +26,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 
-public class TradeOrderbookHandler implements ChannelCallbackHandler {
+public class OrderbookHandler implements ChannelCallbackHandler {
 
 	@Override
 	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker, 

@@ -46,7 +46,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.api.WalletHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.CandlestickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.TickHandler;
-import com.github.jnidzwetzki.bitfinex.v2.callback.channel.TradeOrderbookHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.OrderbookHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.AuthCallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.CommandCallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.ConnectionHeartbeatCallback;
@@ -508,10 +508,10 @@ public class BitfinexApiBroker implements Closeable {
 					final ChannelCallbackHandler handler = new CandlestickHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
 				} else if(channelSymbol instanceof RawOrderbookConfiguration) {
-					final TradeOrderbookHandler handler = new TradeOrderbookHandler();
+					final OrderbookHandler handler = new OrderbookHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
 				} else if(channelSymbol instanceof OrderbookConfiguration) {
-					final TradeOrderbookHandler handler = new TradeOrderbookHandler();
+					final OrderbookHandler handler = new OrderbookHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
 				} else if(channelSymbol instanceof BitfinexCurrencyPair) {
 					final ChannelCallbackHandler handler = new TickHandler();
