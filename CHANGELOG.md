@@ -2,6 +2,7 @@
 * New Feature: Introduced the RawOrderBook Manager
 * Improvement: Added further currencies (thanks to Flexz9)
 * Improvement: A APIException is thrown immediately after an authentication failure occurred
+* Improvement: Added further timeframes
 * Bugfix: Websocket messages up to 1 MB will be accepted
 
 # Version 0.5.2 (11.01.2018)

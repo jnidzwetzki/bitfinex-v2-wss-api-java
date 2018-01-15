@@ -25,8 +25,14 @@ public enum Timeframe {
 	MINUTES_5(TimeUnit.MINUTES.toMillis(5), "5m"),
 	MINUTES_15(TimeUnit.MINUTES.toMillis(15), "15m"),
 	MINUTES_30(TimeUnit.MINUTES.toMillis(30), "30m"),
-	HOUR_1(TimeUnit.HOURS.toMillis(1), "1h");
-	
+	HOUR_1(TimeUnit.HOURS.toMillis(1), "1h"),
+	HOUR_3(TimeUnit.HOURS.toMillis(3), "3h"),
+	HOUR_6(TimeUnit.HOURS.toMillis(6), "6h"),
+	HOUR_12(TimeUnit.HOURS.toMillis(2), "12h"),
+	DAY_1(TimeUnit.DAYS.toMillis(1), "1D"),
+	DAY_14(TimeUnit.DAYS.toMillis(14), "14D"),
+	MONTH_1(TimeUnit.DAYS.toMillis(30), "1M");
+
 	private Timeframe(final long milliseconds, final String bitfinexString) {
 		this.milliseconds = milliseconds;
 		this.bitfinexString = bitfinexString;
