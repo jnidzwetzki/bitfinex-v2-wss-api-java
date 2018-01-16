@@ -1,3 +1,5 @@
+# Version 0.5.4 (TBA)
+
 # Version 0.5.3 (16.01.2018)
 * New Feature: Introduced the RawOrderBook Manager
 * Improvement: Added further currencies (thanks to Flexz9)
