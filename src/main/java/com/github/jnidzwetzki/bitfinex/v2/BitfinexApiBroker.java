@@ -42,6 +42,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.api.HeartbeatHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.NotificationHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.OrderHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.PositionHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.api.TradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.WalletHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.CandlestickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandler;
@@ -74,6 +75,7 @@ import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
+import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -123,6 +125,11 @@ public class BitfinexApiBroker implements Closeable {
 	 * The order manager
 	 */
 	private final OrderManager orderManager;
+	
+	/**
+	 * The trade manager
+	 */
+	private final TradeManager tradeManager;
 	
 	/**
 	 * The last heartbeat value
@@ -210,6 +217,7 @@ public class BitfinexApiBroker implements Closeable {
 		this.orderbookManager = new OrderbookManager(this);
 		this.rawOrderbookManager = new RawOrderbookManager(this);
 		this.orderManager = new OrderManager(this);
+		this.tradeManager = new TradeManager(this);
 		this.positionManager = new PositionManager(executorService);
 		this.walletTable = HashBasedTable.create();
 		this.capabilities = ConnectionCapabilities.NO_CAPABILITIES;
@@ -255,9 +263,9 @@ public class BitfinexApiBroker implements Closeable {
 		// Order cancelation
 		channelHandler.put("oc", new OrderHandler());
 		// Trade executed
-		channelHandler.put("te", new DoNothingHandler());
+		channelHandler.put("te", new TradeHandler());
 		// Trade update
-		channelHandler.put("tu", new DoNothingHandler());
+		channelHandler.put("tu", new TradeHandler());
 		// General notification 
 		channelHandler.put("n", new NotificationHandler());
 	}
@@ -758,6 +766,14 @@ public class BitfinexApiBroker implements Closeable {
 	 */
 	public OrderManager getOrderManager() {
 		return orderManager;
+	}
+	
+	/**
+	 * Get the trade manager
+	 * @return
+	 */
+	public TradeManager getTradeManager() {
+		return tradeManager;
 	}
 	
 	/**

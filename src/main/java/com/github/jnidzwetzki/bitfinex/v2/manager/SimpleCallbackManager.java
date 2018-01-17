@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
-public abstract class AbstractSimpleCallbackManager<T> {
+public class SimpleCallbackManager<T> {
 	
 	/**
 	 * The order callbacks
@@ -34,8 +34,7 @@ public abstract class AbstractSimpleCallbackManager<T> {
 	 */
 	private final ExecutorService executorService;
 	
-	
-	public AbstractSimpleCallbackManager(ExecutorService executorService) {
+	public SimpleCallbackManager(ExecutorService executorService) {
 		this.callbacks = new ArrayList<>();
 		this.executorService = executorService;
 	}

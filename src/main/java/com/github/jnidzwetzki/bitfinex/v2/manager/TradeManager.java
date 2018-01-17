@@ -17,57 +17,29 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.entity.Trade;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.Position;
-
-public class PositionManager extends SimpleCallbackManager<Position> {
+public class TradeManager extends SimpleCallbackManager<Trade>{
 
 	/**
-	 * The positions
+	 * The bitfinex API broker
 	 */
-	private final List<Position> positions;
+	private final BitfinexApiBroker bitfinexApiBroker;
 
-	public PositionManager(final ExecutorService executorService) {
-		super(executorService);
-		this.positions = new ArrayList<>();
-	}
-
-	/**
-	 * Clear all orders
-	 */
-	public void clear() {
-		synchronized (positions) {
-			positions.clear();	
-		}
+	public TradeManager(final BitfinexApiBroker bitfinexApiBroker) {
+		super(bitfinexApiBroker.getExecutorService());
+		this.bitfinexApiBroker = bitfinexApiBroker;
 	}
 	
 	/**
 	 * Update a exchange order
 	 * @param exchangeOrder
 	 */
-	public void updatePosition(final Position position) {
-		
-		synchronized (positions) {
-			// Replace position
-			positions.removeIf(p -> p.getCurreny() == position.getCurreny());
-			positions.add(position);
-			positions.notifyAll();
-		}
-		
-		notifyCallbacks(position);
-	}
-	
-	/**
-	 * Get the positions
-	 * @return
-	 */
-	public List<Position> getPositions() {
-		synchronized (positions) {
-			return positions;
-		}
+	public void updateTrade(final Trade trade) {
+		trade.setApikey(bitfinexApiBroker.getApiKey());
+		notifyCallbacks(trade);
 	}
 	
 }
+	

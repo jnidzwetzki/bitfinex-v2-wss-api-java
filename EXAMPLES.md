@@ -15,7 +15,7 @@ BitfinexApiBroker bitfinexApiBroker = BitfinexApiBroker(apiKey, apiSecret);
 bitfinexApiBroker.connect();
 ```
 
-## Working with connection capabilities
+## Connection capabilities
 ```java
 final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
 
@@ -106,6 +106,15 @@ rawOrderbookManager.subscribeOrderbook(orderbookConfiguration);
 // To unsubscribe the raw orderbook stream
 rawOrderbookManager.removeOrderbookCallback(orderbookConfiguration, callback);
 rawOrderbookManager.unsubscribeOrderbook(orderbookConfiguration);
+```
+
+## Trade callbacks
+```java
+final TradeManager tradeManager = bitfinexApiBroker.getTradeManager();		
+		
+tradeManager.registerCallback((trade) -> {
+	System.out.format("Got trade callback (%s)\n", trade);
+}
 ```
 
 ## Market order

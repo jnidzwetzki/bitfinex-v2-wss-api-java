@@ -38,7 +38,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrderState;
 
-public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
+public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 
 	/**
 	 * The orders
@@ -174,7 +174,7 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 			}
 		};
 		
-		bitfinexApiBroker.getOrderManager().registerCallback(ordercallback);
+		registerCallback(ordercallback);
 		
 		try {
 			placeOrder(order);
@@ -201,7 +201,7 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			bitfinexApiBroker.getOrderManager().removeCallback(ordercallback);
+			removeCallback(ordercallback);
 		}		
 	}
 	
@@ -255,7 +255,7 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 			}
 		};
 		
-		bitfinexApiBroker.getOrderManager().registerCallback(ordercallback);
+		registerCallback(ordercallback);
 		
 		try {
 			logger.info("Cancel order: {}", id);
@@ -270,7 +270,7 @@ public class OrderManager extends AbstractSimpleCallbackManager<ExchangeOrder> {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			bitfinexApiBroker.getOrderManager().removeCallback(ordercallback);
+			removeCallback(ordercallback);
 		}
 	}
 	
