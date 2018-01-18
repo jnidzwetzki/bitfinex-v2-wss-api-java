@@ -42,7 +42,7 @@ public class OrderbookEntry {
 
 	@Override
 	public String toString() {
-		return "TradingOrderbook [price=" + price + ", count=" + count + ", amount=" + amount + "]";
+		return "OrderbookEntry [price=" + price + ", count=" + count + ", amount=" + amount + "]";
 	}
 
 }
