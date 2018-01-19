@@ -1,5 +1,6 @@
 # Version 0.5.4 (TBA)
 * New Feature: Introduced trade callbacks
+* Improvement: Updated currency pair trade sizes
 
 # Version 0.5.3 (16.01.2018)
 * New Feature: Introduced the RawOrderBook Manager
