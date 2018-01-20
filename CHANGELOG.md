@@ -1,4 +1,4 @@
-# Version 0.5.4 (TBA)
+# Version 0.5.4 (20.01.2018)
 * New Feature: Introduced trade callbacks
 * Improvement: Updated currency pair trade sizes
 
