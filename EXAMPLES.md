@@ -51,19 +51,21 @@ tickerManager.unsubscribeCandles(symbol);
 ## Subscribe ticker stream
 ```java
 // The consumer will be called on all received ticks for the symbol
-final BiConsumer<BitfinexCurrencyPair, Tick> callback = (symbol, tick) -> {
+final BiConsumer<BitfinexTickerSymbol, Tick> callback = (symbol, tick) -> {
 	System.out.format("Got tick (%s) for symbol (%s)\n", tick, symbol);
 };
 
+final BitfinexTickerSymbol symbol = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_USD);
+
 final QuoteManager quoteManager = bitfinexApiBroker.getQuoteManager();
-quoteManager.registerTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
-tickerManager.subscribeTicker(BitfinexCurrencyPair.BTC_USD);
+quoteManager.registerTickCallback(symbol, callback);
+tickerManager.subscribeTicker(symbol);
 
 [...]
 
 // To unsubscribe the ticker stream
-quoteManager.removeTickCallback(BitfinexCurrencyPair.BTC_USD, callback);
-tickerManager.unsubscribeTicker(BitfinexCurrencyPair.BTC_USD);
+quoteManager.removeTickCallback(symbol, callback);
+tickerManager.unsubscribeTicker(symbol);
 ```
 
 ## Subscribe orderbook stream

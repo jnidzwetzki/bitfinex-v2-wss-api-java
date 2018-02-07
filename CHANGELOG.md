@@ -1,4 +1,5 @@
 # Version 0.5.5 (TBA)
+* Bugfix: Ticker now returns a BitfinexTickerSymbol
 
 # Version 0.5.4 (20.01.2018)
 * New Feature: Introduced trade callbacks

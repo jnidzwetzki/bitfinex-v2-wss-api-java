@@ -29,7 +29,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.command.SubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.UnsubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 
 public class CommandsCallbackTest {
 	
@@ -116,7 +116,7 @@ public class CommandsCallbackTest {
 		
 		final SubscribedCallback subscribedCallback = new SubscribedCallback();
 		subscribedCallback.handleChannelData(bitfinexApiBroker, jsonObject);
-		Assert.assertTrue(bitfinexApiBroker.getFromChannelSymbolMap(30) instanceof BitfinexCurrencyPair);
+		Assert.assertTrue(bitfinexApiBroker.getFromChannelSymbolMap(30) instanceof BitfinexTickerSymbol);
 	
 		final String unsubscribedJsonString = "{\"event\":\"unsubscribed\",\"status\":\"OK\",\"chanId\":30}";
 		final JSONObject jsonUnsubscribedObject = new JSONObject(unsubscribedJsonString);

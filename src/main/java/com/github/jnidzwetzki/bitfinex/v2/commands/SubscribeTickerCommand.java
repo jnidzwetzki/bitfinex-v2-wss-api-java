@@ -20,14 +20,14 @@ package com.github.jnidzwetzki.bitfinex.v2.commands;
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 
 public class SubscribeTickerCommand extends AbstractAPICommand {
 
 	private String currencyPair;
 
-	public SubscribeTickerCommand(final BitfinexCurrencyPair currencyPair) {
-		this.currencyPair = currencyPair.toBitfinexString();
+	public SubscribeTickerCommand(final BitfinexTickerSymbol currencyPair) {
+		this.currencyPair = currencyPair.getBitfinexCurrencyPair().toBitfinexString();
 	}
 
 	@Override

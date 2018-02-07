@@ -26,6 +26,7 @@ import org.ta4j.core.Tick;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookEntry;
@@ -34,7 +35,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
@@ -205,11 +206,11 @@ public class IntegrationTest {
 		final CountDownLatch latch = new CountDownLatch(2);
 		try {
 			bitfinexClient.connect();
-			final BitfinexCurrencyPair symbol = BitfinexCurrencyPair.BTC_USD;
+			final BitfinexTickerSymbol symbol = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_USD);
 			
 			final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
 			
-			final BiConsumer<BitfinexCurrencyPair, Tick> callback = (c, o) -> {
+			final BiConsumer<BitfinexTickerSymbol, Tick> callback = (c, o) -> {
 				latch.countDown();
 			};
 			
@@ -265,7 +266,8 @@ public class IntegrationTest {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
 		bitfinexClient.connect();
 		
-		final BitfinexCurrencyPair symbol = BitfinexCurrencyPair.BTC_USD;
+		final BitfinexTickerSymbol symbol = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_USD);
+
 		final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
 		
 		orderbookManager.subscribeTicker(symbol);
@@ -275,7 +277,7 @@ public class IntegrationTest {
 		// Await at least 2 callbacks
 		final CountDownLatch latch = new CountDownLatch(2);
 		
-		final BiConsumer<BitfinexCurrencyPair, Tick> callback = (c, o) -> {
+		final BiConsumer<BitfinexTickerSymbol, Tick> callback = (c, o) -> {
 			latch.countDown();
 		};
 		

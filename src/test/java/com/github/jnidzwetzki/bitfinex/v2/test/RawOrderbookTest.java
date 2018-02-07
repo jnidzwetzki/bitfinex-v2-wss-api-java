@@ -22,8 +22,8 @@ import org.json.JSONTokener;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 
 public class RawOrderbookTest {
 

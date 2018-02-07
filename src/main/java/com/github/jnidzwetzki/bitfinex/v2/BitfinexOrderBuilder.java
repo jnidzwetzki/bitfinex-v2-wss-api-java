@@ -17,9 +17,9 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2;
 
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 
 public class BitfinexOrderBuilder {
 

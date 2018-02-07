@@ -68,8 +68,8 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
@@ -530,7 +530,7 @@ public class BitfinexApiBroker implements Closeable {
 				} else if(channelSymbol instanceof OrderbookConfiguration) {
 					final OrderbookHandler handler = new OrderbookHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
-				} else if(channelSymbol instanceof BitfinexCurrencyPair) {
+				} else if(channelSymbol instanceof BitfinexTickerSymbol) {
 					final ChannelCallbackHandler handler = new TickHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
 				} else {
@@ -558,7 +558,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * @param symbol
 	 * @return
 	 */
-	public boolean isTickerActive(final BitfinexCurrencyPair symbol) {
+	public boolean isTickerActive(final BitfinexTickerSymbol symbol) {
 		return getChannelForSymbol(symbol) != -1;
 	}
 
@@ -643,8 +643,8 @@ public class BitfinexApiBroker implements Closeable {
 		
 		// Resubscribe channels
 		for(BitfinexStreamSymbol symbol : oldChannelIdSymbolMap.values()) {
-			if(symbol instanceof BitfinexCurrencyPair) {
-				sendCommand(new SubscribeTickerCommand((BitfinexCurrencyPair) symbol));
+			if(symbol instanceof BitfinexTickerSymbol) {
+				sendCommand(new SubscribeTickerCommand((BitfinexTickerSymbol) symbol));
 			} else if(symbol instanceof BitfinexCandlestickSymbol) {
 				sendCommand(new SubscribeCandlesCommand((BitfinexCandlestickSymbol) symbol));
 			} else if(symbol instanceof OrderbookConfiguration) {

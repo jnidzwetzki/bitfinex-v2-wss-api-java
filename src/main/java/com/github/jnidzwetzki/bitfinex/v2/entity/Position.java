@@ -17,8 +17,6 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
-
 public class Position {
 
 	private final BitfinexCurrencyPair curreny;

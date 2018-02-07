@@ -26,8 +26,8 @@ import org.ta4j.core.Tick;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.Const;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 
 public class TickHandler implements ChannelCallbackHandler {
 
@@ -40,7 +40,7 @@ public class TickHandler implements ChannelCallbackHandler {
 	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker, 
 			final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
 
-		final BitfinexCurrencyPair currencyPair = (BitfinexCurrencyPair) channelSymbol;
+		final BitfinexTickerSymbol currencyPair = (BitfinexTickerSymbol) channelSymbol;
 		
 		// 0 = BID
 		// 2 = ASK

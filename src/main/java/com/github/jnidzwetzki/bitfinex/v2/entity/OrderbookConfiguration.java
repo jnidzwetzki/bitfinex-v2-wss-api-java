@@ -19,7 +19,6 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 
 public class OrderbookConfiguration implements BitfinexStreamSymbol {

@@ -15,9 +15,10 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.entity.symbol;
+package com.github.jnidzwetzki.bitfinex.v2.entity;
 
-public enum BitfinexCurrencyPair implements BitfinexStreamSymbol {
+public enum BitfinexCurrencyPair {
+	
 	BTC_USD("BTC", "USD", 0.002),
 	LTC_USD("LTC", "USD", 0.08),
 	LTC_BTC("LTC", "BTC", 0.08),

@@ -29,7 +29,8 @@ import org.mockito.Mockito;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.TickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 
 
@@ -50,7 +51,9 @@ public class TickHandlerTest {
 		
 		final String callbackValue = "[26123,41.4645776,26129,33.68138507,2931,0.2231,26129,144327.10936387,26149,13139]";
 		final JSONArray jsonArray = new JSONArray(callbackValue);
+		
 		final BitfinexCurrencyPair currencyPair = BitfinexCurrencyPair.BTC_USD;
+		final BitfinexTickerSymbol symbol = new BitfinexTickerSymbol(currencyPair);
 		
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
@@ -60,10 +63,10 @@ public class TickHandlerTest {
 
 		final CountDownLatch latch = new CountDownLatch(1);
 
-		tickerManager.registerTickCallback(currencyPair, (s, c) -> {
+		tickerManager.registerTickCallback(symbol, (s, c) -> {
 			
 			try {
-				Assert.assertEquals(currencyPair, s);
+				Assert.assertEquals(symbol, s);
 				Assert.assertEquals(26129, c.getOpenPrice().toDouble(), DELTA);
 				Assert.assertEquals(26129, c.getClosePrice().toDouble(), DELTA);
 				Assert.assertEquals(26129, c.getMaxPrice().toDouble(), DELTA);
@@ -78,18 +81,18 @@ public class TickHandlerTest {
 		});
 		
 		
-		Assert.assertEquals(-1, tickerManager.getHeartbeatForSymbol(currencyPair));
-		Assert.assertEquals(null, tickerManager.getLastTick(currencyPair));
+		Assert.assertEquals(-1, tickerManager.getHeartbeatForSymbol(symbol));
+		Assert.assertEquals(null, tickerManager.getLastTick(symbol));
 
 		final TickHandler tickHandler = new TickHandler();
 		final long now = System.currentTimeMillis();
-		tickHandler.handleChannelData(bitfinexApiBroker, currencyPair, jsonArray);
+		tickHandler.handleChannelData(bitfinexApiBroker, symbol, jsonArray);
 		
 		// Tick callbacks are handled async
 		latch.await();
-		Assert.assertTrue(now <= tickerManager.getHeartbeatForSymbol(currencyPair));
-		Assert.assertTrue(tickerManager.getLastTick(currencyPair) != null);
-		Assert.assertTrue(tickerManager.getLastTick(currencyPair) != null);
+		Assert.assertTrue(now <= tickerManager.getHeartbeatForSymbol(symbol));
+		Assert.assertTrue(tickerManager.getLastTick(symbol) != null);
+		Assert.assertTrue(tickerManager.getLastTick(symbol) != null);
 	}
 	
 }

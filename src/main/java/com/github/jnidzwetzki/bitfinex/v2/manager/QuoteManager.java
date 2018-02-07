@@ -32,8 +32,8 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 
 public class QuoteManager {
 	
@@ -50,7 +50,7 @@ public class QuoteManager {
 	/**
 	 * The BitfinexCurrencyPair callbacks
 	 */
-	private final BiConsumerCallbackManager<BitfinexCurrencyPair, Tick> tickerCallbacks;
+	private final BiConsumerCallbackManager<BitfinexTickerSymbol, Tick> tickerCallbacks;
 
 	/**
 	 * The Bitfinex Candlestick callbacks
@@ -118,7 +118,7 @@ public class QuoteManager {
 	 * @param currencyPair
 	 * @return 
 	 */
-	public Tick getLastTick(final BitfinexCurrencyPair currencyPair) {
+	public Tick getLastTick(final BitfinexTickerSymbol currencyPair) {
 		synchronized (lastTick) {
 			return lastTick.get(currencyPair);
 		}
@@ -140,8 +140,8 @@ public class QuoteManager {
 	 * @param callback
 	 * @throws APIException
 	 */
-	public void registerTickCallback(final BitfinexCurrencyPair symbol, 
-			final BiConsumer<BitfinexCurrencyPair, Tick> callback) throws APIException {
+	public void registerTickCallback(final BitfinexTickerSymbol symbol, 
+			final BiConsumer<BitfinexTickerSymbol, Tick> callback) throws APIException {
 		
 		tickerCallbacks.registerCallback(symbol, callback);
 	}
@@ -153,8 +153,8 @@ public class QuoteManager {
 	 * @return
 	 * @throws APIException
 	 */
-	public boolean removeTickCallback(final BitfinexCurrencyPair symbol, 
-			final BiConsumer<BitfinexCurrencyPair, Tick> callback) throws APIException {
+	public boolean removeTickCallback(final BitfinexTickerSymbol symbol, 
+			final BiConsumer<BitfinexTickerSymbol, Tick> callback) throws APIException {
 		
 		return tickerCallbacks.removeCallback(symbol, callback);
 	}
@@ -164,7 +164,7 @@ public class QuoteManager {
 	 * @param symbol
 	 * @param ticksArray
 	 */
-	public void handleTicksList(final BitfinexCurrencyPair symbol, final List<Tick> ticksBuffer) {
+	public void handleTicksList(final BitfinexTickerSymbol symbol, final List<Tick> ticksBuffer) {
 		tickerCallbacks.handleEventsList(symbol, ticksBuffer);
 	}
 	
@@ -173,7 +173,7 @@ public class QuoteManager {
 	 * @param symbol
 	 * @param tick
 	 */
-	public void handleNewTick(final BitfinexCurrencyPair currencyPair, final Tick tick) {
+	public void handleNewTick(final BitfinexTickerSymbol currencyPair, final Tick tick) {
 		
 		synchronized (lastTick) {
 			lastTick.put(currencyPair, tick);
@@ -185,27 +185,27 @@ public class QuoteManager {
 	
 	/**
 	 * Subscribe a ticker
-	 * @param currencyPair
+	 * @param tickerSymbol
 	 */
-	public void subscribeTicker(final BitfinexCurrencyPair currencyPair) {
-		final SubscribeTickerCommand command = new SubscribeTickerCommand(currencyPair);
+	public void subscribeTicker(final BitfinexTickerSymbol tickerSymbol) {
+		final SubscribeTickerCommand command = new SubscribeTickerCommand(tickerSymbol);
 		bitfinexApiBroker.sendCommand(command);
 	}
 	
 	/**
 	 * Unsubscribe a ticker
-	 * @param currencyPair
+	 * @param tickerSymbol
 	 */
-	public void unsubscribeTicker(final BitfinexCurrencyPair currencyPair) {		
-		final int channel = bitfinexApiBroker.getChannelForSymbol(currencyPair);
+	public void unsubscribeTicker(final BitfinexTickerSymbol tickerSymbol) {		
+		final int channel = bitfinexApiBroker.getChannelForSymbol(tickerSymbol);
 		
 		if(channel == -1) {
-			throw new IllegalArgumentException("Unknown symbol: " + currencyPair);
+			throw new IllegalArgumentException("Unknown symbol: " + tickerSymbol);
 		}
 		
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
 		bitfinexApiBroker.sendCommand(command);
-		bitfinexApiBroker.removeChannelForSymbol(currencyPair);
+		bitfinexApiBroker.removeChannelForSymbol(tickerSymbol);
 	}
 	
 	/**
