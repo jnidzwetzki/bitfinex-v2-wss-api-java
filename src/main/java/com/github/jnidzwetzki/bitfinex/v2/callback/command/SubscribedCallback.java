@@ -26,7 +26,8 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTradeSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 
 public class SubscribedCallback implements CommandCallbackHandler {
 
@@ -45,7 +46,13 @@ public class SubscribedCallback implements CommandCallbackHandler {
 		switch(channel) {
 		case "ticker":
 			final String symbol = jsonObject.getString("symbol");
-			final BitfinexTradeSymbol currencyPair = BitfinexTradeSymbol.fromBitfinexString(symbol);
+			final BitfinexTickerSymbol tickerSymbol = BitfinexTickerSymbol.fromBitfinexString(symbol);
+			logger.info("Registering symbol {} on channel {}", tickerSymbol, channelId);
+			bitfinexApiBroker.addToChannelSymbolMap(channelId, tickerSymbol);
+			break;
+		case "trades":
+			final String symbol2 = jsonObject.getString("symbol");
+			final BitfinexExecutedTradeSymbol currencyPair = BitfinexExecutedTradeSymbol.fromBitfinexString(symbol2);
 			logger.info("Registering symbol {} on channel {}", currencyPair, channelId);
 			bitfinexApiBroker.addToChannelSymbolMap(channelId, currencyPair);
 			break;

@@ -19,20 +19,20 @@ package com.github.jnidzwetzki.bitfinex.v2.entity.symbol;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 
-public class BitfinexTradeSymbol implements BitfinexStreamSymbol {
+public class BitfinexExecutedTradeSymbol implements BitfinexStreamSymbol {
 	
 	/**
 	 * The currency pair
 	 */
 	private final BitfinexCurrencyPair bitfinexCurrencyPair;
 
-	public BitfinexTradeSymbol(final BitfinexCurrencyPair bitfinexCurrencyPair) {
+	public BitfinexExecutedTradeSymbol(final BitfinexCurrencyPair bitfinexCurrencyPair) {
 		this.bitfinexCurrencyPair = bitfinexCurrencyPair;
 	}
 
 	@Override
 	public String toString() {
-		return "BitfinexTradeSymbol [bitfinexCurrencyPair=" + bitfinexCurrencyPair + "]";
+		return "BitfinexExecutedTradeSymbol [bitfinexCurrencyPair=" + bitfinexCurrencyPair + "]";
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class BitfinexTradeSymbol implements BitfinexStreamSymbol {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		BitfinexTradeSymbol other = (BitfinexTradeSymbol) obj;
+		BitfinexExecutedTradeSymbol other = (BitfinexExecutedTradeSymbol) obj;
 		if (bitfinexCurrencyPair != other.bitfinexCurrencyPair)
 			return false;
 		return true;
@@ -62,9 +62,9 @@ public class BitfinexTradeSymbol implements BitfinexStreamSymbol {
 	 * @param symbol
 	 * @return
 	 */
-	public static BitfinexTradeSymbol fromBitfinexString(final String symbol) {
+	public static BitfinexExecutedTradeSymbol fromBitfinexString(final String symbol) {
 		final BitfinexCurrencyPair bitfinexCurrencyPair = BitfinexCurrencyPair.fromSymbolString(symbol);
-		return new BitfinexTradeSymbol(bitfinexCurrencyPair);
+		return new BitfinexExecutedTradeSymbol(bitfinexCurrencyPair);
 	}
 
 	/**

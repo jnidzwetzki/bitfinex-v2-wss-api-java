@@ -32,7 +32,7 @@ public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 
 	@Override
 	public String toString() {
-		return "BitfinexTradeSymbol [bitfinexCurrencyPair=" + bitfinexCurrencyPair + "]";
+		return "BitfinexTickerSymbol [bitfinexCurrencyPair=" + bitfinexCurrencyPair + "]";
 	}
 
 	@Override

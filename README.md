@@ -13,7 +13,7 @@
   <img alt="Join the chat at https://gitter.im/bitfinex-v2-wss-api-java/Lobby" src="https://badges.gitter.im/Join%20Chat.svg">
   </a>
 
-This project contains a client for the [Bitfinex WebSocket API (v2)](https://docs.bitfinex.com/v2/reference). At the moment, candles, ticks and (raw) orderbook streams are supported. In addition, orders, and wallets are also implemented.
+This project contains a client for the [Bitfinex WebSocket API (v2)](https://docs.bitfinex.com/v2/reference). At the moment, candles, ticks, executed trades and (raw) orderbook streams are supported. In addition, orders, and wallets are also implemented.
 
 In contrast to other implementations, this project uses the WSS streaming API of Bitfinex. Most other projects are poll the REST-API periodically, which leads to delays in data processing. In this implementation, you can register callback methods on ticks, candles or orders. The callbacks are executed, as soon as new data is received from Bitfinex (see the examples section for more details).
 

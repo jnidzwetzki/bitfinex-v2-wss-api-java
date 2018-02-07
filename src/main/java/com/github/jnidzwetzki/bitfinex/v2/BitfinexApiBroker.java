@@ -46,6 +46,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.api.TradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.WalletHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.CandlestickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ExecutedTradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.OrderbookHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.RawOrderbookHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.TickHandler;
@@ -62,14 +63,17 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeRawOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.manager.ExecutedTradeManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
@@ -105,6 +109,11 @@ public class BitfinexApiBroker implements Closeable {
 	 * The tick manager
 	 */
 	private final QuoteManager quoteManager;
+	
+	/**
+	 * The executed trades manager
+	 */
+	private final ExecutedTradeManager executedTradeManager;
 	
 	/**
 	 * The trading orderbook manager
@@ -214,6 +223,7 @@ public class BitfinexApiBroker implements Closeable {
 		this.channelIdSymbolMap = new HashMap<>();
 		this.lastHeatbeat = new AtomicLong();
 		this.quoteManager = new QuoteManager(this);
+		this.executedTradeManager = new ExecutedTradeManager(this);
 		this.orderbookManager = new OrderbookManager(this);
 		this.rawOrderbookManager = new RawOrderbookManager(this);
 		this.orderManager = new OrderManager(this);
@@ -509,18 +519,22 @@ public class BitfinexApiBroker implements Closeable {
 			return;
 		}
 		
-		if(jsonArray.get(1) instanceof String) {
-			final String value = jsonArray.getString(1);
-			
-			if("hb".equals(value)) {
-				quoteManager.updateChannelHeartbeat(channelSymbol);		
-			} else {
-				logger.error("Unable to process: {}", jsonArray);
-			}
-		} else {	
-			final JSONArray subarray = jsonArray.getJSONArray(1);			
-
-			try {
+		try {
+			if(jsonArray.get(1) instanceof String) {
+				final String value = jsonArray.getString(1);
+				
+				if("hb".equals(value)) {
+					quoteManager.updateChannelHeartbeat(channelSymbol);		
+				} else if("te".equals(value) || "tu".equals(value)) {
+					final JSONArray subarray = jsonArray.getJSONArray(2);			
+					final ChannelCallbackHandler handler = new ExecutedTradeHandler();
+					handler.handleChannelData(this, channelSymbol, subarray);
+				} else {
+					logger.error("Unable to process: {}", jsonArray);
+				}
+			} else {	
+				final JSONArray subarray = jsonArray.getJSONArray(1);			
+				
 				if(channelSymbol instanceof BitfinexCandlestickSymbol) {
 					final ChannelCallbackHandler handler = new CandlestickHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
@@ -533,12 +547,16 @@ public class BitfinexApiBroker implements Closeable {
 				} else if(channelSymbol instanceof BitfinexTickerSymbol) {
 					final ChannelCallbackHandler handler = new TickHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
+				} else if(channelSymbol instanceof BitfinexExecutedTradeSymbol) {
+					final ChannelCallbackHandler handler = new ExecutedTradeHandler();
+					handler.handleChannelData(this, channelSymbol, subarray);
 				} else {
 					logger.error("Unknown stream type: {}", channelSymbol);
 				}
-			} catch (APIException e) {
-				logger.error("Got exception while handling callback", e);
+	
 			}
+		} catch (APIException e) {
+			logger.error("Got exception while handling callback", e);
 		}
 	}
 
@@ -645,6 +663,8 @@ public class BitfinexApiBroker implements Closeable {
 		for(BitfinexStreamSymbol symbol : oldChannelIdSymbolMap.values()) {
 			if(symbol instanceof BitfinexTickerSymbol) {
 				sendCommand(new SubscribeTickerCommand((BitfinexTickerSymbol) symbol));
+			} else if(symbol instanceof BitfinexExecutedTradeSymbol) {
+				sendCommand(new SubscribeTradesCommand((BitfinexExecutedTradeSymbol) symbol));
 			} else if(symbol instanceof BitfinexCandlestickSymbol) {
 				sendCommand(new SubscribeCandlesCommand((BitfinexCandlestickSymbol) symbol));
 			} else if(symbol instanceof OrderbookConfiguration) {
@@ -800,6 +820,14 @@ public class BitfinexApiBroker implements Closeable {
 		return positionManager;
 	}
 	
+	/**
+	 * Get the executed trade manager
+	 * @return
+	 */
+	public ExecutedTradeManager getExecutedTradeManager() {
+		return executedTradeManager;
+	}
+
 	/**
 	 * Set new connection capabilities
 	 * @param capabilities

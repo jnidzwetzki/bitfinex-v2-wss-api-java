@@ -27,6 +27,7 @@ import org.ta4j.core.Tick;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.ExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookEntry;
@@ -35,9 +36,11 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
+import com.github.jnidzwetzki.bitfinex.v2.manager.ExecutedTradeManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 
 public class IntegrationTest {
@@ -194,6 +197,44 @@ public class IntegrationTest {
 			bitfinexClient.close();
 		}
 	}
+	
+	/**
+	 * Test executed trades stream
+	 */
+	@Test(timeout=60000)
+	public void testExecutedTradesStream() {
+		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
+	
+		// Await at least 2 callbacks
+		final CountDownLatch latch = new CountDownLatch(2);
+		try {
+			bitfinexClient.connect();
+			final BitfinexExecutedTradeSymbol symbol = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.BTC_USD);
+			
+			final ExecutedTradeManager executedTradeManager = bitfinexClient.getExecutedTradeManager();
+			
+			final BiConsumer<BitfinexExecutedTradeSymbol, ExecutedTrade> callback = (c, o) -> {
+				latch.countDown();
+			};
+			
+			executedTradeManager.registerExecutedTradeCallback(symbol, callback);
+			executedTradeManager.subscribeExecutedTrades(symbol);
+			latch.await();
+
+			executedTradeManager.unsubscribeExecutedTrades(symbol);
+
+			Assert.assertTrue(executedTradeManager.removeExecutedTradeCallback(symbol, callback));
+			Assert.assertFalse(executedTradeManager.removeExecutedTradeCallback(symbol, callback));
+
+		} catch (Exception e) {
+			// Should not happen
+			e.printStackTrace();
+			Assert.assertTrue(false);
+		} finally {
+			bitfinexClient.close();
+		}
+	}
+	
 	
 	/**
 	 * Test the tick stream

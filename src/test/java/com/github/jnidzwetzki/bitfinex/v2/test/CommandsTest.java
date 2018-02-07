@@ -32,7 +32,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTradeSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
 
 public class CommandsTest {
 
@@ -65,7 +65,7 @@ public class CommandsTest {
 				new PingCommand(), 
 				new SubscribeCandlesCommand(candleSymbol),
 				new SubscribeTickerCommand(new BitfinexTickerSymbol(BitfinexCurrencyPair.BCH_USD)),
-				new SubscribeTradesCommand(new BitfinexTradeSymbol(BitfinexCurrencyPair.BAT_BTC)),
+				new SubscribeTradesCommand(new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.BAT_BTC)),
 				new SubscribeOrderbookCommand(orderbookConfiguration),
 				new SubscribeRawOrderbookCommand(rawOrderbookConfiguration),
 				new UnsubscribeChannelCommand(12));
