@@ -65,8 +65,8 @@ public class ExecutedTradesHandlerTest {
 		executedTradeManager.registerExecutedTradeCallback(symbol, (s, c) -> {
 			try {
 				Assert.assertEquals(symbol, s);
-				Assert.assertEquals(190631057, c.getTimestamp(), DELTA);
-				Assert.assertEquals(1518037080162l, c.getAmount(), DELTA);
+				Assert.assertEquals(190631057, c.getTimestamp());
+				Assert.assertEquals(1518037080162l, c.getAmount());
 				Assert.assertEquals(0.007, c.getPrice(), DELTA);
 				Assert.assertEquals(8175.9, c.getRate(), DELTA);
 				latch.countDown();
@@ -107,13 +107,13 @@ public class ExecutedTradesHandlerTest {
 			try {
 				Assert.assertEquals(symbol, s);
 				if(latch.getCount() == 2) {
-					Assert.assertEquals(190631057, c.getTimestamp(), DELTA);
-					Assert.assertEquals(1518037080162l, c.getAmount(), DELTA);
+					Assert.assertEquals(190631057, c.getTimestamp());
+					Assert.assertEquals(1518037080162l, c.getAmount());
 					Assert.assertEquals(0.007, c.getPrice(), DELTA);
 					Assert.assertEquals(8175.9, c.getRate(), DELTA);
 				} else if(latch.getCount() == 1) {
-					Assert.assertEquals(190631052, c.getTimestamp(), DELTA);
-					Assert.assertEquals(1518037080110l, c.getAmount(), DELTA);
+					Assert.assertEquals(190631052, c.getTimestamp());
+					Assert.assertEquals(1518037080110l, c.getAmount());
 					Assert.assertEquals(-0.25, c.getPrice(), DELTA);
 					Assert.assertEquals(8175.8, c.getRate(), DELTA);
 				} else {
