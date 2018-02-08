@@ -1,5 +1,7 @@
 # Examples
 
+If you have any questions about the meaning of the fields, see the Bitfinex [API documentation](https://docs.bitfinex.com/v2/docs/ws-general) for further information.
+
 ## Connecting and authorizing
 
 ```java 
