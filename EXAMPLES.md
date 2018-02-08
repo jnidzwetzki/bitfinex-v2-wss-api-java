@@ -148,6 +148,8 @@ final BitfinexOrder order = BitfinexOrderBuilder
 bitfinexApiBroker.getOrderManager().placeOrder(order);
 ```
 
+_Please note:_ A negative amount will sell the currency pair, a positive amount will buy the currency pair. 
+
 ## Order group
 ```java
 final CurrencyPair currencyPair = CurrencyPair.BTC_USD;
