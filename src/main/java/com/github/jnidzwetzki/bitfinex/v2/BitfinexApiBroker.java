@@ -73,7 +73,6 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbo
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.manager.ExecutedTradeManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
@@ -109,12 +108,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * The tick manager
 	 */
 	private final QuoteManager quoteManager;
-	
-	/**
-	 * The executed trades manager
-	 */
-	private final ExecutedTradeManager executedTradeManager;
-	
+
 	/**
 	 * The trading orderbook manager
 	 */
@@ -223,7 +217,6 @@ public class BitfinexApiBroker implements Closeable {
 		this.channelIdSymbolMap = new HashMap<>();
 		this.lastHeatbeat = new AtomicLong();
 		this.quoteManager = new QuoteManager(this);
-		this.executedTradeManager = new ExecutedTradeManager(this);
 		this.orderbookManager = new OrderbookManager(this);
 		this.rawOrderbookManager = new RawOrderbookManager(this);
 		this.orderManager = new OrderManager(this);
@@ -818,14 +811,6 @@ public class BitfinexApiBroker implements Closeable {
 	 */
 	public PositionManager getPositionManager() {
 		return positionManager;
-	}
-	
-	/**
-	 * Get the executed trade manager
-	 * @return
-	 */
-	public ExecutedTradeManager getExecutedTradeManager() {
-		return executedTradeManager;
 	}
 
 	/**

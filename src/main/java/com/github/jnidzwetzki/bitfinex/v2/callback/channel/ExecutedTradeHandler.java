@@ -80,6 +80,6 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
 			executedTrade.setPeriod(period);
 		}
 				
-		bitfinexApiBroker.getExecutedTradeManager().handleExecutedTradeEntry(symbol, executedTrade);
+		bitfinexApiBroker.getQuoteManager().handleExecutedTradeEntry(symbol, executedTrade);
 	}
 }

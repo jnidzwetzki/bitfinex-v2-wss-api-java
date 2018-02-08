@@ -31,7 +31,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ExecutedTradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.manager.ExecutedTradeManager;
+import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 
 public class ExecutedTradesHandlerTest {
 
@@ -57,12 +57,12 @@ public class ExecutedTradesHandlerTest {
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
-		final ExecutedTradeManager executedTradeManager = new ExecutedTradeManager(bitfinexApiBroker);
-		Mockito.when(bitfinexApiBroker.getExecutedTradeManager()).thenReturn(executedTradeManager);
+		final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker);
+		Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(quoteManager);
 
 		final CountDownLatch latch = new CountDownLatch(1);
 
-		executedTradeManager.registerExecutedTradeCallback(symbol, (s, c) -> {
+		quoteManager.registerExecutedTradeCallback(symbol, (s, c) -> {
 			try {
 				Assert.assertEquals(symbol, s);
 				Assert.assertEquals(190631057, c.getTimestamp());
@@ -98,12 +98,12 @@ public class ExecutedTradesHandlerTest {
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
-		final ExecutedTradeManager executedTradeManager = new ExecutedTradeManager(bitfinexApiBroker);
-		Mockito.when(bitfinexApiBroker.getExecutedTradeManager()).thenReturn(executedTradeManager);
+		final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker);
+		Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(quoteManager);
 
 		final CountDownLatch latch = new CountDownLatch(2);
 
-		executedTradeManager.registerExecutedTradeCallback(symbol, (s, c) -> {
+		quoteManager.registerExecutedTradeCallback(symbol, (s, c) -> {
 			try {
 				Assert.assertEquals(symbol, s);
 				if(latch.getCount() == 2) {
