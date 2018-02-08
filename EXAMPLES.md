@@ -140,15 +140,8 @@ tradeManager.registerCallback((trade) -> {
 ```
 
 ## Placing orders
-```java
-final BitfinexOrder order = BitfinexOrderBuilder
-		.create(currency, BitfinexOrderType.MARKET, 0.002)
-		.build();
-		
-bitfinexApiBroker.getOrderManager().placeOrder(order);
-```
 
-_Please note:_ A negative amount will sell the currency pair, a positive amount will buy the currency pair. 
+The following order types are supported:
 
 |   Ordertype   |            API Constant Marketplace          |          API Constant Margin         |
 | ------------- | -------------------------------------------- | ------------------------------------ |
@@ -158,6 +151,16 @@ _Please note:_ A negative amount will sell the currency pair, a positive amount 
 | Trailing stop | ``BitfinexOrderType.EXCHANGE_TRAILING_STOP`` | ``BitfinexOrderType.TRAILING_STOP``  |
 | Fill or kill  | ``BitfinexOrderType.EXCHANGE_FOK``           | ``BitfinexOrderType.FOK``            |
 | Stop Limit    | ``BitfinexOrderType.EXCHANGE_STOP_LIMIT``    | ``BitfinexOrderType.STOP_LIMIT``     |
+
+_Please note:_ A negative amount will sell the currency pair, a positive amount will buy the currency pair. 
+
+```java
+final BitfinexOrder order = BitfinexOrderBuilder
+		.create(currency, BitfinexOrderType.MARKET, 0.002)
+		.build();
+		
+bitfinexApiBroker.getOrderManager().placeOrder(order);
+```
 
 ## Order group
 ```java
