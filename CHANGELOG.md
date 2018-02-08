@@ -1,3 +1,5 @@
+# Version 0.5.6 (TBA)
+
 # Version 0.5.5 (08.02.2018)
 * New Feature: Provide a callback for all executed trades (closes #11)
 * Improvement: Updated dependencies
