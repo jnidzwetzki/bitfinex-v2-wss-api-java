@@ -20,8 +20,8 @@ package com.github.jnidzwetzki.bitfinex.v2.callback.channel;
 import java.time.ZonedDateTime;
 
 import org.json.JSONArray;
-import org.ta4j.core.BaseTick;
-import org.ta4j.core.Tick;
+import org.ta4j.core.BaseBar;
+import org.ta4j.core.Bar;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.Const;
@@ -48,7 +48,7 @@ public class TickHandler implements ChannelCallbackHandler {
 		final double price = jsonArray.getDouble(6);
 		
 		// Volume is set to 0, because the ticker contains only the daily volume
-		final Tick tick = new BaseTick(ZonedDateTime.now(Const.BITFINEX_TIMEZONE), price, price, 
+		final Bar tick = new BaseBar(ZonedDateTime.now(Const.BITFINEX_TIMEZONE), price, price, 
 				price, price, 0);
 		
 		bitfinexApiBroker.getQuoteManager().handleNewTick(currencyPair, tick);
