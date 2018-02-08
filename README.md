@@ -32,7 +32,7 @@ Add this to your pom.xml
 <dependency>
 	<groupId>com.github.jnidzwetzki</groupId>
 	<artifactId>bitfinex-v2-wss-api</artifactId>
-	<version>0.5.4</version>
+	<version>0.5.5</version>
 </dependency>
 ```
 
