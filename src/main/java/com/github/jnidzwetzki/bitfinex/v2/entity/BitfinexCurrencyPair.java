@@ -107,32 +107,45 @@ public enum BitfinexCurrencyPair {
 	/**
 	 * The name of the first currency 
 	 */
-	protected final String currency1;
+	private final String currency1;
 	
 	/**
 	 * The name of the second currency
 	 */
-	protected final String currency2;
+	private final String currency2;
 	
 	/**
-	 * The minimal order size
+	 * The minimum order size
 	 */
-	protected final double minimalOrderSize;
+	private double minimumOrderSize;
 
-	private BitfinexCurrencyPair(final String pair1, final String pair2, final double minimalOrderSize) {
+	private BitfinexCurrencyPair(final String pair1, final String pair2, final double minimumOrderSize) {
 		this.currency1 = pair1;
 		this.currency2 = pair2;
-		this.minimalOrderSize = minimalOrderSize;
+		this.minimumOrderSize = minimumOrderSize;
+	}
+
+	/**
+	 * Get the minimum order size
+	 * @return
+	 */
+	public double getMinimumOrderSize() {
+		return minimumOrderSize;
 	}
 	
-	public String toBitfinexString() {
-		return "t" + currency1 + currency2;
+	/**
+	 * Set the minimum order size
+	 * @param minimumOrderSize
+	 */
+	public void setMinimumOrderSize(final double minimumOrderSize) {
+		this.minimumOrderSize = minimumOrderSize;
 	}
 	
-	public double getMinimalOrderSize() {
-		return minimalOrderSize;
-	}
-	
+	/**
+	 * Construct from string
+	 * @param symbolString
+	 * @return
+	 */
 	public static BitfinexCurrencyPair fromSymbolString(final String symbolString) {
 		for (BitfinexCurrencyPair curency : BitfinexCurrencyPair.values()) {
 			if (curency.toBitfinexString().equalsIgnoreCase(symbolString)) {
@@ -141,11 +154,27 @@ public enum BitfinexCurrencyPair {
 		}
 		throw new IllegalArgumentException("Unable to find currency pair for: " + symbolString);
 	}
-
+	
+	/**
+	 * Convert to bitfinex string
+	 * @return
+	 */
+	public String toBitfinexString() {
+		return "t" + currency1 + currency2;
+	}
+	
+	/**
+	 * Get the first currency
+	 * @return
+	 */
 	public String getCurrency1() {
 		return currency1;
 	}
 	
+	/**
+	 * Set the second currency
+	 * @return
+	 */
 	public String getCurrency2() {
 		return currency2;
 	}
