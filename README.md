@@ -28,7 +28,7 @@ In contrast to other implementations, this project uses the WSS streaming API of
 * For reporting issues, visit our [bug tracking system](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/issues)
 * For contributing, see our [contributing guide](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/CONTRIBUTING.md)
 
-# Adding the library to your project
+# Usage
 
 ## Maven
 Add these lines to your ``pom.xml`` file
