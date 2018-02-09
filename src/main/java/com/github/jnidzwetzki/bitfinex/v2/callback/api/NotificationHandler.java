@@ -51,18 +51,32 @@ public class NotificationHandler implements APICallbackHandler {
 				final String stateValue = notifificationValue.optString(7);
 
 				if("ERROR".equals(state)) {
-					final ExchangeOrder exchangeOrder = new ExchangeOrder();
-					exchangeOrder.setApikey(bitfinexApiBroker.getApiKey());
-					exchangeOrder.setCid(order.getLong(2));
-					exchangeOrder.setSymbol(order.getString(3));
-					exchangeOrder.setState(ExchangeOrderState.STATE_ERROR);
-					
-					logger.error("State for order {} is {}, reason is {}", exchangeOrder.getOrderId(), state, stateValue);
-
-					bitfinexApiBroker.getOrderManager().updateOrder(exchangeOrder);
+					handleErrorNotification(bitfinexApiBroker, order, state, stateValue);
 				}
 			}
 		}
+	}
+
+	/**
+	 * Handle the error notification
+	 * 
+	 * @param bitfinexApiBroker
+	 * @param order
+	 * @param state
+	 * @param stateValue
+	 */
+	private void handleErrorNotification(final BitfinexApiBroker bitfinexApiBroker, 
+			final JSONArray order, final String state, final String stateValue) {
+		
+		final ExchangeOrder exchangeOrder = new ExchangeOrder();
+		exchangeOrder.setApikey(bitfinexApiBroker.getApiKey());
+		exchangeOrder.setCid(order.getLong(2));
+		exchangeOrder.setSymbol(order.getString(3));
+		exchangeOrder.setState(ExchangeOrderState.STATE_ERROR);
+		
+		logger.error("State for order {} is {}, reason is {}", exchangeOrder.getOrderId(), state, stateValue);
+
+		bitfinexApiBroker.getOrderManager().updateOrder(exchangeOrder);
 	}
 
 }
