@@ -518,10 +518,12 @@ public class BitfinexApiBroker implements Closeable {
 				
 				if("hb".equals(value)) {
 					quoteManager.updateChannelHeartbeat(channelSymbol);		
-				} else if("te".equals(value) || "tu".equals(value)) {
+				} else if("te".equals(value)) {
 					final JSONArray subarray = jsonArray.getJSONArray(2);			
 					final ChannelCallbackHandler handler = new ExecutedTradeHandler();
 					handler.handleChannelData(this, channelSymbol, subarray);
+				} else if("tu".equals(value)) {
+					// Ignore tu messages (see issue #13)
 				} else {
 					logger.error("Unable to process: {}", jsonArray);
 				}

@@ -1,6 +1,7 @@
 # Version 0.5.6 (TBA)
-* Improvement: Updates to ta4j 0.11 (Thanks brunocvcunha)
+* Improvement: Updates to ta4j 0.11 (Thanks brunocvcunha / closes #14)
 * Bugfix: Fixed executed trades parser (closes #12)
+* Bugfix: "tu" messages are not forwarded on executed trades (closes #13)
 
 # Version 0.5.5 (08.02.2018)
 * New Feature: Provide a callback for all executed trades (closes #11)
