@@ -45,24 +45,48 @@ public class AuthCallbackHandler implements CommandCallbackHandler {
 		logger.info("Authentification callback state {}", status);
 		
 		if(status.equals("OK")) {
-			bitfinexApiBroker.setAuthenticated(true);
-			final ConnectionCapabilities capabilities = new ConnectionCapabilities(jsonObject);
-			bitfinexApiBroker.setCapabilities(capabilities);
-			
-			if(connectionReadyLatch != null) {
+			authSuccessfully(bitfinexApiBroker, jsonObject, connectionReadyLatch);
+		} else {
+			authFailed(bitfinexApiBroker, jsonObject, connectionReadyLatch);
+		}
+	}
+
+	/**
+	 * Auth failed
+	 * 
+	 * @param bitfinexApiBroker
+	 * @param jsonObject
+	 * @param connectionReadyLatch
+	 */
+	private void authFailed(final BitfinexApiBroker bitfinexApiBroker, final JSONObject jsonObject,
+			final CountDownLatch connectionReadyLatch) {
+		
+		bitfinexApiBroker.setAuthenticated(false);
+		logger.error("Unable to authenticate: {}", jsonObject.toString());
+		
+		if(connectionReadyLatch != null) {
+			// No other callbacks are send from the server after a failed auth call
+			while(connectionReadyLatch.getCount() != 0) {
 				connectionReadyLatch.countDown();
 			}
-			
-		} else {
-			bitfinexApiBroker.setAuthenticated(false);
-			logger.error("Unable to authenticate: {}", jsonObject.toString());
-			
-			if(connectionReadyLatch != null) {
-				// No other callbacks are send from the server after a failed auth call
-				while(connectionReadyLatch.getCount() != 0) {
-					connectionReadyLatch.countDown();
-				}
-			}
+		}
+	}
+
+	/**
+	 * Auth was successfully
+	 * 
+	 * @param bitfinexApiBroker
+	 * @param jsonObject
+	 * @param connectionReadyLatch
+	 */
+	private void authSuccessfully(final BitfinexApiBroker bitfinexApiBroker, final JSONObject jsonObject,
+			final CountDownLatch connectionReadyLatch) {
+		bitfinexApiBroker.setAuthenticated(true);
+		final ConnectionCapabilities capabilities = new ConnectionCapabilities(jsonObject);
+		bitfinexApiBroker.setCapabilities(capabilities);
+		
+		if(connectionReadyLatch != null) {
+			connectionReadyLatch.countDown();
 		}
 	}
 }
