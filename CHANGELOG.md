@@ -1,6 +1,7 @@
 # Version 0.5.6 (TBA)
 * Improvement: Updated to ta4j 0.11 (Thanks brunocvcunha / closes #14)
 * Improvement: Use codeclimate.com for code maintainability checks
+* Improvement: Improved code maintainability as suggested by codeclimate.com
 * Bugfix: Fixed executed trades parser (closes #12)
 * Bugfix: "tu" messages are not forwarded on executed trades (closes #13)
 
