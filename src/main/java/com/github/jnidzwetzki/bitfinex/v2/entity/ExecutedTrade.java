@@ -19,8 +19,9 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 public class ExecutedTrade {
 	
+	private long id;
 	private long timestamp;
-	private long amount;
+	private float amount;
 	private float price;
 	private float rate;
 	private int period;
@@ -36,11 +37,11 @@ public class ExecutedTrade {
 		this.timestamp = timestamp;
 	}
 
-	public long getAmount() {
+	public float getAmount() {
 		return amount;
 	}
 
-	public void setAmount(final long amount) {
+	public void setAmount(final float amount) {
 		this.amount = amount;
 	}
 
@@ -68,10 +69,18 @@ public class ExecutedTrade {
 		this.period = period;
 	}
 
+	public long getId() {
+		return id;
+	}
+
+	public void setId(final long id) {
+		this.id = id;
+	}
+
 	@Override
 	public String toString() {
-		return "ExecutedTrade [timestamp=" + timestamp + ", amount=" + amount + ", price=" + price + ", rate=" + rate
-				+ ", period=" + period + "]";
+		return "ExecutedTrade [id=" + id + ", timestamp=" + timestamp + ", amount=" + amount + ", price=" + price
+				+ ", rate=" + rate + ", period=" + period + "]";
 	}
-	
+
 }

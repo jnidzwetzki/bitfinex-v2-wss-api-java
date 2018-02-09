@@ -63,21 +63,25 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
 		
 		final ExecutedTrade executedTrade = new ExecutedTrade();
 		
-		final long timestamp = jsonArray.getNumber(0).longValue();
+		final long id = jsonArray.getNumber(0).longValue();
+		executedTrade.setId(id);
+		
+		final long timestamp = jsonArray.getNumber(1).longValue();
 		executedTrade.setTimestamp(timestamp);
 		
-		final long amount = jsonArray.getNumber(1).longValue();
+		final float amount = jsonArray.getNumber(2).floatValue();
 		executedTrade.setAmount(amount);
 		
-		final float price = jsonArray.getNumber(2).floatValue();
-		executedTrade.setPrice(price);
-		
-		final float rate = jsonArray.getNumber(3).floatValue();
-		executedTrade.setRate(rate);
-		
+		// Funding or Currency
 		if(jsonArray.optNumber(4) != null) {
+			final float rate = jsonArray.getNumber(3).floatValue();
+			executedTrade.setRate(rate);
+			
 			final int period = jsonArray.getNumber(4).intValue();
 			executedTrade.setPeriod(period);
+		} else {
+			final float price = jsonArray.getNumber(3).floatValue();
+			executedTrade.setPrice(price);
 		}
 				
 		bitfinexApiBroker.getQuoteManager().handleExecutedTradeEntry(symbol, executedTrade);
