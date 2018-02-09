@@ -514,44 +514,66 @@ public class BitfinexApiBroker implements Closeable {
 		
 		try {
 			if(jsonArray.get(1) instanceof String) {
-				final String value = jsonArray.getString(1);
-				
-				if("hb".equals(value)) {
-					quoteManager.updateChannelHeartbeat(channelSymbol);		
-				} else if("te".equals(value)) {
-					final JSONArray subarray = jsonArray.getJSONArray(2);			
-					final ChannelCallbackHandler handler = new ExecutedTradeHandler();
-					handler.handleChannelData(this, channelSymbol, subarray);
-				} else if("tu".equals(value)) {
-					// Ignore tu messages (see issue #13)
-				} else {
-					logger.error("Unable to process: {}", jsonArray);
-				}
+				handleChannelDataString(jsonArray, channelSymbol);
 			} else {	
-				final JSONArray subarray = jsonArray.getJSONArray(1);			
-				
-				if(channelSymbol instanceof BitfinexCandlestickSymbol) {
-					final ChannelCallbackHandler handler = new CandlestickHandler();
-					handler.handleChannelData(this, channelSymbol, subarray);
-				} else if(channelSymbol instanceof RawOrderbookConfiguration) {
-					final RawOrderbookHandler handler = new RawOrderbookHandler();
-					handler.handleChannelData(this, channelSymbol, subarray);
-				} else if(channelSymbol instanceof OrderbookConfiguration) {
-					final OrderbookHandler handler = new OrderbookHandler();
-					handler.handleChannelData(this, channelSymbol, subarray);
-				} else if(channelSymbol instanceof BitfinexTickerSymbol) {
-					final ChannelCallbackHandler handler = new TickHandler();
-					handler.handleChannelData(this, channelSymbol, subarray);
-				} else if(channelSymbol instanceof BitfinexExecutedTradeSymbol) {
-					final ChannelCallbackHandler handler = new ExecutedTradeHandler();
-					handler.handleChannelData(this, channelSymbol, subarray);
-				} else {
-					logger.error("Unknown stream type: {}", channelSymbol);
-				}
-	
+				handleChannelDataArray(jsonArray, channelSymbol);
 			}
 		} catch (APIException e) {
 			logger.error("Got exception while handling callback", e);
+		}
+	}
+
+	/**
+	 * Handle the channel data with has a string at first position
+	 * @param jsonArray
+	 * @param channelSymbol
+	 * @throws APIException
+	 */
+	private void handleChannelDataString(final JSONArray jsonArray, 
+			final BitfinexStreamSymbol channelSymbol) throws APIException {
+		
+		final String value = jsonArray.getString(1);
+		
+		if("hb".equals(value)) {
+			quoteManager.updateChannelHeartbeat(channelSymbol);		
+		} else if("te".equals(value)) {
+			final JSONArray subarray = jsonArray.getJSONArray(2);			
+			final ChannelCallbackHandler handler = new ExecutedTradeHandler();
+			handler.handleChannelData(this, channelSymbol, subarray);
+		} else if("tu".equals(value)) {
+			// Ignore tu messages (see issue #13)
+		} else {
+			logger.error("Unable to process: {}", jsonArray);
+		}
+	}
+
+	/**
+	 * Handle the channel data with has an array at first position
+	 * @param jsonArray
+	 * @param channelSymbol
+	 * @throws APIException
+	 */
+	private void handleChannelDataArray(final JSONArray jsonArray, final BitfinexStreamSymbol channelSymbol)
+			throws APIException {
+		final JSONArray subarray = jsonArray.getJSONArray(1);			
+		
+		if(channelSymbol instanceof BitfinexCandlestickSymbol) {
+			final ChannelCallbackHandler handler = new CandlestickHandler();
+			handler.handleChannelData(this, channelSymbol, subarray);
+		} else if(channelSymbol instanceof RawOrderbookConfiguration) {
+			final RawOrderbookHandler handler = new RawOrderbookHandler();
+			handler.handleChannelData(this, channelSymbol, subarray);
+		} else if(channelSymbol instanceof OrderbookConfiguration) {
+			final OrderbookHandler handler = new OrderbookHandler();
+			handler.handleChannelData(this, channelSymbol, subarray);
+		} else if(channelSymbol instanceof BitfinexTickerSymbol) {
+			final ChannelCallbackHandler handler = new TickHandler();
+			handler.handleChannelData(this, channelSymbol, subarray);
+		} else if(channelSymbol instanceof BitfinexExecutedTradeSymbol) {
+			final ChannelCallbackHandler handler = new ExecutedTradeHandler();
+			handler.handleChannelData(this, channelSymbol, subarray);
+		} else {
+			logger.error("Unknown stream type: {}", channelSymbol);
 		}
 	}
 
