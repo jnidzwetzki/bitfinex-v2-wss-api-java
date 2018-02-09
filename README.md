@@ -2,15 +2,17 @@
 
 <a href="https://travis-ci.org/jnidzwetzki/bitfinex-v2-wss-api-java">
   <img alt="Build Status" src="https://travis-ci.org/jnidzwetzki/bitfinex-v2-wss-api-java.svg?branch=master">
-</a>
-<a href="https://repo1.maven.org/maven2/com/github/jnidzwetzki/"><img alt="Maven Central Version" src="https://maven-badges.herokuapp.com/maven-central/com.github.jnidzwetzki/bitfinex-v2-wss-api/badge.svg" />
+</a><a href="https://repo1.maven.org/maven2/com/github/jnidzwetzki/"><img alt="Maven Central Version" src="https://maven-badges.herokuapp.com/maven-central/com.github.jnidzwetzki/bitfinex-v2-wss-api/badge.svg" />
   </a><a href="https://codecov.io/gh/jnidzwetzki/bitfinex-v2-wss-api-java">
   <img src="https://codecov.io/gh/jnidzwetzki/bitfinex-v2-wss-api-java/branch/master/graph/badge.svg" />
 </a><a href="https://scan.coverity.com/projects/jnidzwetzki-bitfinex-v2-wss-api-java">
   <img alt="Coverity Scan Build Status"
        src="https://scan.coverity.com/projects/14740/badge.svg"/>
-</a><a href="https://codeclimate.com/github/jnidzwetzki/bitfinex-v2-wss-api-java/maintainability"><img src="https://api.codeclimate.com/v1/badges/9bb1a95de6767a8c6820/maintainability" /></a>
-<a href="https://gitter.im/bitfinex-v2-wss-api-java/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge">
+</a><a href="http://makeapullrequest.com">
+ <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" />
+</a><a href="https://codeclimate.com/github/jnidzwetzki/bitfinex-v2-wss-api-java/maintainability">
+ <img src="https://api.codeclimate.com/v1/badges/9bb1a95de6767a8c6820/maintainability" />
+</a><a href="https://gitter.im/bitfinex-v2-wss-api-java/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge">
   <img alt="Join the chat at https://gitter.im/bitfinex-v2-wss-api-java/Lobby" src="https://badges.gitter.im/Join%20Chat.svg">
   </a>
 
@@ -27,7 +29,9 @@ In contrast to other implementations, this project uses the WSS streaming API of
 * For contributing, see our [contributing guide](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/CONTRIBUTING.md)
 
 # Adding the library to your project
-Add this to your pom.xml 
+
+## Maven
+Add these lines to your ``pom.xml`` file
 
 ```xml
 <dependency>
@@ -35,6 +39,13 @@ Add this to your pom.xml
 	<artifactId>bitfinex-v2-wss-api</artifactId>
 	<version>0.5.5</version>
 </dependency>
+```
+
+## Gradle
+Add these lines to your ``build.gradle`` file
+
+```groovy
+compile 'com.github.jnidzwetzki:bitfinex-v2-wss-api:0.5.5'
 ```
 
 # Changelog
