@@ -693,6 +693,18 @@ public class BitfinexApiBroker implements Closeable {
 			}
 		}
 		
+		waitForChannelResubscription(oldChannelIdSymbolMap);
+	}
+
+	/**
+	 * Wait for the successfull channel resubscription
+	 * @param oldChannelIdSymbolMap
+	 * @throws APIException
+	 * @throws InterruptedException
+	 */
+	private void waitForChannelResubscription(final Map<Integer, BitfinexStreamSymbol> oldChannelIdSymbolMap)
+			throws APIException, InterruptedException {
+		
 		logger.info("Waiting for streams to resubscribe");
 		int execution = 0;
 		
