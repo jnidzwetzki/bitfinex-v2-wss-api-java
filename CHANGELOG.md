@@ -1,4 +1,5 @@
 # Version 0.5.6 (TBA)
+* Updates to ta4j 0.11 (Thanks brunocvcunha)
 
 # Version 0.5.5 (08.02.2018)
 * New Feature: Provide a callback for all executed trades (closes #11)
