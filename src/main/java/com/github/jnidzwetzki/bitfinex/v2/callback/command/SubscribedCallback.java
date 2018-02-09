@@ -45,39 +45,90 @@ public class SubscribedCallback implements CommandCallbackHandler {
 
 		switch(channel) {
 		case "ticker":
-			final String symbol = jsonObject.getString("symbol");
-			final BitfinexTickerSymbol tickerSymbol = BitfinexTickerSymbol.fromBitfinexString(symbol);
-			logger.info("Registering symbol {} on channel {}", tickerSymbol, channelId);
-			bitfinexApiBroker.addToChannelSymbolMap(channelId, tickerSymbol);
+			handleTickerCallback(bitfinexApiBroker, jsonObject, channelId);
 			break;
 		case "trades":
-			final String symbol2 = jsonObject.getString("symbol");
-			final BitfinexExecutedTradeSymbol currencyPair = BitfinexExecutedTradeSymbol.fromBitfinexString(symbol2);
-			logger.info("Registering symbol {} on channel {}", currencyPair, channelId);
-			bitfinexApiBroker.addToChannelSymbolMap(channelId, currencyPair);
+			handleTradesCallback(bitfinexApiBroker, jsonObject, channelId);
 			break;
 		case "candles":
-			final String key = jsonObject.getString("key");
-			logger.info("Registering key {} on channel {}", key, channelId);
-			final BitfinexCandlestickSymbol candleStickSymbol = BitfinexCandlestickSymbol.fromBitfinexString(key);
-			bitfinexApiBroker.addToChannelSymbolMap(channelId, candleStickSymbol);
+			handleCandlesCallback(bitfinexApiBroker, jsonObject, channelId);
 			break;
 		case "book":
-			if("R0".equals(jsonObject.getString("prec"))) {
-				final RawOrderbookConfiguration configuration 
-					= RawOrderbookConfiguration.fromJSON(jsonObject);
-				logger.info("Registering raw book {} on channel {}", jsonObject, channelId);
-				bitfinexApiBroker.addToChannelSymbolMap(channelId, configuration);
-			} else {
-				final OrderbookConfiguration configuration 
-					= OrderbookConfiguration.fromJSON(jsonObject);
-				logger.info("Registering book {} on channel {}", jsonObject, channelId);
-				bitfinexApiBroker.addToChannelSymbolMap(channelId, configuration);
-			}
+			handleBookCallback(bitfinexApiBroker, jsonObject, channelId);
 			break;
 		default:
 			logger.error("Unknown subscribed callback {}", jsonObject.toString());
 		}
+	}
 
+	/**
+	 * Handle the book callback
+	 * 
+	 * @param bitfinexApiBroker
+	 * @param jsonObject
+	 * @param channelId
+	 */
+	private void handleBookCallback(final BitfinexApiBroker bitfinexApiBroker, final JSONObject jsonObject,
+			final int channelId) {
+		
+		if("R0".equals(jsonObject.getString("prec"))) {
+			final RawOrderbookConfiguration configuration 
+				= RawOrderbookConfiguration.fromJSON(jsonObject);
+			logger.info("Registering raw book {} on channel {}", jsonObject, channelId);
+			bitfinexApiBroker.addToChannelSymbolMap(channelId, configuration);
+		} else {
+			final OrderbookConfiguration configuration 
+				= OrderbookConfiguration.fromJSON(jsonObject);
+			logger.info("Registering book {} on channel {}", jsonObject, channelId);
+			bitfinexApiBroker.addToChannelSymbolMap(channelId, configuration);
+		}
+	}
+
+	/**
+	 * Handle the candles callback
+	 * 
+	 * @param bitfinexApiBroker
+	 * @param jsonObject
+	 * @param channelId
+	 */
+	private void handleCandlesCallback(final BitfinexApiBroker bitfinexApiBroker, final JSONObject jsonObject,
+			final int channelId) {
+		
+		final String key = jsonObject.getString("key");
+		logger.info("Registering key {} on channel {}", key, channelId);
+		final BitfinexCandlestickSymbol candleStickSymbol = BitfinexCandlestickSymbol.fromBitfinexString(key);
+		bitfinexApiBroker.addToChannelSymbolMap(channelId, candleStickSymbol);
+	}
+
+	/**
+	 * Handle the trades callback
+	 * 
+	 * @param bitfinexApiBroker
+	 * @param jsonObject
+	 * @param channelId
+	 */
+	private void handleTradesCallback(final BitfinexApiBroker bitfinexApiBroker, final JSONObject jsonObject,
+			final int channelId) {
+		
+		final String symbol2 = jsonObject.getString("symbol");
+		final BitfinexExecutedTradeSymbol currencyPair = BitfinexExecutedTradeSymbol.fromBitfinexString(symbol2);
+		logger.info("Registering symbol {} on channel {}", currencyPair, channelId);
+		bitfinexApiBroker.addToChannelSymbolMap(channelId, currencyPair);
+	}
+
+	/**
+	 * Handle the ticker callback 
+	 * 
+	 * @param bitfinexApiBroker
+	 * @param jsonObject
+	 * @param channelId
+	 */
+	private void handleTickerCallback(final BitfinexApiBroker bitfinexApiBroker, final JSONObject jsonObject,
+			final int channelId) {
+		
+		final String symbol = jsonObject.getString("symbol");
+		final BitfinexTickerSymbol tickerSymbol = BitfinexTickerSymbol.fromBitfinexString(symbol);
+		logger.info("Registering symbol {} on channel {}", tickerSymbol, channelId);
+		bitfinexApiBroker.addToChannelSymbolMap(channelId, tickerSymbol);
 	}
 }
