@@ -95,12 +95,12 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20171018</version>
+			<version>20180130</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>23.0</version>
+			<version>24.0-jre</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ta4j</groupId>
