@@ -1,3 +1,5 @@
+# Version 0.5.7 (TBA)
+
 # Version 0.5.6 (10.02.2018)
 * Improvement: Updated to ta4j 0.11 (Thanks brunocvcunha / closes #14)
 * Improvement: Use codeclimate.com for code maintainability checks
