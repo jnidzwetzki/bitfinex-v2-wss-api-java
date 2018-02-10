@@ -1,8 +1,9 @@
-# Version 0.5.6 (TBA)
+# Version 0.5.6 (10.02.2018)
 * Improvement: Updated to ta4j 0.11 (Thanks brunocvcunha / closes #14)
 * Improvement: Use codeclimate.com for code maintainability checks
 * Improvement: Improved code maintainability as suggested by codeclimate.com
 * Improvement: The minimum order size of currencies can be changed at runtime
+* Improvement: Updated dependencies
 * Bugfix: Fixed executed trades parser (closes #12)
 * Bugfix: "tu" messages are not forwarded on executed trades (closes #13)
 
