@@ -1,3 +1,5 @@
+# Version 0.5.8 (TBA)
+
 # Version 0.5.7 (28.02.2018)
 * Improvement: Floating point number accuracy increased (closes #16) 
 
