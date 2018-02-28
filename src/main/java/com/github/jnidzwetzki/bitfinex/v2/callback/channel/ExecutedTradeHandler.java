@@ -48,7 +48,6 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
 		} catch (JSONException e) {
 			throw new APIException(e);
 		} 
-
 	}
 
 	/**
@@ -69,18 +68,18 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
 		final long timestamp = jsonArray.getNumber(1).longValue();
 		executedTrade.setTimestamp(timestamp);
 		
-		final float amount = jsonArray.getNumber(2).floatValue();
+		final double amount = jsonArray.getNumber(2).doubleValue();
 		executedTrade.setAmount(amount);
 		
 		// Funding or Currency
 		if(jsonArray.optNumber(4) != null) {
-			final float rate = jsonArray.getNumber(3).floatValue();
+			final double rate = jsonArray.getNumber(3).doubleValue();
 			executedTrade.setRate(rate);
 			
 			final int period = jsonArray.getNumber(4).intValue();
 			executedTrade.setPeriod(period);
 		} else {
-			final float price = jsonArray.getNumber(3).floatValue();
+			final double price = jsonArray.getNumber(3).doubleValue();
 			executedTrade.setPrice(price);
 		}
 				

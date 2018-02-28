@@ -40,15 +40,15 @@ public class Trade {
 	private BitfinexCurrencyPair currency;
 	private long mtsCreate;
 	private long orderId;
-	private float execAmount;
-	private float execPrice;
+	private double execAmount;
+	private double execPrice;
 	
 	@Enumerated(EnumType.STRING)
 	private BitfinexOrderType orderType;	
 	
-	private float orderPrice;
+	private double orderPrice;
 	private boolean maker;
-	private float fee;
+	private double fee;
 	private String feeCurrency;
 
 	/**
@@ -90,19 +90,19 @@ public class Trade {
 		this.orderId = orderId;
 	}
 
-	public float getExecAmount() {
+	public double getExecAmount() {
 		return execAmount;
 	}
 
-	public void setExecAmount(final float execAmount) {
+	public void setExecAmount(final double execAmount) {
 		this.execAmount = execAmount;
 	}
 
-	public float getExecPrice() {
+	public double getExecPrice() {
 		return execPrice;
 	}
 
-	public void setExecPrice(final float execPrice) {
+	public void setExecPrice(final double execPrice) {
 		this.execPrice = execPrice;
 	}
 
@@ -114,11 +114,11 @@ public class Trade {
 		this.orderType = orderType;
 	}
 
-	public float getOrderPrice() {
+	public double getOrderPrice() {
 		return orderPrice;
 	}
 
-	public void setOrderPrice(final float orderPrice) {
+	public void setOrderPrice(final double orderPrice) {
 		this.orderPrice = orderPrice;
 	}
 
@@ -130,11 +130,11 @@ public class Trade {
 		this.maker = maker;
 	}
 
-	public float getFee() {
+	public double getFee() {
 		return fee;
 	}
 
-	public void setFee(final float fee) {
+	public void setFee(final double fee) {
 		this.fee = fee;
 	}
 

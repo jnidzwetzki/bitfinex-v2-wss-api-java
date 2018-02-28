@@ -21,9 +21,9 @@ public class ExecutedTrade {
 	
 	private long id;
 	private long timestamp;
-	private float amount;
-	private float price;
-	private float rate;
+	private double amount;
+	private double price;
+	private double rate;
 	private int period;
 	
 	public ExecutedTrade() {
@@ -37,27 +37,27 @@ public class ExecutedTrade {
 		this.timestamp = timestamp;
 	}
 
-	public float getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(final float amount) {
+	public void setAmount(final double amount) {
 		this.amount = amount;
 	}
 
-	public float getPrice() {
+	public double getPrice() {
 		return price;
 	}
 
-	public void setPrice(final float price) {
+	public void setPrice(final double price) {
 		this.price = price;
 	}
 
-	public float getRate() {
+	public double getRate() {
 		return rate;
 	}
 
-	public void setRate(final float rate) {
+	public void setRate(final double rate) {
 		this.rate = rate;
 	}
 
