@@ -27,6 +27,7 @@ In contrast to other implementations, this project uses the WSS streaming API of
 * You need help or do you have questions? Join our chat at [gitter](https://gitter.im/bitfinex-v2-wss-api-java/Lobby)
 * For reporting issues, visit our [bug tracking system](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/issues)
 * For contributing, see our [contributing guide](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/CONTRIBUTING.md)
+* If you like the project please star it on GitHub
 
 # Usage
 
