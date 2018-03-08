@@ -96,7 +96,7 @@ public class WebsocketClientEndpoint implements Closeable {
 
 	@OnClose
 	public void onClose(final Session userSession, final CloseReason reason) {
-		logger.info("Closing websocket: " + reason);
+		logger.info("Closing websocket: {}", reason);
 		this.userSession = null;
 	}
 
