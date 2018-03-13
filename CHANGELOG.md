@@ -2,9 +2,10 @@
 
 # Version 0.5.7 (28.02.2018)
 * Improvement: Floating point number accuracy increased (closes #16) 
+* Improvement: Added new currency pairs (thanks ilyagalahov / closes #17)
 
 # Version 0.5.6 (10.02.2018)
-* Improvement: Updated to ta4j 0.11 (Thanks brunocvcunha / closes #14)
+* Improvement: Updated to ta4j 0.11 (thanks brunocvcunha / closes #14)
 * Improvement: Use codeclimate.com for code maintainability checks
 * Improvement: Improved code maintainability as suggested by codeclimate.com
 * Improvement: The minimum order size of currencies can be changed at runtime
@@ -23,7 +24,7 @@
 
 # Version 0.5.3 (16.01.2018)
 * New Feature: Introduced the RawOrderBook Manager
-* Improvement: Added further currencies (thanks to Flexz9)
+* Improvement: Added further currencies (thanks Flexz9)
 * Improvement: A APIException is thrown immediately after an authentication failure occurred
 * Improvement: Added further timeframes
 * Bugfix: Websocket messages up to 1 MB will be accepted
