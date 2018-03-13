@@ -102,7 +102,29 @@ public enum BitfinexCurrencyPair {
 	TNB_ETH("TNB", "ETH", 104.0),
 	SPK_USD("SPK", "USD", 26.0),
 	SPK_BTC("SPK", "BTC", 26.0),
-	SPK_ETH("SPK", "ETH", 26.0);
+	SPK_ETH("SPK", "ETH", 26.0),
+	TRX_BTC("TRX", "BTC", 26.0),
+	TRX_ETH("TRX", "ETH", 26.0),
+	TRX_USD("TRX", "USD", 26.0),
+	RCN_BTC("RCN", "BTC", 26.0),
+	RCN_ETH("RCN", "ETH", 26.0),
+	RCN_USD("RCN", "USD", 26.0),
+	RLC_BTC("RLC", "BTC", 26.0),
+	RLC_ETH("RLC", "ETH", 26.0),
+	RLC_USD("RLC", "USD", 26.0),
+	AID_BTC("AID", "BTC", 26.0),
+	AID_USD("AID", "USD", 26.0),
+	AID_ETH("AID", "ETH", 26.0),
+	SNG_BTC("SNG", "BTC", 26.0),
+	SNG_ETH("SNG", "ETH", 26.0),
+	SNG_USD("SNG", "USD", 26.0),
+	REP_BTC("REP", "BTC", 26.0),
+	REP_ETH("REP", "ETH", 26.0),
+	REP_USD("REP", "USD", 26.0),
+	ELF_BTC("ELF", "BTC", 26.0),
+	ELF_ETH("ELF", "ETH", 26.0),
+	ELF_USD("ELF", "USD", 26.0),
+	RCL_ETH("RCL", "ETH", 26.0);
 
 	/**
 	 * The name of the first currency 

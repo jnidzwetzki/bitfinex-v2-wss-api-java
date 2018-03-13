@@ -116,13 +116,13 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 		
 		notifyCallbacks(exchangeOrder);
 	}
-	
-	
+
+
 	/**
-	 * Cancel a order
-	 * @param id
-	 * @throws APIException, InterruptedException 
-	 * @throws InterruptedException 
+	 * Place an order and retry if Exception occur
+	 * @param order - new BitfinexOrder to place
+	 * @throws APIException
+	 * @throws InterruptedException
 	 */
 	public void placeOrderAndWaitUntilActive(final BitfinexOrder order) throws APIException, InterruptedException {
 		
