@@ -1,8 +1,8 @@
 # Version 0.5.8 (TBA)
+* Improvement: Added new currency pairs (thanks ilyagalahov / closes #17)
 
 # Version 0.5.7 (28.02.2018)
 * Improvement: Floating point number accuracy increased (closes #16) 
-* Improvement: Added new currency pairs (thanks ilyagalahov / closes #17)
 
 # Version 0.5.6 (10.02.2018)
 * Improvement: Updated to ta4j 0.11 (thanks brunocvcunha / closes #14)
