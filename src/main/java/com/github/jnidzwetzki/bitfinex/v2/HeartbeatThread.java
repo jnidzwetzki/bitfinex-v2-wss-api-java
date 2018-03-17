@@ -20,7 +20,7 @@ package com.github.jnidzwetzki.bitfinex.v2;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.bboxdb.commons.concurrent.ExceptionSafeThread;
+import org.bboxdb.commons.concurrent.ExceptionSafeRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.util.EventsInTimeslotManager;
 
-public class HeartbeatThread extends ExceptionSafeThread {
+public class HeartbeatThread extends ExceptionSafeRunnable {
 
 	/**
 	 * The ticker timeout

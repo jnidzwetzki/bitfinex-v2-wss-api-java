@@ -1,4 +1,4 @@
-# Version 0.5.8 (TBA)
+# Version 0.6.0 (TBA)
 * Improvement: Added new currency pairs (thanks ilyagalahov / closes #17)
 
 # Version 0.5.7 (28.02.2018)
