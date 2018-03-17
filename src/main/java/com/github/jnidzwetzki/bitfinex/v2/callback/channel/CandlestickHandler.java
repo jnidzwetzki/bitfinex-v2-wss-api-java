@@ -72,7 +72,7 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 		final double low = parts.getDouble(4);
 		final double volume = parts.getDouble(5);
 		
-		final BitfinexTick tick = new BitfinexTick(timestamp, open, close, low, high, volume);
+		final BitfinexTick tick = new BitfinexTick(timestamp, open, close, high, low, volume);
 		ticksBuffer.add(tick);
 	}
 }
