@@ -57,10 +57,10 @@ public class BitfinexTick implements Comparable<BitfinexTick>{
 	public BitfinexTick(final long timestamp, final double open, final double close, final double high,
 			final double low, final double volume) {
 		
-		assert (high >= open);
-		assert (high >= close);
-		assert (low <= open);
-		assert (low <= close);
+		assert (high >= open) : "High needs to be >= open";
+		assert (high >= close) : "High needs to be => close";
+		assert (low <= open) : "Low needs to be <= open";
+		assert (low <= close) : "Low needs to be <= close";
 
 		this.timestamp = timestamp;
 		this.open = open;
