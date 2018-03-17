@@ -67,11 +67,11 @@ public class TickHandlerTest {
 			
 			try {
 				Assert.assertEquals(symbol, s);
-				Assert.assertEquals(26129, c.getOpenPrice().doubleValue(), DELTA);
-				Assert.assertEquals(26129, c.getClosePrice().doubleValue(), DELTA);
-				Assert.assertEquals(26129, c.getMaxPrice().doubleValue(), DELTA);
-				Assert.assertEquals(26129, c.getMinPrice().doubleValue(), DELTA);
-				Assert.assertEquals(0, c.getVolume().doubleValue(), DELTA);
+				Assert.assertEquals(26129, c.getOpen(), DELTA);
+				Assert.assertEquals(26129, c.getClose(), DELTA);
+				Assert.assertEquals(26129, c.getHigh(), DELTA);
+				Assert.assertEquals(26129, c.getLow(), DELTA);
+				Assert.assertEquals(0, c.getVolume(), DELTA);
 			} catch(Throwable e) {
 				System.out.println(e);
 				throw e;

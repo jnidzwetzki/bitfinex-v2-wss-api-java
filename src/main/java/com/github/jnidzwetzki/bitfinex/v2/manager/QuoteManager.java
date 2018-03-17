@@ -24,14 +24,13 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
-import org.ta4j.core.Bar;
-
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
@@ -43,7 +42,7 @@ public class QuoteManager {
 	/**
 	 * The last ticks
 	 */
-	protected final Map<BitfinexStreamSymbol, Bar> lastTick;
+	protected final Map<BitfinexStreamSymbol, BitfinexTick> lastTick;
 	
 	/**
 	 * The last tick timestamp
@@ -53,12 +52,12 @@ public class QuoteManager {
 	/**
 	 * The BitfinexCurrencyPair callbacks
 	 */
-	private final BiConsumerCallbackManager<BitfinexTickerSymbol, Bar> tickerCallbacks;
+	private final BiConsumerCallbackManager<BitfinexTickerSymbol, BitfinexTick> tickerCallbacks;
 
 	/**
 	 * The Bitfinex Candlestick callbacks
 	 */
-	private final BiConsumerCallbackManager<BitfinexCandlestickSymbol, Bar> candleCallbacks;
+	private final BiConsumerCallbackManager<BitfinexCandlestickSymbol, BitfinexTick> candleCallbacks;
 	
 	/**
 	 * The channel callbacks
@@ -127,7 +126,7 @@ public class QuoteManager {
 	 * @param currencyPair
 	 * @return 
 	 */
-	public Bar getLastTick(final BitfinexTickerSymbol currencyPair) {
+	public BitfinexTick getLastTick(final BitfinexTickerSymbol currencyPair) {
 		synchronized (lastTick) {
 			return lastTick.get(currencyPair);
 		}
@@ -150,7 +149,7 @@ public class QuoteManager {
 	 * @throws APIException
 	 */
 	public void registerTickCallback(final BitfinexTickerSymbol symbol, 
-			final BiConsumer<BitfinexTickerSymbol, Bar> callback) throws APIException {
+			final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback) throws APIException {
 		
 		tickerCallbacks.registerCallback(symbol, callback);
 	}
@@ -163,7 +162,7 @@ public class QuoteManager {
 	 * @throws APIException
 	 */
 	public boolean removeTickCallback(final BitfinexTickerSymbol symbol, 
-			final BiConsumer<BitfinexTickerSymbol, Bar> callback) throws APIException {
+			final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback) throws APIException {
 		
 		return tickerCallbacks.removeCallback(symbol, callback);
 	}
@@ -173,7 +172,7 @@ public class QuoteManager {
 	 * @param symbol
 	 * @param ticksArray
 	 */
-	public void handleTicksList(final BitfinexTickerSymbol symbol, final List<Bar> ticksBuffer) {
+	public void handleTicksList(final BitfinexTickerSymbol symbol, final List<BitfinexTick> ticksBuffer) {
 		tickerCallbacks.handleEventsList(symbol, ticksBuffer);
 	}
 	
@@ -182,7 +181,7 @@ public class QuoteManager {
 	 * @param symbol
 	 * @param tick
 	 */
-	public void handleNewTick(final BitfinexTickerSymbol currencyPair, final Bar tick) {
+	public void handleNewTick(final BitfinexTickerSymbol currencyPair, final BitfinexTick tick) {
 		
 		synchronized (lastTick) {
 			lastTick.put(currencyPair, tick);
@@ -224,7 +223,7 @@ public class QuoteManager {
 	 * @throws APIException
 	 */
 	public void registerCandlestickCallback(final BitfinexCandlestickSymbol symbol, 
-			final BiConsumer<BitfinexCandlestickSymbol, Bar> callback) throws APIException {
+			final BiConsumer<BitfinexCandlestickSymbol, BitfinexTick> callback) throws APIException {
 		
 		candleCallbacks.registerCallback(symbol, callback);
 	}
@@ -237,7 +236,7 @@ public class QuoteManager {
 	 * @throws APIException
 	 */
 	public boolean removeCandlestickCallback(final BitfinexCandlestickSymbol symbol, 
-			final BiConsumer<BitfinexCandlestickSymbol, Bar> callback) throws APIException {
+			final BiConsumer<BitfinexCandlestickSymbol, BitfinexTick> callback) throws APIException {
 		
 		return candleCallbacks.removeCallback(symbol, callback);
 	}
@@ -248,7 +247,7 @@ public class QuoteManager {
 	 * @param symbol
 	 * @param ticksArray
 	 */
-	public void handleCandlestickList(final BitfinexCandlestickSymbol symbol, final List<Bar> ticksBuffer) {
+	public void handleCandlestickList(final BitfinexCandlestickSymbol symbol, final List<BitfinexTick> ticksBuffer) {
 		candleCallbacks.handleEventsList(symbol, ticksBuffer);
 	}
 	
@@ -257,7 +256,7 @@ public class QuoteManager {
 	 * @param symbol
 	 * @param tick
 	 */
-	public void handleNewCandlestick(final BitfinexCandlestickSymbol currencyPair, final Bar tick) {
+	public void handleNewCandlestick(final BitfinexCandlestickSymbol currencyPair, final BitfinexTick tick) {
 		
 		synchronized (lastTick) {
 			lastTick.put(currencyPair, tick);

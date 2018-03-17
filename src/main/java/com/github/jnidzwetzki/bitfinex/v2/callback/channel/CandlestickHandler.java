@@ -17,18 +17,14 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.callback.channel;
 
-import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
-import org.ta4j.core.BaseBar;
-import org.ta4j.core.Bar;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.Const;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 
@@ -44,7 +40,7 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 			final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
 
 		// channel symbol trade:1m:tLTCUSD
-		final List<Bar> ticksBuffer = new ArrayList<>();
+		final List<BitfinexTick> ticksBuffer = new ArrayList<>();
 		
 		// Snapshots contain multiple Bars, Updates only one
 		if(jsonArray.get(0) instanceof JSONArray) {
@@ -56,8 +52,9 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 			parseCandlestick(ticksBuffer, jsonArray);
 		}
 		
-		ticksBuffer.sort((t1, t2) -> t1.getEndTime().compareTo(t2.getEndTime()));
-
+		// Use natural ordering
+		ticksBuffer.sort(null);
+		
 		final BitfinexCandlestickSymbol candlestickSymbol = (BitfinexCandlestickSymbol) channelSymbol;
 		bitfinexApiBroker.getQuoteManager().handleCandlestickList(candlestickSymbol, ticksBuffer);
 	}
@@ -65,18 +62,17 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 	/**
 	 * Parse a candlestick from JSON result
 	 */
-	private void parseCandlestick(final List<Bar> ticksBuffer, final JSONArray parts) {
-		// 0 = Timestamp, 1 = Open, 2 = Close, 3 = High, 4 = Low,  5 = Volume
-		final Instant i = Instant.ofEpochMilli(parts.getLong(0));
-		final ZonedDateTime withTimezone = ZonedDateTime.ofInstant(i, Const.BITFINEX_TIMEZONE);
+	private void parseCandlestick(final List<BitfinexTick> ticksBuffer, final JSONArray parts) {
 		
+		// 0 = Timestamp, 1 = Open, 2 = Close, 3 = High, 4 = Low,  5 = Volume
+		final long timestamp = parts.getLong(0);
 		final double open = parts.getDouble(1);
 		final double close = parts.getDouble(2);
 		final double high = parts.getDouble(3);
 		final double low = parts.getDouble(4);
 		final double volume = parts.getDouble(5);
 		
-		final Bar tick = new BaseBar(withTimezone, open, high, low, close, volume);
+		final BitfinexTick tick = new BitfinexTick(timestamp, open, close, low, high, volume);
 		ticksBuffer.add(tick);
 	}
 }

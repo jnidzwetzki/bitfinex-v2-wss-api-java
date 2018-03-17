@@ -103,11 +103,6 @@
 			<version>24.0-jre</version>
 		</dependency>
 		<dependency>
-			<groupId>org.ta4j</groupId>
-			<artifactId>ta4j-core</artifactId>
-			<version>0.11</version>
-		</dependency>
-		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
 			<artifactId>hibernate-jpa-2.1-api</artifactId>
 			<version>1.0.0.Final</version>

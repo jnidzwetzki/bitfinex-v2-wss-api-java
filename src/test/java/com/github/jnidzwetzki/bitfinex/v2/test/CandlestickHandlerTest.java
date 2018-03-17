@@ -66,11 +66,11 @@ public class CandlestickHandlerTest {
 		tickerManager.registerCandlestickCallback(symbol, (s, c) -> {
 			counter.incrementAndGet();
 			Assert.assertEquals(symbol, s);
-			Assert.assertEquals(15996, c.getOpenPrice().doubleValue(), DELTA);
-			Assert.assertEquals(15997, c.getClosePrice().doubleValue(), DELTA);
-			Assert.assertEquals(16000, c.getMaxPrice().doubleValue(), DELTA);
-			Assert.assertEquals(15980, c.getMinPrice().doubleValue(), DELTA);
-			Assert.assertEquals(318.5139342, c.getVolume().doubleValue(), DELTA);
+			Assert.assertEquals(15996, c.getOpen(), DELTA);
+			Assert.assertEquals(15997, c.getClose(), DELTA);
+			Assert.assertEquals(16000, c.getHigh(), DELTA);
+			Assert.assertEquals(15980, c.getLow(), DELTA);
+			Assert.assertEquals(318.5139342, c.getVolume(), DELTA);
 		});
 						
 		final CandlestickHandler candlestickHandler = new CandlestickHandler();
@@ -105,17 +105,17 @@ public class CandlestickHandlerTest {
 			Assert.assertEquals(symbol, s);
 			final int counterValue = counter.getAndIncrement();
 			if(counterValue == 0) {
-				Assert.assertEquals(15996, c.getOpenPrice().doubleValue(), DELTA);
-				Assert.assertEquals(15997, c.getClosePrice().doubleValue(), DELTA);
-				Assert.assertEquals(16000, c.getMaxPrice().doubleValue(), DELTA);
-				Assert.assertEquals(15980, c.getMinPrice().doubleValue(), DELTA);
-				Assert.assertEquals(318.5139342, c.getVolume().doubleValue(), DELTA);
+				Assert.assertEquals(15996, c.getOpen(), DELTA);
+				Assert.assertEquals(15997, c.getClose(), DELTA);
+				Assert.assertEquals(16000, c.getHigh(), DELTA);
+				Assert.assertEquals(15980, c.getLow(), DELTA);
+				Assert.assertEquals(318.5139342, c.getVolume(), DELTA);
 			} else if(counterValue == 1) {
-				Assert.assertEquals(15899, c.getOpenPrice().doubleValue(), DELTA);
-				Assert.assertEquals(15996, c.getClosePrice().doubleValue(), DELTA);
-				Assert.assertEquals(16097, c.getMaxPrice().doubleValue(), DELTA);
-				Assert.assertEquals(15890, c.getMinPrice().doubleValue(), DELTA);
-				Assert.assertEquals(1137.180342268, c.getVolume().doubleValue(), DELTA);
+				Assert.assertEquals(15899, c.getOpen(), DELTA);
+				Assert.assertEquals(15996, c.getClose(), DELTA);
+				Assert.assertEquals(16097, c.getHigh(), DELTA);
+				Assert.assertEquals(15890, c.getLow(), DELTA);
+				Assert.assertEquals(1137.180342268, c.getVolume(), DELTA);
 			} else {
 				throw new IllegalArgumentException("Illegal call, expected 2 candlesticks");
 			}

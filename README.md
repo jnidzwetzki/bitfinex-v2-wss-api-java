@@ -52,6 +52,22 @@ compile 'com.github.jnidzwetzki:bitfinex-v2-wss-api:0.5.7'
 # Changelog
 You will find the changelog of the project [here](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/CHANGELOG.md).
 
+# Recent API changes
+With version 0.6.0 the [ta4j](https://github.com/ta4j/ta4j) dependency was removed. For quotes, the API implementation now returns instances of the class `BitfinexTick`. To convert a `BitfinexTick` into a ta4j `Bar`, you can use the following code:
+
+```java
+final BitfinexTick tick = ....;
+
+final Instant instant = Instant.ofEpochMilli(tick.getTimestamp());
+final ZonedDateTime time = ZonedDateTime.ofInstant(instant, Const.BITFINEX_TIMEZONE);
+
+final Bar tick = new BaseBar(time, tick.getOpen(), 
+	tick.getHigh(), 
+	tick.getLow(), 
+	tick.getClose(), 
+	tick.getVolume != BitfinexTick.INVALID_VOLUME ? tick.getVolume() : 0);
+```
+
 # Examples
 You will find some examples [here](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/EXAMPLES.md).
 
