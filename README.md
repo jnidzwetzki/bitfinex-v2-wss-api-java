@@ -65,7 +65,7 @@ final BitfinexTick tick = ....;
 final Instant instant = Instant.ofEpochMilli(tick.getTimestamp());
 final ZonedDateTime time = ZonedDateTime.ofInstant(instant, Const.BITFINEX_TIMEZONE);
 
-final Bar tick = new BaseBar(time, tick.getOpen(), 
+final Bar bar = new BaseBar(time, tick.getOpen(), 
 	tick.getHigh(), 
 	tick.getLow(), 
 	tick.getClose(), 
