@@ -8,7 +8,7 @@ If you have any questions about the meaning of the fields, see the Bitfinex [API
 final String apiKey = "....";
 final String apiSecret = "....";
 
-// For public operations (subscribe ticker, bars)
+// For public operations (subscribe ticker, BitfinexTicks)
 BitfinexApiBroker bitfinexApiBroker = BitfinexApiBroker();
 bitfinexApiBroker.connect();
 
@@ -35,8 +35,8 @@ final BitfinexCandlestickSymbol symbol
 	= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTE_1);
 	
 // The consumer will be called on all received candles for the symbol
-final BiConsumer<BitfinexCandlestickSymbol, Bar> callback = (symbol, bar) -> {
-	System.out.format("Got bar (%s) for symbol (%s)\n", bar, symbol);
+final BiConsumer<BitfinexCandlestickSymbol, BitfinexTick> callback = (symbol, tick) -> {
+	System.out.format("Got BitfinexTick (%s) for symbol (%s)\n", tick, symbol);
 };
 
 final QuoteManager quoteManager = bitfinexApiBroker.getQuoteManager();
@@ -53,8 +53,8 @@ tickerManager.unsubscribeCandles(symbol);
 ## Subscribe ticker stream
 ```java
 // The consumer will be called on all received ticks for the symbol
-final BiConsumer<BitfinexTickerSymbol, Bar> callback = (symbol, bar) -> {
-	System.out.format("Got bar (%s) for symbol (%s)\n", bar, symbol);
+final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback = (symbol, tick) -> {
+	System.out.format("Got BitfinexTick (%s) for symbol (%s)\n", tick, symbol);
 };
 
 final BitfinexTickerSymbol symbol = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_USD);
