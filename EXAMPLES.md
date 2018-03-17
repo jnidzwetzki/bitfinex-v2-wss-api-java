@@ -8,7 +8,7 @@ If you have any questions about the meaning of the fields, see the Bitfinex [API
 final String apiKey = "....";
 final String apiSecret = "....";
 
-// For public operations (subscribe ticker, BitfinexTicks)
+// For public operations (subscribe ticker, candles)
 BitfinexApiBroker bitfinexApiBroker = BitfinexApiBroker();
 bitfinexApiBroker.connect();
 
