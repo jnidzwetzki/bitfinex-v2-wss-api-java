@@ -1,3 +1,5 @@
+# Version 0.6.1 (TBA)
+
 # Version 0.6.0 (17.03.2018)
 * Improvement: Removed ta4j dependency
 * Improvement: Added new currency pairs (thanks ilyagalahov / closes #17)
