@@ -30,6 +30,9 @@ In contrast to other implementations, this project uses the WSS (_web socket sec
 * If you like the project please star it on GitHub.
 * You are interested in a crypto currency trading bot? See my [crypto-bot](https://github.com/jnidzwetzki/crypto-bot) project.
 
+# Examples
+You will find some examples [here](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/EXAMPLES.md).
+
 # Usage
 
 ## Maven
@@ -68,7 +71,4 @@ final Bar tick = new BaseBar(time, tick.getOpen(),
 	tick.getClose(), 
 	tick.getVolume != BitfinexTick.INVALID_VOLUME ? tick.getVolume() : 0);
 ```
-
-# Examples
-You will find some examples [here](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/EXAMPLES.md).
 
