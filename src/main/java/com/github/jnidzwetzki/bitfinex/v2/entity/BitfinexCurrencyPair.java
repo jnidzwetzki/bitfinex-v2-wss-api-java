@@ -123,8 +123,7 @@ public enum BitfinexCurrencyPair {
 	REP_USD("REP", "USD", 26.0),
 	ELF_BTC("ELF", "BTC", 26.0),
 	ELF_ETH("ELF", "ETH", 26.0),
-	ELF_USD("ELF", "USD", 26.0),
-	RCL_ETH("RCL", "ETH", 26.0);
+	ELF_USD("ELF", "USD", 26.0);
 
 	/**
 	 * The name of the first currency 
