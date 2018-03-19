@@ -1,4 +1,5 @@
 # Version 0.6.1 (TBA)
+* Improvement: Switched to tyrus-standalone-client-jdk (uses Java SE 7 Asynchronous IO) for increased performance
 
 # Version 0.6.0 (17.03.2018)
 * Improvement: Removed ta4j dependency
