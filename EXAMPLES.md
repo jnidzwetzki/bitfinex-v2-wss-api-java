@@ -213,4 +213,5 @@ bitfinexApiBroker.getWalletManager().calculateWalletMarginBalance("USD");
 Thread.sleep(TimeUnit.SECONDS.toMillis(5));
 		
 System.out.println(bitfinexApiBroker.getWalletManager().getWalletTable().get("margin", "USD"));
-``
+```
+
