@@ -28,6 +28,7 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.WalletHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
+import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -54,7 +55,10 @@ public class WalletHandlerTest {
 		final Table<String, String, Wallet> walletTable = HashBasedTable.create();
 
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		Mockito.when(bitfinexApiBroker.getWalletManager().getWalletTable()).thenReturn(walletTable);
+		final WalletManager walletManager = Mockito.mock(WalletManager.class);
+		Mockito.when(bitfinexApiBroker.getWalletManager()).thenReturn(walletManager);
+
+		Mockito.when(walletManager.getWalletTable()).thenReturn(walletTable);
 		Mockito.when(bitfinexApiBroker.getConnectionReadyLatch()).thenReturn(walletLatch);
 		
 		Assert.assertTrue(walletTable.isEmpty());
@@ -84,7 +88,10 @@ public class WalletHandlerTest {
 		final Table<String, String, Wallet> walletTable = HashBasedTable.create();
 
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		Mockito.when(bitfinexApiBroker.getWalletManager().getWalletTable()).thenReturn(walletTable);
+		final WalletManager walletManager = Mockito.mock(WalletManager.class);
+		Mockito.when(bitfinexApiBroker.getWalletManager()).thenReturn(walletManager);
+
+		Mockito.when(walletManager.getWalletTable()).thenReturn(walletTable);
 		Mockito.when(bitfinexApiBroker.getConnectionReadyLatch()).thenReturn(walletLatch);
 		
 		Assert.assertTrue(walletTable.isEmpty());
