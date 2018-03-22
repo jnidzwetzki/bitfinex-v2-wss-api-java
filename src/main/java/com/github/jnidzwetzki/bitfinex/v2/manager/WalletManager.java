@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.commands.CalculateCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.google.common.collect.HashBasedTable;
@@ -76,6 +77,30 @@ public class WalletManager {
 		if(! bitfinexApiBroker.isAuthenticated()) {
 			throw new APIException("Unable to perform operation on an unauthenticated connection");
 		}
+	}
+	
+	/**
+	 * Calculate the wallet margin balance for the given currency (e.g., BTC)
+	 * 
+	 * @param symbol
+	 * @throws APIException 
+	 */
+	public void calculateWalletMarginBalance(final String symbol) throws APIException {
+		throwExceptionIfUnauthenticated();
+
+		bitfinexApiBroker.sendCommand(new CalculateCommand("wallet_margin_" + symbol));
+	}
+	
+	/**
+	 * Calculate the wallet funding balance for the given currency (e.g., BTC)
+	 * 
+	 * @param symbol
+	 * @throws APIException 
+	 */
+	public void calculateWalletFundingBalance(final String symbol) throws APIException {
+		throwExceptionIfUnauthenticated();
+
+		bitfinexApiBroker.sendCommand(new CalculateCommand("wallet_funding_" + symbol));
 	}
 	
 }

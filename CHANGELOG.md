@@ -1,5 +1,6 @@
 # Version 0.6.1 (TBA)
 * New Feature: Moved the wallets into a WalletManager
+* New Feature: Support the 'calc' request, to calculate some wallet related data (closes #19)
 * Improvement: Switched to tyrus-standalone-client-jdk (uses Java SE 7 Asynchronous IO) for increased performance
 * Bugfix: Removed invalid currency symbol (closes #18)
 
