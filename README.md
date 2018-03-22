@@ -57,6 +57,20 @@ compile 'com.github.jnidzwetzki:bitfinex-v2-wss-api:0.6.0'
 You will find the changelog of the project [here](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/CHANGELOG.md).
 
 # Recent API changes
+
+## Version 0.6.1
+Since version 0.6.1, the Wallets are new managed by the Wallet manager. The WalletManager provides the same methods as the BitfinexAPIBroker in previous versions. Execute your wallet related calls on the new WalletManager.
+
+```java
+# Old (version <= 0.6.0)
+bitfinexClient.getWallets();
+
+# New (version > 0.6.0)
+bitfinexClient.getWalletManager().getWallets();
+```
+
+## Version 0.6.0
+
 With version 0.6.0 the [ta4j](https://github.com/ta4j/ta4j) dependency was removed. For quotes, the API implementation now returns instances of the class `BitfinexTick`. To convert a `BitfinexTick` into a ta4j `Bar`, you can use the following code:
 
 ```java
@@ -71,4 +85,5 @@ final Bar bar = new BaseBar(time, tick.getOpen(),
 	tick.getClose(), 
 	tick.getVolume() != BitfinexTick.INVALID_VOLUME ? tick.getVolume() : 0);
 ```
+
 

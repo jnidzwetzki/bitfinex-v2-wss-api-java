@@ -24,6 +24,7 @@ import org.json.JSONArray;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
+import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
 import com.google.common.collect.Table;
 
 public class WalletHandler implements APICallbackHandler {
@@ -75,7 +76,8 @@ public class WalletHandler implements APICallbackHandler {
 		
 		final Wallet wallet = new Wallet(walletType, currency, balance, unsettledInterest, balanceAvailable);
 
-		final Table<String, String, Wallet> walletTable = bitfinexApiBroker.getWalletTable();
+		final WalletManager walletManager = bitfinexApiBroker.getWalletManager();
+		final Table<String, String, Wallet> walletTable = walletManager.getWalletTable();
 		
 		synchronized (walletTable) {
 			walletTable.put(walletType, currency, wallet);

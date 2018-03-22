@@ -57,7 +57,7 @@ public class IntegrationTest {
 			Assert.assertFalse(bitfinexClient.isAuthenticated());
 			
 			try {
-				bitfinexClient.getWallets();
+				bitfinexClient.getWalletManager().getWallets();
 
 				// Should not happen
 				Assert.assertTrue(false);

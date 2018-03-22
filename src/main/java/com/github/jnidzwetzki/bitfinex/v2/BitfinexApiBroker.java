@@ -19,8 +19,6 @@ package com.github.jnidzwetzki.bitfinex.v2;
 
 import java.io.Closeable;
 import java.net.URI;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -68,7 +66,6 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
@@ -79,8 +76,7 @@ import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
+import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
 
 public class BitfinexApiBroker implements Closeable {
 
@@ -135,6 +131,11 @@ public class BitfinexApiBroker implements Closeable {
 	private final TradeManager tradeManager;
 	
 	/**
+	 * The wallet manager
+	 */
+	private final WalletManager walletManager;
+	
+	/**
 	 * The last heartbeat value
 	 */
 	protected final AtomicLong lastHeatbeat;
@@ -179,13 +180,6 @@ public class BitfinexApiBroker implements Closeable {
 	private boolean authenticated;
 	
 	/**
-	 * Wallets
-	 * 
-	 *  Currency, Wallet-Type, Wallet
-	 */
-	private final Table<String, String, Wallet> walletTable;
-	
-	/**
 	 * The channel handler
 	 */
 	private final Map<String, APICallbackHandler> channelHandler;
@@ -222,7 +216,7 @@ public class BitfinexApiBroker implements Closeable {
 		this.orderManager = new OrderManager(this);
 		this.tradeManager = new TradeManager(this);
 		this.positionManager = new PositionManager(executorService);
-		this.walletTable = HashBasedTable.create();
+		this.walletManager = new WalletManager(this);
 		this.capabilities = ConnectionCapabilities.NO_CAPABILITIES;
 		this.authenticated = false;
 		this.channelHandler = new HashMap<>();
@@ -753,36 +747,11 @@ public class BitfinexApiBroker implements Closeable {
 	}
 	
 	/**
-	 * Get all wallets
-	 * @return 
-	 * @throws APIException 
+	 * Get the wallet manager
+	 * @return
 	 */
-	public Collection<Wallet> getWallets() throws APIException {		
-		
-		throwExceptionIfUnauthenticated();
-		
-		synchronized (walletTable) {
-			return Collections.unmodifiableCollection(walletTable.values());
-		}
-	}
-	
-	/**
-	 * Get all wallets
-	 * @return 
-	 * @throws APIException 
-	 */
-	public Table<String, String, Wallet> getWalletTable() throws APIException {
-		return walletTable;
-	}
-
-	/**
-	 * Throw a new exception if called on a unauthenticated connection
-	 * @throws APIException
-	 */
-	private void throwExceptionIfUnauthenticated() throws APIException {
-		if(! authenticated) {
-			throw new APIException("Unable to perform operation on an unauthenticated connection");
-		}
+	public WalletManager getWalletManager() {
+		return walletManager;
 	}
 
 	/**
