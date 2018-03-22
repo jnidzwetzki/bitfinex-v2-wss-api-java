@@ -200,3 +200,17 @@ orderManager.addOrderCallback(ordercallback);
 orderManager.placeOrder(bitfinexOrder1);
 orderManager.placeOrder(bitfinexOrder2);
 ```
+
+## Request wallet balance
+Some fields are not automatically calculated by the Bitfinex API, these values must be requested explicitly. This can be done by the `calculateWalletMarginBalancecalculateWalletMarginBalance` method.
+
+```java
+System.out.println(bitfinexApiBroker.getWalletManager().getWalletTable().get("margin", "USD"));
+		
+bitfinexApiBroker.getWalletManager().calculateWalletMarginBalance("USD");
+		
+// Wait some time until Bitfinex has send us a wallet update
+Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+		
+System.out.println(bitfinexApiBroker.getWalletManager().getWalletTable().get("margin", "USD"));
+``
