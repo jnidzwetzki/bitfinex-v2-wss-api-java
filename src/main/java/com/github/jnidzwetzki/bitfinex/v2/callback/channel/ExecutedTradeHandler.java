@@ -17,6 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.callback.channel;
 
+import java.math.BigDecimal;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -68,18 +70,18 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
 		final long timestamp = jsonArray.getNumber(1).longValue();
 		executedTrade.setTimestamp(timestamp);
 		
-		final double amount = jsonArray.getNumber(2).doubleValue();
+		final BigDecimal amount = jsonArray.getBigDecimal(2);
 		executedTrade.setAmount(amount);
 		
 		// Funding or Currency
 		if(jsonArray.optNumber(4) != null) {
-			final double rate = jsonArray.getNumber(3).doubleValue();
+			final BigDecimal rate = jsonArray.getBigDecimal(3);
 			executedTrade.setRate(rate);
 			
 			final int period = jsonArray.getNumber(4).intValue();
 			executedTrade.setPeriod(period);
 		} else {
-			final double price = jsonArray.getNumber(3).doubleValue();
+			final BigDecimal price = jsonArray.getBigDecimal(3);
 			executedTrade.setPrice(price);
 		}
 				

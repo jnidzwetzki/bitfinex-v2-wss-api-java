@@ -17,6 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -44,10 +46,10 @@ public class BitfinexOrder {
 	@Enumerated(EnumType.STRING)
 	private final BitfinexOrderType type;
 	
-	private final double price;
-	private final double priceTrailing;
-	private final double priceAuxLimit;
-	private final double amount;
+	private BigDecimal price;
+	private BigDecimal priceTrailing;
+	private BigDecimal priceAuxLimit;
+	private BigDecimal amount;
 	private final boolean postOnly;
 	private final boolean hidden;
 	private final int groupId;
@@ -62,17 +64,35 @@ public class BitfinexOrder {
 		this.symbol = null;
 		this.apikey = null;
 		this.type = null;
-		this.price = -1;
-		this.priceTrailing = -1;
-		this.priceAuxLimit = -1;
-		this.amount = -1;
+		this.price = BigDecimal.valueOf(-1);
+		this.priceTrailing = BigDecimal.valueOf(-1);
+		this.priceAuxLimit = BigDecimal.valueOf(-1);
+		this.amount = BigDecimal.valueOf(-1);
 		this.postOnly = false;
 		this.hidden = false;
 		this.groupId = -1;
 	}
 	
-	public BitfinexOrder(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, final double price, final double amount,
-			final double priceTrailing, final double priceAuxLimit, final boolean postOnly, final boolean hidden,
+	public BitfinexOrder(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, String price, String amount,
+			String priceTrailing, String priceAuxLimit, final boolean postOnly, final boolean hidden,
+			final int groupId) {
+		
+		// The client ID
+		this.cid = MicroSecondTimestampProvider.getNewTimestamp();
+
+		this.symbol = symbol;
+		this.type = type;
+		this.price = new BigDecimal(price);
+		this.priceTrailing = new BigDecimal(priceTrailing);
+		this.priceAuxLimit = new BigDecimal(priceAuxLimit);
+		this.amount = new BigDecimal(amount);
+		this.postOnly = postOnly;
+		this.hidden = hidden;
+		this.groupId = groupId;
+	}
+	
+	public BitfinexOrder(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, BigDecimal price, BigDecimal amount,
+			BigDecimal priceTrailing, BigDecimal priceAuxLimit, final boolean postOnly, final boolean hidden,
 			final int groupId) {
 		
 		// The client ID
@@ -104,20 +124,40 @@ public class BitfinexOrder {
 		return type;
 	}
 
+	@Deprecated
 	public double getPrice() {
-		return price;
+		return price.doubleValue();
+	}
+	
+	public BigDecimal getPriceAsBigDecimal() {
+		return this.price;
 	}
 
+	@Deprecated
 	public double getPriceTrailing() {
+		return priceTrailing.doubleValue();
+	}
+	
+	public BigDecimal getPriceTrailingAsBigDecimal() {
 		return priceTrailing;
 	}
 
+	@Deprecated
 	public double getPriceAuxLimit() {
+		return priceAuxLimit.doubleValue();
+	}
+	
+	public BigDecimal getPriceAuxLimitAsBigDecimal() {
 		return priceAuxLimit;
 	}
 
+	@Deprecated
 	public double getAmount() {
-		return amount;
+		return amount.doubleValue();
+	}
+	
+	public BigDecimal getAmountAsBigDecimal() {
+		return this.amount;
 	}
 
 	public boolean isPostOnly() {

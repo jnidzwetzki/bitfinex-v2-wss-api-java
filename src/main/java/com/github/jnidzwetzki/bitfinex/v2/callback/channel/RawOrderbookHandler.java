@@ -17,6 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.callback.channel;
 
+import java.math.BigDecimal;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -62,8 +64,8 @@ public class RawOrderbookHandler implements ChannelCallbackHandler {
 			final JSONArray jsonArray) {
 		
 		final long orderId = jsonArray.getNumber(0).longValue();
-		final double price = jsonArray.getNumber(1).doubleValue();
-		final double amount = jsonArray.getNumber(2).doubleValue();
+		final BigDecimal price = jsonArray.getBigDecimal(1);
+		final BigDecimal amount = jsonArray.getBigDecimal(2);
 		
 		final RawOrderbookEntry orderbookEntry = new RawOrderbookEntry(orderId, price, amount);
 		

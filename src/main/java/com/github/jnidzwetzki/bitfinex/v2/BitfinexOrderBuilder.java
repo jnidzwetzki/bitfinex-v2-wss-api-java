@@ -17,6 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2;
 
+import java.math.BigDecimal;
+
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
@@ -25,17 +27,17 @@ public class BitfinexOrderBuilder {
 
 	private final BitfinexCurrencyPair symbol; 
 	private final BitfinexOrderType type;
-	private final double amount;
+	private final BigDecimal amount;
 	
-	private double price = -1;
-	private double priceTrailing = -1;
-	private double priceAuxLimit = -1;
+	private BigDecimal price = BigDecimal.valueOf(-1);
+	private BigDecimal priceTrailing = BigDecimal.valueOf(-1);
+	private BigDecimal priceAuxLimit = BigDecimal.valueOf(-1);
 	private boolean postOnly = false;
 	private boolean hidden = false;
 	private int groupid = -1;
 
 	private BitfinexOrderBuilder(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, 
-			final double amount) {
+			BigDecimal amount) {
 		
 		this.symbol = symbol;
 		this.type = type;
@@ -45,7 +47,13 @@ public class BitfinexOrderBuilder {
 	public static BitfinexOrderBuilder create(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, 
 			final double amount) {
 		
-		return new BitfinexOrderBuilder(symbol, type, amount);
+		return new BitfinexOrderBuilder(symbol, type, BigDecimal.valueOf(amount));
+	}
+	
+	public static BitfinexOrderBuilder create(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, 
+			String amount) {
+		
+		return new BitfinexOrderBuilder(symbol, type, new BigDecimal(amount));
 	}
 	
 	public BitfinexOrderBuilder setHidden() {
@@ -58,18 +66,51 @@ public class BitfinexOrderBuilder {
 		return this;
 	}
 	
+	@Deprecated
 	public BitfinexOrderBuilder withPrice(final double price) {
+		this.price = BigDecimal.valueOf(price);
+		return this;
+	}
+	
+	public BitfinexOrderBuilder withPrice(BigDecimal price) {
 		this.price = price;
 		return this;
 	}
 	
+	public BitfinexOrderBuilder withPrice(String price) {
+		this.price = new BigDecimal(price);
+		return this;
+	}
+	
+	@Deprecated
 	public BitfinexOrderBuilder withPriceTrailing(final double price) {
+		this.priceTrailing = BigDecimal.valueOf(price);
+		return this;
+	}
+	
+	public BitfinexOrderBuilder withPriceTrailing(BigDecimal price) {
 		this.priceTrailing = price;
 		return this;
 	}
 	
+	public BitfinexOrderBuilder withPriceTrailing(String price) {
+		this.priceTrailing = new BigDecimal(price);
+		return this;
+	}
+	
+	@Deprecated
 	public BitfinexOrderBuilder withPriceAuxLimit(final double price) {
+		this.priceAuxLimit = BigDecimal.valueOf(price);
+		return this;
+	}
+	
+	public BitfinexOrderBuilder withPriceAuxLimit(BigDecimal price) {
 		this.priceAuxLimit = price;
+		return this;
+	}
+	
+	public BitfinexOrderBuilder withPriceAuxLimit(String price) {
+		this.priceAuxLimit = new BigDecimal(price);
 		return this;
 	}
 	

@@ -17,6 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.callback.api;
 
+import java.math.BigDecimal;
 import java.util.concurrent.CountDownLatch;
 
 import org.json.JSONArray;
@@ -70,9 +71,9 @@ public class WalletHandler implements APICallbackHandler {
 	private void handleWalletcallback(final BitfinexApiBroker bitfinexApiBroker, final JSONArray walletArray) throws APIException {
 		final String walletType = walletArray.getString(0);
 		final String currency = walletArray.getString(1);
-		final double balance = walletArray.getDouble(2);
-		final double unsettledInterest = walletArray.getDouble(3);
-		final double balanceAvailable = walletArray.optDouble(4, -1);
+		final BigDecimal balance = walletArray.getBigDecimal(2);
+		final BigDecimal unsettledInterest = walletArray.getBigDecimal(3);
+		final BigDecimal balanceAvailable = walletArray.optBigDecimal(4, BigDecimal.valueOf(-1));
 		
 		final Wallet wallet = new Wallet(walletType, currency, balance, unsettledInterest, balanceAvailable);
 

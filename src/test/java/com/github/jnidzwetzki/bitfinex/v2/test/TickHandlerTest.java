@@ -68,11 +68,11 @@ public class TickHandlerTest {
 			
 			try {
 				Assert.assertEquals(symbol, s);
-				Assert.assertEquals(26129, c.getOpen(), DELTA);
-				Assert.assertEquals(26129, c.getClose(), DELTA);
-				Assert.assertEquals(26129, c.getHigh(), DELTA);
-				Assert.assertEquals(26129, c.getLow(), DELTA);
-				Assert.assertEquals(BitfinexTick.INVALID_VOLUME, c.getVolume(), DELTA);
+				Assert.assertEquals(26129, c.getOpenAsBigDecimal().doubleValue(), DELTA);
+				Assert.assertEquals(26129, c.getCloseAsBigDecimal().doubleValue(), DELTA);
+				Assert.assertEquals(26129, c.getHighAsBigDecimal().doubleValue(), DELTA);
+				Assert.assertEquals(26129, c.getLowAsBigDecimal().doubleValue(), DELTA);
+				Assert.assertEquals(BitfinexTick.INVALID_VOLUME.doubleValue(), c.getVolumeAsBigDecimal().doubleValue(), DELTA);
 			} catch(Throwable e) {
 				System.out.println(e);
 				throw e;

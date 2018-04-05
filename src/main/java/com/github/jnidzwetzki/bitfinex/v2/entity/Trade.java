@@ -17,6 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -40,15 +42,15 @@ public class Trade {
 	private BitfinexCurrencyPair currency;
 	private long mtsCreate;
 	private long orderId;
-	private double execAmount;
-	private double execPrice;
+	private BigDecimal execAmount;
+	private BigDecimal execPrice;
 	
 	@Enumerated(EnumType.STRING)
 	private BitfinexOrderType orderType;	
 	
-	private double orderPrice;
+	private BigDecimal orderPrice;
 	private boolean maker;
-	private double fee;
+	private BigDecimal fee;
 	private String feeCurrency;
 
 	/**
@@ -90,19 +92,37 @@ public class Trade {
 		this.orderId = orderId;
 	}
 
+	@Deprecated
 	public double getExecAmount() {
-		return execAmount;
+		return execAmount.doubleValue();
+	}
+	
+	public BigDecimal getExecAmountAsBigDecimal() {
+		return this.execAmount;
 	}
 
 	public void setExecAmount(final double execAmount) {
+		this.execAmount = BigDecimal.valueOf(execAmount);
+	}
+	
+	public void setExecAmount(BigDecimal execAmount) {
 		this.execAmount = execAmount;
 	}
 
+	@Deprecated
 	public double getExecPrice() {
-		return execPrice;
+		return execPrice.doubleValue();
+	}
+	
+	public BigDecimal getExecPriceAsBigDecimal() {
+		return this.execPrice;
 	}
 
 	public void setExecPrice(final double execPrice) {
+		this.execPrice = BigDecimal.valueOf(execPrice);
+	}
+	
+	public void setExecPrice(BigDecimal execPrice) {
 		this.execPrice = execPrice;
 	}
 
@@ -114,11 +134,20 @@ public class Trade {
 		this.orderType = orderType;
 	}
 
+	@Deprecated
 	public double getOrderPrice() {
-		return orderPrice;
+		return orderPrice.doubleValue();
+	}
+	
+	public BigDecimal getOrderPriceAsBigDecimal() {
+		return this.orderPrice;
 	}
 
 	public void setOrderPrice(final double orderPrice) {
+		this.orderPrice = BigDecimal.valueOf(orderPrice);
+	}
+	
+	public void setOrderPrice(BigDecimal orderPrice) {
 		this.orderPrice = orderPrice;
 	}
 
@@ -130,11 +159,20 @@ public class Trade {
 		this.maker = maker;
 	}
 
+	@Deprecated
 	public double getFee() {
-		return fee;
+		return fee.doubleValue();
 	}
 
+	public BigDecimal getFeeAsBigDecimal() {
+		return this.fee;
+	}
+	
 	public void setFee(final double fee) {
+		this.fee = BigDecimal.valueOf(fee);
+	}
+	
+	public void setFee(BigDecimal fee) {
 		this.fee = fee;
 	}
 

@@ -69,8 +69,8 @@ public class TradeManagerTest {
 				Assert.assertEquals(BitfinexCurrencyPair.BTC_USD, t.getCurrency());
 				Assert.assertEquals(1512247319827l, t.getMtsCreate());
 				Assert.assertEquals(5691690918l, t.getOrderId());
-				Assert.assertEquals(-0.002, t.getExecAmount(), DELTA);
-				Assert.assertEquals(10894, t.getExecPrice(), DELTA);
+				Assert.assertEquals(-0.002, t.getExecAmountAsBigDecimal().doubleValue(), DELTA);
+				Assert.assertEquals(10894, t.getExecPriceAsBigDecimal().doubleValue(), DELTA);
 
 				Assert.assertTrue(t.toString().length() > 0);
 			} catch (Throwable e) {
@@ -109,12 +109,12 @@ public class TradeManagerTest {
 				Assert.assertEquals(BitfinexCurrencyPair.BTC_USD, t.getCurrency());
 				Assert.assertEquals(1512247319827l, t.getMtsCreate());
 				Assert.assertEquals(5691690918l, t.getOrderId());
-				Assert.assertEquals(-0.002, t.getExecAmount(), DELTA);
-				Assert.assertEquals(10894, t.getExecPrice(), DELTA);
+				Assert.assertEquals(-0.002, t.getExecAmountAsBigDecimal().doubleValue(), DELTA);
+				Assert.assertEquals(10894, t.getExecPriceAsBigDecimal().doubleValue(), DELTA);
 				Assert.assertEquals(BitfinexOrderType.EXCHANGE_MARKET, t.getOrderType());
-				Assert.assertEquals(10894, t.getOrderPrice(), DELTA);
+				Assert.assertEquals(10894, t.getOrderPriceAsBigDecimal().doubleValue(), DELTA);
 				Assert.assertFalse(t.isMaker());
-				Assert.assertEquals(-0.0392184, t.getFee(), DELTA);
+				Assert.assertEquals(-0.0392184, t.getFeeAsBigDecimal().doubleValue(), DELTA);
 				Assert.assertEquals("USD", t.getFeeCurrency());
 				Assert.assertTrue(t.toString().length() > 0);
 			} catch (Throwable e) {
