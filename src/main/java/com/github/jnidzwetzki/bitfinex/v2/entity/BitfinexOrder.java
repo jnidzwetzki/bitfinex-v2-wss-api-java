@@ -64,10 +64,10 @@ public class BitfinexOrder {
 		this.symbol = null;
 		this.apikey = null;
 		this.type = null;
-		this.price = BigDecimal.valueOf(-1);
-		this.priceTrailing = BigDecimal.valueOf(-1);
-		this.priceAuxLimit = BigDecimal.valueOf(-1);
-		this.amount = BigDecimal.valueOf(-1);
+		this.price = null;
+		this.priceTrailing = null;
+		this.priceAuxLimit = null;
+		this.amount = null;
 		this.postOnly = false;
 		this.hidden = false;
 		this.groupId = -1;
