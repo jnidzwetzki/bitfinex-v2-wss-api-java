@@ -73,26 +73,9 @@ public class BitfinexOrder {
 		this.groupId = -1;
 	}
 	
-	public BitfinexOrder(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, String price, String amount,
-			String priceTrailing, String priceAuxLimit, final boolean postOnly, final boolean hidden,
-			final int groupId) {
-		
-		// The client ID
-		this.cid = MicroSecondTimestampProvider.getNewTimestamp();
-
-		this.symbol = symbol;
-		this.type = type;
-		this.price = new BigDecimal(price);
-		this.priceTrailing = new BigDecimal(priceTrailing);
-		this.priceAuxLimit = new BigDecimal(priceAuxLimit);
-		this.amount = new BigDecimal(amount);
-		this.postOnly = postOnly;
-		this.hidden = hidden;
-		this.groupId = groupId;
-	}
-	
-	public BitfinexOrder(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, BigDecimal price, BigDecimal amount,
-			BigDecimal priceTrailing, BigDecimal priceAuxLimit, final boolean postOnly, final boolean hidden,
+	public BitfinexOrder(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, 
+			final BigDecimal price, final BigDecimal amount, final BigDecimal priceTrailing, 
+			final BigDecimal priceAuxLimit, final boolean postOnly, final boolean hidden,
 			final int groupId) {
 		
 		// The client ID
