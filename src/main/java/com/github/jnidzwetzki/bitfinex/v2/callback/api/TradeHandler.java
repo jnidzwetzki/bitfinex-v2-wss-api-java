@@ -17,6 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.callback.api;
 
+import java.math.BigDecimal;
+
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +71,8 @@ public class TradeHandler implements APICallbackHandler {
 		trade.setCurrency(BitfinexCurrencyPair.fromSymbolString(jsonTrade.getString(1)));
 		trade.setMtsCreate(jsonTrade.getLong(2));
 		trade.setOrderId(jsonTrade.getLong(3));
-		trade.setExecAmount(jsonTrade.getFloat(4));
-		trade.setExecPrice(jsonTrade.getFloat(5));
+		trade.setExecAmount(jsonTrade.getBigDecimal(4));
+		trade.setExecPrice(jsonTrade.getBigDecimal(5));
 		
 		final String orderTypeString = jsonTrade.optString(6, null);
 		
@@ -78,9 +80,9 @@ public class TradeHandler implements APICallbackHandler {
 			trade.setOrderType(BitfinexOrderType.fromString(orderTypeString));
 		}
 		
-		trade.setOrderPrice(jsonTrade.optFloat(7, -1));
+		trade.setOrderPrice(jsonTrade.optBigDecimal(7, BigDecimal.valueOf(-1)));
 		trade.setMaker(jsonTrade.getInt(8) == 1 ? true : false);
-		trade.setFee(jsonTrade.optFloat(9, -1));
+		trade.setFee(jsonTrade.optBigDecimal(9, BigDecimal.valueOf(-1)));
 		trade.setFeeCurrency(jsonTrade.optString(10, ""));
 
 		bitfinexApiBroker.getTradeManager().updateTrade(trade);

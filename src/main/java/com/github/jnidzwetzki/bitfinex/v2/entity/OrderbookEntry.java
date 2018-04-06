@@ -17,27 +17,46 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
+import java.math.BigDecimal;
+
 public class OrderbookEntry {
-	private final double price;
-	private final double count;
-	private final double amount;
 	
-	public OrderbookEntry(final double price, final double count, final double amount) {
+
+	private final BigDecimal price;
+	private final BigDecimal amount;
+	private final BigDecimal count;
+	
+	public OrderbookEntry(BigDecimal price, BigDecimal count, BigDecimal amount) {
 		this.price = price;
 		this.count = count;
 		this.amount = amount;
 	}
 
+	@Deprecated
 	public double getPrice() {
+		return price.doubleValue();
+	}
+	
+	public BigDecimal getPriceAsBigDecimal() {
 		return price;
 	}
 
-	public double getCount() {
-		return count;
+	@Deprecated
+	public double getAmount() {
+		return amount.doubleValue();
+	}
+	
+	public BigDecimal getAmountAsBigDecimal() {
+		return amount;
 	}
 
-	public double getAmount() {
-		return amount;
+	@Deprecated
+	public double getCount() {
+		return count.doubleValue();
+	}
+	
+	public BigDecimal getCountAsBigDecimal() {
+		return count;
 	}
 
 	@Override

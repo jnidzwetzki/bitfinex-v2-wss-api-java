@@ -17,13 +17,15 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
+import java.math.BigDecimal;
+
 public class ExecutedTrade {
 	
 	private long id;
 	private long timestamp;
-	private double amount;
-	private double price;
-	private double rate;
+	private BigDecimal amount;
+	private BigDecimal price;
+	private BigDecimal rate;
 	private int period;
 	
 	public ExecutedTrade() {
@@ -37,27 +39,54 @@ public class ExecutedTrade {
 		this.timestamp = timestamp;
 	}
 
+	@Deprecated
 	public double getAmount() {
+		return amount.doubleValue();
+	}
+	
+	public BigDecimal getAmountAsBigDecimal() {
 		return amount;
 	}
 
 	public void setAmount(final double amount) {
-		this.amount = amount;
+		this.amount = BigDecimal.valueOf(amount);
 	}
 
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
+	
+	@Deprecated
 	public double getPrice() {
+		return price.doubleValue();
+	}
+	
+	public BigDecimal getPriceAsBigDecimal() {
 		return price;
 	}
 
 	public void setPrice(final double price) {
+		this.price = BigDecimal.valueOf(price);
+	}
+	
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 
+	@Deprecated
 	public double getRate() {
+		return rate.doubleValue();
+	}
+	
+	public BigDecimal getRateAsBigDecimal() {
 		return rate;
 	}
 
 	public void setRate(final double rate) {
+		this.rate = BigDecimal.valueOf(rate);
+	}
+	
+	public void setRate(BigDecimal rate) {
 		this.rate = rate;
 	}
 

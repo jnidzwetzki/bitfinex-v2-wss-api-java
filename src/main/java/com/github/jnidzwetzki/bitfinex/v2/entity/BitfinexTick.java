@@ -17,6 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
+import java.math.BigDecimal;
+
 public class BitfinexTick implements Comparable<BitfinexTick>{
 	
 	/**
@@ -27,40 +29,40 @@ public class BitfinexTick implements Comparable<BitfinexTick>{
 	/**
 	 * The open price
 	 */
-	private final double open;
+	private final BigDecimal open;
 	
 	/**
 	 * The close price
 	 */
-	private final double close;
+	private final BigDecimal close;
 	
 	/**
 	 * The high price
 	 */
-	private final double high;
+	private final BigDecimal high;
 	
 	/**
 	 * The low price
 	 */
-	private final double low;
+	private final BigDecimal low;
 	
 	/**
 	 * The volume
 	 */
-	private final double volume;
+	private final BigDecimal volume;
 	
 	/**
 	 * The invalid volume marker
 	 */
-	public final static double INVALID_VOLUME = -1;
+	public final static BigDecimal INVALID_VOLUME = BigDecimal.valueOf(-1);
 
-	public BitfinexTick(final long timestamp, final double open, final double close, final double high,
-			final double low, final double volume) {
+	public BitfinexTick(final long timestamp, BigDecimal open, BigDecimal close, BigDecimal high,
+			BigDecimal low, BigDecimal volume) {
 		
-		assert (high >= open) : "High needs to be >= open";
-		assert (high >= close) : "High needs to be => close";
-		assert (low <= open) : "Low needs to be <= open";
-		assert (low <= close) : "Low needs to be <= close";
+		assert (high.doubleValue() >= open.doubleValue()) : "High needs to be >= open";
+		assert (high.doubleValue() >= close.doubleValue()) : "High needs to be => close";
+		assert (low.doubleValue() <= open.doubleValue()) : "Low needs to be <= open";
+		assert (low.doubleValue() <= close.doubleValue()) : "Low needs to be <= close";
 
 		this.timestamp = timestamp;
 		this.open = open;
@@ -70,31 +72,64 @@ public class BitfinexTick implements Comparable<BitfinexTick>{
 		this.volume = volume;
 	}
 	
-	public BitfinexTick(final long timestamp, final double open, final double close, final double high, final double low) {
+	public BitfinexTick(final long timestamp, BigDecimal open, BigDecimal close, BigDecimal high, BigDecimal low) {
 		this(timestamp, open, close,  high, low, INVALID_VOLUME);
+	}
+	
+	public BitfinexTick(final long timestamp, String open, String close, String high, String low) {
+		this(timestamp, new BigDecimal(open), new BigDecimal(close), new BigDecimal(high), new BigDecimal(low), INVALID_VOLUME);
+	}
+	
+	public BitfinexTick(final long timestamp, String open, String close, String high, String low, String volume) {
+		this(timestamp, new BigDecimal(open), new BigDecimal(close), new BigDecimal(high), new BigDecimal(low), new BigDecimal(volume));
 	}
 	
 	public long getTimestamp() {
 		return timestamp;
 	}
 
+	@Deprecated
 	public double getOpen() {
+		return open.doubleValue();
+	}
+	
+	public BigDecimal getOpenAsBigDecimal() {
 		return open;
 	}
 
+	@Deprecated
 	public double getClose() {
+		return close.doubleValue();
+	}
+	
+	public BigDecimal getCloseAsBigDecimal() {
 		return close;
 	}
 
+	@Deprecated
 	public double getHigh() {
+		return high.doubleValue();
+	}
+	
+	public BigDecimal getHighAsBigDecimal() {
 		return high;
 	}
 
+	@Deprecated
 	public double getLow() {
+		return low.doubleValue();
+	}
+	
+	public BigDecimal getLowAsBigDecimal() {
 		return low;
 	}
 
+	@Deprecated
 	public double getVolume() {
+		return volume.doubleValue();
+	}
+	
+	public BigDecimal getVolumeAsBigDecimal() {
 		return volume;
 	}
 
@@ -103,16 +138,16 @@ public class BitfinexTick implements Comparable<BitfinexTick>{
 		final int prime = 31;
 		int result = 1;
 		long temp;
-		temp = Double.doubleToLongBits(close);
+		temp = Double.doubleToLongBits(close.doubleValue());
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(high);
+		temp = Double.doubleToLongBits(high.doubleValue());
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(low);
+		temp = Double.doubleToLongBits(low.doubleValue());
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(open);
+		temp = Double.doubleToLongBits(open.doubleValue());
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
-		temp = Double.doubleToLongBits(volume);
+		temp = Double.doubleToLongBits(volume.doubleValue());
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
@@ -126,17 +161,17 @@ public class BitfinexTick implements Comparable<BitfinexTick>{
 		if (getClass() != obj.getClass())
 			return false;
 		BitfinexTick other = (BitfinexTick) obj;
-		if (Double.doubleToLongBits(close) != Double.doubleToLongBits(other.close))
+		if (Double.doubleToLongBits(close.doubleValue()) != Double.doubleToLongBits(other.close.doubleValue()))
 			return false;
-		if (Double.doubleToLongBits(high) != Double.doubleToLongBits(other.high))
+		if (Double.doubleToLongBits(high.doubleValue()) != Double.doubleToLongBits(other.high.doubleValue()))
 			return false;
-		if (Double.doubleToLongBits(low) != Double.doubleToLongBits(other.low))
+		if (Double.doubleToLongBits(low.doubleValue()) != Double.doubleToLongBits(other.low.doubleValue()))
 			return false;
-		if (Double.doubleToLongBits(open) != Double.doubleToLongBits(other.open))
+		if (Double.doubleToLongBits(open.doubleValue()) != Double.doubleToLongBits(other.open.doubleValue()))
 			return false;
 		if (timestamp != other.timestamp)
 			return false;
-		if (Double.doubleToLongBits(volume) != Double.doubleToLongBits(other.volume))
+		if (Double.doubleToLongBits(volume.doubleValue()) != Double.doubleToLongBits(other.volume.doubleValue()))
 			return false;
 		return true;
 	}

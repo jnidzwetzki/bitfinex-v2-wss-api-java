@@ -17,6 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.callback.channel;
 
+import java.math.BigDecimal;
+
 import org.json.JSONArray;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
@@ -41,7 +43,7 @@ public class TickHandler implements ChannelCallbackHandler {
 		// 0 = BID
 		// 2 = ASK
 		// 6 = Price
-		final double price = jsonArray.getDouble(6);
+		final BigDecimal price = jsonArray.getBigDecimal(6);
 		
 		// Volume is set to 0, because the ticker contains only the daily volume
 		final BitfinexTick tick = new BitfinexTick(System.currentTimeMillis(), price, price, 

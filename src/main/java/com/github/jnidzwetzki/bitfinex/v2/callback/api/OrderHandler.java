@@ -17,6 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.callback.api;
 
+import java.math.BigDecimal;
 import java.util.concurrent.CountDownLatch;
 
 import org.json.JSONArray;
@@ -92,17 +93,17 @@ public class OrderHandler implements APICallbackHandler {
 		exchangeOrder.setSymbol(order.getString(3));
 		exchangeOrder.setCreated(order.getLong(4));
 		exchangeOrder.setUpdated(order.getLong(5));
-		exchangeOrder.setAmount(order.getDouble(6));
-		exchangeOrder.setAmountAtCreation(order.getDouble(7));
+		exchangeOrder.setAmount(order.getBigDecimal(6));
+		exchangeOrder.setAmountAtCreation(order.getBigDecimal(7));
 		exchangeOrder.setOrderType(BitfinexOrderType.fromString(order.getString(8)));
 		
 		final ExchangeOrderState orderState = ExchangeOrderState.fromString(order.getString(13));
 		exchangeOrder.setState(orderState);
 		
-		exchangeOrder.setPrice(order.getDouble(16));
-		exchangeOrder.setPriceAvg(order.optDouble(17, -1));
-		exchangeOrder.setPriceTrailing(order.optDouble(18, -1));
-		exchangeOrder.setPriceAuxLimit(order.optDouble(19, -1));
+		exchangeOrder.setPrice(order.optBigDecimal(16, BigDecimal.valueOf(-1)));
+		exchangeOrder.setPriceAvg(order.optBigDecimal(17, BigDecimal.valueOf(-1)));
+		exchangeOrder.setPriceTrailing(order.optBigDecimal(18, BigDecimal.valueOf(-1)));
+		exchangeOrder.setPriceAuxLimit(order.optBigDecimal(19, BigDecimal.valueOf(-1)));
 		exchangeOrder.setNotify(order.getInt(23) == 1 ? true : false);
 		exchangeOrder.setHidden(order.getInt(24) == 1 ? true : false);
 

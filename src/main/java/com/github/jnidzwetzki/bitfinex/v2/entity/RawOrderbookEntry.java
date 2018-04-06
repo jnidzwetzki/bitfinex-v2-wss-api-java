@@ -17,27 +17,39 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
+import java.math.BigDecimal;
+
 public class RawOrderbookEntry {
 
 	private final long orderId;
-	private final double price;
-	private final double amount;
+	private final BigDecimal price;
+	private final BigDecimal amount;
 
-	public RawOrderbookEntry(final long orderId, final double price, final double amount) {
+	public RawOrderbookEntry(final long orderId, BigDecimal price, BigDecimal amount) {
 		this.orderId = orderId;
 		this.price = price;
 		this.amount = amount;
 	}
 
-	public double getOrderId() {
+	public long getOrderId() {
 		return orderId;
 	}
 
+	@Deprecated
 	public double getPrice() {
+		return price.doubleValue();
+	}
+	
+	public BigDecimal getPriceAsBigDecimal() {
 		return price;
 	}
 
+	@Deprecated
 	public double getAmount() {
+		return amount.doubleValue();
+	}
+	
+	public BigDecimal getAmountAsBigDecimal() {
 		return amount;
 	}
 

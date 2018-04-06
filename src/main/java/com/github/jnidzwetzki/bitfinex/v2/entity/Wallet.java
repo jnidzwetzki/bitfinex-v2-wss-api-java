@@ -17,13 +17,15 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
+import java.math.BigDecimal;
+
 public class Wallet {
 
 	private final String walletType;
 	private final String curreny;
-	private final double balance;
-	private final double unsettledInterest;
-	private final double balanceAvailable;
+	private final BigDecimal balance;
+	private final BigDecimal unsettledInterest;
+	private final BigDecimal balanceAvailable;
 	
 	public final static String WALLET_TYPE_EXCHANGE = "exchange";
 	
@@ -31,8 +33,8 @@ public class Wallet {
 	
 	public final static String WALLET_TYPE_FUNDING = "funding";
 
-	public Wallet(final String walletType, final String curreny, final double balance, 
-			final double unsettledInterest, final double balanceAvailable) {
+	public Wallet(final String walletType, final String curreny, BigDecimal balance, 
+			BigDecimal unsettledInterest, BigDecimal balanceAvailable) {
 		
 		this.walletType = walletType;
 		this.curreny = curreny;
@@ -55,15 +57,30 @@ public class Wallet {
 		return curreny;
 	}
 
+	@Deprecated
 	public double getBalance() {
+		return balance.doubleValue();
+	}
+	
+	public BigDecimal getBalanceAsBigDecimal() {
 		return balance;
 	}
 
+	@Deprecated
 	public double getUnsettledInterest() {
+		return unsettledInterest.doubleValue();
+	}
+	
+	public BigDecimal getUnsettledInterestAsBigDecimal() {
 		return unsettledInterest;
 	}
 
+	@Deprecated
 	public double getBalanceAvailable() {
+		return balanceAvailable.doubleValue();
+	}
+	
+	public BigDecimal getBalanceAvailableAsBigDecimal() {
 		return balanceAvailable;
 	}
 

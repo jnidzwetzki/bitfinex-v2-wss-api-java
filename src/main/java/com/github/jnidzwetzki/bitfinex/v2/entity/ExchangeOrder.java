@@ -17,6 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -39,8 +41,8 @@ public class ExchangeOrder {
 	private String symbol;
 	private long created;
 	private long updated;
-	private double amount;
-	private double amountAtCreation;
+	private BigDecimal amount;
+	private BigDecimal amountAtCreation;
 	
 	@Enumerated(EnumType.STRING)
 	private BitfinexOrderType orderType;
@@ -48,10 +50,10 @@ public class ExchangeOrder {
 	@Enumerated(EnumType.STRING)
 	private ExchangeOrderState state;
 	
-	private double price;
-	private double priceAvg;
-	private double priceTrailing;
-	private double priceAuxLimit;
+	private BigDecimal price;
+	private BigDecimal priceAvg;
+	private BigDecimal priceTrailing;
+	private BigDecimal priceAuxLimit;
 	private boolean notify;
 	private boolean hidden;
 
@@ -110,19 +112,37 @@ public class ExchangeOrder {
 		this.updated = updated;
 	}
 
+	@Deprecated
 	public double getAmount() {
-		return amount;
+		return amount.doubleValue();
+	}
+	
+	public BigDecimal getAmountAsBigDecimal() {
+		return this.amount;
 	}
 
 	public void setAmount(final double amount) {
+		this.amount = BigDecimal.valueOf(amount);
+	}
+	
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 
+	@Deprecated
 	public double getAmountAtCreation() {
-		return amountAtCreation;
+		return amountAtCreation.doubleValue();
+	}
+	
+	public BigDecimal getAmountAtCreationAsBigDecimal() {
+		return this.amountAtCreation;
 	}
 
 	public void setAmountAtCreation(final double amountAtCreation) {
+		this.amountAtCreation = BigDecimal.valueOf(amountAtCreation);
+	}
+		
+	public void setAmountAtCreation(BigDecimal amountAtCreation) {
 		this.amountAtCreation = amountAtCreation;
 	}
 
@@ -142,35 +162,72 @@ public class ExchangeOrder {
 		this.state = state;
 	}
 
+	@Deprecated
 	public double getPrice() {
-		return price;
+		return price.doubleValue();
+	}
+	
+	public BigDecimal getPriceAsBigDecimal() {
+		return this.price;
 	}
 
 	public void setPrice(final double price) {
+		this.price = BigDecimal.valueOf(price);
+	}
+	
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 
+	@Deprecated
 	public double getPriceAvg() {
-		return priceAvg;
+		return priceAvg.doubleValue();
+	}
+	
+	public BigDecimal getPriceAvgAsBigDecimal() {
+		return this.priceAvg;
 	}
 
 	public void setPriceAvg(final double priceAvg) {
+		this.priceAvg = BigDecimal.valueOf(priceAvg);
+	}
+	
+	
+	public void setPriceAvg(BigDecimal priceAvg) {
 		this.priceAvg = priceAvg;
 	}
 
+	@Deprecated
 	public double getPriceTrailing() {
+		return priceTrailing.doubleValue();
+	}
+	
+	public BigDecimal getPriceTrailingAsBigDecimal() {
 		return priceTrailing;
 	}
 
 	public void setPriceTrailing(final double priceTrailing) {
+		this.priceTrailing = BigDecimal.valueOf(priceTrailing);
+	}
+	
+	public void setPriceTrailing(BigDecimal priceTrailing) {
 		this.priceTrailing = priceTrailing;
 	}
 
+	@Deprecated
 	public double getPriceAuxLimit() {
+		return priceAuxLimit.doubleValue();
+	}
+	
+	public BigDecimal getPriceAuxLimitAsBigDecimal() {
 		return priceAuxLimit;
 	}
 
 	public void setPriceAuxLimit(final double priceAuxLimit) {
+		this.priceAuxLimit = BigDecimal.valueOf(priceAuxLimit);
+	}
+	
+	public void setPriceAuxLimit(BigDecimal priceAuxLimit) {
 		this.priceAuxLimit = priceAuxLimit;
 	}
 
