@@ -58,6 +58,9 @@ You will find the changelog of the project [here](https://github.com/jnidzwetzki
 
 # Recent API changes
 
+## Version 0.6.2 
+Since version 0.6.2, the double data type is replaced by the BigDecimal data type for increased precision.
+
 ## Version 0.6.1
 Since version 0.6.1, the Wallets are new managed by the Wallet manager. The WalletManager provides the same methods as the BitfinexAPIBroker in previous versions. Execute your wallet related calls on the new WalletManager.
 
