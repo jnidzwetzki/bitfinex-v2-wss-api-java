@@ -29,9 +29,9 @@ public class BitfinexOrderBuilder {
 	private final BitfinexOrderType type;
 	private final BigDecimal amount;
 	
-	private BigDecimal price = BigDecimal.valueOf(-1);
-	private BigDecimal priceTrailing = BigDecimal.valueOf(-1);
-	private BigDecimal priceAuxLimit = BigDecimal.valueOf(-1);
+	private BigDecimal price;
+	private BigDecimal priceTrailing;
+	private BigDecimal priceAuxLimit;
 	private boolean postOnly = false;
 	private boolean hidden = false;
 	private int groupid = -1;

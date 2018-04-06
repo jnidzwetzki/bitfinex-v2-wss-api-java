@@ -46,15 +46,15 @@ public class OrderCommand extends AbstractAPICommand {
 		orderJson.put("symbol", bitfinexOrder.getSymbol().toBitfinexString());
 		orderJson.put("amount",  bitfinexOrder.getAmount());
 		
-		if(bitfinexOrder.getPrice().doubleValue() != -1) {
+		if(bitfinexOrder.getPrice() != null) {
 			orderJson.put("price", bitfinexOrder.getPrice());
 		}
 
-		if(bitfinexOrder.getPriceTrailing().doubleValue() != -1) {
+		if(bitfinexOrder.getPriceTrailing() != null) {
 			orderJson.put("price_trailing", bitfinexOrder.getPriceTrailing());
 		}
 		
-		if(bitfinexOrder.getPriceAuxLimit().doubleValue() != -1) {
+		if(bitfinexOrder.getPriceAuxLimit() != null) {
 			orderJson.put("price_aux_limit", bitfinexOrder.getPriceAuxLimit());
 		}
 		
