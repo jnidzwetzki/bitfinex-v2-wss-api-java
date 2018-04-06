@@ -50,12 +50,6 @@ public class BitfinexOrderBuilder {
 		return new BitfinexOrderBuilder(symbol, type, BigDecimal.valueOf(amount));
 	}
 	
-	public static BitfinexOrderBuilder create(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, 
-			String amount) {
-		
-		return new BitfinexOrderBuilder(symbol, type, new BigDecimal(amount));
-	}
-	
 	public BitfinexOrderBuilder setHidden() {
 		hidden = true;
 		return this;
