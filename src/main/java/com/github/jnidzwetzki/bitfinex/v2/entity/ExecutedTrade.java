@@ -39,12 +39,8 @@ public class ExecutedTrade {
 		this.timestamp = timestamp;
 	}
 
-	@Deprecated
-	public double getAmount() {
-		return amount.doubleValue();
-	}
 	
-	public BigDecimal getAmountAsBigDecimal() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
@@ -52,16 +48,11 @@ public class ExecutedTrade {
 		this.amount = BigDecimal.valueOf(amount);
 	}
 
-	public void setAmount(BigDecimal amount) {
+	public void setAmount(final BigDecimal amount) {
 		this.amount = amount;
 	}
 	
-	@Deprecated
-	public double getPrice() {
-		return price.doubleValue();
-	}
-	
-	public BigDecimal getPriceAsBigDecimal() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
@@ -69,16 +60,11 @@ public class ExecutedTrade {
 		this.price = BigDecimal.valueOf(price);
 	}
 	
-	public void setPrice(BigDecimal price) {
+	public void setPrice(final BigDecimal price) {
 		this.price = price;
 	}
 
-	@Deprecated
-	public double getRate() {
-		return rate.doubleValue();
-	}
-	
-	public BigDecimal getRateAsBigDecimal() {
+	public BigDecimal getRate() {
 		return rate;
 	}
 
@@ -86,7 +72,7 @@ public class ExecutedTrade {
 		this.rate = BigDecimal.valueOf(rate);
 	}
 	
-	public void setRate(BigDecimal rate) {
+	public void setRate(final BigDecimal rate) {
 		this.rate = rate;
 	}
 

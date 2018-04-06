@@ -17,6 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.test;
 
+import java.math.BigDecimal;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,9 +33,24 @@ public class BitfinexTickTest {
 
 	@Test
 	public void testEquals() {
-		final BitfinexTick tick1 = new BitfinexTick(210, "11", "16", "18", "10", "45");
-		final BitfinexTick tick2 = new BitfinexTick(213, "12", "15", "18", "10");
-		final BitfinexTick tick3 = new BitfinexTick(213, "12", "15", "18", "10");
+		final BitfinexTick tick1 = new BitfinexTick(210, 
+				new BigDecimal(11),
+				new BigDecimal(16), 
+				new BigDecimal(18), 
+				new BigDecimal(10), 
+				new BigDecimal(45));
+		
+		final BitfinexTick tick2 = new BitfinexTick(213, 
+				new BigDecimal(12),
+				new BigDecimal(15), 
+				new BigDecimal(18), 
+				new BigDecimal(10));
+		
+		final BitfinexTick tick3 = new BitfinexTick(213, 
+				new BigDecimal(12),
+				new BigDecimal(15), 
+				new BigDecimal(18), 
+				new BigDecimal(10));
 		
 		Assert.assertEquals(tick2, tick3);
 		Assert.assertEquals(tick2.hashCode(), tick3.hashCode());
@@ -44,14 +61,14 @@ public class BitfinexTickTest {
 	
 	@Test
 	public void testToString() {
-		final BitfinexTick tick1 = new BitfinexTick(213, "12", "15", "18", "12");
+		final BitfinexTick tick1 = new BitfinexTick(213, 12d, 15d, 18d, 12d, 100d);
 		Assert.assertTrue(tick1.toString().length() > 10);
 	}
 	
 	@Test
 	public void testCompareTo() {
-		final BitfinexTick tick1 = new BitfinexTick(210, "11", "16", "18", "10");
-		final BitfinexTick tick2 = new BitfinexTick(213, "12", "15", "18", "12");
+		final BitfinexTick tick1 = new BitfinexTick(210, 11d, 16d, 18d, 10d, 100d);
+		final BitfinexTick tick2 = new BitfinexTick(213, 12d, 15d, 18d, 12d, 100d);
 		Assert.assertTrue(tick1.compareTo(tick2) < 0);
 		Assert.assertTrue(tick2.compareTo(tick1) > 0);
 		Assert.assertTrue(tick1.compareTo(tick1) == 0);
@@ -59,16 +76,21 @@ public class BitfinexTickTest {
 	
 	@Test
 	public void testGetter() {
-		final BitfinexTick tick1 = new BitfinexTick(210, "11", "16", "18", "10", "45");
-		final BitfinexTick tick2 = new BitfinexTick(213, "12", "15", "18", "12");
+		final BitfinexTick tick1 = new BitfinexTick(210, 11, 16, 18, 10, 45);
+		
+		final BitfinexTick tick2 = new BitfinexTick(210, 
+				new BigDecimal(11),
+				new BigDecimal(16), 
+				new BigDecimal(18), 
+				new BigDecimal(10));		
 		
 		Assert.assertEquals(210, tick1.getTimestamp());
-		Assert.assertEquals(11, tick1.getOpenAsBigDecimal().doubleValue(), DELTA);
-		Assert.assertEquals(16, tick1.getCloseAsBigDecimal().doubleValue(), DELTA);
-		Assert.assertEquals(18, tick1.getHighAsBigDecimal().doubleValue(), DELTA);
-		Assert.assertEquals(10, tick1.getLowAsBigDecimal().doubleValue(), DELTA);
-		Assert.assertEquals(45, tick1.getVolumeAsBigDecimal().doubleValue(), DELTA);
+		Assert.assertEquals(11, tick1.getOpen().doubleValue(), DELTA);
+		Assert.assertEquals(16, tick1.getClose().doubleValue(), DELTA);
+		Assert.assertEquals(18, tick1.getHigh().doubleValue(), DELTA);
+		Assert.assertEquals(10, tick1.getLow().doubleValue(), DELTA);
+		Assert.assertEquals(45, tick1.getVolume().doubleValue(), DELTA);
 
-		Assert.assertEquals(BitfinexTick.INVALID_VOLUME.doubleValue(), tick2.getVolumeAsBigDecimal().doubleValue(), DELTA);
+		Assert.assertEquals(BitfinexTick.INVALID_VOLUME, tick2.getVolume());
 	}
 }

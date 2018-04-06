@@ -48,140 +48,67 @@ public class Position {
 		this.status = status;
 	}
 	
-	@Deprecated
-	public double getAmount() {
-		return amount.doubleValue();
-	}
-	
-	public BigDecimal getAmountAsBigDecimal() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 	
-	public void setAmount(final double amount) {
-		this.amount = BigDecimal.valueOf(amount);
-	}
-	
-	public void setAmount(BigDecimal amount) {
+	public void setAmount(final BigDecimal amount) {
 		this.amount = amount;
 	}
 	
-	@Deprecated
-	public double getBasePrice() {
-		return basePrice.doubleValue();
-	}
-	
-	public BigDecimal getBasePriceAsBigDecimal() {
+	public BigDecimal getBasePrice() {
 		return basePrice;
 	}
 	
-	public void setBasePrice(final double basePrice) {
-		this.basePrice = BigDecimal.valueOf(basePrice);
-	}
-	
-	public void setBasePrice(BigDecimal basePrice) {
+	public void setBasePrice(final BigDecimal basePrice) {
 		this.basePrice = basePrice;
 	}
 	
-	@Deprecated
-	public double getMarginFunding() {
-		return marginFunding.doubleValue();
-	}
-	
-	public BigDecimal getMarginFundingAsBigDecimal() {
+	public BigDecimal getMarginFunding() {
 		return marginFunding;
 	}
 	
-	public void setMarginFunding(final double marginFunding) {
-		this.marginFunding = BigDecimal.valueOf(marginFunding);
-	}
-	
-	public void setMarginFunding(BigDecimal marginFunding) {
+	public void setMarginFunding(final BigDecimal marginFunding) {
 		this.marginFunding = marginFunding;
 	}
 	
-	@Deprecated
-	public double getMarginFundingType() {
-		return marginFundingType.doubleValue();
-	}
-	
-	public BigDecimal getMarginFundingTypeAsBigDecimal() {
+	public BigDecimal getMarginFundingType() {
 		return marginFundingType;
 	}
 	
-	public void setMarginFundingType(final double marginFundingType) {
-		this.marginFundingType = BigDecimal.valueOf(marginFundingType);
-	}
-	
-	public void setMarginFundingType(BigDecimal marginFundingType) {
+	public void setMarginFundingType(final BigDecimal marginFundingType) {
 		this.marginFundingType = marginFundingType;
 	}
 	
-	@Deprecated
-	public double getPl() {
-		return pl.doubleValue();
-	}
-	
-	public BigDecimal getPlAsBigDecimal() {
+	public BigDecimal getPl() {
 		return pl;
 	}
 	
-	
-	public void setPl(final double pl) {
-		this.pl = BigDecimal.valueOf(pl);
-	}
-	
-	public void setPl(BigDecimal pl) {
+	public void setPl(final BigDecimal pl) {
 		this.pl = pl;
 	}
 	
-	@Deprecated
-	public double getPriceLiquidation() {
-		return priceLiquidation.doubleValue();
-	}
-	
-	public BigDecimal getPriceLiquidationAsBigDecimal() {
+	public BigDecimal getPriceLiquidation() {
 		return priceLiquidation;
 	}
 	
-	public void setPriceLiquidation(final double priceLiquidation) {
-		this.priceLiquidation = BigDecimal.valueOf(priceLiquidation);
-	}
-	
-	public void setPriceLiquidation(BigDecimal priceLiquidation) {
+	public void setPriceLiquidation(final BigDecimal priceLiquidation) {
 		this.priceLiquidation = priceLiquidation;
 	}
 	
-	@Deprecated
-	public double getLeverage() {
-		return leverage.doubleValue();
-	}
-	
-	public BigDecimal getLeverageAsBigDecimal() {
+	public BigDecimal getLeverage() {
 		return leverage;
 	}
 	
-	public void setLeverage(final double leverage) {
-		this.leverage = BigDecimal.valueOf(leverage);
-	}
-	
-	public void setLeverage(BigDecimal leverage) {
+	public void setLeverage(final BigDecimal leverage) {
 		this.leverage = leverage;
 	}
 
-	@Deprecated
-	public double getPlPercent() {
-		return plPercent.doubleValue();
-	}
-	
-	public BigDecimal getPlPercentAsBigDecimal() {
+	public BigDecimal getPlPercent() {
 		return plPercent;
 	}
-
-	public void setPlPercent(final double plPercent) {
-		this.plPercent = BigDecimal.valueOf(plPercent);
-	}
 	
-	public void setPlPercent(BigDecimal plPercent) {
+	public void setPlPercent(final BigDecimal plPercent) {
 		this.plPercent = plPercent;
 	}
 

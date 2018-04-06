@@ -67,8 +67,8 @@ public class ExecutedTradesHandlerTest {
 				Assert.assertEquals(symbol, s);
 				Assert.assertEquals(190631057, c.getId());
 				Assert.assertEquals(1518037080162l, c.getTimestamp());
-				Assert.assertEquals(0.007, c.getAmountAsBigDecimal().doubleValue(), DELTA);
-				Assert.assertEquals(8175.9, c.getPriceAsBigDecimal().doubleValue(), DELTA);
+				Assert.assertEquals(0.007, c.getAmount().doubleValue(), DELTA);
+				Assert.assertEquals(8175.9, c.getPrice().doubleValue(), DELTA);
 				latch.countDown();
 			} catch (Throwable e) {
 				e.printStackTrace();
@@ -109,13 +109,13 @@ public class ExecutedTradesHandlerTest {
 				if(c.getId() == 190631057) {
 					Assert.assertEquals(190631057, c.getId());
 					Assert.assertEquals(1518037080162l, c.getTimestamp());
-					Assert.assertEquals(0.007, c.getAmountAsBigDecimal().doubleValue(), DELTA);
-					Assert.assertEquals(8175.9, c.getPriceAsBigDecimal().doubleValue(), DELTA);
+					Assert.assertEquals(0.007, c.getAmount().doubleValue(), DELTA);
+					Assert.assertEquals(8175.9, c.getPrice().doubleValue(), DELTA);
 				} else if(c.getId() == 190631052) {
 					Assert.assertEquals(190631052, c.getId());
 					Assert.assertEquals(1518037080110l, c.getTimestamp());
-					Assert.assertEquals(-0.25, c.getAmountAsBigDecimal().doubleValue(), DELTA);
-					Assert.assertEquals(8175.8, c.getPriceAsBigDecimal().doubleValue(), DELTA);
+					Assert.assertEquals(-0.25, c.getAmount().doubleValue(), DELTA);
+					Assert.assertEquals(8175.8, c.getPrice().doubleValue(), DELTA);
 				} else {
 					throw new IllegalArgumentException("Illegal call, expected 2 trades");
 				}

@@ -56,31 +56,16 @@ public class Wallet {
 	public String getCurreny() {
 		return curreny;
 	}
-
-	@Deprecated
-	public double getBalance() {
-		return balance.doubleValue();
-	}
 	
-	public BigDecimal getBalanceAsBigDecimal() {
+	public BigDecimal getBalance() {
 		return balance;
 	}
-
-	@Deprecated
-	public double getUnsettledInterest() {
-		return unsettledInterest.doubleValue();
-	}
 	
-	public BigDecimal getUnsettledInterestAsBigDecimal() {
+	public BigDecimal getUnsettledInterest() {
 		return unsettledInterest;
 	}
-
-	@Deprecated
-	public double getBalanceAvailable() {
-		return balanceAvailable.doubleValue();
-	}
 	
-	public BigDecimal getBalanceAvailableAsBigDecimal() {
+	public BigDecimal getBalanceAvailable() {
 		return balanceAvailable;
 	}
 

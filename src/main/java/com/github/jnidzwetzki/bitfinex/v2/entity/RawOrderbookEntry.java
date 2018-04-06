@@ -35,21 +35,11 @@ public class RawOrderbookEntry {
 		return orderId;
 	}
 
-	@Deprecated
-	public double getPrice() {
-		return price.doubleValue();
-	}
-	
-	public BigDecimal getPriceAsBigDecimal() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
-	@Deprecated
-	public double getAmount() {
-		return amount.doubleValue();
-	}
-	
-	public BigDecimal getAmountAsBigDecimal() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 

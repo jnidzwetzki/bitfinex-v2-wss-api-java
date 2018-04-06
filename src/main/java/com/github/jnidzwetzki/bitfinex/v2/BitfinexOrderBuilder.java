@@ -66,51 +66,33 @@ public class BitfinexOrderBuilder {
 		return this;
 	}
 	
-	@Deprecated
 	public BitfinexOrderBuilder withPrice(final double price) {
 		this.price = BigDecimal.valueOf(price);
 		return this;
 	}
 	
-	public BitfinexOrderBuilder withPrice(BigDecimal price) {
+	public BitfinexOrderBuilder withPrice(final BigDecimal price) {
 		this.price = price;
 		return this;
 	}
 	
-	public BitfinexOrderBuilder withPrice(String price) {
-		this.price = new BigDecimal(price);
-		return this;
-	}
-	
-	@Deprecated
 	public BitfinexOrderBuilder withPriceTrailing(final double price) {
 		this.priceTrailing = BigDecimal.valueOf(price);
 		return this;
 	}
 	
-	public BitfinexOrderBuilder withPriceTrailing(BigDecimal price) {
+	public BitfinexOrderBuilder withPriceTrailing(final BigDecimal price) {
 		this.priceTrailing = price;
 		return this;
 	}
 	
-	public BitfinexOrderBuilder withPriceTrailing(String price) {
-		this.priceTrailing = new BigDecimal(price);
-		return this;
-	}
-	
-	@Deprecated
 	public BitfinexOrderBuilder withPriceAuxLimit(final double price) {
 		this.priceAuxLimit = BigDecimal.valueOf(price);
 		return this;
 	}
 	
-	public BitfinexOrderBuilder withPriceAuxLimit(BigDecimal price) {
+	public BitfinexOrderBuilder withPriceAuxLimit(final BigDecimal price) {
 		this.priceAuxLimit = price;
-		return this;
-	}
-	
-	public BitfinexOrderBuilder withPriceAuxLimit(String price) {
-		this.priceAuxLimit = new BigDecimal(price);
 		return this;
 	}
 	

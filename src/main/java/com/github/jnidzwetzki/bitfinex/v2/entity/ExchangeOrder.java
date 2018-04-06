@@ -54,6 +54,7 @@ public class ExchangeOrder {
 	private BigDecimal priceAvg;
 	private BigDecimal priceTrailing;
 	private BigDecimal priceAuxLimit;
+	
 	private boolean notify;
 	private boolean hidden;
 
@@ -112,37 +113,19 @@ public class ExchangeOrder {
 		this.updated = updated;
 	}
 
-	@Deprecated
-	public double getAmount() {
-		return amount.doubleValue();
-	}
-	
-	public BigDecimal getAmountAsBigDecimal() {
+	public BigDecimal getAmount() {
 		return this.amount;
 	}
 
-	public void setAmount(final double amount) {
-		this.amount = BigDecimal.valueOf(amount);
-	}
-	
-	public void setAmount(BigDecimal amount) {
+	public void setAmount(final BigDecimal amount) {
 		this.amount = amount;
 	}
 
-	@Deprecated
-	public double getAmountAtCreation() {
-		return amountAtCreation.doubleValue();
-	}
-	
-	public BigDecimal getAmountAtCreationAsBigDecimal() {
+	public BigDecimal getAmountAtCreation() {
 		return this.amountAtCreation;
 	}
 
-	public void setAmountAtCreation(final double amountAtCreation) {
-		this.amountAtCreation = BigDecimal.valueOf(amountAtCreation);
-	}
-		
-	public void setAmountAtCreation(BigDecimal amountAtCreation) {
+	public void setAmountAtCreation(final BigDecimal amountAtCreation) {
 		this.amountAtCreation = amountAtCreation;
 	}
 
@@ -162,72 +145,35 @@ public class ExchangeOrder {
 		this.state = state;
 	}
 
-	@Deprecated
-	public double getPrice() {
-		return price.doubleValue();
-	}
-	
-	public BigDecimal getPriceAsBigDecimal() {
+	public BigDecimal getPrice() {
 		return this.price;
 	}
 
-	public void setPrice(final double price) {
-		this.price = BigDecimal.valueOf(price);
-	}
-	
 	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 
-	@Deprecated
-	public double getPriceAvg() {
-		return priceAvg.doubleValue();
-	}
-	
-	public BigDecimal getPriceAvgAsBigDecimal() {
+	public BigDecimal getPriceAvg() {
 		return this.priceAvg;
 	}
-
-	public void setPriceAvg(final double priceAvg) {
-		this.priceAvg = BigDecimal.valueOf(priceAvg);
-	}
 	
-	
-	public void setPriceAvg(BigDecimal priceAvg) {
+	public void setPriceAvg(final BigDecimal priceAvg) {
 		this.priceAvg = priceAvg;
 	}
 
-	@Deprecated
-	public double getPriceTrailing() {
-		return priceTrailing.doubleValue();
-	}
-	
-	public BigDecimal getPriceTrailingAsBigDecimal() {
+	public BigDecimal getPriceTrailing() {
 		return priceTrailing;
 	}
 
-	public void setPriceTrailing(final double priceTrailing) {
-		this.priceTrailing = BigDecimal.valueOf(priceTrailing);
-	}
-	
-	public void setPriceTrailing(BigDecimal priceTrailing) {
+	public void setPriceTrailing(final BigDecimal priceTrailing) {
 		this.priceTrailing = priceTrailing;
 	}
 
-	@Deprecated
-	public double getPriceAuxLimit() {
-		return priceAuxLimit.doubleValue();
-	}
-	
-	public BigDecimal getPriceAuxLimitAsBigDecimal() {
+	public BigDecimal getPriceAuxLimit() {
 		return priceAuxLimit;
 	}
 
-	public void setPriceAuxLimit(final double priceAuxLimit) {
-		this.priceAuxLimit = BigDecimal.valueOf(priceAuxLimit);
-	}
-	
-	public void setPriceAuxLimit(BigDecimal priceAuxLimit) {
+	public void setPriceAuxLimit(final BigDecimal priceAuxLimit) {
 		this.priceAuxLimit = priceAuxLimit;
 	}
 

@@ -68,9 +68,9 @@ public class WalletHandlerTest {
 		walletLatch.await();
 		
 		Assert.assertEquals(1, walletTable.size());
-		Assert.assertEquals(9, walletTable.get("exchange", "ETH").getBalanceAsBigDecimal().doubleValue(), DELTA);
-		Assert.assertEquals(-1, walletTable.get("exchange", "ETH").getBalanceAvailableAsBigDecimal().doubleValue(), DELTA);
-		Assert.assertEquals(0, walletTable.get("exchange", "ETH").getUnsettledInterestAsBigDecimal().doubleValue(), DELTA);
+		Assert.assertEquals(9, walletTable.get("exchange", "ETH").getBalance().doubleValue(), DELTA);
+		Assert.assertEquals(-1, walletTable.get("exchange", "ETH").getBalanceAvailable().doubleValue(), DELTA);
+		Assert.assertEquals(0, walletTable.get("exchange", "ETH").getUnsettledInterest().doubleValue(), DELTA);
 	}
 	
 	/**
@@ -102,17 +102,17 @@ public class WalletHandlerTest {
 		
 		Assert.assertEquals(9, walletTable.size());
 		
-		Assert.assertEquals(9, walletTable.get("exchange", "ETH").getBalanceAsBigDecimal().doubleValue(), DELTA);
-		Assert.assertEquals(-1, walletTable.get("exchange", "ETH").getBalanceAvailableAsBigDecimal().doubleValue(), DELTA);
-		Assert.assertEquals(0, walletTable.get("exchange", "ETH").getUnsettledInterestAsBigDecimal().doubleValue(), DELTA);
+		Assert.assertEquals(9, walletTable.get("exchange", "ETH").getBalance().doubleValue(), DELTA);
+		Assert.assertEquals(-1, walletTable.get("exchange", "ETH").getBalanceAvailable().doubleValue(), DELTA);
+		Assert.assertEquals(0, walletTable.get("exchange", "ETH").getUnsettledInterest().doubleValue(), DELTA);
 		
-		Assert.assertEquals(1826.56468323, walletTable.get("exchange", "USD").getBalanceAsBigDecimal().doubleValue(), DELTA);
-		Assert.assertEquals(-1, walletTable.get("exchange", "ETH").getBalanceAvailableAsBigDecimal().doubleValue(), DELTA);
-		Assert.assertEquals(0, walletTable.get("exchange", "ETH").getUnsettledInterestAsBigDecimal().doubleValue(), DELTA);
+		Assert.assertEquals(1826.56468323, walletTable.get("exchange", "USD").getBalance().doubleValue(), DELTA);
+		Assert.assertEquals(-1, walletTable.get("exchange", "ETH").getBalanceAvailable().doubleValue(), DELTA);
+		Assert.assertEquals(0, walletTable.get("exchange", "ETH").getUnsettledInterest().doubleValue(), DELTA);
 		
-		Assert.assertEquals(0, walletTable.get("margin", "USD").getBalanceAsBigDecimal().doubleValue(), DELTA);
-		Assert.assertEquals(-1, walletTable.get("margin", "USD").getBalanceAvailableAsBigDecimal().doubleValue(), DELTA);
-		Assert.assertEquals(0, walletTable.get("margin", "USD").getUnsettledInterestAsBigDecimal().doubleValue(), DELTA);
+		Assert.assertEquals(0, walletTable.get("margin", "USD").getBalance().doubleValue(), DELTA);
+		Assert.assertEquals(-1, walletTable.get("margin", "USD").getBalanceAvailable().doubleValue(), DELTA);
+		Assert.assertEquals(0, walletTable.get("margin", "USD").getUnsettledInterest().doubleValue(), DELTA);
 		
 		Assert.assertTrue(walletTable.get("margin", "USD").toString().length() > 0);
 	}

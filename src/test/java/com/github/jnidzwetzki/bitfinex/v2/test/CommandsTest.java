@@ -89,9 +89,9 @@ public class CommandsTest {
 			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.BCH_USD, BitfinexOrderType.EXCHANGE_STOP, 2)
 			.setHidden()
 			.setPostOnly()
-			.withPrice("12")
-			.withPriceAuxLimit("23")
-			.withPriceTrailing("23")
+			.withPrice(12)
+			.withPriceAuxLimit(23)
+			.withPriceTrailing(23)
 			.withGroupId(4)
 			.build();
 		

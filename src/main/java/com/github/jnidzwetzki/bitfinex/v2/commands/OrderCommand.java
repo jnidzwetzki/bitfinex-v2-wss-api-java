@@ -44,18 +44,18 @@ public class OrderCommand extends AbstractAPICommand {
 		orderJson.put("cid", bitfinexOrder.getCid());
 		orderJson.put("type", bitfinexOrder.getType().getBifinexString());
 		orderJson.put("symbol", bitfinexOrder.getSymbol().toBitfinexString());
-		orderJson.put("amount",  bitfinexOrder.getAmountAsBigDecimal());
+		orderJson.put("amount",  bitfinexOrder.getAmount());
 		
-		if(bitfinexOrder.getPriceAsBigDecimal().doubleValue() != -1) {
-			orderJson.put("price", bitfinexOrder.getPriceAsBigDecimal());
+		if(bitfinexOrder.getPrice().doubleValue() != -1) {
+			orderJson.put("price", bitfinexOrder.getPrice());
 		}
 
-		if(bitfinexOrder.getPriceTrailingAsBigDecimal().doubleValue() != -1) {
-			orderJson.put("price_trailing", bitfinexOrder.getPriceTrailingAsBigDecimal());
+		if(bitfinexOrder.getPriceTrailing().doubleValue() != -1) {
+			orderJson.put("price_trailing", bitfinexOrder.getPriceTrailing());
 		}
 		
-		if(bitfinexOrder.getPriceAuxLimitAsBigDecimal().doubleValue() != -1) {
-			orderJson.put("price_aux_limit", bitfinexOrder.getPriceAuxLimitAsBigDecimal());
+		if(bitfinexOrder.getPriceAuxLimit().doubleValue() != -1) {
+			orderJson.put("price_aux_limit", bitfinexOrder.getPriceAuxLimit());
 		}
 		
 		if(bitfinexOrder.isHidden()) {

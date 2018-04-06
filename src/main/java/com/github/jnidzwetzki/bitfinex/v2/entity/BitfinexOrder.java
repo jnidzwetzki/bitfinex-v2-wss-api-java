@@ -124,39 +124,19 @@ public class BitfinexOrder {
 		return type;
 	}
 
-	@Deprecated
-	public double getPrice() {
-		return price.doubleValue();
-	}
-	
-	public BigDecimal getPriceAsBigDecimal() {
+	public BigDecimal getPrice() {
 		return this.price;
 	}
 
-	@Deprecated
-	public double getPriceTrailing() {
-		return priceTrailing.doubleValue();
-	}
-	
-	public BigDecimal getPriceTrailingAsBigDecimal() {
+	public BigDecimal getPriceTrailing() {
 		return priceTrailing;
 	}
 
-	@Deprecated
-	public double getPriceAuxLimit() {
-		return priceAuxLimit.doubleValue();
-	}
-	
-	public BigDecimal getPriceAuxLimitAsBigDecimal() {
+	public BigDecimal getPriceAuxLimit() {
 		return priceAuxLimit;
 	}
 
-	@Deprecated
-	public double getAmount() {
-		return amount.doubleValue();
-	}
-	
-	public BigDecimal getAmountAsBigDecimal() {
+	public BigDecimal getAmount() {
 		return this.amount;
 	}
 

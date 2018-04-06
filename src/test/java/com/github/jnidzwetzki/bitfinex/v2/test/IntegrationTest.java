@@ -92,9 +92,9 @@ public class IntegrationTest {
 			final OrderbookManager orderbookManager = bitfinexClient.getOrderbookManager();
 			
 			final BiConsumer<OrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
-				Assert.assertTrue(o.getAmountAsBigDecimal().doubleValue() != 0);
-				Assert.assertTrue(o.getPriceAsBigDecimal().doubleValue() != 0);
-				Assert.assertTrue(o.getCountAsBigDecimal().doubleValue() != 0);
+				Assert.assertTrue(o.getAmount().doubleValue() != 0);
+				Assert.assertTrue(o.getPrice().doubleValue() != 0);
+				Assert.assertTrue(o.getCount().doubleValue() != 0);
 				Assert.assertTrue(o.toString().length() > 0);
 				latch.countDown();
 			};
@@ -134,8 +134,8 @@ public class IntegrationTest {
 			final RawOrderbookManager rawOrderbookManager = bitfinexClient.getRawOrderbookManager();
 			
 			final BiConsumer<RawOrderbookConfiguration, RawOrderbookEntry> callback = (c, o) -> {
-				Assert.assertTrue(o.getAmountAsBigDecimal().doubleValue() != 0);
-				Assert.assertTrue(o.getPriceAsBigDecimal().doubleValue() != 0);
+				Assert.assertTrue(o.getAmount().doubleValue() != 0);
+				Assert.assertTrue(o.getPrice().doubleValue() != 0);
 				Assert.assertTrue(o.getOrderId() >= 0);
 				Assert.assertTrue(o.toString().length() > 0);
 				latch.countDown();
