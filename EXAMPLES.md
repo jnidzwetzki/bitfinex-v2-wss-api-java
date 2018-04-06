@@ -167,18 +167,20 @@ bitfinexApiBroker.getOrderManager().placeOrder(order);
 ## Order group
 ```java
 final CurrencyPair currencyPair = CurrencyPair.BTC_USD;
-final Tick lastValue = bitfinexApiBroker.getLastTick(currencyPair);
+final BitfinexTick lastValue = bitfinexApiBroker.getQuoteManager().getLastTick(currencyPair);
 
 final int orderGroup = 4711;
 
+// Long order when price rises 1%
 final BitfinexOrder bitfinexOrder1 = BitfinexOrderBuilder
-		.create(currencyPair, BitfinexOrderType.EXCHANGE_LIMIT, 0.002, lastValue.getClosePrice().toDouble() / 100.0 * 100.1)
+		.create(currencyPair, BitfinexOrderType.EXCHANGE_LIMIT, 0.002, lastValue.getClosePrice() / 100.0 * 101.0)
 		.setPostOnly()
 		.withGroupId(orderGroup)
 		.build();
 
+// Short order when price drops 1%
 final BitfinexOrder bitfinexOrder2 = BitfinexOrderBuilder
-		.create(currencyPair, BitfinexOrderType.EXCHANGE_LIMIT, -0.002, lastValue.getClosePrice().toDouble() / 100.0 * 101)
+		.create(currencyPair, BitfinexOrderType.EXCHANGE_LIMIT, -0.002, lastValue.getClosePrice() / 100.0 * 99.0)
 		.setPostOnly()
 		.withGroupId(orderGroup)
 		.build();
