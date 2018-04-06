@@ -1,4 +1,5 @@
 # Version 0.6.2 (TBA)
+* Improvement: Switched from double data type to BigDecimal to increase precision (thanks hansblafoo / closes #20 / #22)
 
 # Version 0.6.1 (23.03.2018)
 * New Feature: Moved the wallets into a WalletManager
