@@ -38,14 +38,9 @@ public class ExecutedTrade {
 	public void setTimestamp(final long timestamp) {
 		this.timestamp = timestamp;
 	}
-
 	
 	public BigDecimal getAmount() {
 		return amount;
-	}
-
-	public void setAmount(final double amount) {
-		this.amount = BigDecimal.valueOf(amount);
 	}
 
 	public void setAmount(final BigDecimal amount) {
@@ -56,10 +51,6 @@ public class ExecutedTrade {
 		return price;
 	}
 
-	public void setPrice(final double price) {
-		this.price = BigDecimal.valueOf(price);
-	}
-	
 	public void setPrice(final BigDecimal price) {
 		this.price = price;
 	}
@@ -68,10 +59,6 @@ public class ExecutedTrade {
 		return rate;
 	}
 
-	public void setRate(final double rate) {
-		this.rate = BigDecimal.valueOf(rate);
-	}
-	
 	public void setRate(final BigDecimal rate) {
 		this.rate = rate;
 	}
