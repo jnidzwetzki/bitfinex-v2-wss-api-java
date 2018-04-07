@@ -2,7 +2,7 @@
 
 <a href="https://travis-ci.org/jnidzwetzki/bitfinex-v2-wss-api-java">
   <img alt="Build Status" src="https://travis-ci.org/jnidzwetzki/bitfinex-v2-wss-api-java.svg?branch=master">
-</a><a href="https://repo1.maven.org/maven2/com/github/jnidzwetzki/"><img alt="Maven Central Version" src="https://maven-badges.herokuapp.com/maven-central/com.github.jnidzwetzki/bitfinex-v2-wss-api/badge.svg" />
+</a><a href="https://repo1.maven.org/maven2/com/github/jnidzwetzki/bitfinex-v2-wss-api/"><img alt="Maven Central Version" src="https://maven-badges.herokuapp.com/maven-central/com.github.jnidzwetzki/bitfinex-v2-wss-api/badge.svg" />
   </a><a href="https://codecov.io/gh/jnidzwetzki/bitfinex-v2-wss-api-java">
   <img src="https://codecov.io/gh/jnidzwetzki/bitfinex-v2-wss-api-java/branch/master/graph/badge.svg" />
 </a><a href="https://scan.coverity.com/projects/jnidzwetzki-bitfinex-v2-wss-api-java">
