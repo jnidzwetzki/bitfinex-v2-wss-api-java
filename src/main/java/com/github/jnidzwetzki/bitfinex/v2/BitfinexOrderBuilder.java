@@ -37,7 +37,7 @@ public class BitfinexOrderBuilder {
 	private int groupid = -1;
 
 	private BitfinexOrderBuilder(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, 
-			BigDecimal amount) {
+			final BigDecimal amount) {
 		
 		this.symbol = symbol;
 		this.type = type;
@@ -47,7 +47,13 @@ public class BitfinexOrderBuilder {
 	public static BitfinexOrderBuilder create(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, 
 			final double amount) {
 		
-		return new BitfinexOrderBuilder(symbol, type, BigDecimal.valueOf(amount));
+		return create(symbol, type, BigDecimal.valueOf(amount));
+	}
+	
+	public static BitfinexOrderBuilder create(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, 
+			final BigDecimal amount) {
+		
+		return new BitfinexOrderBuilder(symbol, type, amount);
 	}
 	
 	public BitfinexOrderBuilder setHidden() {
