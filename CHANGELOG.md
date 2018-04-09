@@ -1,4 +1,5 @@
 # Version 0.6.3 (TBA)
+* Bugfix: Added missing BigDecimal order constructor (closes #23)
 
 # Version 0.6.2 (06.04.2018)
 * Improvement: Switched from double data type to BigDecimal to increase precision (thanks hansblafoo / closes #20 / #22)
