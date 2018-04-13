@@ -2,6 +2,7 @@
 * New Feature: Added the connection feature manager
 * New Feature: Added sequence number audit (BitfinexConnectionFeature.SEQ_ALL)
 * Improvement: Updated dependencies
+* Improvement: Updated currency list (thanks ilyagalahov / closes #25)
 * Bugfix: Added missing BigDecimal order constructor (closes #23)
 
 # Version 0.6.2 (06.04.2018)
