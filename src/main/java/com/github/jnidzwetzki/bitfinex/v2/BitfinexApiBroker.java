@@ -691,7 +691,7 @@ public class BitfinexApiBroker implements Closeable {
 	}
 
 	/**
-	 * Wait for the successfull channel resubscription
+	 * Wait for the successful channel re-subscription
 	 * @param oldChannelIdSymbolMap
 	 * @throws APIException
 	 * @throws InterruptedException
