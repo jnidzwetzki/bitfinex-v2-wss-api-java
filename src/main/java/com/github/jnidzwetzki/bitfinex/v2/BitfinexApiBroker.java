@@ -20,7 +20,9 @@ package com.github.jnidzwetzki.bitfinex.v2;
 import java.io.Closeable;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -57,6 +59,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.command.UnsubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AbstractAPICommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AuthCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CommandException;
+import com.github.jnidzwetzki.bitfinex.v2.commands.SetConnectionFeaturesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeRawOrderbookCommand;
@@ -156,6 +159,11 @@ public class BitfinexApiBroker implements Closeable {
 	private String apiSecret;
 	
 	/**
+	 * The connection features
+	 */
+	private Set<BitfinexConnectionFeature> connectionFeatures;
+	
+	/**
 	 * The connection ready latch
 	 */
 	private CountDownLatch connectionReadyLatch;
@@ -220,7 +228,8 @@ public class BitfinexApiBroker implements Closeable {
 		this.capabilities = ConnectionCapabilities.NO_CAPABILITIES;
 		this.authenticated = false;
 		this.channelHandler = new HashMap<>();
-
+		this.connectionFeatures = new HashSet<>();
+		
 		setupChannelHandler();
 		setupCommandCallbacks();
 	}
@@ -849,4 +858,23 @@ public class BitfinexApiBroker implements Closeable {
 	public void setAuthenticated(final boolean authenticated) {
 		this.authenticated = authenticated;
 	}
+	
+	/**
+	 * Enable a connection feature
+	 * @param feature
+	 */
+	public void enableConnectionFeature(final BitfinexConnectionFeature feature) {
+		connectionFeatures.add(feature);
+		sendCommand(new SetConnectionFeaturesCommand(connectionFeatures));
+	}
+	
+	/**
+	 * Disable a connection feature
+	 * @param feature
+	 */
+	public void disableConnectionFeature(final BitfinexConnectionFeature feature) {
+		connectionFeatures.remove(feature);
+		sendCommand(new SetConnectionFeaturesCommand(connectionFeatures));
+	}
+	
 }

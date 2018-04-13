@@ -24,6 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
@@ -328,6 +329,31 @@ public class IntegrationTest {
 		orderbookManager.unsubscribeTicker(symbol);
 		Assert.assertFalse(bitfinexClient.isTickerActive(symbol));
 		
+		bitfinexClient.close();
+	}
+	
+	/**
+	 * Test the sequencing feature
+	 * @throws APIException 
+	 * @throws InterruptedException 
+	 */
+	public void testSequencing() throws APIException, InterruptedException {
+		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
+		bitfinexClient.connect();
+		bitfinexClient.enableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
+		
+		// Register some ticket to get some sequence numbers
+		final BitfinexTickerSymbol symbol1 = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_USD);
+		final BitfinexTickerSymbol symbol2 = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_EUR);
+
+		final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
+		
+		orderbookManager.subscribeTicker(symbol1);
+		orderbookManager.subscribeTicker(symbol2);
+
+		Thread.sleep(1000);
+		
+		bitfinexClient.disableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
 		bitfinexClient.close();
 	}
 }

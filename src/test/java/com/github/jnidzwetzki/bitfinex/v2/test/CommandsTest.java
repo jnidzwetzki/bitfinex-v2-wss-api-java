@@ -1,6 +1,7 @@
 package com.github.jnidzwetzki.bitfinex.v2.test;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Assert;
@@ -16,6 +17,7 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderGroupCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CommandException;
 import com.github.jnidzwetzki.bitfinex.v2.commands.OrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.PingCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.SetConnectionFeaturesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
@@ -68,7 +70,8 @@ public class CommandsTest {
 				new SubscribeTradesCommand(new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.BAT_BTC)),
 				new SubscribeOrderbookCommand(orderbookConfiguration),
 				new SubscribeRawOrderbookCommand(rawOrderbookConfiguration),
-				new UnsubscribeChannelCommand(12));
+				new UnsubscribeChannelCommand(12),
+				new SetConnectionFeaturesCommand(new HashSet<>()));
 		
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
 		
