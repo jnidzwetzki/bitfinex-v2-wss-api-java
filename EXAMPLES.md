@@ -28,6 +28,17 @@ if(! capabilities.isHavingOrdersWriteCapability()) {
 )
 ```
 
+## Connection Features
+```java 
+// Enabling package sequence auditing (ensuring all result packages are processed)
+final ConnectionFeatureManager cfManager = bitfinexClient.getConnectionFeatureManager();
+
+final SequenceNumberAuditor sequenceNumberAuditor = bitfinexClient.getSequenceNumberAuditor();
+sequenceNumberAuditor.setErrorPolicy(SequenceNumberAuditor.ErrorPolicy.LOG_ONLY);
+
+cfManager.enableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
+```
+
 ## Subscribe candles stream
 ```java
 

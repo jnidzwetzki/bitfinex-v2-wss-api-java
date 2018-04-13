@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
+import com.github.jnidzwetzki.bitfinex.v2.SequenceNumberAuditor;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
@@ -39,6 +40,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
@@ -337,13 +339,23 @@ public class IntegrationTest {
 	 * @throws APIException 
 	 * @throws InterruptedException 
 	 */
+	@Test
 	public void testSequencing() throws APIException, InterruptedException {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
 		bitfinexClient.connect();
 		
-		Assert.assertFalse(bitfinexClient.isConnectionFeatureEnabled(BitfinexConnectionFeature.SEQ_ALL));
-		bitfinexClient.enableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
-		Assert.assertTrue(bitfinexClient.isConnectionFeatureEnabled(BitfinexConnectionFeature.SEQ_ALL));
+		final SequenceNumberAuditor sequenceNumberAuditor = bitfinexClient.getSequenceNumberAuditor();
+		Assert.assertEquals(-1, sequenceNumberAuditor.getPrivateSequence());
+		Assert.assertEquals(-1, sequenceNumberAuditor.getPublicSequence());
+		Assert.assertEquals(SequenceNumberAuditor.ErrorPolicy.LOG_ONLY, sequenceNumberAuditor.getErrorPolicy());
+
+		final ConnectionFeatureManager cfManager = bitfinexClient.getConnectionFeatureManager();
+		Assert.assertEquals(0, cfManager.getActiveConnectionFeatures());
+		Assert.assertFalse(cfManager.isConnectionFeatureEnabled(BitfinexConnectionFeature.SEQ_ALL));
+		cfManager.enableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
+		Thread.sleep(1000);
+		Assert.assertTrue(cfManager.isConnectionFeatureActive(BitfinexConnectionFeature.SEQ_ALL));
+		Assert.assertEquals(BitfinexConnectionFeature.SEQ_ALL.getFeatureFlag(), cfManager.getActiveConnectionFeatures());
 
 		// Register some ticket to get some sequence numbers
 		final BitfinexTickerSymbol symbol1 = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_USD);
@@ -356,8 +368,14 @@ public class IntegrationTest {
 
 		Thread.sleep(1000);
 		
-		bitfinexClient.disableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
-		Assert.assertFalse(bitfinexClient.isConnectionFeatureEnabled(BitfinexConnectionFeature.SEQ_ALL));
+		cfManager.disableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
+		Assert.assertFalse(cfManager.isConnectionFeatureEnabled(BitfinexConnectionFeature.SEQ_ALL));
+		Thread.sleep(2000);
+		Assert.assertEquals(0, cfManager.getActiveConnectionFeatures());
+		Assert.assertFalse(cfManager.isConnectionFeatureActive(BitfinexConnectionFeature.SEQ_ALL));
+
+		Assert.assertEquals(-1, sequenceNumberAuditor.getPrivateSequence());
+		Assert.assertTrue(sequenceNumberAuditor.getPublicSequence() > 1);
 
 		bitfinexClient.close();
 	}

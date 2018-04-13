@@ -21,7 +21,6 @@ import java.io.Closeable;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -51,6 +50,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.channel.RawOrderbookHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.TickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.AuthCallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.CommandCallbackHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.command.ConfCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.ConnectionHeartbeatCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.DoNothingCommandCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.SubscribedCallback;
@@ -58,7 +58,6 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.command.UnsubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AbstractAPICommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AuthCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CommandException;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SetConnectionFeaturesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeRawOrderbookCommand;
@@ -72,6 +71,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbo
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
@@ -79,7 +79,6 @@ import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
-import com.google.common.collect.Sets;
 
 public class BitfinexApiBroker implements Closeable {
 
@@ -139,6 +138,11 @@ public class BitfinexApiBroker implements Closeable {
 	private final WalletManager walletManager;
 	
 	/**
+	 * The connection feature manager
+	 */
+	private final ConnectionFeatureManager connectionFeatureManager;
+	
+	/**
 	 * The last heartbeat value
 	 */
 	protected final AtomicLong lastHeatbeat;
@@ -157,11 +161,6 @@ public class BitfinexApiBroker implements Closeable {
 	 * The API secret
 	 */
 	private String apiSecret;
-	
-	/**
-	 * The connection features
-	 */
-	private Set<BitfinexConnectionFeature> connectionFeatures;
 	
 	/**
 	 * The connection ready latch
@@ -203,6 +202,11 @@ public class BitfinexApiBroker implements Closeable {
 	private final ExecutorService executorService;
 	
 	/**
+	 * The sequence number auditor
+	 */
+	private final SequenceNumberAuditor sequenceNumberAuditor;
+	
+	/**
 	 * The Logger
 	 */
 	private final static Logger logger = LoggerFactory.getLogger(BitfinexApiBroker.class);
@@ -225,10 +229,11 @@ public class BitfinexApiBroker implements Closeable {
 		this.tradeManager = new TradeManager(this);
 		this.positionManager = new PositionManager(executorService);
 		this.walletManager = new WalletManager(this);
+		this.connectionFeatureManager = new ConnectionFeatureManager(this);
 		this.capabilities = ConnectionCapabilities.NO_CAPABILITIES;
 		this.authenticated = false;
 		this.channelHandler = new HashMap<>();
-		this.connectionFeatures = Sets.newConcurrentHashSet();
+		this.sequenceNumberAuditor = new SequenceNumberAuditor();
 		
 		setupChannelHandler();
 		setupCommandCallbacks();
@@ -286,6 +291,7 @@ public class BitfinexApiBroker implements Closeable {
 		commandCallbacks.put("pong", new ConnectionHeartbeatCallback());
 		commandCallbacks.put("unsubscribed", new UnsubscribedCallback());
 		commandCallbacks.put("auth", new AuthCallbackHandler());
+		commandCallbacks.put("conf", new ConfCallback());
 	}
 	
 	/**
@@ -294,13 +300,15 @@ public class BitfinexApiBroker implements Closeable {
 	 */
 	public void connect() throws APIException {
 		try {
+			sequenceNumberAuditor.reset();
+			
 			final URI bitfinexURI = new URI(BITFINEX_URI);
 			websocketEndpoint = new WebsocketClientEndpoint(bitfinexURI);
 			websocketEndpoint.addConsumer(apiCallback);
 			websocketEndpoint.connect();
 			updateConnectionHeartbeat();
 			
-			applyConnectionFeatures();
+			connectionFeatureManager.applyConnectionFeatures();
 			executeAuthentification();
 			
 			heartbeatThread = new Thread(new HeartbeatThread(this));
@@ -456,7 +464,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * Handle a channel callback
 	 * @param message
 	 */
-	protected void handleChannelCallback(final String message) {
+	private void handleChannelCallback(final String message) {
 		// Channel callback
 		logger.debug("Channel callback");
 		updateConnectionHeartbeat();
@@ -464,7 +472,11 @@ public class BitfinexApiBroker implements Closeable {
 		// JSON callback
 		final JSONTokener tokener = new JSONTokener(message);
 		final JSONArray jsonArray = new JSONArray(tokener);
-				
+		
+		if(connectionFeatureManager.isConnectionFeatureActive(BitfinexConnectionFeature.SEQ_ALL)) {
+			sequenceNumberAuditor.auditPackage(jsonArray);
+		}
+		
 		final int channel = jsonArray.getInt(0);
 		
 		if(channel == 0) {
@@ -644,6 +656,8 @@ public class BitfinexApiBroker implements Closeable {
 			logger.info("Performing reconnect");
 			capabilities = ConnectionCapabilities.NO_CAPABILITIES;
 			authenticated = false;
+			sequenceNumberAuditor.reset();
+			connectionFeatureManager.setActiveConnectionFeatures(0);
 			
 			// Invalidate old data
 			quoteManager.invalidateTickerHeartbeat();
@@ -653,7 +667,7 @@ public class BitfinexApiBroker implements Closeable {
 			websocketEndpoint.close();
 			websocketEndpoint.connect();
 			
-			applyConnectionFeatures();
+			connectionFeatureManager.applyConnectionFeatures();
 			executeAuthentification();
 			resubscribeChannels();
 
@@ -668,7 +682,7 @@ public class BitfinexApiBroker implements Closeable {
 	}
 
 	/**
-	 * Resubscribe the old ticker
+	 * Re-subscribe the old ticker
 	 * @throws InterruptedException
 	 * @throws APIException
 	 */
@@ -862,38 +876,19 @@ public class BitfinexApiBroker implements Closeable {
 	}
 	
 	/**
-	 * Enable a connection feature
-	 * @param feature
-	 */
-	public void enableConnectionFeature(final BitfinexConnectionFeature feature) {
-		connectionFeatures.add(feature);
-		applyConnectionFeatures();
-	}
-	
-	/**
-	 * Disable a connection feature
-	 * @param feature
-	 */
-	public void disableConnectionFeature(final BitfinexConnectionFeature feature) {
-		connectionFeatures.remove(feature);
-		applyConnectionFeatures();
-	}
-
-	/**
-	 * Is the given connection feature enabled?
-	 * @param feature
+	 * Get the connection feature manager
 	 * @return
 	 */
-	public boolean isConnectionFeatureEnabled(final BitfinexConnectionFeature feature) {
-		return connectionFeatures.contains(feature);
+	public ConnectionFeatureManager getConnectionFeatureManager() {
+		return connectionFeatureManager;
 	}
 	
 	/**
-	 * Apply the set connection features to connection
+	 * Get the sequence number auditor
+	 * @return
 	 */
-	private void applyConnectionFeatures() {
-		final SetConnectionFeaturesCommand apiCommand = new SetConnectionFeaturesCommand(connectionFeatures);
-		sendCommand(apiCommand);
+	public SequenceNumberAuditor getSequenceNumberAuditor() {
+		return sequenceNumberAuditor;
 	}
 	
 }
