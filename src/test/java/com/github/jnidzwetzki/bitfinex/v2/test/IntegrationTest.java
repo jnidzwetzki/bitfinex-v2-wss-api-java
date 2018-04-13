@@ -340,8 +340,11 @@ public class IntegrationTest {
 	public void testSequencing() throws APIException, InterruptedException {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
 		bitfinexClient.connect();
-		bitfinexClient.enableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
 		
+		Assert.assertFalse(bitfinexClient.isConnectionFeatureEnabled(BitfinexConnectionFeature.SEQ_ALL));
+		bitfinexClient.enableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
+		Assert.assertTrue(bitfinexClient.isConnectionFeatureEnabled(BitfinexConnectionFeature.SEQ_ALL));
+
 		// Register some ticket to get some sequence numbers
 		final BitfinexTickerSymbol symbol1 = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_USD);
 		final BitfinexTickerSymbol symbol2 = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_EUR);
@@ -354,6 +357,8 @@ public class IntegrationTest {
 		Thread.sleep(1000);
 		
 		bitfinexClient.disableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
+		Assert.assertFalse(bitfinexClient.isConnectionFeatureEnabled(BitfinexConnectionFeature.SEQ_ALL));
+
 		bitfinexClient.close();
 	}
 }
