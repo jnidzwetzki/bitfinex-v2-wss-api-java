@@ -4,6 +4,7 @@
 * Improvement: Updated dependencies
 * Improvement: Updated currency list (thanks ilyagalahov / closes #25)
 * Bugfix: Added missing BigDecimal order constructor (closes #23)
+* Bugfix: Reverted FundingType to int and made field optional (closes #26)
 
 # Version 0.6.2 (06.04.2018)
 * Improvement: Switched from double data type to BigDecimal to increase precision (thanks hansblafoo / closes #20 / #22)

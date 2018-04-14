@@ -84,20 +84,18 @@ public class PositionHandler implements APICallbackHandler {
 	 */
 	private void handlePositionCallback(final BitfinexApiBroker bitfinexApiBroker, final JSONArray positions) {
 		final String currencyString = positions.getString(0);
-		BitfinexCurrencyPair currency = BitfinexCurrencyPair.fromSymbolString(currencyString);
+		final BitfinexCurrencyPair currency = BitfinexCurrencyPair.fromSymbolString(currencyString);
 				
 		final Position position = new Position(currency);
 		position.setStatus(positions.getString(1));
 		position.setAmount(positions.getBigDecimal(2));
 		position.setBasePrice(positions.getBigDecimal(3));
 		position.setMarginFunding(positions.getBigDecimal(4));
-		position.setMarginFundingType(positions.getBigDecimal(5));
+		position.setMarginFundingType(positions.optInt(5, -1));
 		position.setPl(positions.optBigDecimal(6, BigDecimal.valueOf(-1)));
 		position.setPlPercent(positions.optBigDecimal(7, BigDecimal.valueOf(-1)));
 		position.setPriceLiquidation(positions.optBigDecimal(8, BigDecimal.valueOf(-1)));
-		position.setLeverage(positions.optBigDecimal(9, BigDecimal.valueOf(-1)));
-				
-		bitfinexApiBroker.getPositionManager().updatePosition(position);
+		position.setLeverage(positions.optBigDecimal(9, BigDecimal.valueOf(-1)));						
 	}
 
 }

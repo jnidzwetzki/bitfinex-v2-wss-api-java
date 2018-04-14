@@ -26,7 +26,7 @@ public class Position {
 	private BigDecimal amount;
 	private BigDecimal basePrice;
 	private BigDecimal marginFunding;
-	private BigDecimal marginFundingType;
+	private int marginFundingType;
 	private BigDecimal pl;
 	private BigDecimal plPercent;
 	private BigDecimal priceLiquidation;
@@ -72,11 +72,11 @@ public class Position {
 		this.marginFunding = marginFunding;
 	}
 	
-	public BigDecimal getMarginFundingType() {
+	public int getMarginFundingType() {
 		return marginFundingType;
 	}
 	
-	public void setMarginFundingType(final BigDecimal marginFundingType) {
+	public void setMarginFundingType(final int marginFundingType) {
 		this.marginFundingType = marginFundingType;
 	}
 	
