@@ -73,7 +73,7 @@ public class WalletHandler implements APICallbackHandler {
 		final String currency = walletArray.getString(1);
 		final BigDecimal balance = walletArray.getBigDecimal(2);
 		final BigDecimal unsettledInterest = walletArray.getBigDecimal(3);
-		final BigDecimal balanceAvailable = walletArray.optBigDecimal(4, BigDecimal.valueOf(-1));
+		final BigDecimal balanceAvailable = walletArray.optBigDecimal(4, null);
 		
 		final Wallet wallet = new Wallet(walletType, currency, balance, unsettledInterest, balanceAvailable);
 

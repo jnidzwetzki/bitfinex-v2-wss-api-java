@@ -54,7 +54,7 @@ public class BitfinexTick implements Comparable<BitfinexTick>{
 	/**
 	 * The invalid volume marker
 	 */
-	public final static BigDecimal INVALID_VOLUME = BigDecimal.valueOf(-1);
+	public final static BigDecimal INVALID_VOLUME = null;
 
 	public BitfinexTick(final long timestamp, final BigDecimal open, final BigDecimal close, 
 			final BigDecimal high, final BigDecimal low, final BigDecimal volume) {

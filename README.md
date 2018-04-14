@@ -58,6 +58,9 @@ You will find the changelog of the project [here](https://github.com/jnidzwetzki
 
 # Recent API changes
 
+## Version 0.6.3
+Starting with version 0.6.3 the value for uninitialized BigDecimal values was unified to null (in version 0.6.2 sometimes -1 and sometimes null was used).
+
 ## Version 0.6.2 
 Since version 0.6.2, the double data type is replaced by the BigDecimal data type for increased precision.
 

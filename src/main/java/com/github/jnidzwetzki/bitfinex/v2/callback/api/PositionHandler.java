@@ -17,7 +17,6 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.callback.api;
 
-import java.math.BigDecimal;
 import java.util.concurrent.CountDownLatch;
 
 import org.json.JSONArray;
@@ -44,7 +43,7 @@ public class PositionHandler implements APICallbackHandler {
 		
 		final JSONArray positions = jsonArray.getJSONArray(2);
 		
-		// No positons active
+		// No positions active
 		if(positions.length() == 0) {
 			notifyLatch(bitfinexApiBroker);
 			return;
@@ -92,10 +91,11 @@ public class PositionHandler implements APICallbackHandler {
 		position.setBasePrice(positions.getBigDecimal(3));
 		position.setMarginFunding(positions.getBigDecimal(4));
 		position.setMarginFundingType(positions.optInt(5, -1));
-		position.setPl(positions.optBigDecimal(6, BigDecimal.valueOf(-1)));
-		position.setPlPercent(positions.optBigDecimal(7, BigDecimal.valueOf(-1)));
-		position.setPriceLiquidation(positions.optBigDecimal(8, BigDecimal.valueOf(-1)));
-		position.setLeverage(positions.optBigDecimal(9, BigDecimal.valueOf(-1)));						
+		position.setPl(positions.optBigDecimal(6, null));
+		position.setPlPercent(positions.optBigDecimal(7, null));
+		position.setPriceLiquidation(positions.optBigDecimal(8, null));
+		position.setLeverage(positions.optBigDecimal(9, null));
+		bitfinexApiBroker.getPositionManager().updatePosition(position);
 	}
 
 }
