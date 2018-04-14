@@ -38,9 +38,27 @@ public class PositionTest {
 	 * @throws APIException 
 	 */
 	@Test
-	public void testPositionHandlerUpdate() throws APIException {
+	public void testPositionHandlerUpdate1() throws APIException {
 		
 		final String jsonString = "[0,\"pu\",[\"tETHUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,0,null,null,null,null]]";
+		final JSONArray jsonArray = new JSONArray(jsonString);
+		
+		final PositionHandler positionHandler = new PositionHandler();
+		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		
+		Assert.assertTrue(bitfinexApiBroker.getPositionManager().getPositions().isEmpty());
+		positionHandler.handleChannelData(bitfinexApiBroker, jsonArray);
+		Assert.assertEquals(1, bitfinexApiBroker.getPositionManager().getPositions().size());
+	}
+	
+	/**
+	 * Test the position handler - with null funding type
+	 * @throws APIException 
+	 */
+	@Test
+	public void testPositionHandlerUpdate2() throws APIException {
+		
+		final String jsonString = "[0,\"pu\",[\"tETHUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,null,null,null,null,null]]";
 		final JSONArray jsonArray = new JSONArray(jsonString);
 		
 		final PositionHandler positionHandler = new PositionHandler();
