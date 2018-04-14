@@ -18,6 +18,7 @@
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public class BitfinexTick implements Comparable<BitfinexTick>{
 	
@@ -49,15 +50,10 @@ public class BitfinexTick implements Comparable<BitfinexTick>{
 	/**
 	 * The volume
 	 */
-	private final BigDecimal volume;
+	private final Optional<BigDecimal> volume;
 	
-	/**
-	 * The invalid volume marker
-	 */
-	public final static BigDecimal INVALID_VOLUME = null;
-
 	public BitfinexTick(final long timestamp, final BigDecimal open, final BigDecimal close, 
-			final BigDecimal high, final BigDecimal low, final BigDecimal volume) {
+			final BigDecimal high, final BigDecimal low, final Optional<BigDecimal> volume) {
 		
 		assert (high.doubleValue() >= open.doubleValue()) : "High needs to be >= open";
 		assert (high.doubleValue() >= close.doubleValue()) : "High needs to be => close";
@@ -75,14 +71,20 @@ public class BitfinexTick implements Comparable<BitfinexTick>{
 	public BitfinexTick(final long timestamp, final BigDecimal open, final BigDecimal close, 
 			final BigDecimal high, final BigDecimal low) {
 		
-		this(timestamp, open, close,  high, low, INVALID_VOLUME);
+		this(timestamp, open, close,  high, low, Optional.empty());
+	}
+	
+	public BitfinexTick(final long timestamp, final BigDecimal open, final BigDecimal close, 
+			final BigDecimal high, final BigDecimal low, final BigDecimal volume) {
+		
+		this(timestamp, open, close,  high, low, Optional.of(volume));
 	}
 	
 	public BitfinexTick(final long timestamp, final double open, final double close, 
 			final double high, final double low, final double volume) {
 		
 		this(timestamp, new BigDecimal(open), new BigDecimal(close),  new BigDecimal(high), 
-				new BigDecimal(low), new BigDecimal(volume));
+				new BigDecimal(low), Optional.of(new BigDecimal(volume)));
 	}
 	
 	public long getTimestamp() {
@@ -105,7 +107,7 @@ public class BitfinexTick implements Comparable<BitfinexTick>{
 		return low;
 	}
 
-	public BigDecimal getVolume() {
+	public Optional<BigDecimal> getVolume() {
 		return volume;
 	}
 

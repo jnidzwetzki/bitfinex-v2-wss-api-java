@@ -89,8 +89,8 @@ public class BitfinexTickTest {
 		Assert.assertEquals(16, tick1.getClose().doubleValue(), DELTA);
 		Assert.assertEquals(18, tick1.getHigh().doubleValue(), DELTA);
 		Assert.assertEquals(10, tick1.getLow().doubleValue(), DELTA);
-		Assert.assertEquals(45, tick1.getVolume().doubleValue(), DELTA);
+		Assert.assertEquals(45, tick1.getVolume().get().doubleValue(), DELTA);
 
-		Assert.assertEquals(BitfinexTick.INVALID_VOLUME, tick2.getVolume());
+		Assert.assertFalse(tick2.getVolume().isPresent());
 	}
 }

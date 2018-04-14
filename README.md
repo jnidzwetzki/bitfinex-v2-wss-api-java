@@ -61,6 +61,18 @@ You will find the changelog of the project [here](https://github.com/jnidzwetzki
 ## Version 0.6.3
 Starting with version 0.6.3 the value for uninitialized BigDecimal values was unified to null (in version 0.6.2 sometimes -1 and sometimes null was used).
 
+The BitfinexTick.INVALID_VOLUME is removed and replaced by a Java 8 optional
+
+```java 
+# Old (version <= 0.6.2)
+tick1.getVolume().doubleValue()
+if (tick2.getVolume() != BitfinexTick.INVALID_VOLUME)
+
+# New (version > 0.6.2)
+tick1.getVolume().get().doubleValue()
+if(tick2.getVolume().isPresent())
+```
+
 ## Version 0.6.2 
 Since version 0.6.2, the double data type is replaced by the BigDecimal data type for increased precision.
 

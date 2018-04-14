@@ -20,6 +20,7 @@ package com.github.jnidzwetzki.bitfinex.v2.callback.channel;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.json.JSONArray;
 
@@ -73,7 +74,7 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 		final BigDecimal low = parts.getBigDecimal(4);
 		final BigDecimal volume = parts.getBigDecimal(5);
 		
-		final BitfinexTick tick = new BitfinexTick(timestamp, open, close, high, low, volume);
+		final BitfinexTick tick = new BitfinexTick(timestamp, open, close, high, low, Optional.of(volume));
 		ticksBuffer.add(tick);
 	}
 }

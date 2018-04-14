@@ -30,7 +30,6 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.TickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 
@@ -72,7 +71,7 @@ public class TickHandlerTest {
 				Assert.assertEquals(26129, c.getClose().doubleValue(), DELTA);
 				Assert.assertEquals(26129, c.getHigh().doubleValue(), DELTA);
 				Assert.assertEquals(26129, c.getLow().doubleValue(), DELTA);
-				Assert.assertEquals(BitfinexTick.INVALID_VOLUME.doubleValue(), c.getVolume().doubleValue(), DELTA);
+				Assert.assertFalse(c.getVolume().isPresent());
 			} catch(Throwable e) {
 				System.out.println(e);
 				throw e;
