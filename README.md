@@ -65,12 +65,14 @@ The BitfinexTick.INVALID_VOLUME is removed and replaced by a Java 8 optional
 
 ```java 
 # Old (version <= 0.6.2)
-tick1.getVolume().doubleValue()
-if (tick2.getVolume() != BitfinexTick.INVALID_VOLUME)
+if (tick.getVolume() != BitfinexTick.INVALID_VOLUME) {
+	tick.getVolume().doubleValue()
+}
 
 # New (version > 0.6.2)
-tick1.getVolume().get().doubleValue()
-if(tick2.getVolume().isPresent())
+if(tick.getVolume().isPresent()) {
+	tick.getVolume().get().doubleValue()
+}
 ```
 
 ## Version 0.6.2 
