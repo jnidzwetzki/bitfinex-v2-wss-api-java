@@ -103,7 +103,7 @@ final Bar bar = new BaseBar(time, tick.getOpen(),
 	tick.getHigh(), 
 	tick.getLow(), 
 	tick.getClose(), 
-	tick.getVolume() != BitfinexTick.INVALID_VOLUME ? tick.getVolume() : 0);
+	tick.getVolume().orElse(0));
 ```
 
 
