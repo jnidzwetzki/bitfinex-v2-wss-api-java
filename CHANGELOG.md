@@ -1,4 +1,4 @@
-# Version 0.6.3 (TBA)
+# Version 0.6.3 (14.04.2018)
 * New Feature: Added the connection feature manager
 * New Feature: Added sequence number audit (BitfinexConnectionFeature.SEQ_ALL)
 * Improvement: Updated dependencies
