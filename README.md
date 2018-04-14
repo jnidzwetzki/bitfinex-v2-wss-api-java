@@ -99,11 +99,11 @@ final BitfinexTick tick = ....;
 final Instant instant = Instant.ofEpochMilli(tick.getTimestamp());
 final ZonedDateTime time = ZonedDateTime.ofInstant(instant, Const.BITFINEX_TIMEZONE);
 
-final Bar bar = new BaseBar(time, tick.getOpen(), 
-	tick.getHigh(), 
-	tick.getLow(), 
-	tick.getClose(), 
-	tick.getVolume().orElse(0));
+final Bar bar = new BaseBar(time, tick.getOpen().doubleValue(), 
+				tick.getHigh().doubleValue(), 
+				tick.getLow().doubleValue(), 
+				tick.getClose().doubleValue(), 
+				tick.getVolume().orElse(BigDecimal.ZERO).doubleValue());
 ```
 
 
