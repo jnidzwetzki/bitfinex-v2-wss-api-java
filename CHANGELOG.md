@@ -6,7 +6,7 @@
 * Improvement: Updated dependencies
 * Improvement: Updated currency list (thanks ilyagalahov / closes #25)
 * Improvement: Unified the value for uninitialized BigDecimal values to null (sometimes -1 was used)
-* Improvement: Replaced BitfinexTick.INVALID_VOLUME null marker value with Java 8 Optional value
+* Improvement: Replaced BitfinexTick.INVALID_VOLUME invalid marker value with Java 8 Optional value
 * Bugfix: Added missing BigDecimal order constructor (closes #23)
 * Bugfix: Reverted FundingType to int and made field optional (closes #26)
 
