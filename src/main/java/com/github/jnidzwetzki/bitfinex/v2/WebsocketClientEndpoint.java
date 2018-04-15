@@ -20,8 +20,8 @@ package com.github.jnidzwetzki.bitfinex.v2;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
@@ -72,7 +72,7 @@ public class WebsocketClientEndpoint implements Closeable {
 
 	public WebsocketClientEndpoint(final URI endpointURI) {
 		this.endpointURI = endpointURI;
-		this.callbackConsumer = new ArrayList<>();
+		this.callbackConsumer = new CopyOnWriteArrayList<>();
 	}
 
 	/**
@@ -103,10 +103,8 @@ public class WebsocketClientEndpoint implements Closeable {
 	@OnMessage(maxMessageSize=1048576)
 	public void onMessage(final String message) {
 		
-		// Execute callbacks in another thread
-		synchronized (callbackConsumer) {
-			callbackConsumer.forEach((c) -> c.accept(message));
-		}
+		// Notify callbacks
+		callbackConsumer.forEach((c) -> c.accept(message));
 	}
 	
 	@OnError
@@ -138,9 +136,7 @@ public class WebsocketClientEndpoint implements Closeable {
 	 * @param consumer
 	 */
 	public void addConsumer(final Consumer<String> consumer) {
-		synchronized (callbackConsumer) {
-			callbackConsumer.add(consumer);
-		}
+		callbackConsumer.add(consumer);
 	}
 
 	/**
@@ -149,9 +145,7 @@ public class WebsocketClientEndpoint implements Closeable {
 	 * @return
 	 */
 	public boolean removeConsumer(final Consumer<String> consumer) {
-		synchronized (callbackConsumer) {
-			return callbackConsumer.remove(consumer);
-		}
+		return callbackConsumer.remove(consumer);
 	}
 
 	/**
