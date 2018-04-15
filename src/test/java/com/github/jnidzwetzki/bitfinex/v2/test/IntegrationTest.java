@@ -359,14 +359,20 @@ public class IntegrationTest {
 
 		// Register some ticket to get some sequence numbers
 		final BitfinexTickerSymbol symbol1 = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_USD);
-		final BitfinexTickerSymbol symbol2 = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_EUR);
+		final BitfinexTickerSymbol symbol2 = new BitfinexTickerSymbol(BitfinexCurrencyPair.ETH_USD);
+		final BitfinexTickerSymbol symbol3 = new BitfinexTickerSymbol(BitfinexCurrencyPair.EOS_USD);
+		final BitfinexTickerSymbol symbol4 = new BitfinexTickerSymbol(BitfinexCurrencyPair.IOS_USD);
+		final BitfinexTickerSymbol symbol5 = new BitfinexTickerSymbol(BitfinexCurrencyPair.NEO_USD);
 
 		final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
 		
 		orderbookManager.subscribeTicker(symbol1);
 		orderbookManager.subscribeTicker(symbol2);
+		orderbookManager.subscribeTicker(symbol3);
+		orderbookManager.subscribeTicker(symbol4);
+		orderbookManager.subscribeTicker(symbol5);
 
-		Thread.sleep(1000);
+		Thread.sleep(5000);
 		
 		cfManager.disableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
 		Assert.assertFalse(cfManager.isConnectionFeatureEnabled(BitfinexConnectionFeature.SEQ_ALL));
@@ -376,6 +382,7 @@ public class IntegrationTest {
 
 		Assert.assertEquals(-1, sequenceNumberAuditor.getPrivateSequence());
 		Assert.assertTrue(sequenceNumberAuditor.getPublicSequence() > 1);
+		Assert.assertFalse(sequenceNumberAuditor.isFailed());
 
 		bitfinexClient.close();
 	}
