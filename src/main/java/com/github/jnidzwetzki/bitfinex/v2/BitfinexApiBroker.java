@@ -252,7 +252,7 @@ public class BitfinexApiBroker implements Closeable {
 		channelHandler.put("pn", new PositionHandler());
 		// Position updated
 		channelHandler.put("pu", new PositionHandler());
-		// Position caneled
+		// Position canceled
 		channelHandler.put("pc", new PositionHandler());
 		// Founding offers
 		channelHandler.put("fos", new DoNothingHandler());
@@ -260,7 +260,7 @@ public class BitfinexApiBroker implements Closeable {
 		channelHandler.put("fcs", new DoNothingHandler());
 		// Founding loans
 		channelHandler.put("fls", new DoNothingHandler());
-		// Ats - Unkown
+		// Ats - Unknown
 		channelHandler.put("ats", new DoNothingHandler());
 		// Wallet snapshot
 		channelHandler.put("ws", new WalletHandler());
@@ -272,7 +272,7 @@ public class BitfinexApiBroker implements Closeable {
 		channelHandler.put("on", new OrderHandler());
 		// Order update
 		channelHandler.put("ou", new OrderHandler());
-		// Order cancelation
+		// Order cancellation
 		channelHandler.put("oc", new OrderHandler());
 		// Trade executed
 		channelHandler.put("te", new TradeHandler());
