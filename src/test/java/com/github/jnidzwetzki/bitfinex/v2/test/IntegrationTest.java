@@ -409,10 +409,11 @@ public class IntegrationTest {
 			
 			// 1st subscribe call
 			orderbookManager.registerCandlestickCallback(symbol, callback);
-			
-			// 2dn subscribe call
-			orderbookManager.registerCandlestickCallback(symbol, callback);
 			orderbookManager.subscribeCandles(symbol);
+			
+			// 2nd subscribe call
+			orderbookManager.subscribeCandles(symbol);
+			
 			latch.await();
 
 			orderbookManager.unsubscribeCandles(symbol);
