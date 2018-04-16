@@ -733,6 +733,8 @@ public class BitfinexApiBroker implements Closeable {
 			while(channelIdSymbolMap.size() != oldChannelIdSymbolMap.size()) {
 				
 				if(execution > 20) {
+					final int requiredSymbols = oldChannelIdSymbolMap.size();
+					final int subscribedSymbols = channelIdSymbolMap.size();
 					
 					// Restore old map for reconnect
 					synchronized (channelIdSymbolMap) {
@@ -740,7 +742,8 @@ public class BitfinexApiBroker implements Closeable {
 						channelIdSymbolMap.putAll(oldChannelIdSymbolMap);
 					}
 					
-					throw new APIException("Subscription of ticker failed");
+					throw new APIException("Subscription of ticker failed: got only " 
+							+ subscribedSymbols + " of " + requiredSymbols + " subscribed");
 				}
 				
 				channelIdSymbolMap.wait(500);
