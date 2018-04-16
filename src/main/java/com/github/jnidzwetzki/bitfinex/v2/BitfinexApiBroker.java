@@ -732,7 +732,7 @@ public class BitfinexApiBroker implements Closeable {
 		synchronized (channelIdSymbolMap) {		
 			while(channelIdSymbolMap.size() != oldChannelIdSymbolMap.size()) {
 				
-				if(execution > 10) {
+				if(execution > 20) {
 					
 					// Restore old map for reconnect
 					synchronized (channelIdSymbolMap) {
