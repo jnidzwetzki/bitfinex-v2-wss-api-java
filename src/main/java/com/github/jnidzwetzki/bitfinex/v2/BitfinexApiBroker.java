@@ -53,6 +53,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.command.CommandCallbackHandle
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.ConfCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.ConnectionHeartbeatCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.DoNothingCommandCallback;
+import com.github.jnidzwetzki.bitfinex.v2.callback.command.ErrorCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.SubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.UnsubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AbstractAPICommand;
@@ -292,6 +293,7 @@ public class BitfinexApiBroker implements Closeable {
 		commandCallbacks.put("unsubscribed", new UnsubscribedCallback());
 		commandCallbacks.put("auth", new AuthCallbackHandler());
 		commandCallbacks.put("conf", new ConfCallback());
+		commandCallbacks.put("error", new ErrorCallback());
 	}
 	
 	/**

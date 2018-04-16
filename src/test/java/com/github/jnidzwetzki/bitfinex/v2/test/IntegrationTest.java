@@ -386,4 +386,46 @@ public class IntegrationTest {
 
 		bitfinexClient.close();
 	}
+	
+	/**
+	 * Test the error callback 
+	 */
+	@Test(timeout=10000)
+	public void testErrorCallback() {
+		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
+		
+		// Await at least 5 callbacks
+		final CountDownLatch latch = new CountDownLatch(5);
+		try {
+			bitfinexClient.connect();
+			final BitfinexCandlestickSymbol symbol = new BitfinexCandlestickSymbol(
+					BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTES_1);
+			
+			final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
+			
+			final BiConsumer<BitfinexCandlestickSymbol, BitfinexTick> callback = (c, o) -> {
+				latch.countDown();
+			};
+			
+			// 1st subscribe call
+			orderbookManager.registerCandlestickCallback(symbol, callback);
+			
+			// 2dn subscribe call
+			orderbookManager.registerCandlestickCallback(symbol, callback);
+			orderbookManager.subscribeCandles(symbol);
+			latch.await();
+
+			orderbookManager.unsubscribeCandles(symbol);
+			
+			Assert.assertTrue(orderbookManager.removeCandlestickCallback(symbol, callback));
+			Assert.assertFalse(orderbookManager.removeCandlestickCallback(symbol, callback));
+
+		} catch (Exception e) {
+			// Should not happen
+			e.printStackTrace();
+			Assert.assertTrue(false);
+		} finally {
+			bitfinexClient.close();
+		}
+	}
 }
