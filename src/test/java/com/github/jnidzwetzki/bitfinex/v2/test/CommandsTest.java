@@ -105,6 +105,7 @@ public class CommandsTest {
 		final String commandValue = command.getCommand(bitfinexApiBroker);
 		Assert.assertNotNull(commandValue);
 		Assert.assertTrue(commandValue.length() > 10);
+		Assert.assertTrue(commandValue.contains("\"2.0\""));
 	}
 	
 	/**
