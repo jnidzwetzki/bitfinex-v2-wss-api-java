@@ -78,6 +78,41 @@ public class OrderManagerTest {
 		latch.await();
 	}
 	
+	
+	/**
+	 * Test notifications with null value
+	 * @throws APIException
+	 * @throws InterruptedException
+	 */
+	@Test(timeout=10000)
+	public void testNotificationWithNull() throws APIException, InterruptedException {
+		final String jsonString = "[0,\"n\",[1523930407542,\"on-req\",null,null,[null,null,1523930407442000,null,null,null,0.0001,null,\"LIMIT\",null,null,null,null,null,null,null,6800,null,null,null,null,null,null,0,0,null,null,null,null,null,null,null],null,\"ERROR\",\"amount: invalid\"]]";
+		final JSONArray jsonArray = new JSONArray(jsonString);
+		
+		final CountDownLatch latch = new CountDownLatch(1);
+		
+		final Consumer<ExchangeOrder> orderCallback = (e) -> {
+			
+			try {
+				Assert.assertEquals(ExchangeOrderState.STATE_ERROR, e.getState());
+				Assert.assertEquals(API_KEY, e.getApikey());
+				Assert.assertEquals(1523930407442000l, e.getCid());
+				Assert.assertEquals("", e.getSymbol());
+			} catch(Throwable e1) {
+				e1.printStackTrace();
+			}
+			
+			latch.countDown();
+		};
+		
+		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		bitfinexApiBroker.getOrderManager().registerCallback(orderCallback);
+		final NotificationHandler notificationHandler = new NotificationHandler();
+		
+		notificationHandler.handleChannelData(bitfinexApiBroker, jsonArray);
+		latch.await();
+	}
+	
 	/**
 	 * Test the order channel handler - single order
 	 * @throws APIException 

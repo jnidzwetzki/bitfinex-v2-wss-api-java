@@ -69,9 +69,15 @@ public class NotificationHandler implements APICallbackHandler {
 			final JSONArray order, final String state, final String stateValue) {
 		
 		final ExchangeOrder exchangeOrder = new ExchangeOrder();
-		exchangeOrder.setApikey(bitfinexApiBroker.getApiKey());
-		exchangeOrder.setCid(order.getLong(2));
-		exchangeOrder.setSymbol(order.getString(3));
+		
+		final String apiKey = bitfinexApiBroker.getApiKey();
+		final long cid = order.getLong(2);
+		final String symbol = order.optString(3);
+		
+		exchangeOrder.setApikey(apiKey);
+		exchangeOrder.setCid(cid);
+		exchangeOrder.setSymbol(symbol);
+
 		exchangeOrder.setState(ExchangeOrderState.STATE_ERROR);
 		
 		logger.error("State for order {} is {}, reason is {}", exchangeOrder.getOrderId(), state, stateValue);
