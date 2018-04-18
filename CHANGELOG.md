@@ -3,6 +3,7 @@
 * Improvement: Handle error callbacks
 * Bugfix: Increased reconnect timeout
 * Bugfix: Handle error callbacks without currency symbol properly (closes #28)
+* Bugfix: Fixed some BigDecimal / JSON related serialization issued (closes #29)
 
 # Version 0.6.3 (14.04.2018)
 * New Feature: Added the connection feature manager
