@@ -47,7 +47,7 @@ public class OrderCommand extends AbstractAPICommand {
 		orderJson.put("amount",  bitfinexOrder.getAmount().toString());
 		
 		if(bitfinexOrder.getPrice() != null) {
-			orderJson.put("price", bitfinexOrder.getPrice());
+			orderJson.put("price", bitfinexOrder.getPrice().toString());
 		}
 
 		if(bitfinexOrder.getPriceTrailing() != null) {
