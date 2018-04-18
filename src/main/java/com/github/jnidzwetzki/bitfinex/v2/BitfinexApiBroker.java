@@ -80,6 +80,7 @@ import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
+import com.google.common.base.Stopwatch;
 
 public class BitfinexApiBroker implements Closeable {
 
@@ -726,13 +727,15 @@ public class BitfinexApiBroker implements Closeable {
 	private void waitForChannelResubscription(final Map<Integer, BitfinexStreamSymbol> oldChannelIdSymbolMap)
 			throws APIException, InterruptedException {
 		
-		logger.info("Waiting for streams to resubscribe");
-		int execution = 0;
-		
+		final Stopwatch stopwatch = Stopwatch.createStarted();
+		final long MAX_WAIT_TIME_IN_MS = TimeUnit.MINUTES.toMillis(3);
+		logger.info("Waiting for streams to resubscribe (max wait time {} msec)", MAX_WAIT_TIME_IN_MS);
+
 		synchronized (channelIdSymbolMap) {		
+			
 			while(channelIdSymbolMap.size() != oldChannelIdSymbolMap.size()) {
 				
-				if(execution > 20) {
+				if(stopwatch.elapsed(TimeUnit.MILLISECONDS) > MAX_WAIT_TIME_IN_MS) {
 					final int requiredSymbols = oldChannelIdSymbolMap.size();
 					final int subscribedSymbols = channelIdSymbolMap.size();
 					
@@ -747,7 +750,6 @@ public class BitfinexApiBroker implements Closeable {
 				}
 				
 				channelIdSymbolMap.wait(500);
-				execution++;	
 			}
 		}
 	}
