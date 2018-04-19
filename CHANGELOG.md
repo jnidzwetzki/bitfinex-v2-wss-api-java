@@ -1,9 +1,9 @@
-# Version 0.6.4 (TBA)
+# Version 0.6.4 (19.04.2018)
 * Improvement: Replaced ArrayList by thread-safe variant in WebsocketClient to speed-up message processing
 * Improvement: Handle error callbacks
 * Bugfix: Increased reconnect timeout
 * Bugfix: Handle error callbacks without currency symbol properly (closes #28)
-* Bugfix: Fixed some BigDecimal / JSON related serialization issued (closes #29)
+* Bugfix: Fixed some BigDecimal / JSON related serialization issues (closes #29)
 
 # Version 0.6.3 (14.04.2018)
 * New Feature: Added the connection feature manager
