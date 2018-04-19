@@ -1,3 +1,5 @@
+# Version 0.6.5 (TBA)
+
 # Version 0.6.4 (19.04.2018)
 * Improvement: Replaced ArrayList by thread-safe variant in WebsocketClient to speed-up message processing
 * Improvement: Handle error callbacks
