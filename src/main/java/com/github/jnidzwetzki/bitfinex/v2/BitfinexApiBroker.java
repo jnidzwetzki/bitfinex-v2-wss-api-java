@@ -746,7 +746,7 @@ public class BitfinexApiBroker implements Closeable {
 					}
 					
 					throw new APIException("Subscription of ticker failed: got only " 
-							+ subscribedSymbols + " of " + requiredSymbols + " subscribed");
+							+ subscribedSymbols + " of " + requiredSymbols + " symbols subscribed");
 				}
 				
 				channelIdSymbolMap.wait(500);
