@@ -64,6 +64,7 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeRawOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
+import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
@@ -736,22 +737,40 @@ public class BitfinexApiBroker implements Closeable {
 			while(channelIdSymbolMap.size() != oldChannelIdSymbolMap.size()) {
 				
 				if(stopwatch.elapsed(TimeUnit.MILLISECONDS) > MAX_WAIT_TIME_IN_MS) {
-					final int requiredSymbols = oldChannelIdSymbolMap.size();
-					final int subscribedSymbols = channelIdSymbolMap.size();
-					
-					// Restore old map for reconnect
-					synchronized (channelIdSymbolMap) {
-						channelIdSymbolMap.clear();
-						channelIdSymbolMap.putAll(oldChannelIdSymbolMap);
-					}
-					
-					throw new APIException("Subscription of ticker failed: got only " 
-							+ subscribedSymbols + " of " + requiredSymbols + " symbols subscribed");
+					handleResubscribeFailed(oldChannelIdSymbolMap);
 				}
 				
 				channelIdSymbolMap.wait(500);
 			}
 		}
+	}
+
+	/**
+	 * Handle channel re-subscribe failed
+	 * 
+	 * @param oldChannelIdSymbolMap
+	 * @throws APIException
+	 */
+	private void handleResubscribeFailed(final Map<Integer, BitfinexStreamSymbol> oldChannelIdSymbolMap)
+			throws APIException {
+		
+		final int requiredSymbols = oldChannelIdSymbolMap.size();
+		final int subscribedSymbols = channelIdSymbolMap.size();
+		
+		// Unsubscribe old channels before the symbol map is restored
+		// otherwise we will get a lot of unknown symbol messages
+		for(final Integer channel : channelIdSymbolMap.keySet()) {
+			sendCommand(new UnsubscribeChannelCommand(channel));
+		}
+		
+		// Restore old symbol map for reconnect
+		synchronized (channelIdSymbolMap) {
+			channelIdSymbolMap.clear();
+			channelIdSymbolMap.putAll(oldChannelIdSymbolMap);
+		}
+		
+		throw new APIException("Subscription of ticker failed: got only " 
+				+ subscribedSymbols + " of " + requiredSymbols + " symbols subscribed");
 	}
 	
 	/**
