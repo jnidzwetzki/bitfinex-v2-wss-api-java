@@ -750,19 +750,18 @@ public class BitfinexApiBroker implements Closeable {
 	 * 
 	 * @param oldChannelIdSymbolMap
 	 * @throws APIException
+	 * @throws InterruptedException 
 	 */
 	private void handleResubscribeFailed(final Map<Integer, BitfinexStreamSymbol> oldChannelIdSymbolMap)
-			throws APIException {
+			throws APIException, InterruptedException {
 		
 		final int requiredSymbols = oldChannelIdSymbolMap.size();
 		final int subscribedSymbols = channelIdSymbolMap.size();
 		
 		// Unsubscribe old channels before the symbol map is restored
 		// otherwise we will get a lot of unknown symbol messages
-		for(final Integer channel : channelIdSymbolMap.keySet()) {
-			sendCommand(new UnsubscribeChannelCommand(channel));
-		}
-		
+		unsubscribeAllChannels();
+
 		// Restore old symbol map for reconnect
 		synchronized (channelIdSymbolMap) {
 			channelIdSymbolMap.clear();
@@ -771,6 +770,34 @@ public class BitfinexApiBroker implements Closeable {
 		
 		throw new APIException("Subscription of ticker failed: got only " 
 				+ subscribedSymbols + " of " + requiredSymbols + " symbols subscribed");
+	}
+
+	/**
+	 * Wait for unsubscription complete
+	 * 
+	 * @throws InterruptedException
+	 */
+	public boolean unsubscribeAllChannels() throws InterruptedException {
+		
+		for(final Integer channel : channelIdSymbolMap.keySet()) {
+			sendCommand(new UnsubscribeChannelCommand(channel));
+		}
+
+		final Stopwatch stopwatch = Stopwatch.createStarted();
+		
+		synchronized (channelIdSymbolMap) {
+			while(! channelIdSymbolMap.isEmpty()) {
+				channelIdSymbolMap.wait(500);
+				
+				// Wait max 1 minute for unsubscription complete
+				if(stopwatch.elapsed(TimeUnit.SECONDS) >= 60) {
+					logger.error("Unable to unsubscribe channels in 60 seconds");
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 	
 	/**
@@ -917,4 +944,11 @@ public class BitfinexApiBroker implements Closeable {
 		return sequenceNumberAuditor;
 	}
 	
+	/**
+	 * Get the channel id symbol map
+	 * @return
+	 */
+	public Map<Integer, BitfinexStreamSymbol> getChannelIdSymbolMap() {
+		return channelIdSymbolMap;
+	}
 }

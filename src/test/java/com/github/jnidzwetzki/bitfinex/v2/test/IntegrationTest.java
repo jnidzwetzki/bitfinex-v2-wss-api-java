@@ -17,6 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.test;
 
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.BiConsumer;
 
@@ -39,6 +40,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
@@ -228,6 +230,52 @@ public class IntegrationTest {
 			Assert.assertTrue(executedTradeManager.removeExecutedTradeCallback(symbol, callback));
 			Assert.assertFalse(executedTradeManager.removeExecutedTradeCallback(symbol, callback));
 
+		} catch (Exception e) {
+			// Should not happen
+			e.printStackTrace();
+			Assert.assertTrue(false);
+		} finally {
+			bitfinexClient.close();
+		}
+	}
+	
+	/**
+	 * Test unsubscribe all channels
+	 */
+	@Test(timeout=60000)
+	public void testUnsubscrribeAllChannels() {
+		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
+	
+		
+		try {
+			bitfinexClient.connect();
+			final BitfinexExecutedTradeSymbol symbol1 = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.BTC_USD);
+			final BitfinexExecutedTradeSymbol symbol2 = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.ETH_USD);
+
+			final QuoteManager quoteManager = bitfinexClient.getQuoteManager();
+			
+			quoteManager.subscribeExecutedTrades(symbol1);
+			quoteManager.subscribeExecutedTrades(symbol2);
+			
+			final Map<Integer, BitfinexStreamSymbol> channelIdSymbolMap = bitfinexClient.getChannelIdSymbolMap();
+			
+			synchronized (channelIdSymbolMap) {
+				while(channelIdSymbolMap.size() != 2) {
+					channelIdSymbolMap.wait();
+				}
+			}
+		
+			Assert.assertEquals(2, channelIdSymbolMap.size());
+			
+			bitfinexClient.unsubscribeAllChannels();
+			
+			synchronized (channelIdSymbolMap) {
+				while(! channelIdSymbolMap.isEmpty()) {
+					channelIdSymbolMap.wait();
+				}
+			}
+			
+			Assert.assertEquals(0, channelIdSymbolMap.size());
 		} catch (Exception e) {
 			// Should not happen
 			e.printStackTrace();
