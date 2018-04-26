@@ -132,6 +132,8 @@ public class OrderManagerTest {
 		Assert.assertTrue(orderManager.getOrders().isEmpty());
 		orderHandler.handleChannelData(bitfinexApiBroker, jsonArray);
 		Assert.assertEquals(1, orderManager.getOrders().size());	
+		
+		Assert.assertEquals(ExchangeOrderState.STATE_ACTIVE, orderManager.getOrders().get(0).getState());
 	}
 	
 	/**
@@ -150,6 +152,9 @@ public class OrderManagerTest {
 		orderHandler.handleChannelData(bitfinexApiBroker, jsonArray);
 		Assert.assertEquals(2, orderManager.getOrders().size());	
 		
+		Assert.assertEquals(ExchangeOrderState.STATE_ACTIVE, orderManager.getOrders().get(0).getState());
+		Assert.assertEquals(ExchangeOrderState.STATE_ACTIVE, orderManager.getOrders().get(1).getState());
+
 		orderManager.clear();
 		Assert.assertTrue(orderManager.getOrders().isEmpty());
 	}
@@ -170,6 +175,7 @@ public class OrderManagerTest {
 		Assert.assertTrue(orderManager.getOrders().isEmpty());
 		orderHandler.handleChannelData(bitfinexApiBroker, jsonArray);
 		Assert.assertEquals(1, orderManager.getOrders().size());	
+		Assert.assertEquals(ExchangeOrderState.STATE_ACTIVE, orderManager.getOrders().get(0).getState());
 	}
 	
 	/**
@@ -188,6 +194,7 @@ public class OrderManagerTest {
 		Assert.assertTrue(orderManager.getOrders().isEmpty());
 		orderHandler.handleChannelData(bitfinexApiBroker, jsonArray);
 		Assert.assertEquals(1, orderManager.getOrders().size());	
+		Assert.assertEquals(ExchangeOrderState.STATE_PARTIALLY_FILLED, orderManager.getOrders().get(0).getState());
 	}
 	
 	/**

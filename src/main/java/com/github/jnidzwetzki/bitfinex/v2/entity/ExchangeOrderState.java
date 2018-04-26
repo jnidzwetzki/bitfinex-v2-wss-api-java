@@ -43,9 +43,16 @@ public enum ExchangeOrderState {
 		Objects.requireNonNull(string);
 		
 		for (ExchangeOrderState state : ExchangeOrderState.values()) {
-			if (string.contains(state.getBitfinexString())) {
+			if (string.startsWith(state.getBitfinexString())) {
 				return state;
 			}
+		}
+
+		// Handle special cases
+		//
+		// Case1: INSUFFICIENT BALANCE (G1) was: ACTIVE (note:POSCLOSE), PARTIALLY FILLED
+		if(string.contains(", PARTIALLY FILLED")) {
+			return ExchangeOrderState.STATE_PARTIALLY_FILLED;
 		}
 		
 		throw new IllegalArgumentException("Unable to find order type for: " + string);
