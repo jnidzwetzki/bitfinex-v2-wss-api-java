@@ -1,5 +1,6 @@
 # Version 0.6.5 (TBA)
-* Bugfix: Unsubscibe channels before symbol map restore is performed in re-connect 
+* Bugfix: Unsubscibe channels before symbol map restore is performed in re-connect
+* Bugfix: Handle 'partially filled' order notifications correctly (closes #30)
 
 # Version 0.6.4 (19.04.2018)
 * Improvement: Replaced ArrayList by thread-safe variant in WebsocketClient to speed-up message processing

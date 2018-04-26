@@ -173,6 +173,24 @@ public class OrderManagerTest {
 	}
 	
 	/**
+	 * Test the order channel handler - partFilled order
+	 * @throws APIException 
+	 */
+	@Test
+	public void testOrderChannelHandler4() throws APIException {
+		final String jsonString = "[0,\"oc\",[11291120775,null,null,\"tNEOBTC\",1524661302976,1524661303001,0,-0.41291886,\"MARKET\",null,null,null,0,\"INSUFFICIENT BALANCE (G1) was: ACTIVE (note:POSCLOSE), PARTIALLY FILLED @ 0.008049(-0.41291886)\",null,null,0,0.008049,null,null,null,null,null,0,0,0,null,null,\"\",null,null,null]]";
+		
+		final JSONArray jsonArray = new JSONArray(jsonString);
+		final OrderHandler orderHandler = new OrderHandler();
+		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		
+		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
+		Assert.assertTrue(orderManager.getOrders().isEmpty());
+		orderHandler.handleChannelData(bitfinexApiBroker, jsonArray);
+		Assert.assertEquals(1, orderManager.getOrders().size());	
+	}
+	
+	/**
 	 * Test the cancelation of an order
 	 * @throws InterruptedException 
 	 * @throws APIException 

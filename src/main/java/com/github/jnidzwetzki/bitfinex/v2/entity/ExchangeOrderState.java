@@ -24,8 +24,8 @@ public enum ExchangeOrderState {
 	STATE_ACTIVE("ACTIVE"),
 	STATE_EXECUTED("EXECUTED"),
 	STATE_PARTIALLY_FILLED("PARTIALLY FILLED"),
-	STATE_CANCELED("CANCELED"),
 	STATE_POSTONLY_CANCELED("POSTONLY CANCELED"),
+	STATE_CANCELED("CANCELED"),
 	STATE_ERROR("ERROR");
 
 	private String bitfinexString;
@@ -43,7 +43,7 @@ public enum ExchangeOrderState {
 		Objects.requireNonNull(string);
 		
 		for (ExchangeOrderState state : ExchangeOrderState.values()) {
-			if (string.startsWith(state.getBitfinexString())) {
+			if (string.contains(state.getBitfinexString())) {
 				return state;
 			}
 		}
