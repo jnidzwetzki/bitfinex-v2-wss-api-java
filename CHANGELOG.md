@@ -1,4 +1,4 @@
-# Version 0.6.5 (TBA)
+# Version 0.6.5 (27.04.2018)
 * Bugfix: Unsubscibe channels before symbol map restore is performed in re-connect
 * Bugfix: Handle 'partially filled' order notifications correctly (closes #30)
 
