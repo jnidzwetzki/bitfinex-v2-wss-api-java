@@ -172,8 +172,34 @@ public enum BitfinexCurrencyPair {
 	MTN_ETH("MTN", "ETH", 26.0),
 	ODE_USD("ODE", "USD", 26.0),
 	ODE_BTC("ODE", "BTC", 26.0),
-	ODE_ETH("ODE", "ETH", 26.0);
-
+	ODE_ETH("ODE", "ETH", 26.0),
+	ANT_USD("ANT", "USD", 26.0),
+	ANT_BTC("ANT", "BTC", 26.0),
+	ANT_ETH("ANT", "ETH", 26.0),
+	MIT_USD("MIT", "USD", 26.0),
+	MIT_BTC("MIT", "BTC", 26.0),
+	MIT_ETH("MIT", "ETH", 26.0),
+	DTH_USD("DTH", "USD", 26.0),
+	DTH_BTC("DTH", "BTC", 26.0),
+	DTH_ETH("DTH", "ETH", 26.0),
+	STJ_USD("STJ", "USD", 26.0),
+	STJ_BTC("STJ", "BTC", 26.0),
+	STJ_ETH("STJ", "ETH", 26.0),
+	XLM_USD("XLM", "USD", 26.0),
+	XLM_BTC("XLM", "BTC", 26.0),
+	XLM_ETH("XLM", "ETH", 26.0),
+	XLM_EUR("XLM", "EUR", 26.0),
+	XLM_GBP("XLM", "GBP", 26.0),
+	XLM_JPY("XLM", "JPY", 26.0),
+	XVG_USD("XVG", "USD", 26.0),
+	XVG_BTC("XVG", "BTC", 26.0),
+	XVG_ETH("XVG", "ETH", 26.0),
+	XVG_EUR("XVG", "EUR", 26.0),
+	XVG_GBP("XVG", "GBP", 26.0),
+	XVG_JPY("XVG", "JPY", 26.0),
+	BCI_USD("BCI", "USD", 26.0),
+	BCI_BTC("BCI", "BTC", 26.0),
+	BCI_ETH("BCI", "ETH", 26.0);
 
 	/**
 	 * The name of the first currency 
