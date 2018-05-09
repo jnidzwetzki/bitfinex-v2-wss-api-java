@@ -166,6 +166,11 @@ public class BitfinexApiBroker implements Closeable {
 	private String apiSecret;
 	
 	/**
+	 * The dead man switch
+	 */
+	private boolean deadManSwitch = false;
+	
+	/**
 	 * The connection ready latch
 	 */
 	private CountDownLatch connectionReadyLatch;
@@ -214,7 +219,11 @@ public class BitfinexApiBroker implements Closeable {
 	 */
 	private final static Logger logger = LoggerFactory.getLogger(BitfinexApiBroker.class);
 
-
+	public BitfinexApiBroker(final String apiKey, final String apiSecret, final boolean deadManSwitch) {
+		this(apiKey, apiSecret);
+		this.deadManSwitch = deadManSwitch;
+	}
+	
 	public BitfinexApiBroker(final String apiKey, final String apiSecret) {
 		this();
 		this.apiKey = apiKey;
@@ -950,5 +959,13 @@ public class BitfinexApiBroker implements Closeable {
 	 */
 	public Map<Integer, BitfinexStreamSymbol> getChannelIdSymbolMap() {
 		return channelIdSymbolMap;
+	}
+	
+	/**
+	 * Is the dead man feature enabled
+	 * @return
+	 */
+	public boolean isDeadManFeatureEnabled() {
+		return deadManSwitch;
 	}
 }

@@ -34,6 +34,7 @@ public class AuthCommand extends AbstractAPICommand {
 		try {
 			final String APIKey = bitfinexApiBroker.getApiKey();
 			final String APISecret = bitfinexApiBroker.getApiSecret();
+			final boolean deadManSwitch = bitfinexApiBroker.isDeadManFeatureEnabled();
 			
 			final String authNonce = Long.toString(System.currentTimeMillis());
 			final String authPayload = "AUTH" + authNonce;
@@ -51,6 +52,10 @@ public class AuthCommand extends AbstractAPICommand {
 			subscribeJson.put("authSig", authSig.toLowerCase());
 			subscribeJson.put("authPayload", authPayload);
 			subscribeJson.put("authNonce", authNonce);
+			
+			if(deadManSwitch) {
+				subscribeJson.put("dms", 4);
+			}
 			
 			return subscribeJson.toString();
 		} catch (Exception e) {
