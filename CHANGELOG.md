@@ -1,4 +1,5 @@
 # Version 0.6.6 (TBA)
+* Improvement: Updated currency list (thanks ilyagalahov / closes #31)
 
 # Version 0.6.5 (27.04.2018)
 * Bugfix: Unsubscibe channels before symbol map restore is performed in re-connect
