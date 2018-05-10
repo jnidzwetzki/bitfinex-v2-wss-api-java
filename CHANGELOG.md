@@ -1,4 +1,4 @@
-# Version 0.6.6 (TBA)
+# Version 0.6.6 (10.05.2018)
 * New Feature: Added the 'dead man switch' connection feature
 * Improvement: Updated currency list (thanks ilyagalahov / closes #31)
 
