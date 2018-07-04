@@ -46,13 +46,13 @@ final BitfinexCandlestickSymbol symbol
 	= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTE_1);
 	
 // The consumer will be called on all received candles for the symbol
-final BiConsumer<BitfinexCandlestickSymbol, BitfinexTick> callback = (symbol, tick) -> {
-	System.out.format("Got BitfinexTick (%s) for symbol (%s)\n", tick, symbol);
+final BiConsumer<BitfinexCandlestickSymbol, BitfinexTick> callback = (sym, tick) -> {
+	System.out.format("Got BitfinexTick (%s) for symbol (%s)\n", tick, sym);
 };
 
 final QuoteManager quoteManager = bitfinexApiBroker.getQuoteManager();
 quoteManager.registerCandlestickCallback(symbol, callback);
-tickerManager.subscribeCandles(symbol);
+quoteManager.subscribeCandles(symbol);
 
 [...]
 
