@@ -17,6 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.test;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.BiConsumer;
@@ -170,29 +172,34 @@ public class IntegrationTest {
 	@Test(timeout=10000)
 	public void testCandleStream() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
-	
-		// Await at least 10 callbacks
-		final CountDownLatch latch = new CountDownLatch(10);
+
 		try {
 			bitfinexClient.connect();
-			final BitfinexCandlestickSymbol symbol = new BitfinexCandlestickSymbol(
-					BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTES_1);
+			final List<BitfinexCandlestickSymbol> symbols = Arrays.asList(
+						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTES_1),
+						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.DAY_1),
+						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.MONTH_1)
+						);
 			
 			final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
 			
-			final BiConsumer<BitfinexCandlestickSymbol, BitfinexTick> callback = (c, o) -> {
-				latch.countDown();
-			};
-			
-			orderbookManager.registerCandlestickCallback(symbol, callback);
-			orderbookManager.subscribeCandles(symbol);
-			latch.await();
-
-			orderbookManager.unsubscribeCandles(symbol);
-			
-			Assert.assertTrue(orderbookManager.removeCandlestickCallback(symbol, callback));
-			Assert.assertFalse(orderbookManager.removeCandlestickCallback(symbol, callback));
-
+			for(final BitfinexCandlestickSymbol symbol : symbols) {
+				// Await at least 10 callbacks
+				final CountDownLatch latch1 = new CountDownLatch(10);
+				
+				final BiConsumer<BitfinexCandlestickSymbol, BitfinexTick> callback = (c, o) -> {
+					latch1.countDown();
+				};
+				
+				orderbookManager.registerCandlestickCallback(symbol, callback);
+				orderbookManager.subscribeCandles(symbol);
+				latch1.await();
+	
+				orderbookManager.unsubscribeCandles(symbol);
+				
+				Assert.assertTrue(orderbookManager.removeCandlestickCallback(symbol, callback));
+				Assert.assertFalse(orderbookManager.removeCandlestickCallback(symbol, callback));
+			}
 		} catch (Exception e) {
 			// Should not happen
 			e.printStackTrace();

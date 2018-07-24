@@ -1,4 +1,5 @@
 # Version 0.6.7 (TBA)
+* Bugfix: It was not possible to request the monthly candles
 
 # Version 0.6.6 (10.05.2018)
 * New Feature: Added the 'dead man switch' connection feature

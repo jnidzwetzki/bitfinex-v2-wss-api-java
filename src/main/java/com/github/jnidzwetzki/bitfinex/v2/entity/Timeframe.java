@@ -57,7 +57,7 @@ public enum Timeframe {
 	 */
 	public static Timeframe fromSymbolString(final String symbolString) {
 		for (final Timeframe timeframe : Timeframe.values()) {
-			if (timeframe.getBitfinexString().equalsIgnoreCase(symbolString)) {
+			if (timeframe.getBitfinexString().equals(symbolString)) {
 				return timeframe;
 			}
 		}
