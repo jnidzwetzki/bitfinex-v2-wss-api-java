@@ -1,19 +1,19 @@
 /*******************************************************************************
  *
  *    Copyright (C) 2015-2018 Jan Kristof Nidzwetzki
- *  
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *  
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
- *    limitations under the License. 
- *    
+ *    limitations under the License.
+ *
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.test;
 
@@ -31,6 +31,7 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
 import com.github.jnidzwetzki.bitfinex.v2.SequenceNumberAuditor;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
@@ -50,19 +51,19 @@ import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
 
 public class IntegrationTest {
-	
+
 	/**
 	 * Try to fetch wallets on an unauthenticated connection
 	 */
 	@Test
 	public void testWalletsOnUnauthClient() throws APIException {
-		
+
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
 
 		try {
 			bitfinexClient.connect();
 			Assert.assertFalse(bitfinexClient.isAuthenticated());
-			
+
 			try {
 				bitfinexClient.getWalletManager().getWallets();
 
@@ -71,9 +72,9 @@ public class IntegrationTest {
 			} catch (APIException e) {
 				return;
 			}
-		
+
 		} catch (Exception e) {
-			
+
 			// Should not happen
 			e.printStackTrace();
 			Assert.assertTrue(false);
@@ -81,23 +82,23 @@ public class IntegrationTest {
 			bitfinexClient.close();
 		}
 	}
-	
+
 	/**
 	 * Test the orderbook stream
 	 */
 	@Test(timeout=10000)
 	public void testOrderbookStream() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
-	
+
 		// Await at least 10 callbacks
 		final CountDownLatch latch = new CountDownLatch(10);
 		try {
 			bitfinexClient.connect();
 			final OrderbookConfiguration orderbookConfiguration = new OrderbookConfiguration(
 					BitfinexCurrencyPair.BTC_USD, OrderBookPrecision.P0, OrderBookFrequency.F0, 25);
-			
+
 			final OrderbookManager orderbookManager = bitfinexClient.getOrderbookManager();
-			
+
 			final BiConsumer<OrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
 				Assert.assertTrue(o.getAmount().doubleValue() != 0);
 				Assert.assertTrue(o.getPrice().doubleValue() != 0);
@@ -105,13 +106,13 @@ public class IntegrationTest {
 				Assert.assertTrue(o.toString().length() > 0);
 				latch.countDown();
 			};
-			
+
 			orderbookManager.registerOrderbookCallback(orderbookConfiguration, callback);
 			orderbookManager.subscribeOrderbook(orderbookConfiguration);
 			latch.await();
 
 			orderbookManager.unsubscribeOrderbook(orderbookConfiguration);
-			
+
 			Assert.assertTrue(orderbookManager.removeOrderbookCallback(orderbookConfiguration, callback));
 			Assert.assertFalse(orderbookManager.removeOrderbookCallback(orderbookConfiguration, callback));
 
@@ -123,23 +124,23 @@ public class IntegrationTest {
 			bitfinexClient.close();
 		}
 	}
-	
+
 	/**
 	 * Test the raw orderbook stream
 	 */
 	@Test(timeout=10000)
 	public void testRawOrderbookStream() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
-	
+
 		// Await at least 20 callbacks
 		final CountDownLatch latch = new CountDownLatch(20);
 		try {
 			bitfinexClient.connect();
 			final RawOrderbookConfiguration orderbookConfiguration = new RawOrderbookConfiguration(
 					BitfinexCurrencyPair.BTC_USD);
-			
+
 			final RawOrderbookManager rawOrderbookManager = bitfinexClient.getRawOrderbookManager();
-			
+
 			final BiConsumer<RawOrderbookConfiguration, RawOrderbookEntry> callback = (c, o) -> {
 				Assert.assertTrue(o.getAmount().doubleValue() != 0);
 				Assert.assertTrue(o.getPrice().doubleValue() != 0);
@@ -147,13 +148,13 @@ public class IntegrationTest {
 				Assert.assertTrue(o.toString().length() > 0);
 				latch.countDown();
 			};
-			
+
 			rawOrderbookManager.registerOrderbookCallback(orderbookConfiguration, callback);
 			rawOrderbookManager.subscribeOrderbook(orderbookConfiguration);
 			latch.await();
 
 			rawOrderbookManager.unsubscribeOrderbook(orderbookConfiguration);
-			
+
 			Assert.assertTrue(rawOrderbookManager.removeOrderbookCallback(orderbookConfiguration, callback));
 			Assert.assertFalse(rawOrderbookManager.removeOrderbookCallback(orderbookConfiguration, callback));
 
@@ -165,7 +166,7 @@ public class IntegrationTest {
 			bitfinexClient.close();
 		}
 	}
-	
+
 	/**
 	 * Test the candle stream
 	 */
@@ -180,23 +181,23 @@ public class IntegrationTest {
 						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.DAY_1),
 						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.MONTH_1)
 						);
-			
+
 			final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
-			
+
 			for(final BitfinexCandlestickSymbol symbol : symbols) {
 				// Await at least 10 callbacks
 				final CountDownLatch latch1 = new CountDownLatch(10);
-				
+
 				final BiConsumer<BitfinexCandlestickSymbol, BitfinexCandle> callback = (c, o) -> {
 					latch1.countDown();
 				};
-				
+
 				orderbookManager.registerCandlestickCallback(symbol, callback);
 				orderbookManager.subscribeCandles(symbol);
 				latch1.await();
-	
+
 				orderbookManager.unsubscribeCandles(symbol);
-				
+
 				Assert.assertTrue(orderbookManager.removeCandlestickCallback(symbol, callback));
 				Assert.assertFalse(orderbookManager.removeCandlestickCallback(symbol, callback));
 			}
@@ -208,26 +209,26 @@ public class IntegrationTest {
 			bitfinexClient.close();
 		}
 	}
-	
+
 	/**
 	 * Test executed trades stream
 	 */
 	@Test(timeout=60000)
 	public void testExecutedTradesStream() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
-	
+
 		// Await at least 2 callbacks
 		final CountDownLatch latch = new CountDownLatch(2);
 		try {
 			bitfinexClient.connect();
 			final BitfinexExecutedTradeSymbol symbol = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.BTC_USD);
-			
+
 			final QuoteManager executedTradeManager = bitfinexClient.getQuoteManager();
-			
+
 			final BiConsumer<BitfinexExecutedTradeSymbol, ExecutedTrade> callback = (c, o) -> {
 				latch.countDown();
 			};
-			
+
 			executedTradeManager.registerExecutedTradeCallback(symbol, callback);
 			executedTradeManager.subscribeExecutedTrades(symbol);
 			latch.await();
@@ -245,43 +246,43 @@ public class IntegrationTest {
 			bitfinexClient.close();
 		}
 	}
-	
+
 	/**
 	 * Test unsubscribe all channels
 	 */
 	@Test(timeout=60000)
 	public void testUnsubscrribeAllChannels() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
-	
-		
+
+
 		try {
 			bitfinexClient.connect();
 			final BitfinexExecutedTradeSymbol symbol1 = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.BTC_USD);
 			final BitfinexExecutedTradeSymbol symbol2 = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.ETH_USD);
 
 			final QuoteManager quoteManager = bitfinexClient.getQuoteManager();
-			
+
 			quoteManager.subscribeExecutedTrades(symbol1);
 			quoteManager.subscribeExecutedTrades(symbol2);
-			
+
 			final Map<Integer, BitfinexStreamSymbol> channelIdSymbolMap = bitfinexClient.getChannelIdSymbolMap();
-			
+
 			synchronized (channelIdSymbolMap) {
 				while(channelIdSymbolMap.size() != 2) {
 					channelIdSymbolMap.wait();
 				}
 			}
-		
+
 			Assert.assertEquals(2, channelIdSymbolMap.size());
-			
+
 			bitfinexClient.unsubscribeAllChannels();
-			
+
 			synchronized (channelIdSymbolMap) {
 				while(! channelIdSymbolMap.isEmpty()) {
 					channelIdSymbolMap.wait();
 				}
 			}
-			
+
 			Assert.assertEquals(0, channelIdSymbolMap.size());
 		} catch (Exception e) {
 			// Should not happen
@@ -291,27 +292,27 @@ public class IntegrationTest {
 			bitfinexClient.close();
 		}
 	}
-	
-	
+
+
 	/**
 	 * Test the tick stream
 	 */
 	@Test(timeout=60000)
 	public void testTickerStream() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
-	
+
 		// Await at least 2 callbacks
 		final CountDownLatch latch = new CountDownLatch(2);
 		try {
 			bitfinexClient.connect();
 			final BitfinexTickerSymbol symbol = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_USD);
-			
+
 			final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
-			
-			final BiConsumer<BitfinexTickerSymbol, BitfinexCandle> callback = (c, o) -> {
+
+			final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback = (c, o) -> {
 				latch.countDown();
 			};
-			
+
 			orderbookManager.registerTickCallback(symbol, callback);
 			orderbookManager.subscribeTicker(symbol);
 			latch.await();
@@ -331,74 +332,74 @@ public class IntegrationTest {
 			bitfinexClient.close();
 		}
 	}
-	
+
 	/**
 	 * Test auth failed
-	 * @throws APIException 
+	 * @throws APIException
 	 */
 	@Test(expected=APIException.class, timeout=10000)
 	public void testAuthFailed() throws APIException {
 		final String KEY = "key";
 		final String SECRET = "secret";
-		
+
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(KEY, SECRET);
 		Assert.assertEquals(KEY, bitfinexClient.getApiKey());
 		Assert.assertEquals(SECRET, bitfinexClient.getApiSecret());
-		
+
 		Assert.assertFalse(bitfinexClient.isAuthenticated());
-		
+
 		bitfinexClient.connect();
-		
+
 		// Should not be reached
 		Assert.assertTrue(false);
 		bitfinexClient.close();
 	}
-	
+
 	/**
 	 * Test the session reconnect
-	 * @throws APIException 
-	 * @throws InterruptedException 
+	 * @throws APIException
+	 * @throws InterruptedException
 	 */
 	@Test
 	public void testReconnect() throws APIException, InterruptedException {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
 		bitfinexClient.connect();
-		
+
 		final BitfinexTickerSymbol symbol = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_USD);
 
 		final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
-		
+
 		orderbookManager.subscribeTicker(symbol);
 		Thread.sleep(1000);
 		bitfinexClient.reconnect();
-		
+
 		// Await at least 2 callbacks
 		final CountDownLatch latch = new CountDownLatch(2);
-		
-		final BiConsumer<BitfinexTickerSymbol, BitfinexCandle> callback = (c, o) -> {
+
+		final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback = (c, o) -> {
 			latch.countDown();
 		};
-		
+
 		orderbookManager.registerTickCallback(symbol, callback);
 		latch.await();
 		Assert.assertTrue(bitfinexClient.isTickerActive(symbol));
 
 		orderbookManager.unsubscribeTicker(symbol);
 		Assert.assertFalse(bitfinexClient.isTickerActive(symbol));
-		
+
 		bitfinexClient.close();
 	}
-	
+
 	/**
 	 * Test the sequencing feature
-	 * @throws APIException 
-	 * @throws InterruptedException 
+	 * @throws APIException
+	 * @throws InterruptedException
 	 */
 	@Test
 	public void testSequencing() throws APIException, InterruptedException {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
 		bitfinexClient.connect();
-		
+
 		final SequenceNumberAuditor sequenceNumberAuditor = bitfinexClient.getSequenceNumberAuditor();
 		Assert.assertEquals(-1, sequenceNumberAuditor.getPrivateSequence());
 		Assert.assertEquals(-1, sequenceNumberAuditor.getPublicSequence());
@@ -420,7 +421,7 @@ public class IntegrationTest {
 		final BitfinexTickerSymbol symbol5 = new BitfinexTickerSymbol(BitfinexCurrencyPair.NEO_USD);
 
 		final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
-		
+
 		orderbookManager.subscribeTicker(symbol1);
 		orderbookManager.subscribeTicker(symbol2);
 		orderbookManager.subscribeTicker(symbol3);
@@ -428,7 +429,7 @@ public class IntegrationTest {
 		orderbookManager.subscribeTicker(symbol5);
 
 		Thread.sleep(5000);
-		
+
 		cfManager.disableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
 		Assert.assertFalse(cfManager.isConnectionFeatureEnabled(BitfinexConnectionFeature.SEQ_ALL));
 		Thread.sleep(2000);
@@ -441,38 +442,38 @@ public class IntegrationTest {
 
 		bitfinexClient.close();
 	}
-	
+
 	/**
-	 * Test the error callback 
+	 * Test the error callback
 	 */
 	@Test(timeout=10000)
 	public void testErrorCallback() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker();
-		
+
 		// Await at least 5 callbacks
 		final CountDownLatch latch = new CountDownLatch(5);
 		try {
 			bitfinexClient.connect();
 			final BitfinexCandlestickSymbol symbol = new BitfinexCandlestickSymbol(
 					BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTES_1);
-			
+
 			final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
-			
+
 			final BiConsumer<BitfinexCandlestickSymbol, BitfinexCandle> callback = (c, o) -> {
 				latch.countDown();
 			};
-			
+
 			// 1st subscribe call
 			orderbookManager.registerCandlestickCallback(symbol, callback);
 			orderbookManager.subscribeCandles(symbol);
-			
+
 			// 2nd subscribe call
 			orderbookManager.subscribeCandles(symbol);
-			
+
 			latch.await();
 
 			orderbookManager.unsubscribeCandles(symbol);
-			
+
 			Assert.assertTrue(orderbookManager.removeCandlestickCallback(symbol, callback));
 			Assert.assertFalse(orderbookManager.removeCandlestickCallback(symbol, callback));
 

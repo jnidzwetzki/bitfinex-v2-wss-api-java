@@ -1,4 +1,5 @@
 # Version 0.6.7 (TBA)
+* New Feature: Add support for Bitfinex native ticks
 * Bugfix: It was not possible to request the monthly candles
 
 # Version 0.6.6 (10.05.2018)
@@ -41,7 +42,7 @@
 * Improvement: Added new currency pairs (thanks ilyagalahov / closes #17)
 
 # Version 0.5.7 (28.02.2018)
-* Improvement: Floating point number accuracy increased (closes #16) 
+* Improvement: Floating point number accuracy increased (closes #16)
 
 # Version 0.5.6 (10.02.2018)
 * Improvement: Updated to ta4j 0.11 (thanks brunocvcunha / closes #14)
@@ -92,6 +93,6 @@
 * Bugfix: Positions are now available in the position manager
 
 # Version 0.0.1 (27.12.2017)
-* First version of this project 
+* First version of this project
 * Repository split form https://github.com/jnidzwetzki/crypto-bot
 

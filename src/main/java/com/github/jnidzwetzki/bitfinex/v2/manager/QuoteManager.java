@@ -17,10 +17,10 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.manager;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
@@ -31,6 +31,7 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
@@ -42,17 +43,17 @@ public class QuoteManager {
 	/**
 	 * The last ticks
 	 */
-	protected final Map<BitfinexStreamSymbol, BitfinexCandle> lastCandle;
+	private final Map<BitfinexStreamSymbol, BitfinexCandle> lastCandle;
 
 	/**
 	 * The last tick timestamp
 	 */
-	protected final Map<BitfinexStreamSymbol, Long> lastTickTimestamp;
+	private final Map<BitfinexStreamSymbol, Long> lastTickTimestamp;
 
 	/**
 	 * The BitfinexCurrencyPair callbacks
 	 */
-	private final BiConsumerCallbackManager<BitfinexTickerSymbol, BitfinexCandle> tickerCallbacks;
+	private final BiConsumerCallbackManager<BitfinexTickerSymbol, BitfinexTick> tickerCallbacks;
 
 	/**
 	 * The Bitfinex Candlestick callbacks
@@ -77,8 +78,8 @@ public class QuoteManager {
 	public QuoteManager(final BitfinexApiBroker bitfinexApiBroker) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
 		this.executorService = bitfinexApiBroker.getExecutorService();
-		this.lastCandle = new HashMap<>();
-		this.lastTickTimestamp = new HashMap<>();
+		this.lastCandle = new ConcurrentHashMap<>();
+		this.lastTickTimestamp = new ConcurrentHashMap<>();
 		this.tickerCallbacks = new BiConsumerCallbackManager<>(executorService);
 		this.candleCallbacks = new BiConsumerCallbackManager<>(executorService);
 		this.tradesCallbacks = new BiConsumerCallbackManager<>(executorService);
@@ -90,15 +91,7 @@ public class QuoteManager {
 	 * @return
 	 */
 	public long getHeartbeatForSymbol(final BitfinexStreamSymbol symbol) {
-		synchronized (lastCandle) {
-			final Long heartbeat = lastTickTimestamp.get(symbol);
-
-			if(heartbeat == null) {
-				return -1;
-			}
-
-			return heartbeat;
-		}
+		return lastTickTimestamp.getOrDefault(symbol, -1l);
 	}
 
 	/**
@@ -106,9 +99,7 @@ public class QuoteManager {
 	 * @param channel
 	 */
 	public void updateChannelHeartbeat(final BitfinexStreamSymbol symbol) {
-		synchronized (lastCandle) {
-			lastTickTimestamp.put(symbol, System.currentTimeMillis());
-		}
+		lastTickTimestamp.put(symbol, System.currentTimeMillis());
 	}
 
 	/**
@@ -116,9 +107,7 @@ public class QuoteManager {
 	 * @return
 	 */
 	public Set<BitfinexStreamSymbol> getActiveSymbols() {
-		synchronized (lastCandle) {
-			return lastCandle.keySet();
-		}
+		return lastCandle.keySet();
 	}
 
 	/**
@@ -126,10 +115,8 @@ public class QuoteManager {
 	 * @param currencyPair
 	 * @return
 	 */
-	public BitfinexCandle getLastCandle(final BitfinexTickerSymbol currencyPair) {
-		synchronized (lastCandle) {
-			return lastCandle.get(currencyPair);
-		}
+	public BitfinexCandle getLastCandle(final BitfinexStreamSymbol symbol) {
+		return lastCandle.get(symbol);
 	}
 
 	/**
@@ -137,9 +124,7 @@ public class QuoteManager {
 	 */
 	public void invalidateTickerHeartbeat() {
 		// Invalidate last tick timestamps
-		synchronized (lastCandle) {
-			lastTickTimestamp.clear();
-		}
+		lastTickTimestamp.clear();
 	}
 
 	/**
@@ -149,7 +134,7 @@ public class QuoteManager {
 	 * @throws APIException
 	 */
 	public void registerTickCallback(final BitfinexTickerSymbol symbol,
-			final BiConsumer<BitfinexTickerSymbol, BitfinexCandle> callback) throws APIException {
+			final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback) throws APIException {
 
 		tickerCallbacks.registerCallback(symbol, callback);
 	}
@@ -162,7 +147,7 @@ public class QuoteManager {
 	 * @throws APIException
 	 */
 	public boolean removeTickCallback(final BitfinexTickerSymbol symbol,
-			final BiConsumer<BitfinexTickerSymbol, BitfinexCandle> callback) throws APIException {
+			final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback) throws APIException {
 
 		return tickerCallbacks.removeCallback(symbol, callback);
 	}
@@ -172,7 +157,7 @@ public class QuoteManager {
 	 * @param symbol
 	 * @param ticksArray
 	 */
-	public void handleCandleList(final BitfinexTickerSymbol symbol, final List<BitfinexCandle> candles) {
+	public void handleCandleList(final BitfinexTickerSymbol symbol, final List<BitfinexTick> candles) {
 		tickerCallbacks.handleEventsList(symbol, candles);
 	}
 
@@ -181,14 +166,9 @@ public class QuoteManager {
 	 * @param symbol
 	 * @param candle
 	 */
-	public void handleNewCandle(final BitfinexTickerSymbol currencyPair, final BitfinexCandle candle) {
-
-		synchronized (lastCandle) {
-			lastCandle.put(currencyPair, candle);
-			lastTickTimestamp.put(currencyPair, System.currentTimeMillis());
-		}
-
-		tickerCallbacks.handleEvent(currencyPair, candle);
+	public void handleNewTick(final BitfinexTickerSymbol currencyPair, final BitfinexTick tick) {
+		lastTickTimestamp.put(currencyPair, System.currentTimeMillis());
+		tickerCallbacks.handleEvent(currencyPair, tick);
 	}
 
 	/**
@@ -257,12 +237,8 @@ public class QuoteManager {
 	 * @param tick
 	 */
 	public void handleNewCandlestick(final BitfinexCandlestickSymbol currencyPair, final BitfinexCandle tick) {
-
-		synchronized (lastCandle) {
-			lastCandle.put(currencyPair, tick);
-			lastTickTimestamp.put(currencyPair, System.currentTimeMillis());
-		}
-
+		lastCandle.put(currencyPair, tick);
+		lastTickTimestamp.put(currencyPair, System.currentTimeMillis());
 		candleCallbacks.handleEvent(currencyPair, tick);
 	}
 
