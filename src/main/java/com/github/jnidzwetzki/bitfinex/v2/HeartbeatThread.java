@@ -30,18 +30,19 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.PingCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.util.EventsInTimeslotManager;
+import com.google.common.annotations.VisibleForTesting;
 
 public class HeartbeatThread extends ExceptionSafeRunnable {
 
 	/**
 	 * The ticker timeout
 	 */
-	private static final long TICKER_TIMEOUT = TimeUnit.MINUTES.toMillis(5);
+	public static final long TICKER_TIMEOUT = TimeUnit.MINUTES.toMillis(5);
 
 	/**
 	 * The API timeout
 	 */
-	private static final long CPNNECTION_TIMEOUT = TimeUnit.SECONDS.toMillis(45);
+	public static final long CONNECTION_TIMEOUT = TimeUnit.SECONDS.toMillis(45);
 
 	/**
 	 * The API timeout
@@ -127,14 +128,23 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	}
 
 	/**
-	 * Are all ticker uptodate
+	 * Are all tickers up-to-date
 	 * @return
 	 */
 	private boolean checkTickerFreshness() {
-
-		final long currentTime = System.currentTimeMillis();
 		final QuoteManager quoteManager = bitfinexApiBroker.getQuoteManager();
 		final Map<BitfinexStreamSymbol, Long> heartbeatValues = quoteManager.getLastTickerActivity();
+
+		return checkTickerFreshness(heartbeatValues);
+	}
+
+	/**
+	 * Are all ticker up-to-date
+	 * @return
+	 */
+	@VisibleForTesting
+	public static boolean checkTickerFreshness(final Map<BitfinexStreamSymbol, Long> heartbeatValues) {
+		final long currentTime = System.currentTimeMillis();
 
 		final List<BitfinexStreamSymbol> outdatedSybols = heartbeatValues.entrySet().stream()
 			.filter(e -> e.getValue() + TICKER_TIMEOUT < currentTime)
@@ -168,7 +178,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	 * @return
 	 */
 	private boolean checkConnectionTimeout() {
-		final long heartbeatTimeout = bitfinexApiBroker.getLastHeatbeat().get() + CPNNECTION_TIMEOUT;
+		final long heartbeatTimeout = bitfinexApiBroker.getLastHeatbeat().get() + CONNECTION_TIMEOUT;
 
 		if(heartbeatTimeout < System.currentTimeMillis()) {
 			logger.error("Heartbeat timeout reconnecting");
