@@ -82,7 +82,7 @@ public class TickHandlerTest {
 		
 		
 		Assert.assertEquals(-1, tickerManager.getHeartbeatForSymbol(symbol));
-		Assert.assertEquals(null, tickerManager.getLastTick(symbol));
+		Assert.assertEquals(null, tickerManager.getLastCandle(symbol));
 
 		final TickHandler tickHandler = new TickHandler();
 		final long now = System.currentTimeMillis();
@@ -91,8 +91,8 @@ public class TickHandlerTest {
 		// Tick callbacks are handled async
 		latch.await();
 		Assert.assertTrue(now <= tickerManager.getHeartbeatForSymbol(symbol));
-		Assert.assertTrue(tickerManager.getLastTick(symbol) != null);
-		Assert.assertTrue(tickerManager.getLastTick(symbol) != null);
+		Assert.assertTrue(tickerManager.getLastCandle(symbol) != null);
+		Assert.assertTrue(tickerManager.getLastCandle(symbol) != null);
 	}
 	
 }

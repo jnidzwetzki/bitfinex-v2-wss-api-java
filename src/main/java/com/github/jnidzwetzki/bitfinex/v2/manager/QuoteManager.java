@@ -42,7 +42,7 @@ public class QuoteManager {
 	/**
 	 * The last ticks
 	 */
-	protected final Map<BitfinexStreamSymbol, BitfinexCandle> lastTick;
+	protected final Map<BitfinexStreamSymbol, BitfinexCandle> lastCandle;
 
 	/**
 	 * The last tick timestamp
@@ -77,7 +77,7 @@ public class QuoteManager {
 	public QuoteManager(final BitfinexApiBroker bitfinexApiBroker) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
 		this.executorService = bitfinexApiBroker.getExecutorService();
-		this.lastTick = new HashMap<>();
+		this.lastCandle = new HashMap<>();
 		this.lastTickTimestamp = new HashMap<>();
 		this.tickerCallbacks = new BiConsumerCallbackManager<>(executorService);
 		this.candleCallbacks = new BiConsumerCallbackManager<>(executorService);
@@ -90,7 +90,7 @@ public class QuoteManager {
 	 * @return
 	 */
 	public long getHeartbeatForSymbol(final BitfinexStreamSymbol symbol) {
-		synchronized (lastTick) {
+		synchronized (lastCandle) {
 			final Long heartbeat = lastTickTimestamp.get(symbol);
 
 			if(heartbeat == null) {
@@ -106,7 +106,7 @@ public class QuoteManager {
 	 * @param channel
 	 */
 	public void updateChannelHeartbeat(final BitfinexStreamSymbol symbol) {
-		synchronized (lastTick) {
+		synchronized (lastCandle) {
 			lastTickTimestamp.put(symbol, System.currentTimeMillis());
 		}
 	}
@@ -116,19 +116,19 @@ public class QuoteManager {
 	 * @return
 	 */
 	public Set<BitfinexStreamSymbol> getActiveSymbols() {
-		synchronized (lastTick) {
-			return lastTick.keySet();
+		synchronized (lastCandle) {
+			return lastCandle.keySet();
 		}
 	}
 
 	/**
-	 * Get the last tick for a given symbol
+	 * Get the last candle for a given symbol
 	 * @param currencyPair
 	 * @return
 	 */
-	public BitfinexCandle getLastTick(final BitfinexTickerSymbol currencyPair) {
-		synchronized (lastTick) {
-			return lastTick.get(currencyPair);
+	public BitfinexCandle getLastCandle(final BitfinexTickerSymbol currencyPair) {
+		synchronized (lastCandle) {
+			return lastCandle.get(currencyPair);
 		}
 	}
 
@@ -137,7 +137,7 @@ public class QuoteManager {
 	 */
 	public void invalidateTickerHeartbeat() {
 		// Invalidate last tick timestamps
-		synchronized (lastTick) {
+		synchronized (lastCandle) {
 			lastTickTimestamp.clear();
 		}
 	}
@@ -168,12 +168,12 @@ public class QuoteManager {
 	}
 
 	/**
-	 * Process a list with ticks
+	 * Process a list with candles
 	 * @param symbol
 	 * @param ticksArray
 	 */
-	public void handleTicksList(final BitfinexTickerSymbol symbol, final List<BitfinexCandle> ticksBuffer) {
-		tickerCallbacks.handleEventsList(symbol, ticksBuffer);
+	public void handleCandleList(final BitfinexTickerSymbol symbol, final List<BitfinexCandle> candles) {
+		tickerCallbacks.handleEventsList(symbol, candles);
 	}
 
 	/**
@@ -183,8 +183,8 @@ public class QuoteManager {
 	 */
 	public void handleNewCandle(final BitfinexTickerSymbol currencyPair, final BitfinexCandle candle) {
 
-		synchronized (lastTick) {
-			lastTick.put(currencyPair, candle);
+		synchronized (lastCandle) {
+			lastCandle.put(currencyPair, candle);
 			lastTickTimestamp.put(currencyPair, System.currentTimeMillis());
 		}
 
@@ -258,8 +258,8 @@ public class QuoteManager {
 	 */
 	public void handleNewCandlestick(final BitfinexCandlestickSymbol currencyPair, final BitfinexCandle tick) {
 
-		synchronized (lastTick) {
-			lastTick.put(currencyPair, tick);
+		synchronized (lastCandle) {
+			lastCandle.put(currencyPair, tick);
 			lastTickTimestamp.put(currencyPair, System.currentTimeMillis());
 		}
 
