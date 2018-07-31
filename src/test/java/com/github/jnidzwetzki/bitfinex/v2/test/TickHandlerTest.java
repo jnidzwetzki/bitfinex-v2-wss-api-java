@@ -87,13 +87,14 @@ public class TickHandlerTest {
 
 
 		Assert.assertEquals(-1, tickerManager.getHeartbeatForSymbol(symbol));
-		Assert.assertEquals(null, tickerManager.getLastCandle(symbol));
 
 		final TickHandler tickHandler = new TickHandler();
 		tickHandler.handleChannelData(bitfinexApiBroker, symbol, jsonArray);
 
 		// Tick callbacks are handled async
 		latch.await();
+
+		Assert.assertTrue(tickerManager.getHeartbeatForSymbol(symbol) != -1);
 	}
 
 }

@@ -19,7 +19,6 @@ package com.github.jnidzwetzki.bitfinex.v2.manager;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
@@ -43,12 +42,7 @@ public class QuoteManager {
 	/**
 	 * The last ticks
 	 */
-	private final Map<BitfinexStreamSymbol, BitfinexCandle> lastCandle;
-
-	/**
-	 * The last tick timestamp
-	 */
-	private final Map<BitfinexStreamSymbol, Long> lastTickTimestamp;
+	private final Map<BitfinexStreamSymbol, Long> lastTickerActivity;
 
 	/**
 	 * The BitfinexCurrencyPair callbacks
@@ -78,8 +72,7 @@ public class QuoteManager {
 	public QuoteManager(final BitfinexApiBroker bitfinexApiBroker) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
 		this.executorService = bitfinexApiBroker.getExecutorService();
-		this.lastCandle = new ConcurrentHashMap<>();
-		this.lastTickTimestamp = new ConcurrentHashMap<>();
+		this.lastTickerActivity = new ConcurrentHashMap<>();
 		this.tickerCallbacks = new BiConsumerCallbackManager<>(executorService);
 		this.candleCallbacks = new BiConsumerCallbackManager<>(executorService);
 		this.tradesCallbacks = new BiConsumerCallbackManager<>(executorService);
@@ -91,7 +84,7 @@ public class QuoteManager {
 	 * @return
 	 */
 	public long getHeartbeatForSymbol(final BitfinexStreamSymbol symbol) {
-		return lastTickTimestamp.getOrDefault(symbol, -1l);
+		return lastTickerActivity.getOrDefault(symbol, -1l);
 	}
 
 	/**
@@ -99,32 +92,22 @@ public class QuoteManager {
 	 * @param channel
 	 */
 	public void updateChannelHeartbeat(final BitfinexStreamSymbol symbol) {
-		lastTickTimestamp.put(symbol, System.currentTimeMillis());
+		lastTickerActivity.put(symbol, System.currentTimeMillis());
 	}
 
 	/**
-	 * Get a set with active symbols
+	 * Get the last ticker activity
 	 * @return
 	 */
-	public Set<BitfinexStreamSymbol> getActiveSymbols() {
-		return lastCandle.keySet();
+	public Map<BitfinexStreamSymbol, Long> getLastTickerActivity() {
+		return lastTickerActivity;
 	}
 
 	/**
-	 * Get the last candle for a given symbol
-	 * @param currencyPair
-	 * @return
-	 */
-	public BitfinexCandle getLastCandle(final BitfinexStreamSymbol symbol) {
-		return lastCandle.get(symbol);
-	}
-
-	/**
-	 * Invalidate the ticket heartbeat values
+	 * Invalidate the ticker heartbeat values
 	 */
 	public void invalidateTickerHeartbeat() {
-		// Invalidate last tick timestamps
-		lastTickTimestamp.clear();
+		lastTickerActivity.clear();
 	}
 
 	/**
@@ -158,6 +141,7 @@ public class QuoteManager {
 	 * @param ticksArray
 	 */
 	public void handleCandleList(final BitfinexTickerSymbol symbol, final List<BitfinexTick> candles) {
+		updateChannelHeartbeat(symbol);
 		tickerCallbacks.handleEventsList(symbol, candles);
 	}
 
@@ -167,7 +151,7 @@ public class QuoteManager {
 	 * @param candle
 	 */
 	public void handleNewTick(final BitfinexTickerSymbol currencyPair, final BitfinexTick tick) {
-		lastTickTimestamp.put(currencyPair, System.currentTimeMillis());
+		updateChannelHeartbeat(currencyPair);
 		tickerCallbacks.handleEvent(currencyPair, tick);
 	}
 
@@ -185,6 +169,9 @@ public class QuoteManager {
 	 * @param tickerSymbol
 	 */
 	public void unsubscribeTicker(final BitfinexTickerSymbol tickerSymbol) {
+
+		lastTickerActivity.remove(tickerSymbol);
+
 		final int channel = bitfinexApiBroker.getChannelForSymbol(tickerSymbol);
 
 		if(channel == -1) {
@@ -237,8 +224,7 @@ public class QuoteManager {
 	 * @param tick
 	 */
 	public void handleNewCandlestick(final BitfinexCandlestickSymbol currencyPair, final BitfinexCandle tick) {
-		lastCandle.put(currencyPair, tick);
-		lastTickTimestamp.put(currencyPair, System.currentTimeMillis());
+		updateChannelHeartbeat(currencyPair);
 		candleCallbacks.handleEvent(currencyPair, tick);
 	}
 
@@ -258,6 +244,8 @@ public class QuoteManager {
 	 * @param timeframe
 	 */
 	public void unsubscribeCandles(final BitfinexCandlestickSymbol symbol) {
+
+		lastTickerActivity.remove(symbol);
 
 		final int channel = bitfinexApiBroker.getChannelForSymbol(symbol);
 

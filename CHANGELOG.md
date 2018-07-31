@@ -1,4 +1,5 @@
 # Version 0.6.8 (TBA)
+* Improvement: Clean up channel freshness handling
 
 # Version 0.6.7 (31.07.2018)
 * New Feature: Add support for Bitfinex native ticks
