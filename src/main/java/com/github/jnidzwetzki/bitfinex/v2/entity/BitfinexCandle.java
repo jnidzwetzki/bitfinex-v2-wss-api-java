@@ -20,7 +20,7 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-public class BitfinexTick implements Comparable<BitfinexTick>{
+public class BitfinexCandle implements Comparable<BitfinexCandle>{
 	
 	/**
 	 * The timestamp
@@ -52,7 +52,7 @@ public class BitfinexTick implements Comparable<BitfinexTick>{
 	 */
 	private final Optional<BigDecimal> volume;
 	
-	public BitfinexTick(final long timestamp, final BigDecimal open, final BigDecimal close, 
+	public BitfinexCandle(final long timestamp, final BigDecimal open, final BigDecimal close, 
 			final BigDecimal high, final BigDecimal low, final Optional<BigDecimal> volume) {
 		
 		assert (high.doubleValue() >= open.doubleValue()) : "High needs to be >= open";
@@ -68,19 +68,19 @@ public class BitfinexTick implements Comparable<BitfinexTick>{
 		this.volume = volume;
 	}
 	
-	public BitfinexTick(final long timestamp, final BigDecimal open, final BigDecimal close, 
+	public BitfinexCandle(final long timestamp, final BigDecimal open, final BigDecimal close, 
 			final BigDecimal high, final BigDecimal low) {
 		
 		this(timestamp, open, close,  high, low, Optional.empty());
 	}
 	
-	public BitfinexTick(final long timestamp, final BigDecimal open, final BigDecimal close, 
+	public BitfinexCandle(final long timestamp, final BigDecimal open, final BigDecimal close, 
 			final BigDecimal high, final BigDecimal low, final BigDecimal volume) {
 		
 		this(timestamp, open, close,  high, low, Optional.of(volume));
 	}
 	
-	public BitfinexTick(final long timestamp, final double open, final double close, 
+	public BitfinexCandle(final long timestamp, final double open, final double close, 
 			final double high, final double low, final double volume) {
 		
 		this(timestamp, new BigDecimal(open), new BigDecimal(close),  new BigDecimal(high), 
@@ -132,7 +132,7 @@ public class BitfinexTick implements Comparable<BitfinexTick>{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		BitfinexTick other = (BitfinexTick) obj;
+		BitfinexCandle other = (BitfinexCandle) obj;
 		if (close == null) {
 			if (other.close != null)
 				return false;
@@ -170,7 +170,7 @@ public class BitfinexTick implements Comparable<BitfinexTick>{
 	}
 
 	@Override
-	public int compareTo(final BitfinexTick otherTick) {
+	public int compareTo(final BitfinexCandle otherTick) {
 		return Long.compare(getTimestamp(), otherTick.getTimestamp());
 	}
 	

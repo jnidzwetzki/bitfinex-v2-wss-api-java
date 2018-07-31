@@ -26,7 +26,7 @@ import org.json.JSONArray;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 
@@ -42,7 +42,7 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 			final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
 
 		// channel symbol trade:1m:tLTCUSD
-		final List<BitfinexTick> ticksBuffer = new ArrayList<>();
+		final List<BitfinexCandle> ticksBuffer = new ArrayList<>();
 		
 		// Snapshots contain multiple Bars, Updates only one
 		if(jsonArray.get(0) instanceof JSONArray) {
@@ -64,7 +64,7 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 	/**
 	 * Parse a candlestick from JSON result
 	 */
-	private void parseCandlestick(final List<BitfinexTick> ticksBuffer, final JSONArray parts) {
+	private void parseCandlestick(final List<BitfinexCandle> ticksBuffer, final JSONArray parts) {
 		
 		// 0 = Timestamp, 1 = Open, 2 = Close, 3 = High, 4 = Low,  5 = Volume
 		final long timestamp = parts.getLong(0);
@@ -74,7 +74,7 @@ public class CandlestickHandler implements ChannelCallbackHandler {
 		final BigDecimal low = parts.getBigDecimal(4);
 		final BigDecimal volume = parts.getBigDecimal(5);
 		
-		final BitfinexTick tick = new BitfinexTick(timestamp, open, close, high, low, Optional.of(volume));
+		final BitfinexCandle tick = new BitfinexCandle(timestamp, open, close, high, low, Optional.of(volume));
 		ticksBuffer.add(tick);
 	}
 }

@@ -23,7 +23,7 @@ import org.json.JSONArray;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 
@@ -46,7 +46,7 @@ public class TickHandler implements ChannelCallbackHandler {
 		final BigDecimal price = jsonArray.getBigDecimal(6);
 		
 		// Volume is set to 0, because the ticker contains only the daily volume
-		final BitfinexTick tick = new BitfinexTick(System.currentTimeMillis(), price, price, 
+		final BitfinexCandle tick = new BitfinexCandle(System.currentTimeMillis(), price, price, 
 				price, price);
 		
 		bitfinexApiBroker.getQuoteManager().handleNewTick(currencyPair, tick);

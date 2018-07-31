@@ -20,7 +20,7 @@ This project provides a Java client library for the [Bitfinex WebSocket API (v2)
 
 In contrast to other implementations, this project uses the WSS (_web socket secure_) streaming API of Bitfinex. Most other projects are poll the REST-API periodically, which leads to delays in data processing. In this implementation, you can register callback methods on ticks, candles or orders. The callbacks are executed, as soon as new data is received from Bitfinex (see the examples section for more details).
 
-**Warning:** Trading carries significant financial risk; you could lose a lot of money. If you are planning to use this software to trade, you should perform many tests and simulations first. This software is provided 'as is' and released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0). 
+**Warning:** Trading carries significant financial risk; you could lose a lot of money. If you are planning to use this software to trade, you should perform many tests and simulations first. This software is provided 'as is' and released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0).
 
 
 ## Contact / Stay informed
@@ -58,12 +58,15 @@ You will find the changelog of the project [here](https://github.com/jnidzwetzki
 
 # Recent API changes
 
+## Version 0.6.7
+The class ``BitfinexTick`` was renamed to ``BitfinexCandle`` and a new class for ticks was introduced.
+
 ## Version 0.6.3
 Starting with version 0.6.3 the value for uninitialized BigDecimal values was unified to null (in version 0.6.2 sometimes -1 and sometimes null was used).
 
 The BitfinexTick.INVALID_VOLUME is removed and replaced by a Java 8 optional
 
-```java 
+```java
 # Old (version <= 0.6.2)
 if (tick.getVolume() != BitfinexTick.INVALID_VOLUME) {
 	tick.getVolume().doubleValue()
@@ -75,7 +78,7 @@ if(tick.getVolume().isPresent()) {
 }
 ```
 
-## Version 0.6.2 
+## Version 0.6.2
 Since version 0.6.2, the double data type is replaced by the BigDecimal data type for increased precision.
 
 ## Version 0.6.1
@@ -99,10 +102,10 @@ final BitfinexTick tick = ....;
 final Instant instant = Instant.ofEpochMilli(tick.getTimestamp());
 final ZonedDateTime time = ZonedDateTime.ofInstant(instant, Const.BITFINEX_TIMEZONE);
 
-final Bar bar = new BaseBar(time, tick.getOpen().doubleValue(), 
-				tick.getHigh().doubleValue(), 
-				tick.getLow().doubleValue(), 
-				tick.getClose().doubleValue(), 
+final Bar bar = new BaseBar(time, tick.getOpen().doubleValue(),
+				tick.getHigh().doubleValue(),
+				tick.getLow().doubleValue(),
+				tick.getClose().doubleValue(),
 				tick.getVolume().orElse(BigDecimal.ZERO).doubleValue());
 ```
 

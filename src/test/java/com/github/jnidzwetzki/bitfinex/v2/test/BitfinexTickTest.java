@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 
 public class BitfinexTickTest {
 	
@@ -33,20 +33,20 @@ public class BitfinexTickTest {
 
 	@Test
 	public void testEquals() {
-		final BitfinexTick tick1 = new BitfinexTick(210, 
+		final BitfinexCandle tick1 = new BitfinexCandle(210, 
 				new BigDecimal(11),
 				new BigDecimal(16), 
 				new BigDecimal(18), 
 				new BigDecimal(10), 
 				new BigDecimal(45));
 		
-		final BitfinexTick tick2 = new BitfinexTick(213, 
+		final BitfinexCandle tick2 = new BitfinexCandle(213, 
 				new BigDecimal(12),
 				new BigDecimal(15), 
 				new BigDecimal(18), 
 				new BigDecimal(10));
 		
-		final BitfinexTick tick3 = new BitfinexTick(213, 
+		final BitfinexCandle tick3 = new BitfinexCandle(213, 
 				new BigDecimal(12),
 				new BigDecimal(15), 
 				new BigDecimal(18), 
@@ -61,14 +61,14 @@ public class BitfinexTickTest {
 	
 	@Test
 	public void testToString() {
-		final BitfinexTick tick1 = new BitfinexTick(213, 12d, 15d, 18d, 12d, 100d);
+		final BitfinexCandle tick1 = new BitfinexCandle(213, 12d, 15d, 18d, 12d, 100d);
 		Assert.assertTrue(tick1.toString().length() > 10);
 	}
 	
 	@Test
 	public void testCompareTo() {
-		final BitfinexTick tick1 = new BitfinexTick(210, 11d, 16d, 18d, 10d, 100d);
-		final BitfinexTick tick2 = new BitfinexTick(213, 12d, 15d, 18d, 12d, 100d);
+		final BitfinexCandle tick1 = new BitfinexCandle(210, 11d, 16d, 18d, 10d, 100d);
+		final BitfinexCandle tick2 = new BitfinexCandle(213, 12d, 15d, 18d, 12d, 100d);
 		Assert.assertTrue(tick1.compareTo(tick2) < 0);
 		Assert.assertTrue(tick2.compareTo(tick1) > 0);
 		Assert.assertTrue(tick1.compareTo(tick1) == 0);
@@ -76,9 +76,9 @@ public class BitfinexTickTest {
 	
 	@Test
 	public void testGetter() {
-		final BitfinexTick tick1 = new BitfinexTick(210, 11, 16, 18, 10, 45);
+		final BitfinexCandle tick1 = new BitfinexCandle(210, 11, 16, 18, 10, 45);
 		
-		final BitfinexTick tick2 = new BitfinexTick(210, 
+		final BitfinexCandle tick2 = new BitfinexCandle(210, 
 				new BigDecimal(11),
 				new BigDecimal(16), 
 				new BigDecimal(18), 

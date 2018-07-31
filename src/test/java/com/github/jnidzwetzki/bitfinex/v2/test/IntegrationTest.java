@@ -31,7 +31,7 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
 import com.github.jnidzwetzki.bitfinex.v2.SequenceNumberAuditor;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
@@ -187,7 +187,7 @@ public class IntegrationTest {
 				// Await at least 10 callbacks
 				final CountDownLatch latch1 = new CountDownLatch(10);
 				
-				final BiConsumer<BitfinexCandlestickSymbol, BitfinexTick> callback = (c, o) -> {
+				final BiConsumer<BitfinexCandlestickSymbol, BitfinexCandle> callback = (c, o) -> {
 					latch1.countDown();
 				};
 				
@@ -308,7 +308,7 @@ public class IntegrationTest {
 			
 			final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
 			
-			final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback = (c, o) -> {
+			final BiConsumer<BitfinexTickerSymbol, BitfinexCandle> callback = (c, o) -> {
 				latch.countDown();
 			};
 			
@@ -375,7 +375,7 @@ public class IntegrationTest {
 		// Await at least 2 callbacks
 		final CountDownLatch latch = new CountDownLatch(2);
 		
-		final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback = (c, o) -> {
+		final BiConsumer<BitfinexTickerSymbol, BitfinexCandle> callback = (c, o) -> {
 			latch.countDown();
 		};
 		
@@ -458,7 +458,7 @@ public class IntegrationTest {
 			
 			final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
 			
-			final BiConsumer<BitfinexCandlestickSymbol, BitfinexTick> callback = (c, o) -> {
+			final BiConsumer<BitfinexCandlestickSymbol, BitfinexCandle> callback = (c, o) -> {
 				latch.countDown();
 			};
 			
