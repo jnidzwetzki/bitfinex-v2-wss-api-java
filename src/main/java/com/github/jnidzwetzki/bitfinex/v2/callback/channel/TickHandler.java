@@ -49,6 +49,6 @@ public class TickHandler implements ChannelCallbackHandler {
 		final BitfinexCandle tick = new BitfinexCandle(System.currentTimeMillis(), price, price, 
 				price, price);
 		
-		bitfinexApiBroker.getQuoteManager().handleNewTick(currencyPair, tick);
+		bitfinexApiBroker.getQuoteManager().handleNewCandle(currencyPair, tick);
 	}
 }
