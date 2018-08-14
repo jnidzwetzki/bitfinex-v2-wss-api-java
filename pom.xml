@@ -22,7 +22,7 @@
 	<groupId>com.github.jnidzwetzki</groupId>
 	<artifactId>bitfinex-v2-wss-api</artifactId>
 	<packaging>jar</packaging>
-	<version>0.6.8-snapshot</version>
+	<version>0.6.8</version>
 
 	<name>Bitfinex v2 WSS API</name>
 	<description>Implementation of the Bitfinex v2 websocket API</description>

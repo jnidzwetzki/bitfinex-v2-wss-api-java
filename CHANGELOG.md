@@ -1,4 +1,4 @@
-# Version 0.6.8 (TBA)
+# Version 0.6.8 (14.08.2018)
 * Improvement: Clean up channel freshness handling
 * Improvement: Updated dependencies
 
