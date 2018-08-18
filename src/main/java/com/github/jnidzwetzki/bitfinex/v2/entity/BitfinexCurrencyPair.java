@@ -220,13 +220,13 @@ public class BitfinexCurrencyPair {
 
 		final String key = buildCacheKey(currency, profitCurrency);
 
-		if(instances.containsKey(key)) {
-			throw new IllegalArgumentException("The currency " + key + " is already known");
-		}
-
 		final BitfinexCurrencyPair value = new BitfinexCurrencyPair(currency, profitCurrency, minimalOrderSize);
 
-		instances.put(key, value);
+		final BitfinexCurrencyPair oldCurrency = instances.putIfAbsent(key, value);
+		
+		if(oldCurrency != null) {
+			throw new IllegalArgumentException("The currency " + key + " is already known");
+		}
 	}
 
 	/**
