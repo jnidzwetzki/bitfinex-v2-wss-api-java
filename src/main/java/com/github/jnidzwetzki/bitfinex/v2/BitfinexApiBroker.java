@@ -349,7 +349,7 @@ public class BitfinexApiBroker implements Closeable {
 
 		if(isAuthenticatedConnection()) {
 			sendCommand(new AuthCommand(authNonceProducer));
-			logger.info("Waiting for connection ready events");
+			logger.debug("Waiting for connection ready events");
 			connectionReadyLatch.await(10, TimeUnit.SECONDS);
 			
 			if(! authenticated) {
