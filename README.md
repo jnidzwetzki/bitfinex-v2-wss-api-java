@@ -59,7 +59,7 @@ You will find the changelog of the project [here](https://github.com/jnidzwetzki
 # Recent API changes
 
 ## Version 0.6.9
-The class ``BitfinexCurrencyPair`` now supports dynamic currency creation. Therefore, the old enaum consts are removed.
+The class ``BitfinexCurrencyPair`` now supports dynamic currency creation. Therefore, the old enum consts are removed.
 
 ```java
 # Old (version <= 0.6.8)
