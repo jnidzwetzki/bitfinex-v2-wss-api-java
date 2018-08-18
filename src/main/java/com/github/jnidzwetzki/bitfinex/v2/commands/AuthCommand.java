@@ -30,12 +30,18 @@ import java.util.function.Supplier;
 
 public class AuthCommand extends AbstractAPICommand {
 
+	/**
+	 * The used auth algorithm
+	 */
 	private static final String HMAC_SHA1_ALGORITHM = "HmacSHA384";
+	
+	/**
+	 * The auth nonce supplier
+	 */
 	private final Supplier<String> authNonceSupplier;
 
-	public AuthCommand(Supplier<String> authNonceSupplier) {
-		Objects.requireNonNull(authNonceSupplier);
-		this.authNonceSupplier = authNonceSupplier;
+	public AuthCommand(final Supplier<String> authNonceSupplier) {
+		this.authNonceSupplier = Objects.requireNonNull(authNonceSupplier);
 	}
 
 	@Override
