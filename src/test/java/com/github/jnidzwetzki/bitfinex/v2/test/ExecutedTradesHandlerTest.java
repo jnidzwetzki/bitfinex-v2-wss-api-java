@@ -52,7 +52,7 @@ public class ExecutedTradesHandlerTest {
 		final JSONArray jsonArray = new JSONArray(callbackValue);
 		
 		final BitfinexExecutedTradeSymbol symbol 
-			= new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.BTC_USD);
+			= new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.of("BTC","USD"));
 		
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
@@ -93,7 +93,7 @@ public class ExecutedTradesHandlerTest {
 		final JSONArray jsonArray = new JSONArray(callbackValue);
 
 		final BitfinexExecutedTradeSymbol symbol 
-			= new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.BTC_USD);
+			= new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.of("BTC","USD"));
 		
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);

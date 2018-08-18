@@ -66,7 +66,7 @@ public class OrderManagerTest {
 				Assert.assertEquals(ExchangeOrderState.STATE_ERROR, e.getState());
 				Assert.assertEquals(API_KEY, e.getApikey());
 				Assert.assertEquals(1513970684865000l, e.getCid());
-				Assert.assertEquals(BitfinexCurrencyPair.BTC_USD.toBitfinexString(), e.getSymbol());
+				Assert.assertEquals(BitfinexCurrencyPair.of("BTC","USD").toBitfinexString(), e.getSymbol());
 			} catch(Throwable e1) {
 				e1.printStackTrace();
 			}
@@ -255,7 +255,7 @@ public class OrderManagerTest {
 		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 		
 		final BitfinexOrder order 
-			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.BCH_USD, BitfinexOrderType.MARKET, 12).build();
+			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderType.MARKET, 12).build();
 		
 		orderManager.placeOrderAndWaitUntilActive(order);
 	}
@@ -275,7 +275,7 @@ public class OrderManagerTest {
 		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 		
 		final BitfinexOrder order 
-			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.BCH_USD, BitfinexOrderType.MARKET, 1).build();
+			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderType.MARKET, 1).build();
 	
 		final Runnable r = () -> {
 			try {

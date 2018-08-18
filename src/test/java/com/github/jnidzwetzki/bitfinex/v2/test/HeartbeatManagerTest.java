@@ -105,7 +105,7 @@ public class HeartbeatManagerTest {
 	@Test
 	public void testTickerFreshness2() {
 		final HashMap<BitfinexStreamSymbol, Long> heartbeatValues = new HashMap<>();
-		heartbeatValues.put(new BitfinexTickerSymbol(BitfinexCurrencyPair.AGI_ETH), System.currentTimeMillis());
+		heartbeatValues.put(new BitfinexTickerSymbol(BitfinexCurrencyPair.of("AGI","ETH")), System.currentTimeMillis());
 		Assert.assertTrue(HeartbeatThread.checkTickerFreshness(heartbeatValues));
 	}
 
@@ -116,7 +116,7 @@ public class HeartbeatManagerTest {
 	public void testTickerFreshness3() {
 		final HashMap<BitfinexStreamSymbol, Long> heartbeatValues = new HashMap<>();
 		long outdatedTime = System.currentTimeMillis() - HeartbeatThread.TICKER_TIMEOUT - 10;
-		heartbeatValues.put(new BitfinexTickerSymbol(BitfinexCurrencyPair.AGI_ETH), outdatedTime);
+		heartbeatValues.put(new BitfinexTickerSymbol(BitfinexCurrencyPair.of("AGI","ETH")), outdatedTime);
 		Assert.assertFalse(HeartbeatThread.checkTickerFreshness(heartbeatValues));
 	}
 }

@@ -33,13 +33,13 @@ public class RawOrderbookTest {
 	@Test
 	public void testTradingOrderbookEquals() {
 		final RawOrderbookConfiguration configuration1 = new RawOrderbookConfiguration(
-				BitfinexCurrencyPair.BCH_USD);
+				BitfinexCurrencyPair.of("BCH","USD"));
 		
 		final RawOrderbookConfiguration configuration2 = new RawOrderbookConfiguration(
-				BitfinexCurrencyPair.BCH_USD);
+				BitfinexCurrencyPair.of("BCH","USD"));
 		
 		final RawOrderbookConfiguration configuration3 = new RawOrderbookConfiguration(
-				BitfinexCurrencyPair.AVT_BTC);
+				BitfinexCurrencyPair.of("AVT","BTC"));
 		
 		Assert.assertEquals(configuration1.hashCode(), configuration2.hashCode());
 		Assert.assertEquals(configuration1, configuration2);
@@ -58,6 +58,6 @@ public class RawOrderbookTest {
 		final RawOrderbookConfiguration configuration 
 			= RawOrderbookConfiguration.fromJSON(jsonObject);
 	
-		Assert.assertEquals(BitfinexCurrencyPair.BTC_USD, configuration.getCurrencyPair());
+		Assert.assertEquals(BitfinexCurrencyPair.of("BTC","USD"), configuration.getCurrencyPair());
 	}
 }

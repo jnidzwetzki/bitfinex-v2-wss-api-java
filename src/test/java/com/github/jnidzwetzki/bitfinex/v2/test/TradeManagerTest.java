@@ -66,7 +66,7 @@ public class TradeManagerTest {
 			try {
 				Assert.assertTrue(t.isExecuted());
 				Assert.assertEquals(106655593, t.getId());
-				Assert.assertEquals(BitfinexCurrencyPair.BTC_USD, t.getCurrency());
+				Assert.assertEquals(BitfinexCurrencyPair.of("BTC","USD"), t.getCurrency());
 				Assert.assertEquals(1512247319827l, t.getMtsCreate());
 				Assert.assertEquals(5691690918l, t.getOrderId());
 				Assert.assertEquals(-0.002, t.getExecAmount().doubleValue(), DELTA);
@@ -106,7 +106,7 @@ public class TradeManagerTest {
 			try {
 				Assert.assertFalse(t.isExecuted());
 				Assert.assertEquals(106655593, t.getId());
-				Assert.assertEquals(BitfinexCurrencyPair.BTC_USD, t.getCurrency());
+				Assert.assertEquals(BitfinexCurrencyPair.of("BTC","USD"), t.getCurrency());
 				Assert.assertEquals(1512247319827l, t.getMtsCreate());
 				Assert.assertEquals(5691690918l, t.getOrderId());
 				Assert.assertEquals(-0.002, t.getExecAmount().doubleValue(), DELTA);

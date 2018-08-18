@@ -52,7 +52,7 @@ public class TickHandlerTest {
 		final String callbackValue = "[26123,41.4645776,26129,33.68138507,2931,0.2231,26129,144327.10936387,26149,13139]";
 		final JSONArray jsonArray = new JSONArray(callbackValue);
 
-		final BitfinexCurrencyPair currencyPair = BitfinexCurrencyPair.BTC_USD;
+		final BitfinexCurrencyPair currencyPair = BitfinexCurrencyPair.of("BTC","USD");
 		final BitfinexTickerSymbol symbol = new BitfinexTickerSymbol(currencyPair);
 
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
