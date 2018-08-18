@@ -18,12 +18,12 @@
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BitfinexCurrencyPair {
 
-    private final static Map<String, BitfinexCurrencyPair> OBJECT_POOL = new HashMap<>();
+    private final static Map<String, BitfinexCurrencyPair> instances = new ConcurrentHashMap<>();
 
     static {
         register("BTC", "USD", 0.002);
@@ -217,7 +217,7 @@ public class BitfinexCurrencyPair {
      * @param minimalOrderSize minimal order size
      */
     public static void register(String currency, String profitCurrency, double minimalOrderSize) {
-        OBJECT_POOL.put(currency + "_" + profitCurrency, new BitfinexCurrencyPair(currency, profitCurrency, minimalOrderSize));
+        instances.put(currency + "_" + profitCurrency, new BitfinexCurrencyPair(currency, profitCurrency, minimalOrderSize));
     }
 
     /**
@@ -228,7 +228,7 @@ public class BitfinexCurrencyPair {
      * @return BitfinexCurrencyPair
      */
     public static BitfinexCurrencyPair of(String currency, String profitCurrency) {
-        BitfinexCurrencyPair bcp = OBJECT_POOL.get(currency + "_" + profitCurrency);
+        BitfinexCurrencyPair bcp = instances.get(currency + "_" + profitCurrency);
         if (bcp == null) {
             throw new IllegalArgumentException("CurrencyPair is not registered: " + currency + " " + profitCurrency);
         }
@@ -241,7 +241,7 @@ public class BitfinexCurrencyPair {
      * @return list of BitfinexCurrencyPair
      */
     public static Collection<BitfinexCurrencyPair> values() {
-        return OBJECT_POOL.values();
+        return instances.values();
     }
 
 	/**
