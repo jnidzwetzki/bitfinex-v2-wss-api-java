@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -239,7 +240,7 @@ public class BitfinexApiBroker implements Closeable {
 	
 	public BitfinexApiBroker() {
 		this.executorService = Executors.newFixedThreadPool(10);
-		this.channelIdSymbolMap = new HashMap<>();
+		this.channelIdSymbolMap = new ConcurrentSkipListMap<>();
 		this.lastHeatbeat = new AtomicLong();
 		this.quoteManager = new QuoteManager(this);
 		this.orderbookManager = new OrderbookManager(this);
@@ -251,7 +252,7 @@ public class BitfinexApiBroker implements Closeable {
 		this.connectionFeatureManager = new ConnectionFeatureManager(this);
 		this.capabilities = ConnectionCapabilities.NO_CAPABILITIES;
 		this.authenticated = false;
-		this.channelHandler = new HashMap<>();
+		this.channelHandler = new ConcurrentSkipListMap<>();
 		this.sequenceNumberAuditor = new SequenceNumberAuditor();
 		this.authNonceProducer = AuthCommand.AUTH_NONCE_PRODUCER_TIMESTAMP;
 		
@@ -305,7 +306,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * Setup the command callbacks
 	 */
 	private void setupCommandCallbacks() {
-		commandCallbacks = new HashMap<>();
+		commandCallbacks = new ConcurrentSkipListMap<>();
 		commandCallbacks.put("info", new DoNothingCommandCallback());
 		commandCallbacks.put("subscribed", new SubscribedCallback());
 		commandCallbacks.put("pong", new ConnectionHeartbeatCallback());

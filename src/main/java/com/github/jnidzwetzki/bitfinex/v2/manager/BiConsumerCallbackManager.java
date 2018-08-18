@@ -18,9 +18,9 @@
 package com.github.jnidzwetzki.bitfinex.v2.manager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
@@ -40,7 +40,7 @@ public class BiConsumerCallbackManager<S, T> {
 
 	public BiConsumerCallbackManager(final ExecutorService executorService) {
 		this.executorService = executorService;
-		this.callbacks = new HashMap<>();
+		this.callbacks = new ConcurrentSkipListMap<>();
 	}
 	
 	/**
