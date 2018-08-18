@@ -25,9 +25,18 @@ import org.json.JSONObject;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.google.common.io.BaseEncoding;
 
+import java.util.Objects;
+import java.util.function.Supplier;
+
 public class AuthCommand extends AbstractAPICommand {
 
 	private static final String HMAC_SHA1_ALGORITHM = "HmacSHA384";
+	private final Supplier<String> authNonceSupplier;
+
+	public AuthCommand(Supplier<String> authNonceSupplier) {
+		Objects.requireNonNull(authNonceSupplier);
+		this.authNonceSupplier = authNonceSupplier;
+	}
 
 	@Override
 	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) throws CommandException {
@@ -36,7 +45,7 @@ public class AuthCommand extends AbstractAPICommand {
 			final String APISecret = bitfinexApiBroker.getApiSecret();
 			final boolean deadManSwitch = bitfinexApiBroker.isDeadManFeatureEnabled();
 			
-			final String authNonce = Long.toString(System.currentTimeMillis());
+			final String authNonce = authNonceSupplier.get();
 			final String authPayload = "AUTH" + authNonce;
 
 			final SecretKeySpec signingKey = new SecretKeySpec(APISecret.getBytes(), HMAC_SHA1_ALGORITHM);

@@ -60,7 +60,7 @@ public class CommandsTest {
 			= new RawOrderbookConfiguration(BitfinexCurrencyPair.of("BAT","BTC"));
 		
 		final List<AbstractAPICommand> commands = Arrays.asList(
-				new AuthCommand(), 
+				new AuthCommand(() -> Long.toString(System.currentTimeMillis())),
 				new CancelOrderCommand(123),
 				new CancelOrderGroupCommand(1),
 				new OrderCommand(order),
