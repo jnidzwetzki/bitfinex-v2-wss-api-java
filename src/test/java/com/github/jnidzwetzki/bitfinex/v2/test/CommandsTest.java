@@ -47,17 +47,17 @@ public class CommandsTest {
 		
 		final BitfinexOrder order 
 			= BitfinexOrderBuilder.create(
-					BitfinexCurrencyPair.BCH_USD, BitfinexOrderType.EXCHANGE_STOP, 2).build();
+					BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderType.EXCHANGE_STOP, 2).build();
 		
 		final BitfinexCandlestickSymbol candleSymbol 
-			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BCH_USD, Timeframe.HOUR_1);
+			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BCH","USD"), Timeframe.HOUR_1);
 		
 		final OrderbookConfiguration orderbookConfiguration 
-			= new OrderbookConfiguration(BitfinexCurrencyPair.BCH_USD, 
+			= new OrderbookConfiguration(BitfinexCurrencyPair.of("BCH","USD"),
 					OrderBookPrecision.P0, OrderBookFrequency.F0	, 50);
 		
 		final RawOrderbookConfiguration rawOrderbookConfiguration 
-			= new RawOrderbookConfiguration(BitfinexCurrencyPair.BAT_BTC);
+			= new RawOrderbookConfiguration(BitfinexCurrencyPair.of("BAT","BTC"));
 		
 		final List<AbstractAPICommand> commands = Arrays.asList(
 				new AuthCommand(), 
@@ -66,8 +66,8 @@ public class CommandsTest {
 				new OrderCommand(order),
 				new PingCommand(), 
 				new SubscribeCandlesCommand(candleSymbol),
-				new SubscribeTickerCommand(new BitfinexTickerSymbol(BitfinexCurrencyPair.BCH_USD)),
-				new SubscribeTradesCommand(new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.BAT_BTC)),
+				new SubscribeTickerCommand(new BitfinexTickerSymbol(BitfinexCurrencyPair.of("BCH","USD"))),
+				new SubscribeTradesCommand(new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.of("BAT","BTC"))),
 				new SubscribeOrderbookCommand(orderbookConfiguration),
 				new SubscribeRawOrderbookCommand(rawOrderbookConfiguration),
 				new UnsubscribeChannelCommand(12),
@@ -89,7 +89,7 @@ public class CommandsTest {
 	@Test
 	public void testOrderCommand() throws CommandException {
 		final BitfinexOrder order 
-			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.BCH_USD, BitfinexOrderType.EXCHANGE_STOP, 2)
+			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderType.EXCHANGE_STOP, 2)
 			.setHidden()
 			.setPostOnly()
 			.withPrice(12)

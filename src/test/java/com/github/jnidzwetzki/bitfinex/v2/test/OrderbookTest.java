@@ -35,13 +35,13 @@ public class OrderbookTest {
 	@Test
 	public void testTradingOrderbookEquals() {
 		final OrderbookConfiguration configuration1 = new OrderbookConfiguration(
-				BitfinexCurrencyPair.BCH_USD, OrderBookPrecision.P1, OrderBookFrequency.F1, 50);
+				BitfinexCurrencyPair.of("BCH","USD"), OrderBookPrecision.P1, OrderBookFrequency.F1, 50);
 		
 		final OrderbookConfiguration configuration2 = new OrderbookConfiguration(
-				BitfinexCurrencyPair.BCH_USD, OrderBookPrecision.P1, OrderBookFrequency.F1, 50);
+				BitfinexCurrencyPair.of("BCH","USD"), OrderBookPrecision.P1, OrderBookFrequency.F1, 50);
 		
 		final OrderbookConfiguration configuration3 = new OrderbookConfiguration(
-				BitfinexCurrencyPair.BCH_USD, OrderBookPrecision.P0, OrderBookFrequency.F1, 50);
+				BitfinexCurrencyPair.of("BCH","USD"), OrderBookPrecision.P0, OrderBookFrequency.F1, 50);
 		
 		Assert.assertEquals(configuration1.hashCode(), configuration2.hashCode());
 		Assert.assertEquals(configuration1, configuration2);
@@ -60,7 +60,7 @@ public class OrderbookTest {
 		final OrderbookConfiguration configuration 
 			= OrderbookConfiguration.fromJSON(jsonObject);
 	
-		Assert.assertEquals(BitfinexCurrencyPair.BTC_USD, configuration.getCurrencyPair());
+		Assert.assertEquals(BitfinexCurrencyPair.of("BTC","USD"), configuration.getCurrencyPair());
 		Assert.assertEquals(OrderBookFrequency.F0, configuration.getOrderBookFrequency());
 		Assert.assertEquals(OrderBookPrecision.P0, configuration.getOrderBookPrecision());
 		Assert.assertEquals(25, configuration.getPricePoints());
