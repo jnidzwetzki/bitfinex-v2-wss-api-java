@@ -21,12 +21,14 @@ import java.io.Closeable;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -213,6 +215,11 @@ public class BitfinexApiBroker implements Closeable {
 	 * The sequence number auditor
 	 */
 	private final SequenceNumberAuditor sequenceNumberAuditor;
+
+	/**
+	 * default auth nonce producer
+	 */
+	private Supplier<String> defaultAuthNonceProducer = () -> Long.toString(System.currentTimeMillis());
 	
 	/**
 	 * The Logger
@@ -340,7 +347,7 @@ public class BitfinexApiBroker implements Closeable {
 		connectionReadyLatch = new CountDownLatch(CONNECTION_READY_EVENTS);
 
 		if(isAuthenticatedConnection()) {
-			sendCommand(new AuthCommand());
+			sendCommand(new AuthCommand(defaultAuthNonceProducer));
 			logger.info("Waiting for connection ready events");
 			connectionReadyLatch.await(10, TimeUnit.SECONDS);
 			
@@ -967,5 +974,14 @@ public class BitfinexApiBroker implements Closeable {
 	 */
 	public boolean isDeadManFeatureEnabled() {
 		return deadManSwitch;
+	}
+
+	/**
+	 * Sets default auth nonce producer
+	 * @param defaultAuthNonceProducer 	- default nonce producer used for authentication
+	 */
+	public void setDefaultAuthNonceProducer(Supplier<String> defaultAuthNonceProducer) {
+		Objects.requireNonNull(defaultAuthNonceProducer);
+		this.defaultAuthNonceProducer = defaultAuthNonceProducer;
 	}
 }
