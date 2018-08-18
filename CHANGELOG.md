@@ -1,4 +1,5 @@
 # Version 0.6.9 (TBA)
+* New Feature: Made auth nonce producer configurable (thanks to mironbalcerzak / closes #43) 
 * Improvement: Added dynamic currency creation (thanks to mironbalcerzak / closes #41 and #42) 
 
 # Version 0.6.8 (14.08.2018)
