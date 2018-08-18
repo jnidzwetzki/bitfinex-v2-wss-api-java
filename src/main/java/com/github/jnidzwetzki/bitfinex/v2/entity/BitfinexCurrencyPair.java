@@ -305,7 +305,7 @@ public class BitfinexCurrencyPair {
 	 * @return
 	 */
 	public static BitfinexCurrencyPair fromSymbolString(final String symbolString) {
-		for (BitfinexCurrencyPair curency : BitfinexCurrencyPair.values()) {
+		for (final BitfinexCurrencyPair curency : BitfinexCurrencyPair.values()) {
 			if (curency.toBitfinexString().equalsIgnoreCase(symbolString)) {
 				return curency;
 			}
