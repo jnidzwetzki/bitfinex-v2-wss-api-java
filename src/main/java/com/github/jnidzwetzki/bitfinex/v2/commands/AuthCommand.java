@@ -39,7 +39,12 @@ public class AuthCommand extends AbstractAPICommand {
 	 * The auth nonce supplier
 	 */
 	private final Supplier<String> authNonceSupplier;
-
+	
+	/**
+	 * Default auth nonce producer
+	 */
+	public static Supplier<String> AUTH_NONCE_PRODUCER_TIMESTAMP = () -> Long.toString(System.currentTimeMillis());
+	
 	public AuthCommand(final Supplier<String> authNonceSupplier) {
 		this.authNonceSupplier = Objects.requireNonNull(authNonceSupplier);
 	}
