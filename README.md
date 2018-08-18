@@ -58,6 +58,17 @@ You will find the changelog of the project [here](https://github.com/jnidzwetzki
 
 # Recent API changes
 
+## Version 0.6.9
+The class ``BitfinexCurrencyPair`` now supports dynamic currency creation. Therefore, the old enaum consts are removed.
+
+```java
+# Old (version <= 0.6.8)
+BitfinexCurrencyPair.BTC_USD
+
+# New (version > 0.6.8)
+BitfinexCurrencyPair.of("BTC","USD")
+```
+
 ## Version 0.6.7
 The class ``BitfinexTick`` was renamed to ``BitfinexCandle`` and a new class for ticks was introduced.
 

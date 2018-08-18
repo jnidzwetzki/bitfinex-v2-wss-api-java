@@ -43,7 +43,7 @@ cfManager.enableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
 ```java
 
 final BitfinexCandlestickSymbol symbol
-	= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.BTC_USD, Timeframe.MINUTE_1);
+	= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), Timeframe.MINUTE_1);
 
 // The consumer will be called on all received candles for the symbol
 final BiConsumer<BitfinexCandlestickSymbol, BitfinexCandle> callback = (sym, tick) -> {
@@ -68,7 +68,7 @@ final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback = (symbol, tick) -
 	System.out.format("Got BitfinexTick (%s) for symbol (%s)\n", tick, symbol);
 };
 
-final BitfinexTickerSymbol symbol = new BitfinexTickerSymbol(BitfinexCurrencyPair.BTC_USD);
+final BitfinexTickerSymbol symbol = new BitfinexTickerSymbol(BitfinexCurrencyPair.of("BTC","USD"));
 
 final QuoteManager quoteManager = bitfinexApiBroker.getQuoteManager();
 quoteManager.registerTickCallback(symbol, callback);
@@ -84,7 +84,7 @@ tickerManager.unsubscribeTicker(symbol);
 ## Subscribe orderbook stream
 ```java
 final OrderbookConfiguration orderbookConfiguration = new OrderbookConfiguration(
-			BitfinexCurrencyPair.BTC_USD, OrderBookPrecision.P0, OrderBookFrequency.F0, 25);
+			BitfinexCurrencyPair.of("BTC","USD"), OrderBookPrecision.P0, OrderBookFrequency.F0, 25);
 
 final OrderbookManager orderbookManager = bitfinexApiBroker.getOrderbookManager();
 
@@ -105,7 +105,7 @@ orderbookManager.unsubscribeOrderbook(orderbookConfiguration);
 ## Subscribe raw orderbook stream
 ```java
 final RawOrderbookConfiguration orderbookConfiguration = new RawOrderbookConfiguration(
-			BitfinexCurrencyPair.BTC_USD);
+			BitfinexCurrencyPair.of("BTC","USD"));
 
 final RawOrderbookManager rawOrderbookManager = bitfinexClient.getRawOrderbookManager();
 
@@ -125,7 +125,7 @@ rawOrderbookManager.unsubscribeOrderbook(orderbookConfiguration);
 
 ## Executed trade callbacks (all trades on the exchange)
 ```java
-final BitfinexExecutedTradeSymbol symbol = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.BTC_USD);
+final BitfinexExecutedTradeSymbol symbol = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.of("BTC","USD"));
 
 final QuoteManager quoteManager = bitfinexClient.getQuoteManager();
 
@@ -177,7 +177,7 @@ bitfinexApiBroker.getOrderManager().placeOrder(order);
 
 ## Order group
 ```java
-final CurrencyPair currencyPair = CurrencyPair.BTC_USD;
+final CurrencyPair currencyPair = BitfinexCurrencyPair.of("BTC","USD");
 final BitfinexTick lastValue = bitfinexApiBroker.getQuoteManager().getLastTick(currencyPair);
 
 final int orderGroup = 4711;
