@@ -217,9 +217,15 @@ public class BitfinexCurrencyPair {
      * @param minimalOrderSize minimal order size
      */
     public static void register(String currency, String profitCurrency, double minimalOrderSize) {
+    	
+        final String key = buildCacheKey(currency, profitCurrency);
+        
+        if(instances.containsKey(key)) {
+        		throw new IllegalArgumentException("The currency " + key + " is already known");
+        }
+        
         final BitfinexCurrencyPair value = new BitfinexCurrencyPair(currency, profitCurrency, minimalOrderSize);
-		final String key = buildInstanceKey(currency, profitCurrency);
-		
+        
 		instances.put(key, value);
     }
 
@@ -231,7 +237,7 @@ public class BitfinexCurrencyPair {
      * @return BitfinexCurrencyPair
      */
     public static BitfinexCurrencyPair of(final String currency, final String profitCurrency) {
-        final String key = buildInstanceKey(currency, profitCurrency);
+        final String key = buildCacheKey(currency, profitCurrency);
         
 		final BitfinexCurrencyPair bcp = instances.get(key);
         
@@ -243,13 +249,13 @@ public class BitfinexCurrencyPair {
     }
 
 	/**
-	 * Build the instance cache key
+	 * Build the cache key
 	 * 
 	 * @param currency1
 	 * @param currency2
 	 * @return
 	 */
-	private static String buildInstanceKey(final String currency1, final String currency2) {
+	private static String buildCacheKey(final String currency1, final String currency2) {
 		return currency1 + "_" + currency2;
 	}
 
