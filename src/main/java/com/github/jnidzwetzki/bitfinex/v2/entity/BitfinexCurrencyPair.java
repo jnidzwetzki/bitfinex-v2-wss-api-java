@@ -241,7 +241,7 @@ public class BitfinexCurrencyPair {
         
 		final BitfinexCurrencyPair bcp = instances.get(key);
         
-        if (! instances.containsKey(key)) {
+        if (bcp == null) {
             throw new IllegalArgumentException("CurrencyPair is not registered: " + currency + " " + profitCurrency);
         }
         
