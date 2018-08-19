@@ -222,15 +222,17 @@ public class BitfinexCurrencyPair {
 
 		final String key = buildCacheKey(currency, profitCurrency);
 
-		final BitfinexCurrencyPair value = new BitfinexCurrencyPair(currency, profitCurrency, minimalOrderSize);
+		final BitfinexCurrencyPair newCurrency = new BitfinexCurrencyPair(currency, profitCurrency, 
+				minimalOrderSize);
 
-		final BitfinexCurrencyPair oldCurrency = instances.putIfAbsent(key, value);
+		final BitfinexCurrencyPair oldCurrency = instances.putIfAbsent(key, newCurrency);
 		
+		// The currency was already registered
 		if(oldCurrency != null) {
 			throw new IllegalArgumentException("The currency " + key + " is already known");
 		}
 		
-		return oldCurrency;
+		return newCurrency;
 	}
 
 	/**
