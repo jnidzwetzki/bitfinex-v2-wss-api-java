@@ -74,7 +74,7 @@ public class EventsInTimeslotManager {
 	}
 	
 	/**
-	 * Wait for a new timeslow
+	 * Wait for a new timeslot
 	 * @return 
 	 * @throws InterruptedException 
 	 */
