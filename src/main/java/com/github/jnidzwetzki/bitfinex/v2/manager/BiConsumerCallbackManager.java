@@ -17,10 +17,10 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.manager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
@@ -40,7 +40,7 @@ public class BiConsumerCallbackManager<S, T> {
 
 	public BiConsumerCallbackManager(final ExecutorService executorService) {
 		this.executorService = executorService;
-		this.callbacks = new HashMap<>();
+		this.callbacks = new ConcurrentHashMap<>();
 	}
 	
 	/**
@@ -50,14 +50,9 @@ public class BiConsumerCallbackManager<S, T> {
 	 * @throws APIException
 	 */
 	public void registerCallback(final S symbol, final BiConsumer<S, T> callback) throws APIException {
-		
-		callbacks.putIfAbsent(symbol, new ArrayList<>());
-				
-		final List<BiConsumer<S, T>> callbackList = callbacks.get(symbol);
-		
-		synchronized (callbackList) {
-			callbackList.add(callback);	
-		}
+		final List<BiConsumer<S, T>> callbackList 
+			= callbacks.computeIfAbsent(symbol, (k) -> new CopyOnWriteArrayList<>());	
+		callbackList.add(callback);
 	}
 	
 	/**
@@ -69,15 +64,13 @@ public class BiConsumerCallbackManager<S, T> {
 	 */
 	public boolean removeCallback(final S symbol, final BiConsumer<S, T> callback) throws APIException {
 		
-		if(! callbacks.containsKey(symbol)) {
-			throw new APIException("Unknown ticker string: " + symbol);
-		}
-			
 		final List<BiConsumer<S, T>> callbackList = callbacks.get(symbol);
+
+		if(callbackList == null) {
+			throw new APIException("Unknown ticker string: " + symbol);
+		}			
 		
-		synchronized (callbackList) {
-			return callbackList.remove(callback);
-		}
+		return callbackList.remove(callback);	
 	}
 	
 	/**
@@ -93,17 +86,15 @@ public class BiConsumerCallbackManager<S, T> {
 			return;
 		}
 				
-		synchronized(callbackList) {
-			if(callbackList.isEmpty()) {
-				return;
-			}
-			
-			// Notify callbacks synchronously, to preserve the order of events
-			for (final T element : elements) {
-				callbackList.forEach((c) -> {
-					c.accept(symbol, element);
-				});
-			}
+		if(callbackList.isEmpty()) {
+			return;
+		}
+		
+		// Notify callbacks synchronously, to preserve the order of events
+		for (final T element : elements) {
+			callbackList.forEach((c) -> {
+				c.accept(symbol, element);
+			});
 		}
 	}
 	
@@ -120,16 +111,13 @@ public class BiConsumerCallbackManager<S, T> {
 			return;
 		}
 
-		synchronized(callbackList) {
-			if(callbackList.isEmpty()) {
-				return;
-			}
-
-			callbackList.forEach((c) -> {
-				final Runnable runnable = () -> c.accept(symbol, element);
-				executorService.submit(runnable);
-			});
+		if(callbackList.isEmpty()) {
+			return;
 		}
-	}
 
+		callbackList.forEach((c) -> {
+			final Runnable runnable = () -> c.accept(symbol, element);
+			executorService.submit(runnable);
+		});
+	}
 }
