@@ -215,8 +215,10 @@ public class BitfinexCurrencyPair {
 	 * @param currency         currency (from)
 	 * @param profitCurrency   currency (to)
 	 * @param minimalOrderSize minimal order size
+	 * @return 
 	 */
-	public static void register(String currency, String profitCurrency, double minimalOrderSize) {
+	public static BitfinexCurrencyPair register(final String currency, 
+			final String profitCurrency, final double minimalOrderSize) {
 
 		final String key = buildCacheKey(currency, profitCurrency);
 
@@ -227,6 +229,8 @@ public class BitfinexCurrencyPair {
 		if(oldCurrency != null) {
 			throw new IllegalArgumentException("The currency " + key + " is already known");
 		}
+		
+		return oldCurrency;
 	}
 
 	/**
