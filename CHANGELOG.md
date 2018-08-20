@@ -1,4 +1,5 @@
 # Version 0.6.10 (TBA)
+* Improvement: Updated dependencies
 * Bugfix: Fixed race condition in BiConsumerCallback
 
 # Version 0.6.9 (19.08.2018)
