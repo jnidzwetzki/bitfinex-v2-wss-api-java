@@ -15,7 +15,7 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.test;
+package com.github.jnidzwetzki.bitfinex.v2.test.handler;
 
 import java.util.concurrent.CountDownLatch;
 
