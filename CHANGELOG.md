@@ -1,5 +1,6 @@
 # Version 0.6.10 (TBA)
 * Improvement: Updated dependencies
+* Bugfix: Limit the number of ticket subscriptions to 50 (https://www.bitfinex.com/posts/267)
 * Bugfix: Fixed race condition in BiConsumerCallback
 
 # Version 0.6.9 (19.08.2018)

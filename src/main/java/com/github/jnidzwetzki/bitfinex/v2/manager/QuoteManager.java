@@ -68,6 +68,13 @@ public class QuoteManager {
 	 * The bitfinex API
 	 */
 	private final BitfinexApiBroker bitfinexApiBroker;
+	
+	/**
+	 * The number of symbols that can be subscribed within one connection
+	 * @see https://www.bitfinex.com/posts/267
+	 */
+	public static int SYMBOL_QUOTA = 50;
+	
 
 	public QuoteManager(final BitfinexApiBroker bitfinexApiBroker) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
@@ -158,8 +165,15 @@ public class QuoteManager {
 	/**
 	 * Subscribe a ticker
 	 * @param tickerSymbol
+	 * @throws APIException 
 	 */
-	public void subscribeTicker(final BitfinexTickerSymbol tickerSymbol) {
+	public void subscribeTicker(final BitfinexTickerSymbol tickerSymbol) throws APIException {
+		
+		if(bitfinexApiBroker.getChannelIdSymbolMap().size() >= SYMBOL_QUOTA) {
+			throw new APIException("Unable to subscript more than " + SYMBOL_QUOTA 
+					+ " symbols per connection");
+		}
+		
 		final SubscribeTickerCommand command = new SubscribeTickerCommand(tickerSymbol);
 		bitfinexApiBroker.sendCommand(command);
 	}
