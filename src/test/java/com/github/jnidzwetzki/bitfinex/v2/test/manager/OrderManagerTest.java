@@ -18,8 +18,6 @@
 package com.github.jnidzwetzki.bitfinex.v2.test.manager;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import org.json.JSONArray;
@@ -44,11 +42,6 @@ import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 public class OrderManagerTest {
 
 	/**
-	 * The API key of the connection
-	 */
-	private final static String API_KEY = "abc123";
-	
-	/**
 	 * Test order submit failed
 	 * @throws APIException
 	 * @throws InterruptedException
@@ -64,7 +57,7 @@ public class OrderManagerTest {
 			
 			try {
 				Assert.assertEquals(ExchangeOrderState.STATE_ERROR, e.getState());
-				Assert.assertEquals(API_KEY, e.getApikey());
+				Assert.assertEquals(TestHelper.API_KEY, e.getApikey());
 				Assert.assertEquals(1513970684865000l, e.getCid());
 				Assert.assertEquals(BitfinexCurrencyPair.of("BTC","USD").toBitfinexString(), e.getSymbol());
 			} catch(Throwable e1) {
@@ -74,7 +67,7 @@ public class OrderManagerTest {
 			latch.countDown();
 		};
 		
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
 		bitfinexApiBroker.getOrderManager().registerCallback(orderCallback);
 		final NotificationHandler notificationHandler = new NotificationHandler();
 		
@@ -99,7 +92,7 @@ public class OrderManagerTest {
 			
 			try {
 				Assert.assertEquals(ExchangeOrderState.STATE_ERROR, e.getState());
-				Assert.assertEquals(API_KEY, e.getApikey());
+				Assert.assertEquals(TestHelper.API_KEY, e.getApikey());
 				Assert.assertEquals(1523930407442000l, e.getCid());
 				Assert.assertEquals("", e.getSymbol());
 			} catch(Throwable e1) {
@@ -109,7 +102,7 @@ public class OrderManagerTest {
 			latch.countDown();
 		};
 		
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
 		bitfinexApiBroker.getOrderManager().registerCallback(orderCallback);
 		final NotificationHandler notificationHandler = new NotificationHandler();
 		
@@ -126,7 +119,7 @@ public class OrderManagerTest {
 		final String jsonString = "[0,\"on\",[6784335053,null,1514956504945000,\"tIOTUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0]]";
 		final JSONArray jsonArray = new JSONArray(jsonString);
 		final OrderHandler orderHandler = new OrderHandler();
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
 		
 		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 		Assert.assertTrue(orderManager.getOrders().isEmpty());
@@ -145,7 +138,7 @@ public class OrderManagerTest {
 		final String jsonString = "[0,\"on\",[[6784335053,null,1514956504945000,\"tIOTUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0], [67843353243,null,1514956234945000,\"tBTCUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0]]]";
 		final JSONArray jsonArray = new JSONArray(jsonString);
 		final OrderHandler orderHandler = new OrderHandler();
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
 		
 		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 		Assert.assertTrue(orderManager.getOrders().isEmpty());
@@ -169,7 +162,7 @@ public class OrderManagerTest {
 		
 		final JSONArray jsonArray = new JSONArray(jsonString);
 		final OrderHandler orderHandler = new OrderHandler();
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
 		
 		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 		Assert.assertTrue(orderManager.getOrders().isEmpty());
@@ -188,7 +181,7 @@ public class OrderManagerTest {
 		
 		final JSONArray jsonArray = new JSONArray(jsonString);
 		final OrderHandler orderHandler = new OrderHandler();
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
 		
 		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 		Assert.assertTrue(orderManager.getOrders().isEmpty());
@@ -205,7 +198,7 @@ public class OrderManagerTest {
 	@Test(expected=APIException.class)
 	public void testCancelOrderUnauth() throws APIException, InterruptedException {
 		
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
 		Mockito.when(bitfinexApiBroker.getCapabilities()).thenReturn(ConnectionCapabilities.NO_CAPABILITIES);
 
 		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
@@ -219,7 +212,7 @@ public class OrderManagerTest {
 	 */
 	@Test(timeout=60000)
 	public void testCancelOrder() throws APIException, InterruptedException {
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
 		
 		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 		
@@ -249,7 +242,7 @@ public class OrderManagerTest {
 	@Test(expected=APIException.class)
 	public void testPlaceOrderUnauth() throws APIException, InterruptedException {
 		
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
 		Mockito.when(bitfinexApiBroker.getCapabilities()).thenReturn(ConnectionCapabilities.NO_CAPABILITIES);
 
 		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
@@ -269,7 +262,7 @@ public class OrderManagerTest {
 	@Test(timeout=60000)
 	public void testPlaceOrder() throws APIException, InterruptedException {
 		
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
 		Mockito.when(bitfinexApiBroker.isAuthenticated()).thenReturn(true);
 		
 		final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
@@ -295,24 +288,6 @@ public class OrderManagerTest {
 		orderManager.placeOrderAndWaitUntilActive(order);
 	}
 	
-	/**
-	 * Build a mocked bitfinex connection
-	 * @return
-	 */
-	private BitfinexApiBroker buildMockedBitfinexConnection() {
-		
-		final ExecutorService executorService = Executors.newFixedThreadPool(10);
-		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		
-		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
-		Mockito.when(bitfinexApiBroker.getApiKey()).thenReturn(API_KEY);
-		Mockito.when(bitfinexApiBroker.isAuthenticated()).thenReturn(true);
-		Mockito.when(bitfinexApiBroker.getCapabilities()).thenReturn(ConnectionCapabilities.ALL_CAPABILITIES);
-		
-		final OrderManager orderManager = new OrderManager(bitfinexApiBroker);
-		Mockito.when(bitfinexApiBroker.getOrderManager()).thenReturn(orderManager);
-		
-		return bitfinexApiBroker;
-	}
+	
 	
 }
