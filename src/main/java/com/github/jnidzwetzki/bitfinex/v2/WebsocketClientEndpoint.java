@@ -158,7 +158,8 @@ public class WebsocketClientEndpoint implements Closeable {
 		}
 		
 		try {
-			userSession.close(new CloseReason(CloseCodes.NORMAL_CLOSURE, "Socket closed"));
+			final CloseReason closeReason = new CloseReason(CloseCodes.NORMAL_CLOSURE, "Socket closed");
+			userSession.close(closeReason);
 		} catch (Throwable e) {
 			logger.error("Got exception while closing socket", e);
 		}
