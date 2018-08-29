@@ -168,14 +168,22 @@ public class QuoteManager {
 	 * @throws APIException 
 	 */
 	public void subscribeTicker(final BitfinexTickerSymbol tickerSymbol) throws APIException {
-		
+		checkForQuota();
+		final SubscribeTickerCommand command = new SubscribeTickerCommand(tickerSymbol);
+		bitfinexApiBroker.sendCommand(command);
+	}
+
+	/**
+	 * A quota on the bitfinex side prevents that more than 50 symbols can 
+	 * be subscribed per connection
+	 * 
+	 * @throws APIException
+	 */
+	private void checkForQuota() throws APIException {
 		if(bitfinexApiBroker.getChannelIdSymbolMap().size() >= SYMBOL_QUOTA) {
 			throw new APIException("Unable to subscript more than " + SYMBOL_QUOTA 
 					+ " symbols per connection");
 		}
-		
-		final SubscribeTickerCommand command = new SubscribeTickerCommand(tickerSymbol);
-		bitfinexApiBroker.sendCommand(command);
 	}
 
 	/**
@@ -246,8 +254,10 @@ public class QuoteManager {
 	 * Subscribe candles for a symbol
 	 * @param currencyPair
 	 * @param timeframe
+	 * @throws APIException 
 	 */
-	public void subscribeCandles(final BitfinexCandlestickSymbol symbol) {
+	public void subscribeCandles(final BitfinexCandlestickSymbol symbol) throws APIException {
+		checkForQuota();
 		final SubscribeCandlesCommand command = new SubscribeCandlesCommand(symbol);
 		bitfinexApiBroker.sendCommand(command);
 	}
