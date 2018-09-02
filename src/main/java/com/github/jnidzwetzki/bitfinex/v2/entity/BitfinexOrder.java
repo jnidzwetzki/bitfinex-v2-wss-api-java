@@ -36,7 +36,7 @@ public class BitfinexOrder {
 	@GeneratedValue
 	private long id;
 	
-	private final long cid;
+	private long cid;
 	
 	private String apikey;
 	
@@ -134,6 +134,10 @@ public class BitfinexOrder {
 	public long getCid() {
 		return cid;
 	}
+
+	public void setCid(long cid) {
+		this.cid = cid;
+	}
 	
 	public int getGroupId() {
 		return groupId;
@@ -154,5 +158,5 @@ public class BitfinexOrder {
 	public void setApikey(final String apikey) {
 		this.apikey = apikey;
 	}
-	
+
 }
