@@ -42,24 +42,29 @@ public class SubscribedCallback implements CommandCallbackHandler {
 	 */
 	@Override
 	public void handleChannelData(final JSONObject jsonObject) throws APIException {
-		final String channel = jsonObject.getString("channel");
+		final String channelType = jsonObject.getString("channel");
 		final int channelId = jsonObject.getInt("chanId");
 
-		switch (channel) {
+		BitfinexStreamSymbol symbol = null;
+		switch (channelType) {
 			case "ticker":
-				handleTickerCallback(jsonObject, channelId);
+				symbol = handleTickerCallback(jsonObject);
 				break;
 			case "trades":
-				handleTradesCallback(jsonObject, channelId);
+				symbol = handleTradesCallback(jsonObject);
 				break;
 			case "candles":
-				handleCandlesCallback(jsonObject, channelId);
+				symbol = handleCandlesCallback(jsonObject);
 				break;
 			case "book":
-				handleBookCallback(jsonObject, channelId);
+				symbol = handleBookCallback(jsonObject);
 				break;
 			default:
 				LOGGER.error("Unknown subscribed callback {}", jsonObject.toString());
+		}
+		if (symbol != null) {
+			LOGGER.info("Registering symbol {} on channel {}", symbol, channelId);
+			subscribeResultConsumer.accept(channelId, symbol);
 		}
 	}
 
@@ -71,36 +76,30 @@ public class SubscribedCallback implements CommandCallbackHandler {
 		this.subscribeResultConsumer = consumer;
 	}
 
-	private void handleBookCallback(final JSONObject jsonObject, final int channelId) {
+	private BitfinexStreamSymbol handleBookCallback(final JSONObject jsonObject) {
 		BitfinexStreamSymbol symbol;
 		if("R0".equals(jsonObject.getString("prec"))) {
 			symbol = RawOrderbookConfiguration.fromJSON(jsonObject);
-			LOGGER.info("Registering raw book {} on channel {}", jsonObject, channelId);
+			LOGGER.info("Registering raw book {}", jsonObject);
 		} else {
 			symbol = OrderbookConfiguration.fromJSON(jsonObject);
-			LOGGER.info("Registering book {} on channel {}", jsonObject, channelId);
+			LOGGER.info("Registering book {}", jsonObject);
 		}
-		subscribeResultConsumer.accept(channelId, symbol);
+		return symbol;
 	}
 
-	private void handleCandlesCallback(final JSONObject jsonObject, final int channelId) {
+	private BitfinexCandlestickSymbol handleCandlesCallback(final JSONObject jsonObject) {
 		final String key = jsonObject.getString("key");
-		final BitfinexCandlestickSymbol symbol = BitfinexCandlestickSymbol.fromBitfinexString(key);
-		LOGGER.info("Registering key {} on channel {}", key, channelId);
-		subscribeResultConsumer.accept(channelId, symbol);
+		return BitfinexCandlestickSymbol.fromBitfinexString(key);
 	}
 
-	private void handleTradesCallback(final JSONObject jsonObject, final int channelId) {
+	private BitfinexExecutedTradeSymbol handleTradesCallback(final JSONObject jsonObject) {
 		final String key = jsonObject.getString("symbol");
-		final BitfinexExecutedTradeSymbol symbol = BitfinexExecutedTradeSymbol.fromBitfinexString(key);
-		LOGGER.info("Registering symbol {} on channel {}", symbol, channelId);
-		subscribeResultConsumer.accept(channelId, symbol);
+		return BitfinexExecutedTradeSymbol.fromBitfinexString(key);
 	}
 
-	private void handleTickerCallback(final JSONObject jsonObject, final int channelId) {
+	private BitfinexTickerSymbol handleTickerCallback(final JSONObject jsonObject) {
 		final String key = jsonObject.getString("symbol");
-		final BitfinexTickerSymbol symbol = BitfinexTickerSymbol.fromBitfinexString(key);
-		LOGGER.info("Registering symbol {} on channel {}", symbol, channelId);
-		subscribeResultConsumer.accept(channelId, symbol);
+		return BitfinexTickerSymbol.fromBitfinexString(key);
 	}
 }
