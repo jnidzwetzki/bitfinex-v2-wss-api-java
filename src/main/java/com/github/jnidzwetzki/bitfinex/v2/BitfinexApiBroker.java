@@ -359,7 +359,8 @@ public class BitfinexApiBroker implements Closeable {
 	public void connect() throws APIException {
 		try {
 			sequenceNumberAuditor.reset();
-			
+			connectionReadyLatch = new CountDownLatch(CONNECTION_READY_EVENTS);
+
 			final URI bitfinexURI = new URI(BITFINEX_URI);
 			websocketEndpoint = new WebsocketClientEndpoint(bitfinexURI);
 			websocketEndpoint.addConsumer(apiCallback);
