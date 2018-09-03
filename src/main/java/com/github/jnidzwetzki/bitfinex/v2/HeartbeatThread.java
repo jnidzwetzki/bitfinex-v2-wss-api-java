@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.bboxdb.commons.concurrent.ExceptionSafeRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,6 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.PingCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.util.EventsInTimeslotManager;
-import com.google.common.annotations.VisibleForTesting;
 
 public class HeartbeatThread extends ExceptionSafeRunnable {
 
@@ -60,6 +60,12 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	private final BitfinexApiBroker bitfinexApiBroker;
 
 	/**
+	 * websocketEndpoint
+	 */
+	private final WebsocketClientEndpoint websocketEndpoint;
+
+
+	/**
 	 * The reconnect timeslot manager
 	 */
 	private final EventsInTimeslotManager eventsInTimeslotManager;
@@ -73,8 +79,9 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	/**
 	 * @param bitfinexApiBroker
 	 */
-	public HeartbeatThread(final BitfinexApiBroker bitfinexApiBroker) {
+	public HeartbeatThread(final BitfinexApiBroker bitfinexApiBroker, WebsocketClientEndpoint websocketClientEndpoint) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
+		this.websocketEndpoint = websocketClientEndpoint;
 
 		this.eventsInTimeslotManager = new EventsInTimeslotManager(
 				MAX_RECONNECTS_IN_TIME,
@@ -89,8 +96,6 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 			while(! Thread.interrupted()) {
 
 				Thread.sleep(TimeUnit.SECONDS.toMillis(3));
-
-				final WebsocketClientEndpoint websocketEndpoint = bitfinexApiBroker.getWebsocketEndpoint();
 
 				if(websocketEndpoint == null) {
 					continue;
@@ -194,7 +199,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	 */
 	private void executeReconnect() throws InterruptedException {
 		// Close connection
-		bitfinexApiBroker.getWebsocketEndpoint().close();
+		websocketEndpoint.close();
 
 		// Store the reconnect time to prevent to much
 		// reconnects in a short timeframe. Otherwise the

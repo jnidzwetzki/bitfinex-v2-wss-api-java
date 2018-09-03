@@ -2,6 +2,8 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class ConnectionCapabilities {
 	
 	/**
@@ -37,7 +39,7 @@ public class ConnectionCapabilities {
 			final boolean havingFundingReadCapability, final boolean havingFundingWriteCapability,
 			final boolean havingHistoryReadCapability, final boolean havingHistoryWriteCapability,
 			final boolean havingWalletsReadCapability, final boolean havingWalletsWriteCapability,
-			final boolean havingWithdrawReadCapability, final boolean havingWithdeawWriteCapability,
+			final boolean havingWithdrawReadCapability, final boolean havingWithdrawWriteCapability,
 			final boolean havingPositionReadCapability, final boolean havingPositionWriteCapability) {
 		
 		this.havingOrdersReadCapability = havingOrdersReadCapability;
@@ -51,7 +53,7 @@ public class ConnectionCapabilities {
 		this.havingWalletsReadCapability = havingWalletsReadCapability;
 		this.havingWalletsWriteCapability = havingWalletsWriteCapability;
 		this.havingWithdrawReadCapability = havingWithdrawReadCapability;
-		this.havingWithdrawWriteCapability = havingWithdeawWriteCapability;
+		this.havingWithdrawWriteCapability = havingWithdrawWriteCapability;
 		this.havingPositionReadCapability = havingPositionReadCapability;
 		this.havingPositionWriteCapability = havingPositionWriteCapability;
 	}
@@ -142,6 +144,38 @@ public class ConnectionCapabilities {
 
 	public boolean isHavingPositionWriteCapability() {
 		return havingPositionWriteCapability;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ConnectionCapabilities that = (ConnectionCapabilities) o;
+		return havingOrdersReadCapability == that.havingOrdersReadCapability &&
+				havingOrdersWriteCapability == that.havingOrdersWriteCapability &&
+				havingAccountReadCapability == that.havingAccountReadCapability &&
+				havingAccountWriteCapability == that.havingAccountWriteCapability &&
+				havingFundingReadCapability == that.havingFundingReadCapability &&
+				havingFundingWriteCapability == that.havingFundingWriteCapability &&
+				havingHistoryReadCapability == that.havingHistoryReadCapability &&
+				havingHistoryWriteCapability == that.havingHistoryWriteCapability &&
+				havingWalletsReadCapability == that.havingWalletsReadCapability &&
+				havingWalletsWriteCapability == that.havingWalletsWriteCapability &&
+				havingWithdrawReadCapability == that.havingWithdrawReadCapability &&
+				havingWithdrawWriteCapability == that.havingWithdrawWriteCapability &&
+				havingPositionReadCapability == that.havingPositionReadCapability &&
+				havingPositionWriteCapability == that.havingPositionWriteCapability;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(havingOrdersReadCapability, havingOrdersWriteCapability,
+				havingAccountReadCapability, havingAccountWriteCapability,
+				havingFundingReadCapability, havingFundingWriteCapability,
+				havingHistoryReadCapability, havingHistoryWriteCapability,
+				havingWalletsReadCapability, havingWalletsWriteCapability,
+				havingWithdrawReadCapability, havingWithdrawWriteCapability,
+				havingPositionReadCapability, havingPositionWriteCapability);
 	}
 }
 

@@ -19,17 +19,14 @@ package com.github.jnidzwetzki.bitfinex.v2.callback.command;
 
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 
 public interface CommandCallbackHandler {
 	
 	/**
 	 * Handle callback of the command
-	 * @param bitfinexApiBroker
-	 * @param jsonArray
-	 * @throws APIException 
+	 * @param jsonObject to consume
+	 * @throws APIException raised in case of handling error
 	 */
-	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker, final JSONObject jsonObject) 
-			throws APIException;
+	void handleChannelData(final JSONObject jsonObject) throws APIException;
 }

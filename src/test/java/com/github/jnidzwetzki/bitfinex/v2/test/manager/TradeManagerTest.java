@@ -139,12 +139,11 @@ public class TradeManagerTest {
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		
-		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
 		Mockito.when(bitfinexApiBroker.getApiKey()).thenReturn(API_KEY);
 		Mockito.when(bitfinexApiBroker.isAuthenticated()).thenReturn(true);
 		Mockito.when(bitfinexApiBroker.getCapabilities()).thenReturn(ConnectionCapabilities.ALL_CAPABILITIES);
 		
-		final TradeManager tradeManager = new TradeManager(bitfinexApiBroker);
+		final TradeManager tradeManager = new TradeManager(bitfinexApiBroker, executorService);
 		Mockito.when(bitfinexApiBroker.getTradeManager()).thenReturn(tradeManager);
 		
 		return bitfinexApiBroker;

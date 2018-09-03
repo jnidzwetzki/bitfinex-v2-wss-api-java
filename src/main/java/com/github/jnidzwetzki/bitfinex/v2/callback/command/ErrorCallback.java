@@ -21,21 +21,18 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 
 public class ErrorCallback implements CommandCallbackHandler {
 
-	/**
-	 * The Logger
-	 */
-	final static Logger logger = LoggerFactory.getLogger(ErrorCallback.class);
-	
-	@Override
-	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker, final JSONObject jsonObject) 
-			throws APIException {
+	private final static Logger LOGGER = LoggerFactory.getLogger(ErrorCallback.class);
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void handleChannelData(final JSONObject jsonObject) throws APIException {
 		// {"channel":"ticker","symbol":"tLTCUSD","event":"error","msg":"subscribe: dup","code":10301,"pair":"LTCUSD"}
-		logger.info("Got error callback: {}", jsonObject);
+		LOGGER.error("Got error callback: {}", jsonObject);
 	}
 }

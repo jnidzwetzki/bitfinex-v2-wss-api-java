@@ -17,29 +17,34 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.callback.command;
 
+import java.util.function.Consumer;
+
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 
 public class UnsubscribedCallback implements CommandCallbackHandler {
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(UnsubscribedCallback.class);
+	private Consumer<Integer> unsubscribedConsumer;
+
 	/**
-	 * The Logger
+	 * {@inheritDoc}
 	 */
-	final static Logger logger = LoggerFactory.getLogger(UnsubscribedCallback.class);
-	
 	@Override
-	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker, final JSONObject jsonObject) 
-			throws APIException {
-			
-			final int channelId = jsonObject.getInt("chanId");
-			final BitfinexStreamSymbol symbol = bitfinexApiBroker.getFromChannelSymbolMap(channelId);
-			logger.info("Channel {} ({}) is unsubscribed", channelId, symbol);
-			
-			bitfinexApiBroker.removeChannel(channelId);
+	public void handleChannelData(final JSONObject jsonObject) throws APIException {
+		final int channelId = jsonObject.getInt("chanId");
+		unsubscribedConsumer.accept(channelId);
+		LOGGER.info("Channel {} ({}) is unsubscribed", channelId);
+	}
+
+	/**
+	 * unsubscribe event handler
+	 * @param consumer of event
+	 */
+	public void onUnsubscribedChannelEvent(Consumer<Integer> consumer) {
+		this.unsubscribedConsumer = consumer;
 	}
 }

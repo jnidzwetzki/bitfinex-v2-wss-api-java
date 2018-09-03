@@ -56,8 +56,7 @@ public class ExecutedTradesHandlerTest {
 		
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
-		final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker);
+		final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker, executorService);
 		Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(quoteManager);
 
 		final CountDownLatch latch = new CountDownLatch(1);
@@ -97,8 +96,7 @@ public class ExecutedTradesHandlerTest {
 		
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
-		final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker);
+		final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker, executorService);
 		Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(quoteManager);
 
 		final CountDownLatch latch = new CountDownLatch(2);
