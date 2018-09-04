@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.CandlestickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
@@ -54,10 +55,11 @@ public class CandlestickHandlerTest {
 		
 		final BitfinexCandlestickSymbol symbol 
 			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), Timeframe.MINUTES_1);
+		final BitfinexApiCallbackRegistry callbackRegistry = new BitfinexApiCallbackRegistry();
 		
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker, executorService);
+		final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker, executorService, callbackRegistry);
 		Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(tickerManager);
 
 		final AtomicInteger counter = new AtomicInteger(0);
@@ -92,10 +94,11 @@ public class CandlestickHandlerTest {
 		
 		final BitfinexCandlestickSymbol symbol 
 			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), Timeframe.MINUTES_1);
-			
+		final BitfinexApiCallbackRegistry callbackRegistry = new BitfinexApiCallbackRegistry();
+
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker, executorService);
+		final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker, executorService, callbackRegistry);
 		Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(tickerManager);
 
 		final AtomicInteger counter = new AtomicInteger(0);

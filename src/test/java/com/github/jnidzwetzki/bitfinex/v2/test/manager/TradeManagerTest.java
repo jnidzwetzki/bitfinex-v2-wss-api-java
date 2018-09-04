@@ -26,6 +26,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.TradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
@@ -122,12 +124,14 @@ public class TradeManagerTest {
 
         final ExecutorService executorService = Executors.newFixedThreadPool(10);
         final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
+        final BitfinexApiBrokerConfig config = Mockito.mock(BitfinexApiBrokerConfig.class);
 
-        Mockito.when(bitfinexApiBroker.getApiKey()).thenReturn(API_KEY);
+        Mockito.when(bitfinexApiBroker.getConfiguration()).thenReturn(config);
+        Mockito.when(config.getApiKey()).thenReturn(API_KEY);
         Mockito.when(bitfinexApiBroker.isAuthenticated()).thenReturn(true);
         Mockito.when(bitfinexApiBroker.getCapabilities()).thenReturn(ConnectionCapabilities.ALL_CAPABILITIES);
 
-        final TradeManager tradeManager = new TradeManager(bitfinexApiBroker, executorService);
+        final TradeManager tradeManager = new TradeManager(bitfinexApiBroker, executorService, new BitfinexApiCallbackRegistry());
         Mockito.when(bitfinexApiBroker.getTradeManager()).thenReturn(tradeManager);
 
         return bitfinexApiBroker;

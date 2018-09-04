@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ExecutedTradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
@@ -56,7 +57,7 @@ public class ExecutedTradesHandlerTest {
 
         final ExecutorService executorService = MoreExecutors.newDirectExecutorService();
         final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-        final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker, executorService);
+        final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker, executorService, new BitfinexApiCallbackRegistry());
         Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(quoteManager);
 
         quoteManager.registerExecutedTradeCallback(symbol, (s, c) -> {
@@ -88,7 +89,7 @@ public class ExecutedTradesHandlerTest {
 
         final ExecutorService executorService = MoreExecutors.newDirectExecutorService();
         final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-        final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker, executorService);
+        final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker, executorService, new BitfinexApiCallbackRegistry());
         Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(quoteManager);
 
         quoteManager.registerExecutedTradeCallback(symbol, (s, c) -> {

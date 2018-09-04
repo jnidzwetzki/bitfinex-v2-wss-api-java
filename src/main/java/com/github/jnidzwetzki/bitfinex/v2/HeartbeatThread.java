@@ -170,7 +170,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	 * Send a heartbeat package on the connection
 	 */
 	private void sendHeartbeatIfNeeded() {
-		final long nextHeartbeat = bitfinexApiBroker.getLastHeatbeat().get() + HEARTBEAT;
+		final long nextHeartbeat = bitfinexApiBroker.getLastHeartbeat().get() + HEARTBEAT;
 
 		if(nextHeartbeat < System.currentTimeMillis()) {
 			logger.debug("Send heartbeat");
@@ -183,7 +183,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	 * @return
 	 */
 	private boolean checkConnectionTimeout() {
-		final long heartbeatTimeout = bitfinexApiBroker.getLastHeatbeat().get() + CONNECTION_TIMEOUT;
+		final long heartbeatTimeout = bitfinexApiBroker.getLastHeartbeat().get() + CONNECTION_TIMEOUT;
 
 		if(heartbeatTimeout < System.currentTimeMillis()) {
 			logger.error("Heartbeat timeout reconnecting");

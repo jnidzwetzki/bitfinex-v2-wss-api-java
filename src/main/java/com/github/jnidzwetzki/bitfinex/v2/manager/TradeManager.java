@@ -18,22 +18,24 @@
 package com.github.jnidzwetzki.bitfinex.v2.manager;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Trade;
 
 import java.util.concurrent.ExecutorService;
 
 public class TradeManager extends SimpleCallbackManager<Trade> {
 
-	public TradeManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
+	public TradeManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService, BitfinexApiCallbackRegistry callbackRegistry) {
 		super(executorService, bitfinexApiBroker);
+		callbackRegistry.onTradeEvent(this::updateTrade);
 	}
 	
 	/**
 	 * Update a exchange order
-	 * @param exchangeOrder
+	 * @param trade
 	 */
 	public void updateTrade(final Trade trade) {
-		trade.setApikey(bitfinexApiBroker.getApiKey());
+		trade.setApikey(bitfinexApiBroker.getConfiguration().getApiKey());
 		notifyCallbacks(trade);
 	}
 	

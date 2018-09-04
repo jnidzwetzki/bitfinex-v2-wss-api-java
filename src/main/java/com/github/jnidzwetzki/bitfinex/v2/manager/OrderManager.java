@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderGroupCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.OrderCommand;
@@ -67,9 +68,11 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	private final static Logger logger = LoggerFactory.getLogger(OrderManager.class);
 
 
-	public OrderManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
+	public OrderManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService, BitfinexApiCallbackRegistry callbackRegistry) {
 		super(executorService, bitfinexApiBroker);
 		this.orders = new ArrayList<>();
+		callbackRegistry.onExchangeOrdersEvent(eos -> eos.forEach(this::updateOrder));
+		callbackRegistry.onExchangeOrderNotification(this::updateOrder);
 	}
 
 	/**
@@ -128,7 +131,7 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 			throw new APIException("Unable to wait for order " + order + " connection has not enough capabilities: " + capabilities);
 		}
 
-		order.setApikey(bitfinexApiBroker.getApiKey());
+		order.setApikey(bitfinexApiBroker.getConfiguration().getApiKey());
 
 		final Callable<Boolean> orderCallable = () -> placeOrderOrderOnAPI(order);
 
@@ -292,8 +295,7 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 
 	/**
 	 * Cancel the given order
-	 * @param cid
-	 * @param date
+	 * @param id
 	 * @throws APIException
 	 */
 	public void cancelOrder(final long id) throws APIException {
@@ -311,8 +313,7 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 
 	/**
 	 * Cancel the given order group
-	 * @param cid
-	 * @param date
+	 * @param id
 	 * @throws APIException
 	 */
 	public void cancelOrderGroup(final int id) throws APIException {
