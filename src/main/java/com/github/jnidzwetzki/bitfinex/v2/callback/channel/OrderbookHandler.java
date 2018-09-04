@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import com.google.common.collect.Lists;
 import org.json.JSONArray;
 import org.json.JSONException;
 
