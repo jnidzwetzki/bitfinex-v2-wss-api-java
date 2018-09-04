@@ -27,7 +27,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 
 public class ConfCallback implements CommandCallbackHandler {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(ConfCallback.class);
+	private final static Logger logger = LoggerFactory.getLogger(ConfCallback.class);
 
 	private Consumer<Integer> connectionFeatureConsumer = i -> {};
 
@@ -38,7 +38,7 @@ public class ConfCallback implements CommandCallbackHandler {
 	public void handleChannelData(final JSONObject jsonObject) throws APIException {
 		final String status = jsonObject.getString("status");
 		if (!status.equals("OK")) {
-			LOGGER.info("Got wrong state back {}", status);
+			logger.info("Got wrong state back {}", status);
 		}
 		// Got message: {"event":"conf","status":"OK","flags":65536}
 		if (jsonObject.has("flags")) {

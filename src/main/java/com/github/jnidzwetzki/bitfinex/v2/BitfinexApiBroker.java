@@ -308,7 +308,7 @@ public class BitfinexApiBroker implements Closeable {
 		commandCallbacks = new HashMap<>();
 		commandCallbacks.put("info", new DoNothingCommandCallback());
 
-		SubscribedCallback subscribed = new SubscribedCallback();
+		final SubscribedCallback subscribed = new SubscribedCallback();
 		subscribed.onSubscribedEvent((channelId, symbol) -> {
 			synchronized (channelIdSymbolMap) {
 				channelIdSymbolMap.put(channelId, symbol);
@@ -318,7 +318,7 @@ public class BitfinexApiBroker implements Closeable {
 		commandCallbacks.put("subscribed", subscribed);
 
 		// TODO: hb is not ping:pong
-		ConnectionHeartbeatCallback pong = new ConnectionHeartbeatCallback();
+		final ConnectionHeartbeatCallback pong = new ConnectionHeartbeatCallback();
 		pong.onHeartbeatEvent(l -> this.updateConnectionHeartbeat());
 		commandCallbacks.put("pong", pong);
 
@@ -331,7 +331,7 @@ public class BitfinexApiBroker implements Closeable {
 		});
 		commandCallbacks.put("unsubscribed", unsubscribed);
 
-		AuthCallback auth = new AuthCallback();
+		final AuthCallback auth = new AuthCallback();
 		auth.onAuthenticationSuccessEvent(c -> {
 			this.capabilities = c;
 			this.authenticated = true;
@@ -346,7 +346,7 @@ public class BitfinexApiBroker implements Closeable {
 		});
 		commandCallbacks.put("auth", auth);
 
-		ConfCallback conf = new ConfCallback();
+		final ConfCallback conf = new ConfCallback();
 		conf.onConnectionFeatureEvent(connectionFeatureManager::setActiveConnectionFeatures);
 		commandCallbacks.put("conf", conf);
 		commandCallbacks.put("error", new ErrorCallback());

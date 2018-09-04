@@ -28,7 +28,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
 
 public class AuthCallback implements CommandCallbackHandler {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(AuthCallback.class);
+    private final static Logger logger = LoggerFactory.getLogger(AuthCallback.class);
 
     private Consumer<ConnectionCapabilities> authSuccessConsumer = c -> {};
     private Consumer<ConnectionCapabilities> authFailedConsumer = c -> {};
@@ -41,10 +41,10 @@ public class AuthCallback implements CommandCallbackHandler {
             throws APIException {
         final String status = jsonObject.getString("status");
         if (status.equals("OK")) {
-            LOGGER.info("authentication successful");
+            logger.info("authentication successful");
             authSuccessConsumer.accept(new ConnectionCapabilities(jsonObject));
         } else {
-            LOGGER.error("Unable to authenticate: {}", jsonObject.toString());
+            logger.error("Unable to authenticate: {}", jsonObject.toString());
             authFailedConsumer.accept(ConnectionCapabilities.NO_CAPABILITIES);
         }
     }

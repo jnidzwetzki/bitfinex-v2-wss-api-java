@@ -25,7 +25,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 
 public class ErrorCallback implements CommandCallbackHandler {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(ErrorCallback.class);
+	private final static Logger logger = LoggerFactory.getLogger(ErrorCallback.class);
 
 	/**
 	 * {@inheritDoc}
@@ -33,6 +33,6 @@ public class ErrorCallback implements CommandCallbackHandler {
 	@Override
 	public void handleChannelData(final JSONObject jsonObject) throws APIException {
 		// {"channel":"ticker","symbol":"tLTCUSD","event":"error","msg":"subscribe: dup","code":10301,"pair":"LTCUSD"}
-		LOGGER.error("Got error callback: {}", jsonObject);
+		logger.error("Got error callback: {}", jsonObject);
 	}
 }

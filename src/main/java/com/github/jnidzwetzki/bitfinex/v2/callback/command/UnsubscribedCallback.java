@@ -27,7 +27,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 
 public class UnsubscribedCallback implements CommandCallbackHandler {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(UnsubscribedCallback.class);
+	private final static Logger logger = LoggerFactory.getLogger(UnsubscribedCallback.class);
 	private Consumer<Integer> unsubscribedConsumer;
 
 	/**
@@ -37,7 +37,7 @@ public class UnsubscribedCallback implements CommandCallbackHandler {
 	public void handleChannelData(final JSONObject jsonObject) throws APIException {
 		final int channelId = jsonObject.getInt("chanId");
 		unsubscribedConsumer.accept(channelId);
-		LOGGER.info("Channel {} ({}) is unsubscribed", channelId);
+		logger.info("Channel {} ({}) is unsubscribed", channelId);
 	}
 
 	/**

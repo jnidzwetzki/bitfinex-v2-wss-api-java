@@ -33,7 +33,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 
 public class SubscribedCallback implements CommandCallbackHandler {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(SubscribedCallback.class);
+	private final static Logger logger = LoggerFactory.getLogger(SubscribedCallback.class);
 
 	private BiConsumer<Integer, BitfinexStreamSymbol> subscribeResultConsumer = (i, s) -> {};
 
@@ -60,10 +60,10 @@ public class SubscribedCallback implements CommandCallbackHandler {
 				symbol = handleBookCallback(jsonObject);
 				break;
 			default:
-				LOGGER.error("Unknown subscribed callback {}", jsonObject.toString());
+				logger.error("Unknown subscribed callback {}", jsonObject.toString());
 		}
 		if (symbol != null) {
-			LOGGER.info("Registering symbol {} on channel {}", symbol, channelId);
+			logger.info("Registering symbol {} on channel {}", symbol, channelId);
 			subscribeResultConsumer.accept(channelId, symbol);
 		}
 	}
@@ -80,10 +80,10 @@ public class SubscribedCallback implements CommandCallbackHandler {
 		BitfinexStreamSymbol symbol;
 		if("R0".equals(jsonObject.getString("prec"))) {
 			symbol = RawOrderbookConfiguration.fromJSON(jsonObject);
-			LOGGER.info("Registering raw book {}", jsonObject);
+			logger.info("Registering raw book {}", jsonObject);
 		} else {
 			symbol = OrderbookConfiguration.fromJSON(jsonObject);
-			LOGGER.info("Registering book {}", jsonObject);
+			logger.info("Registering book {}", jsonObject);
 		}
 		return symbol;
 	}
