@@ -22,21 +22,19 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
-public class SimpleCallbackManager<T> {
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+
+public class SimpleCallbackManager<T> extends AbstractManager {
 	
 	/**
 	 * The order callbacks
 	 */
 	private final List<Consumer<T>> callbacks;
 	
-	/**
-	 * The executor service
-	 */
-	private final ExecutorService executorService;
-	
-	public SimpleCallbackManager(ExecutorService executorService) {
+	public SimpleCallbackManager(final ExecutorService executorService, 
+			final BitfinexApiBroker bitfinexApiBroker) {
+		super(bitfinexApiBroker, executorService);
 		this.callbacks = new ArrayList<>();
-		this.executorService = executorService;
 	}
 	
 	/**

@@ -19,6 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2.manager;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.ExecutorService;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CalculateCommand;
@@ -27,7 +28,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
-public class WalletManager {
+public class WalletManager extends AbstractManager {
 	
 	/**
 	 * Wallets
@@ -36,13 +37,8 @@ public class WalletManager {
 	 */
 	private final Table<String, String, Wallet> walletTable;
 	
-	/**
-	 * The bitfinex API broker
-	 */
-	private final BitfinexApiBroker bitfinexApiBroker;
-	
-	public WalletManager(final BitfinexApiBroker bitfinexApiBroker) {
-		this.bitfinexApiBroker = bitfinexApiBroker;
+	public WalletManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
+		super(bitfinexApiBroker, executorService);
 		this.walletTable = HashBasedTable.create();
 	}
 	

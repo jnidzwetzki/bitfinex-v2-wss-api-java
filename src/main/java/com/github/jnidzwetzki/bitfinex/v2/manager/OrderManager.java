@@ -47,19 +47,9 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	private final List<ExchangeOrder> orders;
 
 	/**
-	 * The api broker
-	 */
-	private BitfinexApiBroker bitfinexApiBroker;
-
-	/**
 	 * The order timeout
 	 */
 	private final long TIMEOUT_IN_SECONDS = 120;
-
-	/**
-	 * The Logger
-	 */
-	private final static Logger logger = LoggerFactory.getLogger(OrderManager.class);
 
 	/**
 	 * The number of order retries on error
@@ -70,10 +60,15 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	 * The delay between two retries
 	 */
 	private static final int RETRY_DELAY_IN_MS = 1000;
+	
+	/**
+	 * The Logger
+	 */
+	private final static Logger logger = LoggerFactory.getLogger(OrderManager.class);
 
-	public OrderManager(final BitfinexApiBroker bitfinexApiBroker, ExecutorService executorService) {
-		super(executorService);
-		this.bitfinexApiBroker = bitfinexApiBroker;
+
+	public OrderManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
+		super(executorService, bitfinexApiBroker);
 		this.orders = new ArrayList<>();
 	}
 

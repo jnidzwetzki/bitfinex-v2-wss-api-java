@@ -27,27 +27,16 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookEntry;
 
-public class RawOrderbookManager {
+public class RawOrderbookManager extends AbstractManager {
 
 	/**
 	 * The channel callbacks
 	 */
 	private final BiConsumerCallbackManager<RawOrderbookConfiguration, RawOrderbookEntry> channelCallbacks;
 
-	/**
-	 * The executor service
-	 */
-	private final ExecutorService executorService;
-
-	/**
-	 * The bitfinex API broker
-	 */
-	private final BitfinexApiBroker bitfinexApiBroker;
-
 	public RawOrderbookManager(final BitfinexApiBroker bitfinexApiBroker, ExecutorService executorService) {
-		this.bitfinexApiBroker = bitfinexApiBroker;
-		this.executorService = executorService;
-		this.channelCallbacks = new BiConsumerCallbackManager<>(executorService);
+		super(bitfinexApiBroker, executorService);
+		this.channelCallbacks = new BiConsumerCallbackManager<>(executorService, bitfinexApiBroker);
 	}
 	
 	/**

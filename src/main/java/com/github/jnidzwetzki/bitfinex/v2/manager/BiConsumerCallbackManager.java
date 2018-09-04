@@ -25,22 +25,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 
-public class BiConsumerCallbackManager<S, T> {
+public class BiConsumerCallbackManager<S, T> extends AbstractManager {
 
 	/**
 	 * The callbacks
 	 */
 	private final Map<S, List<BiConsumer<S, T>>> callbacks;
 	
-	/**
-	 * The executor service
-	 */
-	private final ExecutorService executorService;
-
-	public BiConsumerCallbackManager(final ExecutorService executorService) {
-		this.executorService = executorService;
+	public BiConsumerCallbackManager(final ExecutorService executorService, 
+			final BitfinexApiBroker bitfinexApiBroker) {
+		
+		super(bitfinexApiBroker, executorService);
 		this.callbacks = new ConcurrentHashMap<>();
 	}
 	

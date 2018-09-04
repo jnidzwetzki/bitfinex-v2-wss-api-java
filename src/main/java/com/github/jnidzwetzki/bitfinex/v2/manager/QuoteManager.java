@@ -38,7 +38,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSym
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 
-public class QuoteManager {
+public class QuoteManager extends AbstractManager {
 
 	/**
 	 * The last ticks
@@ -61,11 +61,6 @@ public class QuoteManager {
 	private final BiConsumerCallbackManager<BitfinexExecutedTradeSymbol, ExecutedTrade> tradesCallbacks;
 
 	/**
-	 * The executor service
-	 */
-	private final ExecutorService executorService;
-
-	/**
 	 * The bitfinex API
 	 */
 	private final BitfinexApiBroker bitfinexApiBroker;
@@ -77,13 +72,13 @@ public class QuoteManager {
 	public static int SYMBOL_QUOTA = 50;
 	
 
-	public QuoteManager(final BitfinexApiBroker bitfinexApiBroker, ExecutorService executorService) {
+	public QuoteManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
+		super(bitfinexApiBroker, executorService);
 		this.bitfinexApiBroker = bitfinexApiBroker;
-		this.executorService = executorService;
 		this.lastTickerActivity = new ConcurrentHashMap<>();
-		this.tickerCallbacks = new BiConsumerCallbackManager<>(executorService);
-		this.candleCallbacks = new BiConsumerCallbackManager<>(executorService);
-		this.tradesCallbacks = new BiConsumerCallbackManager<>(executorService);
+		this.tickerCallbacks = new BiConsumerCallbackManager<>(executorService, bitfinexApiBroker);
+		this.candleCallbacks = new BiConsumerCallbackManager<>(executorService, bitfinexApiBroker);
+		this.tradesCallbacks = new BiConsumerCallbackManager<>(executorService, bitfinexApiBroker);
 	}
 
 	/**

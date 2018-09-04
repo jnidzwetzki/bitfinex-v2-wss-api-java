@@ -254,9 +254,9 @@ public class BitfinexApiBroker implements Closeable {
 		this.rawOrderbookManager = new RawOrderbookManager(this, executorService);
 		this.orderManager = new OrderManager(this, executorService);
 		this.tradeManager = new TradeManager(this, executorService);
-		this.positionManager = new PositionManager(executorService);
-		this.walletManager = new WalletManager(this);
-		this.connectionFeatureManager = new ConnectionFeatureManager(this);
+		this.positionManager = new PositionManager(this, executorService);
+		this.walletManager = new WalletManager(this, executorService);
+		this.connectionFeatureManager = new ConnectionFeatureManager(this, executorService);
 		this.capabilities = ConnectionCapabilities.NO_CAPABILITIES;
 		this.channelHandler = new HashMap<>();
 		this.sequenceNumberAuditor = new SequenceNumberAuditor();

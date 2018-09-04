@@ -18,18 +18,14 @@
 package com.github.jnidzwetzki.bitfinex.v2.manager;
 
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SetConnectionFeaturesCommand;
 import com.google.common.collect.Sets;
 
-public class ConnectionFeatureManager {
-	
-	/**
-	 * The connection
-	 */
-	private final BitfinexApiBroker connection;
+public class ConnectionFeatureManager extends AbstractManager {
 	
 	/**
 	 * The connection features
@@ -43,8 +39,10 @@ public class ConnectionFeatureManager {
 	private int activeConnectionFeatures;
 	
 	
-	public ConnectionFeatureManager(final BitfinexApiBroker connection) {
-		this.connection = connection;
+	public ConnectionFeatureManager(final BitfinexApiBroker bitfinexApiBroker, 
+			final ExecutorService executorService) {
+		super(bitfinexApiBroker, executorService);
+		
 		this.connectionFeatures = Sets.newConcurrentHashSet();
 		this.activeConnectionFeatures = 0;
 	}
@@ -106,6 +104,6 @@ public class ConnectionFeatureManager {
 	 */
 	public void applyConnectionFeatures() {
 		final SetConnectionFeaturesCommand apiCommand = new SetConnectionFeaturesCommand(connectionFeatures);
-		connection.sendCommand(apiCommand);
+		bitfinexApiBroker.sendCommand(apiCommand);
 	}
 }
