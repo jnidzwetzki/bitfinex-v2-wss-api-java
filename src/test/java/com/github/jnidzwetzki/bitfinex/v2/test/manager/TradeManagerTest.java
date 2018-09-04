@@ -17,7 +17,6 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.test.manager;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

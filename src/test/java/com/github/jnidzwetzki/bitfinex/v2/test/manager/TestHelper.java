@@ -18,15 +18,14 @@
 package com.github.jnidzwetzki.bitfinex.v2.test.manager;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import com.google.common.util.concurrent.MoreExecutors;
 import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
+import com.google.common.util.concurrent.MoreExecutors;
 
 public class TestHelper {
 	

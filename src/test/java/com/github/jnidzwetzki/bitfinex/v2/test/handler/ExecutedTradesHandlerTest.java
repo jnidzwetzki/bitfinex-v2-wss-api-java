@@ -17,11 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.test.handler;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import com.google.common.util.concurrent.MoreExecutors;
 import org.json.JSONArray;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,6 +30,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
+import com.google.common.util.concurrent.MoreExecutors;
 
 public class ExecutedTradesHandlerTest {
 
