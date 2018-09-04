@@ -20,6 +20,8 @@ package com.github.jnidzwetzki.bitfinex.v2.manager;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Trade;
 
+import java.util.concurrent.ExecutorService;
+
 public class TradeManager extends SimpleCallbackManager<Trade>{
 
 	/**
@@ -27,8 +29,8 @@ public class TradeManager extends SimpleCallbackManager<Trade>{
 	 */
 	private final BitfinexApiBroker bitfinexApiBroker;
 
-	public TradeManager(final BitfinexApiBroker bitfinexApiBroker) {
-		super(bitfinexApiBroker.getExecutorService());
+	public TradeManager(final BitfinexApiBroker bitfinexApiBroker, ExecutorService executorService) {
+		super(executorService);
 		this.bitfinexApiBroker = bitfinexApiBroker;
 	}
 	

@@ -17,19 +17,29 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.callback.command;
 
+import java.util.function.Consumer;
+
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 
 public class ConnectionHeartbeatCallback implements CommandCallbackHandler {
 
-	@Override
-	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker, 
-			final JSONObject jsonObject) throws APIException {
-		
-		bitfinexApiBroker.updateConnectionHeartbeat();
+	private Consumer<Long> heartbeatConsumer = l -> {};
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void handleChannelData(final JSONObject jsonObject) throws APIException {
+		heartbeatConsumer.accept(System.currentTimeMillis());
 	}
 
+	/**
+	 * heartbeat event consumer
+	 * @param consumer of event
+	 */
+	public void onHeartbeatEvent(Consumer<Long> consumer) {
+		this.heartbeatConsumer = consumer;
+	}
 }

@@ -57,10 +57,9 @@ public class HeartbeatManagerTest {
 
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 
-		final HeartbeatThread heartbeatThreadRunnable = new HeartbeatThread(bitfinexApiBroker);
 		final WebsocketClientEndpoint websocketClientEndpoint = Mockito.mock(WebsocketClientEndpoint.class);
 		Mockito.when(websocketClientEndpoint.isConnected()).thenReturn(connectLatch.getCount() == 0);
-		Mockito.when(bitfinexApiBroker.getWebsocketEndpoint()).thenReturn(websocketClientEndpoint);
+		final HeartbeatThread heartbeatThreadRunnable = new HeartbeatThread(bitfinexApiBroker, websocketClientEndpoint);
 
 		Mockito.doAnswer(answer).when(bitfinexApiBroker).reconnect();
 		Mockito.doAnswer(answer).when(websocketClientEndpoint).close();

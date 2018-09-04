@@ -46,7 +46,7 @@ public class PositionManager extends SimpleCallbackManager<Position> {
 	
 	/**
 	 * Update a exchange order
-	 * @param exchangeOrder
+	 * @param position
 	 */
 	public void updatePosition(final Position position) {
 		

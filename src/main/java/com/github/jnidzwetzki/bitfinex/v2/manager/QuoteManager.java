@@ -76,9 +76,9 @@ public class QuoteManager {
 	public static int SYMBOL_QUOTA = 50;
 	
 
-	public QuoteManager(final BitfinexApiBroker bitfinexApiBroker) {
+	public QuoteManager(final BitfinexApiBroker bitfinexApiBroker, ExecutorService executorService) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
-		this.executorService = bitfinexApiBroker.getExecutorService();
+		this.executorService = executorService;
 		this.lastTickerActivity = new ConcurrentHashMap<>();
 		this.tickerCallbacks = new BiConsumerCallbackManager<>(executorService);
 		this.candleCallbacks = new BiConsumerCallbackManager<>(executorService);

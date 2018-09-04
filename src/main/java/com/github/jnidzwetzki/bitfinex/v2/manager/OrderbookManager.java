@@ -44,9 +44,9 @@ public class OrderbookManager {
 	 */
 	private final BitfinexApiBroker bitfinexApiBroker;
 
-	public OrderbookManager(final BitfinexApiBroker bitfinexApiBroker) {
+	public OrderbookManager(final BitfinexApiBroker bitfinexApiBroker, ExecutorService executorService) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
-		this.executorService = bitfinexApiBroker.getExecutorService();
+		this.executorService = executorService;
 		this.channelCallbacks = new BiConsumerCallbackManager<>(executorService);
 	}
 	

@@ -17,40 +17,43 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.callback.command;
 
+import java.util.function.Consumer;
+
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
 
 public class ConfCallback implements CommandCallbackHandler {
 
-	/**
-	 * The Logger
-	 */
-	final static Logger logger = LoggerFactory.getLogger(ConfCallback.class);
-	
-	@Override
-	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker, final JSONObject jsonObject) 
-			throws APIException {
+	private final static Logger logger = LoggerFactory.getLogger(ConfCallback.class);
 
+	private Consumer<Integer> connectionFeatureConsumer = i -> {};
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void handleChannelData(final JSONObject jsonObject) throws APIException {
 		final String status = jsonObject.getString("status");
-				
-		if(! status.equals("OK")) {
+		if (!status.equals("OK")) {
 			logger.info("Got wrong state back {}", status);
-		} 
-		
-		// Got message: {"event":"conf","status":"OK","flags":65536}
-		final ConnectionFeatureManager connectionFeatureManager 
-			= bitfinexApiBroker.getConnectionFeatureManager();
-		
-		if(jsonObject.has("flags")) {
-			final int features = jsonObject.getInt("flags");
-			connectionFeatureManager.setActiveConnectionFeatures(features);
-		} else {
-			connectionFeatureManager.setActiveConnectionFeatures(0);
 		}
+		// Got message: {"event":"conf","status":"OK","flags":65536}
+		if (jsonObject.has("flags")) {
+			final int features = jsonObject.getInt("flags");
+			this.connectionFeatureConsumer.accept(features);
+		} else {
+			this.connectionFeatureConsumer.accept(0);
+		}
+	}
+
+	/**
+	 * connection feature event consumer
+	 * @param consumer of event
+	 */
+	public void onConnectionFeatureEvent(Consumer<Integer> consumer) {
+		this.connectionFeatureConsumer = consumer;
 	}
 }

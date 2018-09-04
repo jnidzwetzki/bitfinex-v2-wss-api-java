@@ -44,9 +44,9 @@ public class RawOrderbookManager {
 	 */
 	private final BitfinexApiBroker bitfinexApiBroker;
 
-	public RawOrderbookManager(final BitfinexApiBroker bitfinexApiBroker) {
+	public RawOrderbookManager(final BitfinexApiBroker bitfinexApiBroker, ExecutorService executorService) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
-		this.executorService = bitfinexApiBroker.getExecutorService();
+		this.executorService = executorService;
 		this.channelCallbacks = new BiConsumerCallbackManager<>(executorService);
 	}
 	

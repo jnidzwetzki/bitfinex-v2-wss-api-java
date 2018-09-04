@@ -42,12 +42,11 @@ public class TestHelper {
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		
-		Mockito.when(bitfinexApiBroker.getExecutorService()).thenReturn(executorService);
 		Mockito.when(bitfinexApiBroker.getApiKey()).thenReturn(API_KEY);
 		Mockito.when(bitfinexApiBroker.isAuthenticated()).thenReturn(true);
 		Mockito.when(bitfinexApiBroker.getCapabilities()).thenReturn(ConnectionCapabilities.ALL_CAPABILITIES);
 		
-		final OrderManager orderManager = new OrderManager(bitfinexApiBroker);
+		final OrderManager orderManager = new OrderManager(bitfinexApiBroker, executorService);
 		Mockito.when(bitfinexApiBroker.getOrderManager()).thenReturn(orderManager);
 		
 		return bitfinexApiBroker;

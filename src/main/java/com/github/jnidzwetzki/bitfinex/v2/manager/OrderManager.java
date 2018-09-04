@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -70,8 +71,8 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	 */
 	private static final int RETRY_DELAY_IN_MS = 1000;
 
-	public OrderManager(final BitfinexApiBroker bitfinexApiBroker) {
-		super(bitfinexApiBroker.getExecutorService());
+	public OrderManager(final BitfinexApiBroker bitfinexApiBroker, ExecutorService executorService) {
+		super(executorService);
 		this.bitfinexApiBroker = bitfinexApiBroker;
 		this.orders = new ArrayList<>();
 	}
