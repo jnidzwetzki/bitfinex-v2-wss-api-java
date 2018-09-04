@@ -28,6 +28,7 @@ import org.mockito.Mockito;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.PositionHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.entity.Position;
 import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
 
 
@@ -42,12 +43,17 @@ public class PositionTest {
 		
 		final String jsonString = "[0,\"pu\",[\"tETHUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,0,null,null,null,null]]";
 		final JSONArray jsonArray = new JSONArray(jsonString);
-		
-		final PositionHandler positionHandler = new PositionHandler();
+
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
-		
+		final PositionHandler positionHandler = new PositionHandler();
+		positionHandler.onPositionsEvent(positions -> {
+			for (Position position : positions) {
+				bitfinexApiBroker.getPositionManager().updatePosition(position);
+			}
+		});
+
 		Assert.assertTrue(bitfinexApiBroker.getPositionManager().getPositions().isEmpty());
-		positionHandler.handleChannelData(bitfinexApiBroker, jsonArray);
+		positionHandler.handleChannelData(jsonArray);
 		Assert.assertEquals(1, bitfinexApiBroker.getPositionManager().getPositions().size());
 	}
 	
@@ -60,12 +66,17 @@ public class PositionTest {
 		
 		final String jsonString = "[0,\"pu\",[\"tETHUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,null,null,null,null,null]]";
 		final JSONArray jsonArray = new JSONArray(jsonString);
-		
-		final PositionHandler positionHandler = new PositionHandler();
+
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
-		
+		final PositionHandler positionHandler = new PositionHandler();
+		positionHandler.onPositionsEvent(positions -> {
+			for (Position position : positions) {
+				bitfinexApiBroker.getPositionManager().updatePosition(position);
+			}
+		});
+
 		Assert.assertTrue(bitfinexApiBroker.getPositionManager().getPositions().isEmpty());
-		positionHandler.handleChannelData(bitfinexApiBroker, jsonArray);
+		positionHandler.handleChannelData(jsonArray);
 		Assert.assertEquals(1, bitfinexApiBroker.getPositionManager().getPositions().size());
 	}
 	
@@ -78,12 +89,17 @@ public class PositionTest {
 		
 		final String jsonString = "[0,\"ps\",[[\"tETHUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,0,null,null,null,null], [\"tBTCUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,0,null,null,null,null]]]";
 		final JSONArray jsonArray = new JSONArray(jsonString);
-		
-		final PositionHandler positionHandler = new PositionHandler();
+
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
-		
+		final PositionHandler positionHandler = new PositionHandler();
+		positionHandler.onPositionsEvent(positions -> {
+			for (Position position : positions) {
+				bitfinexApiBroker.getPositionManager().updatePosition(position);
+			}
+		});
+
 		Assert.assertTrue(bitfinexApiBroker.getPositionManager().getPositions().isEmpty());
-		positionHandler.handleChannelData(bitfinexApiBroker, jsonArray);
+		positionHandler.handleChannelData(jsonArray);
 		Assert.assertEquals(2, bitfinexApiBroker.getPositionManager().getPositions().size());
 	}
 	

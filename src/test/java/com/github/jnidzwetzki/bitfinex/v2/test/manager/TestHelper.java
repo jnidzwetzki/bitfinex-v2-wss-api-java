@@ -20,11 +20,13 @@ package com.github.jnidzwetzki.bitfinex.v2.test.manager;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
+import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
 
 public class TestHelper {
 	
@@ -39,16 +41,18 @@ public class TestHelper {
 	 */
 	public static BitfinexApiBroker buildMockedBitfinexConnection() {
 		
-		final ExecutorService executorService = Executors.newFixedThreadPool(10);
+		final ExecutorService executorService = MoreExecutors.newDirectExecutorService();
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		
 		Mockito.when(bitfinexApiBroker.getApiKey()).thenReturn(API_KEY);
 		Mockito.when(bitfinexApiBroker.isAuthenticated()).thenReturn(true);
 		Mockito.when(bitfinexApiBroker.getCapabilities()).thenReturn(ConnectionCapabilities.ALL_CAPABILITIES);
-		
+
 		final OrderManager orderManager = new OrderManager(bitfinexApiBroker, executorService);
+		final TradeManager tradeManager = new TradeManager(bitfinexApiBroker, executorService);
 		Mockito.when(bitfinexApiBroker.getOrderManager()).thenReturn(orderManager);
-		
+		Mockito.when(bitfinexApiBroker.getTradeManager()).thenReturn(tradeManager);
+
 		return bitfinexApiBroker;
 	}
 }

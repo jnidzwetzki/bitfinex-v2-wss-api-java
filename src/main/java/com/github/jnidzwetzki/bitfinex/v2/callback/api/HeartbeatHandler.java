@@ -17,26 +17,29 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.callback.api;
 
+import java.util.function.Consumer;
+
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 
 public class HeartbeatHandler implements APICallbackHandler {
-	
-	/**
-	 * The Logger
-	 */
-	final static Logger logger = LoggerFactory.getLogger(HeartbeatHandler.class);
 
+	private final static Logger logger = LoggerFactory.getLogger(HeartbeatHandler.class);
+	private Consumer<Long> heartbeatConsumer = l -> {};
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker, 
-			final JSONArray jsonArray) throws APIException {
-		
+	public void handleChannelData(final JSONArray jsonArray) throws APIException {
 		logger.debug("Got connection heartbeat");
-		bitfinexApiBroker.updateConnectionHeartbeat();
+		heartbeatConsumer.accept(System.currentTimeMillis());
 	}
 
+	public void onHeartbeatEvent(Consumer<Long> heartbeatConsumer) {
+		this.heartbeatConsumer = heartbeatConsumer;
+	}
 }

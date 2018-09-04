@@ -17,8 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.test.handler;
 
-import java.util.concurrent.CountDownLatch;
-
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import org.json.JSONArray;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,8 +29,6 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.api.WalletHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 
 
 public class WalletHandlerTest {
@@ -45,13 +43,12 @@ public class WalletHandlerTest {
 	 * @throws APIException
 	 * @throws InterruptedException 
 	 */
-	@Test(timeout=20000)
+	@Test
 	public void testWalletUpdate() throws APIException, InterruptedException {
 		
 		final String callbackValue = "[0,\"ws\",[\"exchange\",\"ETH\",9,0,null]]";
 		final JSONArray jsonArray = new JSONArray(callbackValue);
 		
-		final CountDownLatch walletLatch = new CountDownLatch(1);
 		final Table<String, String, Wallet> walletTable = HashBasedTable.create();
 
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
@@ -59,17 +56,25 @@ public class WalletHandlerTest {
 		Mockito.when(bitfinexApiBroker.getWalletManager()).thenReturn(walletManager);
 
 		Mockito.when(walletManager.getWalletTable()).thenReturn(walletTable);
-		Mockito.when(bitfinexApiBroker.getConnectionReadyLatch()).thenReturn(walletLatch);
-		
+
 		Assert.assertTrue(walletTable.isEmpty());
 		
 		final WalletHandler walletHandler = new WalletHandler();
-		walletHandler.handleChannelData(bitfinexApiBroker, jsonArray);
-		walletLatch.await();
-		
+		walletHandler.onWalletsEvent(wallets -> {
+			for (Wallet wallet : wallets) {
+				try {
+					Table<String, String, Wallet> wt = walletManager.getWalletTable();
+					wt.put(wallet.getWalletType(), wallet.getCurreny(), wallet);
+				} catch (APIException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		walletHandler.handleChannelData(jsonArray);
+
 		Assert.assertEquals(1, walletTable.size());
 		Assert.assertEquals(9, walletTable.get("exchange", "ETH").getBalance().doubleValue(), DELTA);
-		Assert.assertEquals(null, walletTable.get("exchange", "ETH").getBalanceAvailable());
+		Assert.assertNull(walletTable.get("exchange", "ETH").getBalanceAvailable());
 		Assert.assertEquals(0, walletTable.get("exchange", "ETH").getUnsettledInterest().doubleValue(), DELTA);
 	}
 	
@@ -78,13 +83,12 @@ public class WalletHandlerTest {
 	 * @throws APIException
 	 * @throws InterruptedException 
 	 */
-	@Test(timeout=20000)
+	@Test
 	public void testWalletSnapshot() throws APIException, InterruptedException {
 		
 		final String callbackValue = "[0,\"ws\",[[\"exchange\",\"ETH\",9,0,null],[\"exchange\",\"USD\",1826.56468323,0,null],[\"margin\",\"USD\",0,0,null],[\"exchange\",\"XRP\",0,0,null],[\"exchange\",\"EOS\",0,0,null],[\"exchange\",\"NEO\",0,0,null],[\"exchange\",\"LTC\",0,0,null],[\"exchange\",\"IOT\",0,0,null],[\"exchange\",\"BTC\",0,0,null]]]";
 		final JSONArray jsonArray = new JSONArray(callbackValue);
 		
-		final CountDownLatch walletLatch = new CountDownLatch(1);
 		final Table<String, String, Wallet> walletTable = HashBasedTable.create();
 
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
@@ -92,14 +96,22 @@ public class WalletHandlerTest {
 		Mockito.when(bitfinexApiBroker.getWalletManager()).thenReturn(walletManager);
 
 		Mockito.when(walletManager.getWalletTable()).thenReturn(walletTable);
-		Mockito.when(bitfinexApiBroker.getConnectionReadyLatch()).thenReturn(walletLatch);
-		
+
 		Assert.assertTrue(walletTable.isEmpty());
 		
 		final WalletHandler walletHandler = new WalletHandler();
-		walletHandler.handleChannelData(bitfinexApiBroker, jsonArray);
-		walletLatch.await();
-		
+		walletHandler.onWalletsEvent(wallets -> {
+			for (Wallet wallet : wallets) {
+				try {
+					Table<String, String, Wallet> wt = walletManager.getWalletTable();
+					wt.put(wallet.getWalletType(), wallet.getCurreny(), wallet);
+				} catch (APIException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		walletHandler.handleChannelData(jsonArray);
+
 		Assert.assertEquals(9, walletTable.size());
 		
 		Assert.assertEquals(9, walletTable.get("exchange", "ETH").getBalance().doubleValue(), DELTA);

@@ -48,11 +48,9 @@ public class HeartbeatManagerTest {
 		final CountDownLatch connectLatch = new CountDownLatch(3);
 
 		// Count down the latch on method call
-		final Answer<Void> answer = new Answer<Void>() {
-	        public Void answer(final InvocationOnMock invocation) throws Throwable {
-	        		connectLatch.countDown();
-	        		return null;
-	        }
+		final Answer<Void> answer = invocation -> {
+				connectLatch.countDown();
+				return null;
 		};
 
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
@@ -85,7 +83,8 @@ public class HeartbeatManagerTest {
 	public void testHeartbeatHandler() throws APIException {
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		final HeartbeatHandler handler = new HeartbeatHandler();
-		handler.handleChannelData(bitfinexApiBroker, null);
+		handler.onHeartbeatEvent(timestamp -> bitfinexApiBroker.updateConnectionHeartbeat());
+		handler.handleChannelData(null);
 		Mockito.verify(bitfinexApiBroker, Mockito.times(1)).updateConnectionHeartbeat();
 	}
 

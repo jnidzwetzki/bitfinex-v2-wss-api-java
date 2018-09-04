@@ -17,6 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.manager;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -91,7 +92,7 @@ public class QuoteManager {
 	 * @return
 	 */
 	public long getHeartbeatForSymbol(final BitfinexStreamSymbol symbol) {
-		return lastTickerActivity.getOrDefault(symbol, -1l);
+		return lastTickerActivity.getOrDefault(symbol, -1L);
 	}
 
 	/**
@@ -147,9 +148,9 @@ public class QuoteManager {
 	 * @param symbol
 	 * @param ticksArray
 	 */
-	public void handleCandleList(final BitfinexTickerSymbol symbol, final List<BitfinexTick> candles) {
+	public void handleCandleCollection(final BitfinexTickerSymbol symbol, final List<BitfinexTick> candles) {
 		updateChannelHeartbeat(symbol);
-		tickerCallbacks.handleEventsList(symbol, candles);
+		tickerCallbacks.handleEventsCollection(symbol, candles);
 	}
 
 	/**
@@ -236,8 +237,8 @@ public class QuoteManager {
 	 * @param symbol
 	 * @param ticksArray
 	 */
-	public void handleCandlestickList(final BitfinexCandlestickSymbol symbol, final List<BitfinexCandle> ticksBuffer) {
-		candleCallbacks.handleEventsList(symbol, ticksBuffer);
+	public void handleCandlestickCollection(final BitfinexCandlestickSymbol symbol, final Collection<BitfinexCandle> ticksBuffer) {
+		candleCallbacks.handleEventsCollection(symbol, ticksBuffer);
 	}
 
 	/**

@@ -17,6 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.manager;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -78,7 +79,7 @@ public class BiConsumerCallbackManager<S, T> {
 	 * @param symbol
 	 * @param ticksArray
 	 */
-	public void handleEventsList(final S symbol, final List<T> elements) {
+	public void handleEventsCollection(final S symbol, final Collection<T> elements) {
 		
 		final List<BiConsumer<S, T>> callbackList = callbacks.get(symbol);
 		
