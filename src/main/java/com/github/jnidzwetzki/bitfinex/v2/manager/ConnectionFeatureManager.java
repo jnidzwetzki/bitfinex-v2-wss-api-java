@@ -34,7 +34,7 @@ public class ConnectionFeatureManager {
 	/**
 	 * The connection features
 	 */
-	private Set<BitfinexConnectionFeature> connectionFeatures;
+	private final Set<BitfinexConnectionFeature> connectionFeatures;
 	
 	/**
 	 * The active connection features 
@@ -43,7 +43,7 @@ public class ConnectionFeatureManager {
 	private int activeConnectionFeatures;
 	
 	
-	public ConnectionFeatureManager(BitfinexApiBroker connection) {
+	public ConnectionFeatureManager(final BitfinexApiBroker connection) {
 		this.connection = connection;
 		this.connectionFeatures = Sets.newConcurrentHashSet();
 		this.activeConnectionFeatures = 0;
@@ -97,7 +97,7 @@ public class ConnectionFeatureManager {
 	 * Set the active connection features
 	 * @param activeConnectionFeatures
 	 */
-	public void setActiveConnectionFeatures(int activeConnectionFeatures) {
+	public void setActiveConnectionFeatures(final int activeConnectionFeatures) {
 		this.activeConnectionFeatures = activeConnectionFeatures;
 	}
 	
