@@ -18,72 +18,63 @@
 package com.github.jnidzwetzki.bitfinex.v2.callback.api;
 
 import java.math.BigDecimal;
-import java.util.concurrent.CountDownLatch;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Consumer;
 
+import com.google.common.collect.Lists;
 import org.json.JSONArray;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
-import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
-import com.google.common.collect.Table;
 
 public class WalletHandler implements APICallbackHandler {
 
+	private Consumer<Collection<Wallet>> walletConsumer = w -> {};
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker, final JSONArray jsonArray) 
-			throws APIException {
-		
-		final JSONArray wallets = jsonArray.getJSONArray(2);
-		
-		// Snapshot or update
-		if(! (wallets.get(0) instanceof JSONArray)) {
-			handleWalletcallback(bitfinexApiBroker, wallets);
-		} else {
-			for(int walletPos = 0; walletPos < wallets.length(); walletPos++) {
-				final JSONArray walletArray = wallets.getJSONArray(walletPos);
-				handleWalletcallback(bitfinexApiBroker, walletArray);
+	public void handleChannelData(final JSONArray jsonArray) throws APIException {
+		final JSONArray json = jsonArray.getJSONArray(2);
+		List<Wallet> wallets = Lists.newArrayList();
+
+		if (json.length() == 0) {
+			walletConsumer.accept(wallets);
+			return;
+		}
+
+		if (json.get(0) instanceof JSONArray) {
+			// snapshot
+			for (int walletPos = 0; walletPos < json.length(); walletPos++) {
+				final JSONArray walletArray = json.getJSONArray(walletPos);
+				Wallet wallet = jsonArrayToWallet(walletArray);
+				wallets.add(wallet);
 			}
+		} else {
+			// update
+			Wallet wallet = jsonArrayToWallet(json);
+			wallets.add(wallet);
 		}
+		walletConsumer.accept(wallets);
+	}
+
+	private Wallet jsonArrayToWallet(final JSONArray json) {
+		final String walletType = json.getString(0);
+		final String currency = json.getString(1);
+		final BigDecimal balance = json.getBigDecimal(2);
+		final BigDecimal unsettledInterest = json.getBigDecimal(3);
+		final BigDecimal balanceAvailable = json.optBigDecimal(4, null);
 		
-		notifyLatch(bitfinexApiBroker);
+		return new Wallet(walletType, currency, balance, unsettledInterest, balanceAvailable);
 	}
 
 	/**
-	 * Notify the wallet latch
-	 * @param bitfinexApiBroker
+	 * wallet event consumer
+	 * @param consumer of event
 	 */
-	private void notifyLatch(final BitfinexApiBroker bitfinexApiBroker) {
-		
-		final CountDownLatch connectionReadyLatch = bitfinexApiBroker.getConnectionReadyLatch();
-		
-		if(connectionReadyLatch != null) {
-			connectionReadyLatch.countDown();
-		}
+	public void onWalletsEvent(Consumer<Collection<Wallet>> consumer) {
+		this.walletConsumer = consumer;
 	}
-
-	/**
-	 * Handle the callback for a single wallet
-	 * @param bitfinexApiBroker 
-	 * @param walletArray
-	 * @throws APIException 
-	 */
-	private void handleWalletcallback(final BitfinexApiBroker bitfinexApiBroker, final JSONArray walletArray) throws APIException {
-		final String walletType = walletArray.getString(0);
-		final String currency = walletArray.getString(1);
-		final BigDecimal balance = walletArray.getBigDecimal(2);
-		final BigDecimal unsettledInterest = walletArray.getBigDecimal(3);
-		final BigDecimal balanceAvailable = walletArray.optBigDecimal(4, null);
-		
-		final Wallet wallet = new Wallet(walletType, currency, balance, unsettledInterest, balanceAvailable);
-
-		final WalletManager walletManager = bitfinexApiBroker.getWalletManager();
-		final Table<String, String, Wallet> walletTable = walletManager.getWalletTable();
-		
-		synchronized (walletTable) {
-			walletTable.put(walletType, currency, wallet);
-			walletTable.notifyAll();
-		}
-	}
-
 }

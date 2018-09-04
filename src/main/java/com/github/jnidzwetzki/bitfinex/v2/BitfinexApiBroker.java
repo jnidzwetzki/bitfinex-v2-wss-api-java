@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Table;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -71,8 +72,11 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
+import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.Position;
 import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
@@ -177,6 +181,9 @@ public class BitfinexApiBroker implements Closeable {
 	 * The connection ready latch
 	 */
 	private CountDownLatch connectionReadyLatch;
+	private boolean ordersUpdated;
+	private boolean walletsUpdated;
+	private boolean positionsUpdated;
 	
 	/**
 	 * Event on the latch until the connection is ready
@@ -264,15 +271,29 @@ public class BitfinexApiBroker implements Closeable {
 	 */
 	private void setupChannelHandler() {
 		// Heartbeat
-		channelHandler.put("hb", new HeartbeatHandler());
+		final HeartbeatHandler heartbeatHandler = new HeartbeatHandler();
+		heartbeatHandler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
+		channelHandler.put("hb", heartbeatHandler);
+
+		final PositionHandler positionHandler = new PositionHandler();
+		positionHandler.onPositionsEvent(positions -> {
+			for (Position position : positions) {
+				positionManager.updatePosition(position);
+			}
+			if (!positionsUpdated) {
+				positionsUpdated = true;
+				connectionReadyLatch.countDown();
+			}
+		});
 		// Position snapshot
-		channelHandler.put("ps", new PositionHandler());
+		channelHandler.put("ps", positionHandler);
 		// Position new
-		channelHandler.put("pn", new PositionHandler());
+		channelHandler.put("pn", positionHandler);
 		// Position updated
-		channelHandler.put("pu", new PositionHandler());
+		channelHandler.put("pu", positionHandler);
 		// Position canceled
-		channelHandler.put("pc", new PositionHandler());
+		channelHandler.put("pc", positionHandler);
+
 		// Founding offers
 		channelHandler.put("fos", new DoNothingHandler());
 		// Founding credits
@@ -281,24 +302,67 @@ public class BitfinexApiBroker implements Closeable {
 		channelHandler.put("fls", new DoNothingHandler());
 		// Ats - Unknown
 		channelHandler.put("ats", new DoNothingHandler());
+
+		final WalletHandler walletHandler = new WalletHandler();
+		walletHandler.onWalletsEvent(wallets -> {
+			try {
+				for (Wallet wallet : wallets) {
+					Table<String, String, Wallet> walletTable = walletManager.getWalletTable();
+					synchronized (walletTable) {
+						walletTable.put(wallet.getWalletType(), wallet.getCurreny(), wallet);
+						walletTable.notifyAll();
+					}
+				}
+				if (!walletsUpdated) {
+					walletsUpdated = true;
+					connectionReadyLatch.countDown();
+				}
+			} catch (APIException e) {
+				e.printStackTrace();
+			}
+		});
 		// Wallet snapshot
-		channelHandler.put("ws", new WalletHandler());
+		channelHandler.put("ws", walletHandler);
 		// Wallet update
-		channelHandler.put("wu", new WalletHandler());
+		channelHandler.put("wu", walletHandler);
+
+		final OrderHandler orderHandler = new OrderHandler();
+		orderHandler.onExchangeOrdersEvent(exchangeOrders -> {
+			for (ExchangeOrder exchangeOrder : exchangeOrders) {
+				exchangeOrder.setApikey(getApiKey());
+				orderManager.updateOrder(exchangeOrder);
+			}
+			if (!ordersUpdated) {
+				ordersUpdated = true;
+				connectionReadyLatch.countDown();
+			}
+		});
 		// Order snapshot
-		channelHandler.put("os", new OrderHandler());
+		channelHandler.put("os", orderHandler);
 		// Order notification
-		channelHandler.put("on", new OrderHandler());
+		channelHandler.put("on", orderHandler);
 		// Order update
-		channelHandler.put("ou", new OrderHandler());
+		channelHandler.put("ou", orderHandler);
 		// Order cancellation
-		channelHandler.put("oc", new OrderHandler());
+		channelHandler.put("oc", orderHandler);
+
+		final TradeHandler tradeHandler = new TradeHandler();
+		tradeHandler.onTradeEvent(trade -> {
+			trade.setApikey(getApiKey());
+			tradeManager.updateTrade(trade);
+		});
 		// Trade executed
-		channelHandler.put("te", new TradeHandler());
-		// Trade update
-		channelHandler.put("tu", new TradeHandler());
-		// General notification 
-		channelHandler.put("n", new NotificationHandler());
+		channelHandler.put("te", tradeHandler);
+		// Trade updates
+		channelHandler.put("tu", tradeHandler);
+
+		final NotificationHandler notificationHandler = new NotificationHandler();
+		notificationHandler.onExchangeOrderNotification(eo -> {
+			eo.setApikey(getApiKey());
+			orderManager.updateOrder(eo);
+		});
+		// General notification
+		channelHandler.put("n", notificationHandler);
 	}
 	
 	/**
@@ -523,7 +587,7 @@ public class BitfinexApiBroker implements Closeable {
 			return;
 		}
 		try {
-			apiCallbackHandler.handleChannelData(this, jsonArray);
+			apiCallbackHandler.handleChannelData(jsonArray);
 		} catch (APIException e) {
 			logger.error("Got exception while handling callback", e);
 		}
@@ -569,7 +633,7 @@ public class BitfinexApiBroker implements Closeable {
 		} else if("te".equals(value)) {
 			final JSONArray subarray = jsonArray.getJSONArray(2);			
 			final ChannelCallbackHandler handler = new ExecutedTradeHandler();
-			handler.handleChannelData(this, channelSymbol, subarray);
+			handler.handleChannelData(channelSymbol, subarray);
 		} else if("tu".equals(value)) {
 			// Ignore tu messages (see issue #13)
 		} else {
@@ -579,29 +643,40 @@ public class BitfinexApiBroker implements Closeable {
 
 	/**
 	 * Handle the channel data with has an array at first position
-	 * @param jsonArray
+	 * @param message
 	 * @param channelSymbol
 	 * @throws APIException
 	 */
-	private void handleChannelDataArray(final JSONArray jsonArray, final BitfinexStreamSymbol channelSymbol)
+	private void handleChannelDataArray(final JSONArray message, final BitfinexStreamSymbol channelSymbol)
 			throws APIException {
-		final JSONArray subarray = jsonArray.getJSONArray(1);			
+		final JSONArray jsonArray = message.getJSONArray(1);
 		
 		if(channelSymbol instanceof BitfinexCandlestickSymbol) {
-			final ChannelCallbackHandler handler = new CandlestickHandler();
-			handler.handleChannelData(this, channelSymbol, subarray);
+			final CandlestickHandler handler = new CandlestickHandler();
+			handler.onCandlesticksEvent(quoteManager::handleCandlestickCollection);
+			handler.handleChannelData(channelSymbol, jsonArray);
 		} else if(channelSymbol instanceof RawOrderbookConfiguration) {
 			final RawOrderbookHandler handler = new RawOrderbookHandler();
-			handler.handleChannelData(this, channelSymbol, subarray);
+			handler.onOrderbookEvent((sym, entries) -> {
+				entries.forEach(e -> rawOrderbookManager.handleNewOrderbookEntry(sym, e));
+			});
+			handler.handleChannelData(channelSymbol, jsonArray);
 		} else if(channelSymbol instanceof OrderbookConfiguration) {
 			final OrderbookHandler handler = new OrderbookHandler();
-			handler.handleChannelData(this, channelSymbol, subarray);
+			handler.onOrderbookEvent((sym,entries) -> {
+				entries.forEach(e -> orderbookManager.handleNewOrderbookEntry(sym, e));
+			});
+			handler.handleChannelData(channelSymbol, jsonArray);
 		} else if(channelSymbol instanceof BitfinexTickerSymbol) {
-			final ChannelCallbackHandler handler = new TickHandler();
-			handler.handleChannelData(this, channelSymbol, subarray);
+			final TickHandler handler = new TickHandler();
+			handler.onTickEvent(quoteManager::handleNewTick);
+			handler.handleChannelData(channelSymbol, jsonArray);
 		} else if(channelSymbol instanceof BitfinexExecutedTradeSymbol) {
-			final ChannelCallbackHandler handler = new ExecutedTradeHandler();
-			handler.handleChannelData(this, channelSymbol, subarray);
+			final ExecutedTradeHandler handler = new ExecutedTradeHandler();
+			handler.onExecutedTradeEvent((sym, trades) -> {
+				trades.forEach(t -> quoteManager.handleExecutedTradeEntry(sym, t));
+			});
+			handler.handleChannelData(channelSymbol, jsonArray);
 		} else {
 			logger.error("Unknown stream type: {}", channelSymbol);
 		}
@@ -626,7 +701,7 @@ public class BitfinexApiBroker implements Closeable {
 			return channelIdSymbolMap.entrySet()
 					.stream()
 					.filter((v) -> v.getValue().equals(symbol))
-					.map((v) -> v.getKey())
+					.map(Map.Entry::getKey)
 					.findAny().orElse(-1);
 		}
 	}
@@ -841,14 +916,6 @@ public class BitfinexApiBroker implements Closeable {
 		return quoteManager;
 	}
 	
-	/**
-	 * Get the connection ready latch
-	 * @return
-	 */
-	public CountDownLatch getConnectionReadyLatch() {
-		return connectionReadyLatch;
-	}
-
 	/**
 	 * Get the order manager
 	 * @return

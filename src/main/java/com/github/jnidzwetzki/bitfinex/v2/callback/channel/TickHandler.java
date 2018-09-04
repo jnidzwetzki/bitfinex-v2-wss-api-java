@@ -18,10 +18,10 @@
 package com.github.jnidzwetzki.bitfinex.v2.callback.channel;
 
 import java.math.BigDecimal;
+import java.util.function.BiConsumer;
 
 import org.json.JSONArray;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
@@ -29,42 +29,39 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 
 public class TickHandler implements ChannelCallbackHandler {
 
-	/**
-	 * Handle a tick callback
-	 * @param channel
-	 * @param subarray
-	 */
-	@Override
-	public void handleChannelData(final BitfinexApiBroker bitfinexApiBroker,
-			final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
+    private BiConsumer<BitfinexTickerSymbol, BitfinexTick> tickConsumer = (s, t) -> {};
 
-		final BitfinexTickerSymbol currencyPair = (BitfinexTickerSymbol) channelSymbol;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void handleChannelData(final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
+        final BitfinexTickerSymbol symbol = (BitfinexTickerSymbol) channelSymbol;
+        BitfinexTick tick = jsonToBitfinexTick(jsonArray);
+        tickConsumer.accept(symbol, tick);
+    }
 
-		// 0 = BID
-	    // 1 = BID SIZE
-		// 2 = ASK
-	    // 3 = ASK SIZE
-	    // 4 = Daily Change
-	    // 5 = Daily Change %
-		// 6 = Last Price
-	    // 7 = Volume
-	    // 8 = High
-	    // 9 = Low
+    private BitfinexTick jsonToBitfinexTick(final JSONArray jsonArray) {
+        final BigDecimal bid = jsonArray.getBigDecimal(0); // 0 = BID
+        final BigDecimal bidSize = jsonArray.getBigDecimal(1);//  1 = BID SIZE
+        final BigDecimal ask = jsonArray.getBigDecimal(2); // 2 = ASK
+        final BigDecimal askSize = jsonArray.getBigDecimal(3);//  3 = ASK SIZE
+        final BigDecimal dailyChange = jsonArray.getBigDecimal(4);//  4 = Daily Change
+        final BigDecimal dailyChangePerc = jsonArray.getBigDecimal(5);// 5  = Daily Change %
+        final BigDecimal price = jsonArray.getBigDecimal(6);//  6 = Last Price
+        final BigDecimal volume = jsonArray.getBigDecimal(7); // 7 = Volume
+        final BigDecimal high = jsonArray.getBigDecimal(8); // 8 = High
+        final BigDecimal low = jsonArray.getBigDecimal(9); // 9 = Low
 
-		final BigDecimal bid = jsonArray.getBigDecimal(0);
-		final BigDecimal bidSize = jsonArray.getBigDecimal(1);
-		final BigDecimal ask = jsonArray.getBigDecimal(2);
-		final BigDecimal askSize = jsonArray.getBigDecimal(3);
-		final BigDecimal dailyChange = jsonArray.getBigDecimal(4);
-		final BigDecimal dailyChangePerc = jsonArray.getBigDecimal(5);
-		final BigDecimal price = jsonArray.getBigDecimal(6);
-		final BigDecimal volume = jsonArray.getBigDecimal(7);
-		final BigDecimal high = jsonArray.getBigDecimal(8);
-		final BigDecimal low = jsonArray.getBigDecimal(9);
+        return new BitfinexTick(bid, bidSize, ask, askSize, dailyChange, dailyChangePerc, price, volume, high, low);
+    }
 
-		final BitfinexTick tick = new BitfinexTick(bid, bidSize, ask, askSize, dailyChange, dailyChangePerc,
-				price, volume, high, low);
-
-		bitfinexApiBroker.getQuoteManager().handleNewTick(currencyPair, tick);
-	}
+    /**
+     * bitfinex tick event consumer
+     *
+     * @param consumer of event
+     */
+    public void onTickEvent(BiConsumer<BitfinexTickerSymbol, BitfinexTick> consumer) {
+        this.tickConsumer = consumer;
+    }
 }

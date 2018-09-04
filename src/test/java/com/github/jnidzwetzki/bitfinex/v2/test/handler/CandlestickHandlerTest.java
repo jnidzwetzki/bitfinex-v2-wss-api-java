@@ -73,7 +73,8 @@ public class CandlestickHandlerTest {
 		});
 						
 		final CandlestickHandler candlestickHandler = new CandlestickHandler();
-		candlestickHandler.handleChannelData(bitfinexApiBroker, symbol, jsonArray);
+		candlestickHandler.onCandlesticksEvent(bitfinexApiBroker.getQuoteManager()::handleCandlestickCollection);
+		candlestickHandler.handleChannelData(symbol, jsonArray);
 		
 		Assert.assertEquals(1, counter.get());
 	}
@@ -120,7 +121,8 @@ public class CandlestickHandlerTest {
 		});
 						
 		final CandlestickHandler candlestickHandler = new CandlestickHandler();
-		candlestickHandler.handleChannelData(bitfinexApiBroker, symbol, jsonArray);
+		candlestickHandler.onCandlesticksEvent(bitfinexApiBroker.getQuoteManager()::handleCandlestickCollection);
+		candlestickHandler.handleChannelData(symbol, jsonArray);
 		
 		Assert.assertEquals(2, counter.get());
 	}
