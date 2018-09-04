@@ -745,6 +745,9 @@ public class BitfinexApiBroker implements Closeable {
 			websocketEndpoint.close();
 
 			connectionReadyLatch = new CountDownLatch(CONNECTION_READY_EVENTS);
+			ordersUpdated = false;
+			walletsUpdated = false;
+			positionsUpdated = false;
 			websocketEndpoint.connect();
 			
 			connectionFeatureManager.applyConnectionFeatures();
