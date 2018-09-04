@@ -275,16 +275,8 @@ public class BitfinexApiBroker implements Closeable {
 		heartbeatHandler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
 		channelHandler.put("hb", heartbeatHandler);
 
-		final PositionHandler positionHandler = new PositionHandler();
-		positionHandler.onPositionsEvent(positions -> {
-			for (Position position : positions) {
-				positionManager.updatePosition(position);
-			}
-			if (!positionsUpdated) {
-				positionsUpdated = true;
-				connectionReadyLatch.countDown();
-			}
-		});
+		final PositionHandler positionHandler = buildPositionHandler();
+		
 		// Position snapshot
 		channelHandler.put("ps", positionHandler);
 		// Position new
@@ -303,7 +295,95 @@ public class BitfinexApiBroker implements Closeable {
 		// Ats - Unknown
 		channelHandler.put("ats", new DoNothingHandler());
 
+		final WalletHandler walletHandler = buildWalletHandler();
+		// Wallet snapshot
+		channelHandler.put("ws", walletHandler);
+		// Wallet update
+		channelHandler.put("wu", walletHandler);
+
+		final OrderHandler orderHandler = buildOrderHandler();
+		// Order snapshot
+		channelHandler.put("os", orderHandler);
+		// Order notification
+		channelHandler.put("on", orderHandler);
+		// Order update
+		channelHandler.put("ou", orderHandler);
+		// Order cancellation
+		channelHandler.put("oc", orderHandler);
+
+		final TradeHandler tradeHandler = buildTradeHandler();
+		// Trade executed
+		channelHandler.put("te", tradeHandler);
+		// Trade updates
+		channelHandler.put("tu", tradeHandler);
+
+		final NotificationHandler notificationHandler = buildNotificationHandler();
+		// General notification
+		channelHandler.put("n", notificationHandler);
+	}
+
+	/**
+	 * Build the notification handler
+	 * 
+	 * @return
+	 */
+	private NotificationHandler buildNotificationHandler() {
+		
+		final NotificationHandler notificationHandler = new NotificationHandler();
+		
+		notificationHandler.onExchangeOrderNotification(eo -> {
+			eo.setApikey(getApiKey());
+			orderManager.updateOrder(eo);
+		});
+		
+		return notificationHandler;
+	}
+
+	/**
+	 * Build the trade handler
+	 * 
+	 * @return
+	 */
+	private TradeHandler buildTradeHandler() {
+		
+		final TradeHandler tradeHandler = new TradeHandler();
+		
+		tradeHandler.onTradeEvent(trade -> {
+			trade.setApikey(getApiKey());
+			tradeManager.updateTrade(trade);
+		});
+		
+		return tradeHandler;
+	}
+
+	/**
+	 * Build the order handler 
+	 * @return
+	 */
+	private OrderHandler buildOrderHandler() {
+		final OrderHandler orderHandler = new OrderHandler();
+		
+		orderHandler.onExchangeOrdersEvent(exchangeOrders -> {
+			for (ExchangeOrder exchangeOrder : exchangeOrders) {
+				exchangeOrder.setApikey(getApiKey());
+				orderManager.updateOrder(exchangeOrder);
+			}
+			if (!ordersUpdated) {
+				ordersUpdated = true;
+				connectionReadyLatch.countDown();
+			}
+		});
+		
+		return orderHandler;
+	}
+
+	/**
+	 * Build the wallet handler
+	 * @return
+	 */
+	private WalletHandler buildWalletHandler() {
 		final WalletHandler walletHandler = new WalletHandler();
+		
 		walletHandler.onWalletsEvent(wallets -> {
 			try {
 				for (Wallet wallet : wallets) {
@@ -321,48 +401,29 @@ public class BitfinexApiBroker implements Closeable {
 				e.printStackTrace();
 			}
 		});
-		// Wallet snapshot
-		channelHandler.put("ws", walletHandler);
-		// Wallet update
-		channelHandler.put("wu", walletHandler);
+		
+		return walletHandler;
+	}
 
-		final OrderHandler orderHandler = new OrderHandler();
-		orderHandler.onExchangeOrdersEvent(exchangeOrders -> {
-			for (ExchangeOrder exchangeOrder : exchangeOrders) {
-				exchangeOrder.setApikey(getApiKey());
-				orderManager.updateOrder(exchangeOrder);
+	/**
+	 * Build the position handler 
+	 * 
+	 * @return
+	 */
+	private PositionHandler buildPositionHandler() {
+		final PositionHandler positionHandler = new PositionHandler();
+		
+		positionHandler.onPositionsEvent(positions -> {
+			for (Position position : positions) {
+				positionManager.updatePosition(position);
 			}
-			if (!ordersUpdated) {
-				ordersUpdated = true;
+			if (!positionsUpdated) {
+				positionsUpdated = true;
 				connectionReadyLatch.countDown();
 			}
 		});
-		// Order snapshot
-		channelHandler.put("os", orderHandler);
-		// Order notification
-		channelHandler.put("on", orderHandler);
-		// Order update
-		channelHandler.put("ou", orderHandler);
-		// Order cancellation
-		channelHandler.put("oc", orderHandler);
-
-		final TradeHandler tradeHandler = new TradeHandler();
-		tradeHandler.onTradeEvent(trade -> {
-			trade.setApikey(getApiKey());
-			tradeManager.updateTrade(trade);
-		});
-		// Trade executed
-		channelHandler.put("te", tradeHandler);
-		// Trade updates
-		channelHandler.put("tu", tradeHandler);
-
-		final NotificationHandler notificationHandler = new NotificationHandler();
-		notificationHandler.onExchangeOrderNotification(eo -> {
-			eo.setApikey(getApiKey());
-			orderManager.updateOrder(eo);
-		});
-		// General notification
-		channelHandler.put("n", notificationHandler);
+		
+		return positionHandler;
 	}
 	
 	/**
