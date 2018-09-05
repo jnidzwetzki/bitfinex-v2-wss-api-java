@@ -9,11 +9,14 @@ final String apiKey = "....";
 final String apiSecret = "....";
 
 // For public operations (subscribe ticker, candles)
-BitfinexApiBroker bitfinexApiBroker = new BitfinexApiBroker();
+BitfinexApiBroker bitfinexApiBroker = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
 bitfinexApiBroker.connect();
 
 // For public and private operations (executing orders, read wallets)
-BitfinexApiBroker bitfinexApiBroker = new BitfinexApiBroker(apiKey, apiSecret);
+BitfinexApiBrokerConfig config = new BitfinexApiBrokerConfig();
+config.setApiCredentials(apiKey, apiSecret);
+
+BitfinexApiBroker bitfinexApiBroker = new BitfinexApiBroker(config);
 bitfinexApiBroker.connect();
 ```
 
