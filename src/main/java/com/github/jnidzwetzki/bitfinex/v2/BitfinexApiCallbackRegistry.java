@@ -55,111 +55,111 @@ public class BitfinexApiCallbackRegistry {
     private final Queue<Consumer<ConnectionCapabilities>> authSuccessConsumers = new ConcurrentLinkedQueue<>();
     private final Queue<Consumer<ConnectionCapabilities>> authFailedConsumers = new ConcurrentLinkedQueue<>();
 
-    public Closeable onExchangeOrderNotification(Consumer<ExchangeOrder> consumer) {
+    public Closeable onExchangeOrderNotification(final Consumer<ExchangeOrder> consumer) {
         exchangeOrderConsumers.offer(consumer);
         return () -> exchangeOrderConsumers.remove(consumer);
     }
 
-    public void acceptExchangeOrderNotification(ExchangeOrder event) {
+    public void acceptExchangeOrderNotification(final ExchangeOrder event) {
         exchangeOrderConsumers.forEach(consumer -> consumer.accept(event));
     }
 
-    public Closeable onExchangeOrdersEvent(Consumer<Collection<ExchangeOrder>> consumer) {
+    public Closeable onExchangeOrdersEvent(final Consumer<Collection<ExchangeOrder>> consumer) {
         exchangeOrdersConsumers.offer(consumer);
         return () -> exchangeOrdersConsumers.remove(consumer);
     }
 
-    public void acceptExchangeOrdersEvent(Collection<ExchangeOrder> event) {
+    public void acceptExchangeOrdersEvent(final Collection<ExchangeOrder> event) {
         exchangeOrdersConsumers.forEach(consumer -> consumer.accept(event));
     }
 
-    public Closeable onPositionsEvent(Consumer<Collection<Position>> consumer) {
+    public Closeable onPositionsEvent(final Consumer<Collection<Position>> consumer) {
         positionConsumers.offer(consumer);
         return () -> positionConsumers.remove(consumer);
     }
 
-    public void acceptPositionsEvent(Collection<Position> event) {
+    public void acceptPositionsEvent(final Collection<Position> event) {
         positionConsumers.forEach(consumer -> consumer.accept(event));
     }
 
-    public Closeable onTradeEvent(Consumer<Trade> consumer) {
+    public Closeable onTradeEvent(final Consumer<Trade> consumer) {
         tradeConsumers.offer(consumer);
         return () -> tradeConsumers.remove(consumer);
     }
 
-    public void acceptTradeEvent(Trade event) {
+    public void acceptTradeEvent(final Trade event) {
         tradeConsumers.forEach(consumer -> consumer.accept(event));
     }
 
-    public Closeable onWalletsEvent(Consumer<Collection<Wallet>> consumer) {
+    public Closeable onWalletsEvent(final Consumer<Collection<Wallet>> consumer) {
         walletConsumers.offer(consumer);
         return () -> walletConsumers.remove(consumer);
     }
 
-    public void acceptWalletsEvent(Collection<Wallet> event) {
+    public void acceptWalletsEvent(final Collection<Wallet> event) {
         walletConsumers.forEach(consumer -> consumer.accept(event));
     }
 
-    public Closeable onCandlesticksEvent(BiConsumer<BitfinexCandlestickSymbol, Collection<BitfinexCandle>> consumer) {
+    public Closeable onCandlesticksEvent(final BiConsumer<BitfinexCandlestickSymbol, Collection<BitfinexCandle>> consumer) {
         candlesConsumers.offer(consumer);
         return () -> candlesConsumers.remove(consumer);
     }
 
-    public void acceptCandlesticksEvent(BitfinexCandlestickSymbol symbol, Collection<BitfinexCandle> entries) {
+    public void acceptCandlesticksEvent(final BitfinexCandlestickSymbol symbol, final Collection<BitfinexCandle> entries) {
         candlesConsumers.forEach(consumer -> consumer.accept(symbol, entries));
     }
 
-    public Closeable onExecutedTradeEvent(BiConsumer<BitfinexExecutedTradeSymbol, Collection<ExecutedTrade>> consumer) {
+    public Closeable onExecutedTradeEvent(final BiConsumer<BitfinexExecutedTradeSymbol, Collection<ExecutedTrade>> consumer) {
         executedTradesConsumers.offer(consumer);
         return () -> executedTradesConsumers.remove(consumer);
     }
 
-    public void acceptExecutedTradeEvent(BitfinexExecutedTradeSymbol symbol, Collection<ExecutedTrade> entries) {
+    public void acceptExecutedTradeEvent(final BitfinexExecutedTradeSymbol symbol, final Collection<ExecutedTrade> entries) {
         executedTradesConsumers.forEach(consumer -> consumer.accept(symbol, entries));
     }
 
-    public Closeable onOrderbookEvent(BiConsumer<OrderbookConfiguration, Collection<OrderbookEntry>> consumer) {
+    public Closeable onOrderbookEvent(final BiConsumer<OrderbookConfiguration, Collection<OrderbookEntry>> consumer) {
         orderbookEntryConsumers.offer(consumer);
         return () -> orderbookEntryConsumers.remove(consumer);
     }
 
-    public void acceptOrderbookEvent(OrderbookConfiguration symbol, Collection<OrderbookEntry> entries) {
+    public void acceptOrderbookEvent(final OrderbookConfiguration symbol, final Collection<OrderbookEntry> entries) {
         orderbookEntryConsumers.forEach(consumer -> consumer.accept(symbol, entries));
     }
 
-    public Closeable onRawOrderbookEvent(BiConsumer<RawOrderbookConfiguration, Collection<RawOrderbookEntry>> consumer) {
+    public Closeable onRawOrderbookEvent(final BiConsumer<RawOrderbookConfiguration, Collection<RawOrderbookEntry>> consumer) {
         rawOrderbookEntryConsumers.offer(consumer);
         return () -> rawOrderbookEntryConsumers.remove(consumer);
     }
 
-    public void acceptRawOrderbookEvent(RawOrderbookConfiguration symbol, Collection<RawOrderbookEntry> entries) {
+    public void acceptRawOrderbookEvent(final RawOrderbookConfiguration symbol, final Collection<RawOrderbookEntry> entries) {
         rawOrderbookEntryConsumers.forEach(consumer -> consumer.accept(symbol, entries));
     }
 
-    public Closeable onTickEvent(BiConsumer<BitfinexTickerSymbol, BitfinexTick> consumer) {
+    public Closeable onTickEvent(final BiConsumer<BitfinexTickerSymbol, BitfinexTick> consumer) {
         tickConsumers.offer(consumer);
         return () -> tickConsumers.remove(consumer);
     }
 
-    public void acceptTickEvent(BitfinexTickerSymbol symbol, BitfinexTick tick) {
+    public void acceptTickEvent(final BitfinexTickerSymbol symbol, final BitfinexTick tick) {
         tickConsumers.forEach(consumer -> consumer.accept(symbol, tick));
     }
 
-    public Closeable onAuthenticationSuccessEvent(Consumer<ConnectionCapabilities> consumer) {
+    public Closeable onAuthenticationSuccessEvent(final Consumer<ConnectionCapabilities> consumer) {
         authSuccessConsumers.offer(consumer);
         return () -> authSuccessConsumers.remove(consumer);
     }
 
-    public void acceptAuthenticationSuccessEvent(ConnectionCapabilities event) {
+    public void acceptAuthenticationSuccessEvent(final ConnectionCapabilities event) {
         authSuccessConsumers.forEach(consumer -> consumer.accept(event));
     }
 
-    public Closeable onAuthenticationFailedEvent(Consumer<ConnectionCapabilities> consumer) {
+    public Closeable onAuthenticationFailedEvent(final Consumer<ConnectionCapabilities> consumer) {
         authFailedConsumers.offer(consumer);
         return () -> authFailedConsumers.remove(consumer);
     }
 
-    public void acceptAuthenticationFailedEvent(ConnectionCapabilities event) {
+    public void acceptAuthenticationFailedEvent(final ConnectionCapabilities event) {
         authFailedConsumers.forEach(consumer -> consumer.accept(event));
     }
 
