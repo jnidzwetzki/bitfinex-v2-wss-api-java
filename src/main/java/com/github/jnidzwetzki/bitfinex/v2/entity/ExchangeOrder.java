@@ -19,19 +19,8 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "orders")
 public class ExchangeOrder {
 
-	@Id
-	@GeneratedValue
 	private long id;
 	
 	private String apikey;
@@ -44,10 +33,8 @@ public class ExchangeOrder {
 	private BigDecimal amount;
 	private BigDecimal amountAtCreation;
 	
-	@Enumerated(EnumType.STRING)
 	private BitfinexOrderType orderType;
 	
-	@Enumerated(EnumType.STRING)
 	private ExchangeOrderState state;
 	
 	private BigDecimal price;

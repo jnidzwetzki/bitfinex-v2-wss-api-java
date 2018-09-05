@@ -1,6 +1,7 @@
 # Version 0.6.10 (TBA)
 * Improvement: Updated dependencies
 * Improvement: The callbacks channels are refactored (thanks to mironbalcerzak / closes #57 and #58)
+* Improvement: Removed unused JPA annotations
 * Bugfix: Limit the number of ticket subscriptions to 50 (https://www.bitfinex.com/posts/267)
 * Bugfix: Fixed race condition in BiConsumerCallback
 

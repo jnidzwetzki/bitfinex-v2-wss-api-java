@@ -103,12 +103,6 @@
 			<version>26.0-jre</version>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.1-api</artifactId>
-			<version>1.0.2</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.bboxdb</groupId>
 			<artifactId>bboxdb-commons</artifactId>
 			<version>0.8.3</version>

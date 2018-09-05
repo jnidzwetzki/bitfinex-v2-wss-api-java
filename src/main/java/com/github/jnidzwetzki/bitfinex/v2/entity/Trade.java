@@ -19,19 +19,8 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "trades")
 public class Trade {
 
-	@Id
-	@GeneratedValue
 	private long id;
 	
 	// Update or execute
@@ -45,7 +34,6 @@ public class Trade {
 	private BigDecimal execAmount;
 	private BigDecimal execPrice;
 	
-	@Enumerated(EnumType.STRING)
 	private BitfinexOrderType orderType;	
 	
 	private BigDecimal orderPrice;

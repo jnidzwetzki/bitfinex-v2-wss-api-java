@@ -19,31 +19,18 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import org.bboxdb.commons.MicroSecondTimestampProvider;
 
-@Entity
-@Table(name = "orders_executed")
 public class BitfinexOrder {
 
-	@Id
-	@GeneratedValue
 	private long id;
 	
 	private long cid;
 	
 	private String apikey;
 	
-	@Enumerated(EnumType.STRING)
 	private final BitfinexCurrencyPair symbol; 
 	
-	@Enumerated(EnumType.STRING)
 	private final BitfinexOrderType type;
 	
 	private BigDecimal price;
