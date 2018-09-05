@@ -275,18 +275,6 @@ public class BitfinexApiBroker implements Closeable {
 		// Trade updates
 		channelHandler.put("tu", tradeHandler);
 
-		final NotificationHandler notificationHandler = buildNotificationHandler();
-		// General notification
-		channelHandler.put("n", notificationHandler);
-	}
-
-	/**
-	 * Build the notification handler
-	 * 
-	 * @return
-	 */
-	private NotificationHandler buildNotificationHandler() {
-		
 		final NotificationHandler notificationHandler = new NotificationHandler();
 		
 		notificationHandler.onExchangeOrderNotification(eo -> {
@@ -294,7 +282,8 @@ public class BitfinexApiBroker implements Closeable {
 			callbackRegistry.acceptExchangeOrderNotification(eo);
 		});
 		
-		return notificationHandler;
+		// General notification
+		channelHandler.put("n", notificationHandler);
 	}
 
 	/**
