@@ -20,8 +20,6 @@ package com.github.jnidzwetzki.bitfinex.v2;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
