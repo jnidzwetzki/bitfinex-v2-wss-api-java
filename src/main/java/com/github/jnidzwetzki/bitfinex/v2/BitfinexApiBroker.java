@@ -21,18 +21,12 @@ import java.io.Closeable;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Table;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -72,11 +66,8 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Position;
 import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
@@ -96,17 +87,22 @@ public class BitfinexApiBroker implements Closeable {
 	 * The bitfinex api
 	 */
 	public final static String BITFINEX_URI = "wss://api.bitfinex.com/ws/2";
-	
+
 	/**
-	 * The API callback
+	 * broker configuration
 	 */
-	private final Consumer<String> apiCallback = this::websocketCallback;
-	
+	private final BitfinexApiBrokerConfig configuration;
+
+	/**
+	 * callback registry
+	 */
+	private BitfinexApiCallbackRegistry callbackRegistry;
+
 	/**
 	 * The websocket endpoint
 	 */
 	private WebsocketClientEndpoint websocketEndpoint;
-	
+
 	/**
 	 * The channel map
 	 */
@@ -155,45 +151,13 @@ public class BitfinexApiBroker implements Closeable {
 	/**
 	 * The last heartbeat value
 	 */
-	protected final AtomicLong lastHeatbeat;
+	protected final AtomicLong lastHeartbeat;
 
 	/**
 	 * The heartbeat thread
 	 */
 	private Thread heartbeatThread;
-	
-	/**
-	 * The API key
-	 */
-	private String apiKey;
-	
-	/**
-	 * The API secret
-	 */
-	private String apiSecret;
-	
-	/**
-	 * The dead man switch
-	 */
-	private boolean deadManSwitch = false;
-	
-	/**
-	 * The connection ready latch
-	 */
-	private CountDownLatch connectionReadyLatch;
-	private boolean ordersUpdated;
-	private boolean walletsUpdated;
-	private boolean positionsUpdated;
-	
-	/**
-	 * Event on the latch until the connection is ready
-	 * - Authenticated
-	 * - Order snapshots read
-	 * - Wallet snapshot read
-	 * - Position snapshot read
-	 */
-	private final static int CONNECTION_READY_EVENTS = 4;
-	
+
 	/**
 	 * The capabilities of the connection
 	 */
@@ -215,55 +179,36 @@ public class BitfinexApiBroker implements Closeable {
 	private Map<String, CommandCallbackHandler> commandCallbacks;
 	
 	/**
-	 * The executor service
-	 */
-	private final ExecutorService executorService;
-	
-	/**
 	 * The sequence number auditor
 	 */
 	private final SequenceNumberAuditor sequenceNumberAuditor;
-	
-	/**
-	 * The auth nonce producer
-	 */
-	public Supplier<String> authNonceProducer;
 
-	/**
-	 * The Logger
-	 */
 	private final static Logger logger = LoggerFactory.getLogger(BitfinexApiBroker.class);
 
-	public BitfinexApiBroker(final String apiKey, final String apiSecret, final boolean deadManSwitch) {
-		this(apiKey, apiSecret);
-		this.deadManSwitch = deadManSwitch;
+	public BitfinexApiBroker(BitfinexApiBrokerConfig config) {
+		this(config, new BitfinexApiCallbackRegistry());
 	}
-	
-	public BitfinexApiBroker(final String apiKey, final String apiSecret) {
-		this();
-		this.apiKey = apiKey;
-		this.apiSecret = apiSecret;
-	}
-	
-	public BitfinexApiBroker() {
-		this.executorService = Executors.newFixedThreadPool(10);
-		this.channelIdSymbolMap = new ConcurrentHashMap<>();
-		this.lastHeatbeat = new AtomicLong();
-		this.quoteManager = new QuoteManager(this, executorService);
-		this.orderbookManager = new OrderbookManager(this, executorService);
-		this.rawOrderbookManager = new RawOrderbookManager(this, executorService);
-		this.orderManager = new OrderManager(this, executorService);
-		this.tradeManager = new TradeManager(this, executorService);
-		this.positionManager = new PositionManager(this, executorService);
-		this.walletManager = new WalletManager(this, executorService);
-		this.connectionFeatureManager = new ConnectionFeatureManager(this, executorService);
-		this.capabilities = ConnectionCapabilities.NO_CAPABILITIES;
+
+	public BitfinexApiBroker(BitfinexApiBrokerConfig config, BitfinexApiCallbackRegistry callbackRegistry) {
+		this.configuration = new BitfinexApiBrokerConfig(config);
+		this.callbackRegistry = callbackRegistry;
 		this.channelHandler = new HashMap<>();
+
+		this.channelIdSymbolMap = new ConcurrentHashMap<>();
+		this.capabilities = ConnectionCapabilities.NO_CAPABILITIES;
 		this.sequenceNumberAuditor = new SequenceNumberAuditor();
-		this.authNonceProducer = AuthCommand.AUTH_NONCE_PRODUCER_TIMESTAMP;
-		
-		setupChannelHandler();
-		setupCommandCallbacks();
+		this.lastHeartbeat = new AtomicLong();
+		this.quoteManager = new QuoteManager(this, configuration.getExecutorService(), callbackRegistry);
+		this.orderbookManager = new OrderbookManager(this, configuration.getExecutorService(), callbackRegistry);
+		this.rawOrderbookManager = new RawOrderbookManager(this, configuration.getExecutorService(), callbackRegistry);
+		this.orderManager = new OrderManager(this, configuration.getExecutorService(), callbackRegistry);
+		this.tradeManager = new TradeManager(this, configuration.getExecutorService(), callbackRegistry);
+		this.positionManager = new PositionManager(this, configuration.getExecutorService(), callbackRegistry);
+		this.walletManager = new WalletManager(this, configuration.getExecutorService(), callbackRegistry);
+		this.connectionFeatureManager = new ConnectionFeatureManager(this, configuration.getExecutorService());
+
+        setupChannelHandler();
+        setupCommandCallbacks();
 	}
 
 	/**
@@ -275,8 +220,9 @@ public class BitfinexApiBroker implements Closeable {
 		heartbeatHandler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
 		channelHandler.put("hb", heartbeatHandler);
 
-		final PositionHandler positionHandler = buildPositionHandler();
-		
+		final PositionHandler positionHandler = new PositionHandler();
+		positionHandler.onPositionsEvent(callbackRegistry::acceptPositionsEvent);
+
 		// Position snapshot
 		channelHandler.put("ps", positionHandler);
 		// Position new
@@ -295,14 +241,21 @@ public class BitfinexApiBroker implements Closeable {
 		// Ats - Unknown
 		channelHandler.put("ats", new DoNothingHandler());
 
-		final WalletHandler walletHandler = buildWalletHandler();
+		final WalletHandler walletHandler = new WalletHandler();
+		walletHandler.onWalletsEvent(callbackRegistry::acceptWalletsEvent);
+
 		// Wallet snapshot
 		channelHandler.put("ws", walletHandler);
 		// Wallet update
 		channelHandler.put("wu", walletHandler);
 
-		final OrderHandler orderHandler = buildOrderHandler();
-		// Order snapshot
+		final OrderHandler orderHandler = new OrderHandler();
+		orderHandler.onExchangeOrdersEvent(exchangeOrders -> {
+			exchangeOrders.forEach(eo ->  eo.setApikey(configuration.getApiKey()));
+			callbackRegistry.acceptExchangeOrdersEvent(exchangeOrders);
+		});
+    
+    // Order snapshot
 		channelHandler.put("os", orderHandler);
 		// Order notification
 		channelHandler.put("on", orderHandler);
@@ -311,8 +264,13 @@ public class BitfinexApiBroker implements Closeable {
 		// Order cancellation
 		channelHandler.put("oc", orderHandler);
 
-		final TradeHandler tradeHandler = buildTradeHandler();
-		// Trade executed
+		final TradeHandler tradeHandler = new TradeHandler();
+		tradeHandler.onTradeEvent(trade -> {
+			trade.setApikey(configuration.getApiKey());
+			callbackRegistry.acceptTradeEvent(trade);
+		});
+
+    // Trade executed
 		channelHandler.put("te", tradeHandler);
 		// Trade updates
 		channelHandler.put("tu", tradeHandler);
@@ -332,8 +290,8 @@ public class BitfinexApiBroker implements Closeable {
 		final NotificationHandler notificationHandler = new NotificationHandler();
 		
 		notificationHandler.onExchangeOrderNotification(eo -> {
-			eo.setApikey(getApiKey());
-			orderManager.updateOrder(eo);
+			eo.setApikey(configuration.getApiKey());
+			callbackRegistry.acceptExchangeOrderNotification(eo);
 		});
 		
 		return notificationHandler;
@@ -433,6 +391,11 @@ public class BitfinexApiBroker implements Closeable {
 		commandCallbacks = new HashMap<>();
 		commandCallbacks.put("info", new DoNothingCommandCallback());
 
+		// TODO: hb is not ping:pong
+		final ConnectionHeartbeatCallback pong = new ConnectionHeartbeatCallback();
+		pong.onHeartbeatEvent(l -> this.updateConnectionHeartbeat());
+		commandCallbacks.put("pong", pong);
+
 		final SubscribedCallback subscribed = new SubscribedCallback();
 		subscribed.onSubscribedEvent((channelId, symbol) -> {
 			synchronized (channelIdSymbolMap) {
@@ -441,11 +404,6 @@ public class BitfinexApiBroker implements Closeable {
 			}
 		});
 		commandCallbacks.put("subscribed", subscribed);
-
-		// TODO: hb is not ping:pong
-		final ConnectionHeartbeatCallback pong = new ConnectionHeartbeatCallback();
-		pong.onHeartbeatEvent(l -> this.updateConnectionHeartbeat());
-		commandCallbacks.put("pong", pong);
 
 		UnsubscribedCallback unsubscribed = new UnsubscribedCallback();
 		unsubscribed.onUnsubscribedChannelEvent(channelId -> {
@@ -457,18 +415,8 @@ public class BitfinexApiBroker implements Closeable {
 		commandCallbacks.put("unsubscribed", unsubscribed);
 
 		final AuthCallback auth = new AuthCallback();
-		auth.onAuthenticationSuccessEvent(c -> {
-			this.capabilities = c;
-			this.authenticated = true;
-			this.connectionReadyLatch.countDown();
-		});
-		auth.onAuthenticationFailedEvent(c -> {
-			this.capabilities = c;
-			this.authenticated = false;
-			while (connectionReadyLatch.getCount() != 0) {
-				this.connectionReadyLatch.countDown();
-			}
-		});
+		auth.onAuthenticationSuccessEvent(callbackRegistry::acceptAuthenticationSuccessEvent);
+		auth.onAuthenticationFailedEvent(callbackRegistry::acceptAuthenticationFailedEvent);
 		commandCallbacks.put("auth", auth);
 
 		final ConfCallback conf = new ConfCallback();
@@ -484,19 +432,50 @@ public class BitfinexApiBroker implements Closeable {
 	public void connect() throws APIException {
 		try {
 			sequenceNumberAuditor.reset();
-			connectionReadyLatch = new CountDownLatch(CONNECTION_READY_EVENTS);
+			CountDownLatch connectionReadyLatch = new CountDownLatch(4);
+
+			Closeable authSuccessEventCallback = callbackRegistry.onAuthenticationSuccessEvent(c -> {
+				capabilities = c;
+				authenticated = true;
+				connectionReadyLatch.countDown();
+			});
+			Closeable authFailedCallback = callbackRegistry.onAuthenticationFailedEvent(c -> {
+				capabilities = c;
+				authenticated = false;
+				while (connectionReadyLatch.getCount() != 0) {
+					connectionReadyLatch.countDown();
+				}
+			});
+			Closeable positionInitCallback = callbackRegistry.onPositionsEvent(positions -> {
+				connectionReadyLatch.countDown();
+			});
+			Closeable walletsInitCallback = callbackRegistry.onWalletsEvent(wallets -> {
+				connectionReadyLatch.countDown();
+			});
+			Closeable orderInitCallback = callbackRegistry.onExchangeOrdersEvent(exchangeOrders -> {
+				connectionReadyLatch.countDown();
+			});
 
 			final URI bitfinexURI = new URI(BITFINEX_URI);
-			websocketEndpoint = new WebsocketClientEndpoint(bitfinexURI);
-			websocketEndpoint.addConsumer(apiCallback);
+			websocketEndpoint = new WebsocketClientEndpoint(bitfinexURI, this::websocketCallback);
 			websocketEndpoint.connect();
 			updateConnectionHeartbeat();
 			
 			connectionFeatureManager.applyConnectionFeatures();
-			authenticate();
-			
-			heartbeatThread = new Thread(new HeartbeatThread(this, websocketEndpoint));
-			heartbeatThread.start();
+			if( configuration.isAuthenticationEnabled()) {
+				authenticateAndWait(connectionReadyLatch);
+			}
+
+			authSuccessEventCallback.close();
+			authFailedCallback.close();
+			positionInitCallback.close();
+			walletsInitCallback.close();
+			orderInitCallback.close();
+
+			if (configuration.isHeartbeatThreadActive()) {
+				heartbeatThread = new Thread(new HeartbeatThread(this, websocketEndpoint));
+				heartbeatThread.start();
+			}
 		} catch (Exception e) {
 			throw new APIException(e);
 		}
@@ -505,15 +484,15 @@ public class BitfinexApiBroker implements Closeable {
 	/**
 	 * Execute the authentication and wait until the socket is ready
 	 * @throws InterruptedException
-	 * @throws APIException 
+	 * @throws APIException
 	 */
-	private void authenticate() throws InterruptedException, APIException {
-        if (!canAuthenticate() || authenticated) {
-            return;
-        }
-		sendCommand(new AuthCommand(authNonceProducer));
+	private void authenticateAndWait(CountDownLatch latch) throws InterruptedException, APIException {
+		if (authenticated) {
+			return;
+		}
+		sendCommand(new AuthCommand(configuration.getAuthNonceProducer()));
 		logger.debug("Waiting for connection ready events");
-		connectionReadyLatch.await(10, TimeUnit.SECONDS);
+		latch.await(10, TimeUnit.SECONDS);
 
 		if (!authenticated) {
 			throw new APIException("Unable to perform authentication, capabilities are: " + capabilities);
@@ -521,31 +500,18 @@ public class BitfinexApiBroker implements Closeable {
 	}
 
 	/**
-	 * Is the connection to be authenticated
-	 * @return
-	 */
-	private boolean canAuthenticate() {
-		return apiKey != null && apiSecret != null;
-	}
-
-	/**
 	 * Disconnect the websocket
 	 */
 	@Override
 	public void close() {
-		if(heartbeatThread != null) {
+		if (heartbeatThread != null) {
 			heartbeatThread.interrupt();
 			heartbeatThread = null;
 		}
-		
-		if(websocketEndpoint != null) {
-			websocketEndpoint.removeConsumer(apiCallback);
+
+		if (websocketEndpoint != null) {
 			websocketEndpoint.close();
 			websocketEndpoint = null;
-		}
-		
-		if(executorService != null) {
-			executorService.shutdown();
 		}
 	}
 
@@ -604,7 +570,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * Update the connection heartbeat
 	 */
 	public void updateConnectionHeartbeat() {
-		lastHeatbeat.set(System.currentTimeMillis());
+		lastHeartbeat.set(System.currentTimeMillis());
 	}
 
 	/**
@@ -714,29 +680,23 @@ public class BitfinexApiBroker implements Closeable {
 		
 		if(channelSymbol instanceof BitfinexCandlestickSymbol) {
 			final CandlestickHandler handler = new CandlestickHandler();
-			handler.onCandlesticksEvent(quoteManager::handleCandlestickCollection);
+			handler.onCandlesticksEvent(callbackRegistry::acceptCandlesticksEvent);
 			handler.handleChannelData(channelSymbol, jsonArray);
 		} else if(channelSymbol instanceof RawOrderbookConfiguration) {
 			final RawOrderbookHandler handler = new RawOrderbookHandler();
-			handler.onOrderbookEvent((sym, entries) -> {
-				entries.forEach(e -> rawOrderbookManager.handleNewOrderbookEntry(sym, e));
-			});
+			handler.onOrderbookEvent(callbackRegistry::acceptRawOrderbookEvent);
 			handler.handleChannelData(channelSymbol, jsonArray);
 		} else if(channelSymbol instanceof OrderbookConfiguration) {
 			final OrderbookHandler handler = new OrderbookHandler();
-			handler.onOrderbookEvent((sym,entries) -> {
-				entries.forEach(e -> orderbookManager.handleNewOrderbookEntry(sym, e));
-			});
+			handler.onOrderbookEvent(callbackRegistry::acceptOrderbookEvent);
 			handler.handleChannelData(channelSymbol, jsonArray);
 		} else if(channelSymbol instanceof BitfinexTickerSymbol) {
 			final TickHandler handler = new TickHandler();
-			handler.onTickEvent(quoteManager::handleNewTick);
+			handler.onTickEvent(callbackRegistry::acceptTickEvent);
 			handler.handleChannelData(channelSymbol, jsonArray);
 		} else if(channelSymbol instanceof BitfinexExecutedTradeSymbol) {
 			final ExecutedTradeHandler handler = new ExecutedTradeHandler();
-			handler.onExecutedTradeEvent((sym, trades) -> {
-				trades.forEach(t -> quoteManager.handleExecutedTradeEntry(sym, t));
-			});
+			handler.onExecutedTradeEvent(callbackRegistry::acceptExecutedTradeEvent);
 			handler.handleChannelData(channelSymbol, jsonArray);
 		} else {
 			logger.error("Unknown stream type: {}", channelSymbol);
@@ -793,6 +753,8 @@ public class BitfinexApiBroker implements Closeable {
 	public synchronized boolean reconnect() {
 		try {
 			logger.info("Performing reconnect");
+			websocketEndpoint.close();
+
 			capabilities = ConnectionCapabilities.NO_CAPABILITIES;
 			authenticated = false;
 			sequenceNumberAuditor.reset();
@@ -802,17 +764,43 @@ public class BitfinexApiBroker implements Closeable {
 			quoteManager.invalidateTickerHeartbeat();
 			orderManager.clear();
 			positionManager.clear();
-			
-			websocketEndpoint.close();
 
-			connectionReadyLatch = new CountDownLatch(CONNECTION_READY_EVENTS);
-			ordersUpdated = false;
-			walletsUpdated = false;
-			positionsUpdated = false;
+			CountDownLatch connectionReadyLatch = new CountDownLatch(4);
+
+			Closeable authSuccessEventCallback = callbackRegistry.onAuthenticationSuccessEvent(c -> {
+				capabilities = c;
+				authenticated = true;
+				connectionReadyLatch.countDown();
+			});
+			Closeable authFailedCallback = callbackRegistry.onAuthenticationFailedEvent(c -> {
+				capabilities = c;
+				authenticated = false;
+				while (connectionReadyLatch.getCount() != 0) {
+					connectionReadyLatch.countDown();
+				}
+			});
+			Closeable positionInitCallback = callbackRegistry.onPositionsEvent(positions -> {
+				connectionReadyLatch.countDown();
+			});
+			Closeable walletsInitCallback = callbackRegistry.onWalletsEvent(wallets -> {
+				connectionReadyLatch.countDown();
+			});
+			Closeable orderInitCallback = callbackRegistry.onExchangeOrdersEvent(exchangeOrders -> {
+				connectionReadyLatch.countDown();
+			});
+
 			websocketEndpoint.connect();
 			
 			connectionFeatureManager.applyConnectionFeatures();
-			authenticate();
+			if( configuration.isAuthenticationEnabled()) {
+				authenticateAndWait(connectionReadyLatch);
+			}
+			authSuccessEventCallback.close();
+			authFailedCallback.close();
+			positionInitCallback.close();
+			walletsInitCallback.close();
+			orderInitCallback.close();
+
 			resubscribeChannels();
 
 			updateConnectionHeartbeat();
@@ -944,24 +932,8 @@ public class BitfinexApiBroker implements Closeable {
 	 * Get the last heartbeat value
 	 * @return
 	 */
-	public AtomicLong getLastHeatbeat() {
-		return lastHeatbeat;
-	}
-	
-	/**
-	 * Get the API key
-	 * @return
-	 */
-	public String getApiKey() {
-		return apiKey;
-	}
-	
-	/**
-	 * Get the API secret
-	 * @return
-	 */
-	public String getApiSecret() {
-		return apiSecret;
+	public AtomicLong getLastHeartbeat() {
+		return lastHeartbeat;
 	}
 	
 	/**
@@ -1059,20 +1031,8 @@ public class BitfinexApiBroker implements Closeable {
 	public Map<Integer, BitfinexStreamSymbol> getChannelIdSymbolMap() {
 		return channelIdSymbolMap;
 	}
-	
-	/**
-	 * Is the dead man feature enabled
-	 * @return
-	 */
-	public boolean isDeadManFeatureEnabled() {
-		return deadManSwitch;
-	}
 
-	/**
-	 * Sets default auth nonce producer
-	 * @param authNonceProducer 	- default nonce producer used for authentication
-	 */
-	public void setDefaultAuthNonceProducer(final Supplier<String> authNonceProducer) {
-		this.authNonceProducer = Objects.requireNonNull(authNonceProducer);
+	public BitfinexApiBrokerConfig getConfiguration() {
+		return configuration;
 	}
 }

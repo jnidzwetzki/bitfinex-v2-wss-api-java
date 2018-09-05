@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexOrderBuilder;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AbstractAPICommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AuthCommand;
@@ -114,8 +115,11 @@ public class CommandsTest {
 	 */
 	private BitfinexApiBroker buildMockedBitfinexConnection() {
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		Mockito.when(bitfinexApiBroker.getApiKey()).thenReturn("abc");
-		Mockito.when(bitfinexApiBroker.getApiSecret()).thenReturn("123");
+		final BitfinexApiBrokerConfig config = Mockito.mock(BitfinexApiBrokerConfig.class);
+
+		Mockito.when(bitfinexApiBroker.getConfiguration()).thenReturn(config);
+		Mockito.when(bitfinexApiBroker.getConfiguration().getApiKey()).thenReturn("abc");
+		Mockito.when(bitfinexApiBroker.getConfiguration().getApiSecret()).thenReturn("123");
 		return bitfinexApiBroker;
 	}
 }

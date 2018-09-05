@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.PositionHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Position;
@@ -112,7 +113,7 @@ public class PositionTest {
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		
-		final PositionManager positionManager = new PositionManager(bitfinexApiBroker, executorService);
+		final PositionManager positionManager = new PositionManager(bitfinexApiBroker, executorService, new BitfinexApiCallbackRegistry());
 		Mockito.when(bitfinexApiBroker.getPositionManager()).thenReturn(positionManager);
 		
 		return bitfinexApiBroker;

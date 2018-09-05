@@ -52,9 +52,9 @@ public class AuthCommand extends AbstractAPICommand {
 	@Override
 	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) throws CommandException {
 		try {
-			final String APIKey = bitfinexApiBroker.getApiKey();
-			final String APISecret = bitfinexApiBroker.getApiSecret();
-			final boolean deadManSwitch = bitfinexApiBroker.isDeadManFeatureEnabled();
+			final String APIKey = bitfinexApiBroker.getConfiguration().getApiKey();
+			final String APISecret = bitfinexApiBroker.getConfiguration().getApiSecret();
+			final boolean deadManSwitch = bitfinexApiBroker.getConfiguration().isDeadmanSwitchActive();
 			
 			final String authNonce = authNonceSupplier.get();
 			final String authPayload = "AUTH" + authNonce;

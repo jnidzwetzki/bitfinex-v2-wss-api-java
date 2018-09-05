@@ -53,7 +53,7 @@ public class WebsocketClientEndpoint implements Closeable {
 	/**
 	 * The callback consumer
 	 */
-	private final List<Consumer<String>> callbackConsumer;
+	private final Consumer<String> messageConsumer;
 	
 	/**
 	 * The wait for connection latch
@@ -70,9 +70,9 @@ public class WebsocketClientEndpoint implements Closeable {
 	 */
 	private final static Logger logger = LoggerFactory.getLogger(BitfinexApiBroker.class);
 
-	public WebsocketClientEndpoint(final URI endpointURI) {
-		this.endpointURI = endpointURI;
-		this.callbackConsumer = new CopyOnWriteArrayList<>();
+	public WebsocketClientEndpoint(URI bitfinexURI, Consumer<String> consumer) {
+		this.endpointURI = bitfinexURI;
+		this.messageConsumer = consumer;
 	}
 
 	/**
@@ -102,9 +102,7 @@ public class WebsocketClientEndpoint implements Closeable {
 
 	@OnMessage(maxMessageSize=1048576)
 	public void onMessage(final String message) {
-		
-		// Notify callbacks
-		callbackConsumer.forEach((c) -> c.accept(message));
+		messageConsumer.accept(message);
 	}
 	
 	@OnError
@@ -117,35 +115,15 @@ public class WebsocketClientEndpoint implements Closeable {
 	 * @param message
 	 */
 	public void sendMessage(final String message) {
-		
 		if(userSession == null) {
 			logger.error("Unable to send message, user session is null");
 			return;
 		}
-		
 		if(userSession.getAsyncRemote() == null) {
 			logger.error("Unable to send message, async remote is null");
 			return;
 		}
-		
 		userSession.getAsyncRemote().sendText(message);
-	}
-
-	/**
-	 * Add a new connection data consumer
-	 * @param consumer
-	 */
-	public void addConsumer(final Consumer<String> consumer) {
-		callbackConsumer.add(consumer);
-	}
-
-	/**
-	 * Remove a connection data consumer
-	 * @param consumer
-	 * @return
-	 */
-	public boolean removeConsumer(final Consumer<String> consumer) {
-		return callbackConsumer.remove(consumer);
 	}
 
 	/**

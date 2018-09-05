@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.TickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
@@ -56,7 +57,7 @@ public class TickHandlerTest {
 
         final ExecutorService executorService = MoreExecutors.newDirectExecutorService();
         final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-        final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker, executorService);
+        final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker, executorService, new BitfinexApiCallbackRegistry());
         Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(tickerManager);
 
         tickerManager.registerTickCallback(symbol, (s, c) -> {
