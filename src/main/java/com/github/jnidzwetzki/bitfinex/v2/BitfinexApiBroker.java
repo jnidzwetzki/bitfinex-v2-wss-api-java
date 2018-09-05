@@ -255,7 +255,7 @@ public class BitfinexApiBroker implements Closeable {
 			callbackRegistry.acceptExchangeOrdersEvent(exchangeOrders);
 		});
     
-    // Order snapshot
+		// Order snapshot
 		channelHandler.put("os", orderHandler);
 		// Order notification
 		channelHandler.put("on", orderHandler);
@@ -270,7 +270,7 @@ public class BitfinexApiBroker implements Closeable {
 			callbackRegistry.acceptTradeEvent(trade);
 		});
 
-    // Trade executed
+		// Trade executed
 		channelHandler.put("te", tradeHandler);
 		// Trade updates
 		channelHandler.put("tu", tradeHandler);
