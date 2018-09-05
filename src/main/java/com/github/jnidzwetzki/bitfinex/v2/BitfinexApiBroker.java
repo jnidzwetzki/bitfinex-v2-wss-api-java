@@ -222,6 +222,7 @@ public class BitfinexApiBroker implements Closeable {
 
 		final PositionHandler positionHandler = new PositionHandler();
 		positionHandler.onPositionsEvent(callbackRegistry::acceptPositionsEvent);
+
 		// Position snapshot
 		channelHandler.put("ps", positionHandler);
 		// Position new
@@ -242,6 +243,7 @@ public class BitfinexApiBroker implements Closeable {
 
 		final WalletHandler walletHandler = new WalletHandler();
 		walletHandler.onWalletsEvent(callbackRegistry::acceptWalletsEvent);
+
 		// Wallet snapshot
 		channelHandler.put("ws", walletHandler);
 		// Wallet update
@@ -252,7 +254,8 @@ public class BitfinexApiBroker implements Closeable {
 			exchangeOrders.forEach(eo ->  eo.setApikey(configuration.getApiKey()));
 			callbackRegistry.acceptExchangeOrdersEvent(exchangeOrders);
 		});
-		// Order snapshot
+    
+    // Order snapshot
 		channelHandler.put("os", orderHandler);
 		// Order notification
 		channelHandler.put("on", orderHandler);
@@ -266,18 +269,119 @@ public class BitfinexApiBroker implements Closeable {
 			trade.setApikey(configuration.getApiKey());
 			callbackRegistry.acceptTradeEvent(trade);
 		});
-		// Trade executed
+
+    // Trade executed
 		channelHandler.put("te", tradeHandler);
 		// Trade updates
 		channelHandler.put("tu", tradeHandler);
 
+		final NotificationHandler notificationHandler = buildNotificationHandler();
+		// General notification
+		channelHandler.put("n", notificationHandler);
+	}
+
+	/**
+	 * Build the notification handler
+	 * 
+	 * @return
+	 */
+	private NotificationHandler buildNotificationHandler() {
+		
 		final NotificationHandler notificationHandler = new NotificationHandler();
+		
 		notificationHandler.onExchangeOrderNotification(eo -> {
 			eo.setApikey(configuration.getApiKey());
 			callbackRegistry.acceptExchangeOrderNotification(eo);
 		});
-		// General notification
-		channelHandler.put("n", notificationHandler);
+		
+		return notificationHandler;
+	}
+
+	/**
+	 * Build the trade handler
+	 * 
+	 * @return
+	 */
+	private TradeHandler buildTradeHandler() {
+		
+		final TradeHandler tradeHandler = new TradeHandler();
+		
+		tradeHandler.onTradeEvent(trade -> {
+			trade.setApikey(getApiKey());
+			tradeManager.updateTrade(trade);
+		});
+		
+		return tradeHandler;
+	}
+
+	/**
+	 * Build the order handler 
+	 * @return
+	 */
+	private OrderHandler buildOrderHandler() {
+		final OrderHandler orderHandler = new OrderHandler();
+		
+		orderHandler.onExchangeOrdersEvent(exchangeOrders -> {
+			for (ExchangeOrder exchangeOrder : exchangeOrders) {
+				exchangeOrder.setApikey(getApiKey());
+				orderManager.updateOrder(exchangeOrder);
+			}
+			if (!ordersUpdated) {
+				ordersUpdated = true;
+				connectionReadyLatch.countDown();
+			}
+		});
+		
+		return orderHandler;
+	}
+
+	/**
+	 * Build the wallet handler
+	 * @return
+	 */
+	private WalletHandler buildWalletHandler() {
+		final WalletHandler walletHandler = new WalletHandler();
+		
+		walletHandler.onWalletsEvent(wallets -> {
+			try {
+				for (Wallet wallet : wallets) {
+					Table<String, String, Wallet> walletTable = walletManager.getWalletTable();
+					synchronized (walletTable) {
+						walletTable.put(wallet.getWalletType(), wallet.getCurreny(), wallet);
+						walletTable.notifyAll();
+					}
+				}
+				if (!walletsUpdated) {
+					walletsUpdated = true;
+					connectionReadyLatch.countDown();
+				}
+			} catch (APIException e) {
+				e.printStackTrace();
+			}
+		});
+		
+		return walletHandler;
+	}
+
+	/**
+	 * Build the position handler 
+	 * 
+	 * @return
+	 */
+	private PositionHandler buildPositionHandler() {
+		final PositionHandler positionHandler = new PositionHandler();
+		
+		positionHandler.onPositionsEvent(positions -> {
+			for (Position position : positions) {
+				positionManager.updatePosition(position);
+			}
+			if (!positionsUpdated) {
+				positionsUpdated = true;
+				connectionReadyLatch.countDown();
+			}
+		});
+		
+		return positionHandler;
 	}
 	
 	/**
