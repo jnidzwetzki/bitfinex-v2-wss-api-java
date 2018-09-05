@@ -39,7 +39,7 @@ public class BitfinexApiBrokerConfig {
 
     }
 
-    public BitfinexApiBrokerConfig(BitfinexApiBrokerConfig copy) {
+    public BitfinexApiBrokerConfig(final BitfinexApiBrokerConfig copy) {
         this.apiKey = copy.apiKey;
         this.apiSecret = copy.apiSecret;
         this.authenticationEnabled = copy.authenticationEnabled;
@@ -50,7 +50,7 @@ public class BitfinexApiBrokerConfig {
         this.executorService = copy.executorService;
     }
 
-    public void setApiCredentials(String apiKey, String apiSecret) {
+    public void setApiCredentials(final String apiKey, final String apiSecret) {
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
         this.authenticationEnabled = true;
@@ -68,7 +68,7 @@ public class BitfinexApiBrokerConfig {
         return authenticationEnabled;
     }
 
-    public void setAuthenticationEnabled(boolean authenticationEnabled) {
+    public void setAuthenticationEnabled(final boolean authenticationEnabled) {
         this.authenticationEnabled = authenticationEnabled;
     }
 
@@ -76,7 +76,7 @@ public class BitfinexApiBrokerConfig {
         return heartbeatThreadActive;
     }
 
-    public void setHeartbeatThreadActive(boolean heartbeatThreadActive) {
+    public void setHeartbeatThreadActive(final boolean heartbeatThreadActive) {
         this.heartbeatThreadActive = heartbeatThreadActive;
     }
 
@@ -84,7 +84,7 @@ public class BitfinexApiBrokerConfig {
         return deadmanSwitchActive;
     }
 
-    public void setDeadmanSwitchActive(boolean deadmanSwitchActive) {
+    public void setDeadmanSwitchActive(final boolean deadmanSwitchActive) {
         this.deadmanSwitchActive = deadmanSwitchActive;
     }
 
@@ -92,7 +92,7 @@ public class BitfinexApiBrokerConfig {
         return managersActive;
     }
 
-    public void setManagersActive(boolean managersActive) {
+    public void setManagersActive(final boolean managersActive) {
         this.managersActive = managersActive;
     }
 
@@ -100,7 +100,7 @@ public class BitfinexApiBrokerConfig {
         return authNonceProducer;
     }
 
-    public void setAuthNonceProducer(Supplier<String> authNonceProducer) {
+    public void setAuthNonceProducer(final Supplier<String> authNonceProducer) {
         this.authNonceProducer = authNonceProducer;
     }
 
@@ -108,7 +108,7 @@ public class BitfinexApiBrokerConfig {
         return executorService;
     }
 
-    public void setExecutorService(ExecutorService executorService) {
+    public void setExecutorService(final ExecutorService executorService) {
         this.executorService = executorService;
     }
 }
