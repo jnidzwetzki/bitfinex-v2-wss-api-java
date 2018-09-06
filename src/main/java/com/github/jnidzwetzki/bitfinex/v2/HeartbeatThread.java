@@ -79,7 +79,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	/**
 	 * @param bitfinexApiBroker
 	 */
-	public HeartbeatThread(final BitfinexApiBroker bitfinexApiBroker, WebsocketClientEndpoint websocketClientEndpoint) {
+	public HeartbeatThread(final BitfinexApiBroker bitfinexApiBroker, final WebsocketClientEndpoint websocketClientEndpoint) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
 		this.websocketEndpoint = websocketClientEndpoint;
 
@@ -125,7 +125,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 					continue;
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			logger.debug("Heartbeat thread was interrupted, exiting");
 			Thread.currentThread().interrupt();
 			return;
