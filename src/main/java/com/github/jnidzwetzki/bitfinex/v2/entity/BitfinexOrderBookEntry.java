@@ -51,7 +51,7 @@ public class BitfinexOrderBookEntry {
 
 	@Override
 	public String toString() {
-		return "OrderbookEntry [price=" + price + ", count=" + count + ", amount=" + amount + "]";
+		return "BitfinexOrderBookEntry [price=" + price + ", count=" + count + ", amount=" + amount + "]";
 	}
 
 }

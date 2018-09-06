@@ -98,7 +98,7 @@ public class BitfinexOrderBookSymbol implements BitfinexStreamSymbol {
 
 	@Override
 	public String toString() {
-		return "BitfinexOrderBookConfiguration [" +
+		return "BitfinexOrderBookSymbol [" +
 				"currencyPair=" + currencyPair +
 				", orderBookPrecision=" + orderBookPrecision +
 				", frequency=" + frequency +
