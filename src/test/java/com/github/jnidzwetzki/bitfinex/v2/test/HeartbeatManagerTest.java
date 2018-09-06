@@ -79,12 +79,12 @@ public class HeartbeatManagerTest {
 	 * @throws APIException
 	 */
 	@Test
-	public void testHeartbeatHandler() throws APIException {
-		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
+	public void testHeartbeatHandler() throws APIException, InterruptedException {
 		final HeartbeatHandler handler = new HeartbeatHandler();
-		handler.onHeartbeatEvent(timestamp -> bitfinexApiBroker.updateConnectionHeartbeat());
+		long heartbeat = System.currentTimeMillis();
+		handler.onHeartbeatEvent(timestamp -> Assert.assertTrue(timestamp > heartbeat));
+		Thread.sleep(50);
 		handler.handleChannelData(null);
-		Mockito.verify(bitfinexApiBroker, Mockito.times(1)).updateConnectionHeartbeat();
 	}
 
 	/**

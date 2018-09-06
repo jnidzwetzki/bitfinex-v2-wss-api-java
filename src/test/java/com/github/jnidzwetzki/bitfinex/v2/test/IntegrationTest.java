@@ -67,7 +67,7 @@ public class IntegrationTest {
 				bitfinexClient.getWalletManager().getWallets();
 
 				// Should not happen
-				Assert.assertTrue(false);
+				Assert.fail();
 			} catch (APIException e) {
 				return;
 			}
@@ -76,7 +76,7 @@ public class IntegrationTest {
 
 			// Should not happen
 			e.printStackTrace();
-			Assert.assertTrue(false);
+			Assert.fail();
 		} finally {
 			bitfinexClient.close();
 		}
@@ -118,7 +118,7 @@ public class IntegrationTest {
 		} catch (Exception e) {
 			// Should not happen
 			e.printStackTrace();
-			Assert.assertTrue(false);
+			Assert.fail();
 		} finally {
 			bitfinexClient.close();
 		}
@@ -160,7 +160,7 @@ public class IntegrationTest {
 		} catch (Exception e) {
 			// Should not happen
 			e.printStackTrace();
-			Assert.assertTrue(false);
+			Assert.fail();
 		} finally {
 			bitfinexClient.close();
 		}
@@ -203,7 +203,7 @@ public class IntegrationTest {
 		} catch (Exception e) {
 			// Should not happen
 			e.printStackTrace();
-			Assert.assertTrue(false);
+			Assert.fail();
 		} finally {
 			bitfinexClient.close();
 		}
@@ -240,7 +240,7 @@ public class IntegrationTest {
 		} catch (Exception e) {
 			// Should not happen
 			e.printStackTrace();
-			Assert.assertTrue(false);
+			Assert.fail();
 		} finally {
 			bitfinexClient.close();
 		}
@@ -299,11 +299,11 @@ public class IntegrationTest {
 			orderbookManager.registerTickCallback(symbol, callback);
 			orderbookManager.subscribeTicker(symbol);
 			latch.await();
-			Assert.assertTrue(bitfinexClient.isTickerActive(symbol));
+			Assert.assertTrue(bitfinexClient.getSubscribedChannels().contains(symbol));
 
 			orderbookManager.unsubscribeTicker(symbol);
 			Thread.sleep(3000);
-			Assert.assertFalse(bitfinexClient.isTickerActive(symbol));
+			Assert.assertFalse(bitfinexClient.getSubscribedChannels().contains(symbol));
 
 			Assert.assertTrue(orderbookManager.removeTickCallback(symbol, callback));
 			Assert.assertFalse(orderbookManager.removeTickCallback(symbol, callback));
@@ -311,7 +311,7 @@ public class IntegrationTest {
 		} catch (Exception e) {
 			// Should not happen
 			e.printStackTrace();
-			Assert.assertTrue(false);
+			Assert.fail();
 		} finally {
 			bitfinexClient.close();
 		}
@@ -337,7 +337,7 @@ public class IntegrationTest {
 		bitfinexClient.connect();
 
 		// Should not be reached
-		Assert.assertTrue(false);
+		Assert.fail();
 		bitfinexClient.close();
 	}
 
@@ -368,12 +368,12 @@ public class IntegrationTest {
 
 		orderbookManager.registerTickCallback(symbol, callback);
 		latch.await();
-		Assert.assertTrue(bitfinexClient.isTickerActive(symbol));
+		Assert.assertTrue(bitfinexClient.getSubscribedChannels().contains(symbol));
 
 		orderbookManager.unsubscribeTicker(symbol);
 
 		Thread.sleep(5000);
-		Assert.assertFalse(bitfinexClient.isTickerActive(symbol));
+		Assert.assertFalse(bitfinexClient.getSubscribedChannels().contains(symbol));
 
 		bitfinexClient.close();
 	}
@@ -468,7 +468,7 @@ public class IntegrationTest {
 		} catch (Exception e) {
 			// Should not happen
 			e.printStackTrace();
-			Assert.assertTrue(false);
+			Assert.fail();
 		} finally {
 			bitfinexClient.close();
 		}

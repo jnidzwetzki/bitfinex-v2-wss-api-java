@@ -486,10 +486,7 @@ public class BitfinexApiBroker implements Closeable {
 		}
 	}
 
-	/**
-	 * Update the connection heartbeat
-	 */
-	public void updateConnectionHeartbeat() {
+	private void updateConnectionHeartbeat() {
 		lastHeartbeat.set(System.currentTimeMillis());
 	}
 
@@ -621,15 +618,6 @@ public class BitfinexApiBroker implements Closeable {
 		} else {
 			logger.error("Unknown stream type: {}", channelSymbol);
 		}
-	}
-
-	/**
-	 * Test whether the ticker is active or not 
-	 * @param symbol
-	 * @return
-	 */
-	public boolean isTickerActive(final BitfinexTickerSymbol symbol) {
-		return getChannelForSymbol(symbol) != null;
 	}
 
 	/**
