@@ -66,13 +66,6 @@ public class QuoteManager extends AbstractManager {
 	 */
 	private final BitfinexApiBroker bitfinexApiBroker;
 	
-	/**
-	 * The number of symbols that can be subscribed within one connection
-	 * @see https://www.bitfinex.com/posts/267
-	 */
-	public static int SYMBOL_QUOTA = 50;
-	
-
 	public QuoteManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService, BitfinexApiCallbackRegistry callbackRegistry) {
 		super(bitfinexApiBroker, executorService);
 		this.bitfinexApiBroker = bitfinexApiBroker;
@@ -169,22 +162,8 @@ public class QuoteManager extends AbstractManager {
 	 * @throws APIException 
 	 */
 	public void subscribeTicker(final BitfinexTickerSymbol tickerSymbol) throws APIException {
-		checkForQuota();
 		final SubscribeTickerCommand command = new SubscribeTickerCommand(tickerSymbol);
 		bitfinexApiBroker.sendCommand(command);
-	}
-
-	/**
-	 * A quota on the bitfinex side prevents that more than 50 symbols can 
-	 * be subscribed per connection
-	 * 
-	 * @throws APIException
-	 */
-	private void checkForQuota() throws APIException {
-		if(bitfinexApiBroker.getChannelIdSymbolMap().size() >= SYMBOL_QUOTA) {
-			throw new APIException("Unable to subscript more than " + SYMBOL_QUOTA 
-					+ " symbols per connection");
-		}
 	}
 
 	/**
@@ -192,18 +171,9 @@ public class QuoteManager extends AbstractManager {
 	 * @param tickerSymbol
 	 */
 	public void unsubscribeTicker(final BitfinexTickerSymbol tickerSymbol) {
-
 		lastTickerActivity.remove(tickerSymbol);
-
-		final int channel = bitfinexApiBroker.getChannelForSymbol(tickerSymbol);
-
-		if(channel == -1) {
-			throw new IllegalArgumentException("Unknown symbol: " + tickerSymbol);
-		}
-
-		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
+		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(tickerSymbol);
 		bitfinexApiBroker.sendCommand(command);
-		bitfinexApiBroker.removeChannelForSymbol(tickerSymbol);
 	}
 
 	/**
@@ -258,7 +228,6 @@ public class QuoteManager extends AbstractManager {
 	 * @throws APIException 
 	 */
 	public void subscribeCandles(final BitfinexCandlestickSymbol symbol) throws APIException {
-		checkForQuota();
 		final SubscribeCandlesCommand command = new SubscribeCandlesCommand(symbol);
 		bitfinexApiBroker.sendCommand(command);
 	}
@@ -269,18 +238,9 @@ public class QuoteManager extends AbstractManager {
 	 * @param timeframe
 	 */
 	public void unsubscribeCandles(final BitfinexCandlestickSymbol symbol) {
-
 		lastTickerActivity.remove(symbol);
-
-		final int channel = bitfinexApiBroker.getChannelForSymbol(symbol);
-
-		if(channel == -1) {
-			throw new IllegalArgumentException("Unknown symbol: " + symbol);
-		}
-
-		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
+		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(symbol);
 		bitfinexApiBroker.sendCommand(command);
-		bitfinexApiBroker.removeChannelForSymbol(symbol);
 	}
 
 
@@ -332,16 +292,8 @@ public class QuoteManager extends AbstractManager {
 	 * @param pricePoints
 	 */
 	public void unsubscribeExecutedTrades(final BitfinexExecutedTradeSymbol tradeSymbol) {
-
-		final int channel = bitfinexApiBroker.getChannelForSymbol(tradeSymbol);
-
-		if(channel == -1) {
-			throw new IllegalArgumentException("Unknown symbol: " + tradeSymbol);
-		}
-
-		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
+		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(tradeSymbol);
 		bitfinexApiBroker.sendCommand(command);
-		bitfinexApiBroker.removeChannelForSymbol(tradeSymbol);
 	}
 
 	/**

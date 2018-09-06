@@ -92,16 +92,8 @@ public class RawOrderbookManager extends AbstractManager {
 	 * @param pricePoints
 	 */
 	public void unsubscribeOrderbook(final RawOrderbookConfiguration orderbookConfiguration) {
-		
-		final int channel = bitfinexApiBroker.getChannelForSymbol(orderbookConfiguration);
-		
-		if(channel == -1) {
-			throw new IllegalArgumentException("Unknown symbol: " + orderbookConfiguration);
-		}
-		
-		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
+		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(orderbookConfiguration);
 		bitfinexApiBroker.sendCommand(command);
-		bitfinexApiBroker.removeChannelForSymbol(orderbookConfiguration);
 	}
 	
 	/**

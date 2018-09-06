@@ -38,10 +38,13 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.Trade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
 
 public class BitfinexApiCallbackRegistry {
 
+    private final Queue<Consumer<BitfinexStreamSymbol>> subscribeChannelConsumers = new ConcurrentLinkedQueue<>();
+    private final Queue<Consumer<BitfinexStreamSymbol>> unsubscribeChannelConsumers = new ConcurrentLinkedQueue<>();
     private final Queue<Consumer<ExchangeOrder>> exchangeOrderConsumers = new ConcurrentLinkedQueue<>();
     private final Queue<Consumer<Collection<ExchangeOrder>>> exchangeOrdersConsumers = new ConcurrentLinkedQueue<>();
     private final Queue<Consumer<Collection<Position>>> positionConsumers = new ConcurrentLinkedQueue<>();
@@ -54,6 +57,24 @@ public class BitfinexApiCallbackRegistry {
     private final Queue<BiConsumer<BitfinexTickerSymbol, BitfinexTick>> tickConsumers = new ConcurrentLinkedQueue<>();
     private final Queue<Consumer<ConnectionCapabilities>> authSuccessConsumers = new ConcurrentLinkedQueue<>();
     private final Queue<Consumer<ConnectionCapabilities>> authFailedConsumers = new ConcurrentLinkedQueue<>();
+
+    public Closeable onSubscribeChannelEvent(final Consumer<BitfinexStreamSymbol> consumer) {
+        subscribeChannelConsumers.offer(consumer);
+        return () -> subscribeChannelConsumers.remove(consumer);
+    }
+
+    public void acceptSubscribeChannelEvent(final BitfinexStreamSymbol event) {
+        subscribeChannelConsumers.forEach(consumer -> consumer.accept(event));
+    }
+
+    public Closeable onUnsubscribeChannelEvent(final Consumer<BitfinexStreamSymbol> consumer) {
+        unsubscribeChannelConsumers.offer(consumer);
+        return () -> unsubscribeChannelConsumers.remove(consumer);
+    }
+
+    public void acceptUnsubscribeChannelEvent(final BitfinexStreamSymbol event) {
+        unsubscribeChannelConsumers.forEach(consumer -> consumer.accept(event));
+    }
 
     public Closeable onExchangeOrderNotification(final Consumer<ExchangeOrder> consumer) {
         exchangeOrderConsumers.offer(consumer);
