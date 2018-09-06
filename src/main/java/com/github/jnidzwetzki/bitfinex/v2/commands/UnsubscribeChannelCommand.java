@@ -17,28 +17,38 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.commands;
 
+import java.util.Objects;
+import java.util.function.Function;
+
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexStreamSymbolToChannelIdResolverAware;
 
-public class UnsubscribeChannelCommand extends AbstractAPICommand {
+public class UnsubscribeChannelCommand extends AbstractAPICommand implements BitfinexStreamSymbolToChannelIdResolverAware {
 
 	/**
 	 * The channel to unsubscribe
 	 */
-	private final int channel;
+	private final BitfinexStreamSymbol symbol;
+	private Function<BitfinexStreamSymbol, Integer> channelIdResolver;
 
-	public UnsubscribeChannelCommand(final int channel) {
-		this.channel = channel;
+	public UnsubscribeChannelCommand(final BitfinexStreamSymbol symbol) {
+		this.symbol = symbol;
 	}
 
 	@Override
 	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) {
 		final JSONObject subscribeJson = new JSONObject();
 		subscribeJson.put("event", "unsubscribe");
-		subscribeJson.put("chanId", channel);
+		subscribeJson.put("chanId", channelIdResolver.apply(symbol));
 		
 		return subscribeJson.toString();
 	}
 
+	@Override
+	public void setResolver(Function<BitfinexStreamSymbol, Integer> channelIdResolver) {
+		this.channelIdResolver = Objects.requireNonNull(channelIdResolver);
+	}
 }
