@@ -112,8 +112,9 @@ public class PositionTest {
 		
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		
-		final PositionManager positionManager = new PositionManager(bitfinexApiBroker, executorService, new BitfinexApiCallbackRegistry());
+		Mockito.when(bitfinexApiBroker.getCallbacks()).thenReturn(new BitfinexApiCallbackRegistry());
+
+		final PositionManager positionManager = new PositionManager(bitfinexApiBroker, executorService);
 		Mockito.when(bitfinexApiBroker.getPositionManager()).thenReturn(positionManager);
 		
 		return bitfinexApiBroker;

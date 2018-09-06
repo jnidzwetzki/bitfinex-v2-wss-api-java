@@ -25,7 +25,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
@@ -66,7 +65,7 @@ public class QuoteManager extends AbstractManager {
 	 */
 	private final BitfinexApiBroker bitfinexApiBroker;
 	
-	public QuoteManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService, BitfinexApiCallbackRegistry callbackRegistry) {
+	public QuoteManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
 		super(bitfinexApiBroker, executorService);
 		this.bitfinexApiBroker = bitfinexApiBroker;
 		this.lastTickerActivity = new ConcurrentHashMap<>();
@@ -74,9 +73,9 @@ public class QuoteManager extends AbstractManager {
 		this.candleCallbacks = new BiConsumerCallbackManager<>(executorService, bitfinexApiBroker);
 		this.tradesCallbacks = new BiConsumerCallbackManager<>(executorService, bitfinexApiBroker);
 
-		callbackRegistry.onCandlesticksEvent(this::handleCandlestickCollection);
-		callbackRegistry.onTickEvent(this::handleNewTick);
-		callbackRegistry.onExecutedTradeEvent((sym, trades) -> trades.forEach(t -> this.handleExecutedTradeEntry(sym, t)));
+		bitfinexApiBroker.getCallbacks().onCandlesticksEvent(this::handleCandlestickCollection);
+		bitfinexApiBroker.getCallbacks().onTickEvent(this::handleNewTick);
+		bitfinexApiBroker.getCallbacks().onExecutedTradeEvent((sym, trades) -> trades.forEach(t -> this.handleExecutedTradeEntry(sym, t)));
 	}
 
 	/**

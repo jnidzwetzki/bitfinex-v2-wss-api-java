@@ -21,13 +21,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CalculateCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 
 public class WalletManager extends AbstractManager {
 
@@ -38,10 +38,10 @@ public class WalletManager extends AbstractManager {
 	 */
 	private final Table<String, String, Wallet> walletTable;
 
-	public WalletManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService, BitfinexApiCallbackRegistry callbackRegistry) {
+	public WalletManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
 		super(bitfinexApiBroker, executorService);
 		this.walletTable = HashBasedTable.create();
-		callbackRegistry.onWalletsEvent(wallets -> wallets.forEach(wallet -> {
+		bitfinexApiBroker.getCallbacks().onWalletsEvent(wallets -> wallets.forEach(wallet -> {
             try {
                 Table<String, String, Wallet> walletTable = getWalletTable();
                 synchronized (walletTable) {

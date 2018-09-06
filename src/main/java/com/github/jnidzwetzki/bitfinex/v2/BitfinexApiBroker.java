@@ -201,13 +201,13 @@ public class BitfinexApiBroker implements Closeable {
 		this.capabilities = ConnectionCapabilities.NO_CAPABILITIES;
 		this.sequenceNumberAuditor = new SequenceNumberAuditor();
 		this.lastHeartbeat = new AtomicLong();
-		this.quoteManager = new QuoteManager(this, configuration.getExecutorService(), callbackRegistry);
-		this.orderbookManager = new OrderbookManager(this, configuration.getExecutorService(), callbackRegistry);
-		this.rawOrderbookManager = new RawOrderbookManager(this, configuration.getExecutorService(), callbackRegistry);
-		this.orderManager = new OrderManager(this, configuration.getExecutorService(), callbackRegistry);
-		this.tradeManager = new TradeManager(this, configuration.getExecutorService(), callbackRegistry);
-		this.positionManager = new PositionManager(this, configuration.getExecutorService(), callbackRegistry);
-		this.walletManager = new WalletManager(this, configuration.getExecutorService(), callbackRegistry);
+		this.quoteManager = new QuoteManager(this, configuration.getExecutorService());
+		this.orderbookManager = new OrderbookManager(this, configuration.getExecutorService());
+		this.rawOrderbookManager = new RawOrderbookManager(this, configuration.getExecutorService());
+		this.orderManager = new OrderManager(this, configuration.getExecutorService());
+		this.tradeManager = new TradeManager(this, configuration.getExecutorService());
+		this.positionManager = new PositionManager(this, configuration.getExecutorService());
+		this.walletManager = new WalletManager(this, configuration.getExecutorService());
 		this.connectionFeatureManager = new ConnectionFeatureManager(this, configuration.getExecutorService());
 
         setupChannelHandler();
@@ -848,6 +848,10 @@ public class BitfinexApiBroker implements Closeable {
 	public BitfinexApiBrokerConfig getConfiguration() {
 		return new BitfinexApiBrokerConfig(configuration);
 	}
+
+    public BitfinexApiCallbackListeners getCallbacks() {
+        return callbackRegistry;
+    }
 
 	// managers getters
 

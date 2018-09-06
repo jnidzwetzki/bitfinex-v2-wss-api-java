@@ -57,7 +57,9 @@ public class TickHandlerTest {
 
         final ExecutorService executorService = MoreExecutors.newDirectExecutorService();
         final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-        final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker, executorService, new BitfinexApiCallbackRegistry());
+        Mockito.when(bitfinexApiBroker.getCallbacks()).thenReturn(new BitfinexApiCallbackRegistry());
+
+        final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker, executorService);
         Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(tickerManager);
 
         tickerManager.registerTickCallback(symbol, (s, c) -> {

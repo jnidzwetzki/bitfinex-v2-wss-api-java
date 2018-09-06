@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderGroupCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.OrderCommand;
@@ -68,11 +67,11 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	private final static Logger logger = LoggerFactory.getLogger(OrderManager.class);
 
 
-	public OrderManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService, BitfinexApiCallbackRegistry callbackRegistry) {
+	public OrderManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
 		super(executorService, bitfinexApiBroker);
 		this.orders = new ArrayList<>();
-		callbackRegistry.onExchangeOrdersEvent(eos -> eos.forEach(this::updateOrder));
-		callbackRegistry.onExchangeOrderNotification(this::updateOrder);
+		bitfinexApiBroker.getCallbacks().onExchangeOrdersEvent(eos -> eos.forEach(this::updateOrder));
+		bitfinexApiBroker.getCallbacks().onExchangeOrderNotification(this::updateOrder);
 	}
 
 	/**

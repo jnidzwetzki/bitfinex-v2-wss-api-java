@@ -17,17 +17,16 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.manager;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Trade;
-
 import java.util.concurrent.ExecutorService;
+
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.entity.Trade;
 
 public class TradeManager extends SimpleCallbackManager<Trade> {
 
-	public TradeManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService, BitfinexApiCallbackRegistry callbackRegistry) {
+	public TradeManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
 		super(executorService, bitfinexApiBroker);
-		callbackRegistry.onTradeEvent(this::updateTrade);
+		bitfinexApiBroker.getCallbacks().onTradeEvent(this::updateTrade);
 	}
 	
 	/**

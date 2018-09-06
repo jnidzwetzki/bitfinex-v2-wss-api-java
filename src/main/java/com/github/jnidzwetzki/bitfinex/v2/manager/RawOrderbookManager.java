@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeRawOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
@@ -35,11 +34,10 @@ public class RawOrderbookManager extends AbstractManager {
 	 */
 	private final BiConsumerCallbackManager<RawOrderbookConfiguration, RawOrderbookEntry> channelCallbacks;
 
-	public RawOrderbookManager(final BitfinexApiBroker bitfinexApiBroker, ExecutorService executorService,
-							   BitfinexApiCallbackRegistry callbackRegistry) {
+	public RawOrderbookManager(final BitfinexApiBroker bitfinexApiBroker, ExecutorService executorService) {
 		super(bitfinexApiBroker, executorService);
 		this.channelCallbacks = new BiConsumerCallbackManager<>(executorService, bitfinexApiBroker);
-		callbackRegistry.onRawOrderbookEvent((sym, entries) -> {
+		bitfinexApiBroker.getCallbacks().onRawOrderbookEvent((sym, entries) -> {
 			entries.forEach(e -> handleNewOrderbookEntry(sym, e));
 		});
 	}

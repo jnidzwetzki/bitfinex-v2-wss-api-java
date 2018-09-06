@@ -130,8 +130,10 @@ public class TradeManagerTest {
         Mockito.when(config.getApiKey()).thenReturn(API_KEY);
         Mockito.when(bitfinexApiBroker.isAuthenticated()).thenReturn(true);
         Mockito.when(bitfinexApiBroker.getCapabilities()).thenReturn(ConnectionCapabilities.ALL_CAPABILITIES);
+        Mockito.when(bitfinexApiBroker.getCallbacks()).thenReturn(new BitfinexApiCallbackRegistry());
 
-        final TradeManager tradeManager = new TradeManager(bitfinexApiBroker, executorService, new BitfinexApiCallbackRegistry());
+
+        final TradeManager tradeManager = new TradeManager(bitfinexApiBroker, executorService);
         Mockito.when(bitfinexApiBroker.getTradeManager()).thenReturn(tradeManager);
 
         return bitfinexApiBroker;
