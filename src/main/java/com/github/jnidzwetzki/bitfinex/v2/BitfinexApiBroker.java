@@ -80,6 +80,7 @@ import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
+import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexStreamSymbolToChannelIdResolverAware;
 
 public class BitfinexApiBroker implements Closeable {
 
@@ -423,6 +424,16 @@ public class BitfinexApiBroker implements Closeable {
 	 */
 	public void sendCommand(final AbstractAPICommand apiCommand) {
 		try {
+			if (apiCommand instanceof BitfinexStreamSymbolToChannelIdResolverAware) {
+				BitfinexStreamSymbolToChannelIdResolverAware aware = (BitfinexStreamSymbolToChannelIdResolverAware) apiCommand;
+				aware.setResolver(symbol -> {
+					final int channelId = getChannelForSymbol(symbol);
+					if (channelId == -1) {
+						throw new IllegalArgumentException("Unknown symbol: " + symbol);
+					}
+					return channelId;
+				});
+			}
 			final String command = apiCommand.getCommand(this);
 			logger.debug("Sending to server: {}", command);
 			websocketEndpoint.sendMessage(command);
@@ -619,7 +630,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * @param symbol
 	 * @return
 	 */
-	public int getChannelForSymbol(final BitfinexStreamSymbol symbol) {
+	private int getChannelForSymbol(final BitfinexStreamSymbol symbol) {
 		synchronized (channelIdSymbolMap) {
 			return channelIdSymbolMap.entrySet()
 					.stream()
@@ -809,8 +820,8 @@ public class BitfinexApiBroker implements Closeable {
 	 */
 	public boolean unsubscribeAllChannels() throws InterruptedException {
 		
-		for(final Integer channel : channelIdSymbolMap.keySet()) {
-			sendCommand(new UnsubscribeChannelCommand(channel));
+		for(final BitfinexStreamSymbol symbol : channelIdSymbolMap.values()) {
+			sendCommand(new UnsubscribeChannelCommand(symbol));
 		}
 
 		final Stopwatch stopwatch = Stopwatch.createStarted();

@@ -192,16 +192,8 @@ public class QuoteManager extends AbstractManager {
 	 * @param tickerSymbol
 	 */
 	public void unsubscribeTicker(final BitfinexTickerSymbol tickerSymbol) {
-
 		lastTickerActivity.remove(tickerSymbol);
-
-		final int channel = bitfinexApiBroker.getChannelForSymbol(tickerSymbol);
-
-		if(channel == -1) {
-			throw new IllegalArgumentException("Unknown symbol: " + tickerSymbol);
-		}
-
-		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
+		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(tickerSymbol);
 		bitfinexApiBroker.sendCommand(command);
 		bitfinexApiBroker.removeChannelForSymbol(tickerSymbol);
 	}
@@ -269,16 +261,8 @@ public class QuoteManager extends AbstractManager {
 	 * @param timeframe
 	 */
 	public void unsubscribeCandles(final BitfinexCandlestickSymbol symbol) {
-
 		lastTickerActivity.remove(symbol);
-
-		final int channel = bitfinexApiBroker.getChannelForSymbol(symbol);
-
-		if(channel == -1) {
-			throw new IllegalArgumentException("Unknown symbol: " + symbol);
-		}
-
-		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
+		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(symbol);
 		bitfinexApiBroker.sendCommand(command);
 		bitfinexApiBroker.removeChannelForSymbol(symbol);
 	}
@@ -332,14 +316,7 @@ public class QuoteManager extends AbstractManager {
 	 * @param pricePoints
 	 */
 	public void unsubscribeExecutedTrades(final BitfinexExecutedTradeSymbol tradeSymbol) {
-
-		final int channel = bitfinexApiBroker.getChannelForSymbol(tradeSymbol);
-
-		if(channel == -1) {
-			throw new IllegalArgumentException("Unknown symbol: " + tradeSymbol);
-		}
-
-		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(channel);
+		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(tradeSymbol);
 		bitfinexApiBroker.sendCommand(command);
 		bitfinexApiBroker.removeChannelForSymbol(tradeSymbol);
 	}
