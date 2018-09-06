@@ -55,11 +55,12 @@ public class CandlestickHandlerTest {
 		
 		final BitfinexCandlestickSymbol symbol 
 			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), Timeframe.MINUTES_1);
-		final BitfinexApiCallbackRegistry callbackRegistry = new BitfinexApiCallbackRegistry();
-		
+
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker, executorService, callbackRegistry);
+		Mockito.when(bitfinexApiBroker.getCallbacks()).thenReturn(new BitfinexApiCallbackRegistry());
+
+		final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker, executorService);
 		Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(tickerManager);
 
 		final AtomicInteger counter = new AtomicInteger(0);
@@ -94,11 +95,12 @@ public class CandlestickHandlerTest {
 		
 		final BitfinexCandlestickSymbol symbol 
 			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), Timeframe.MINUTES_1);
-		final BitfinexApiCallbackRegistry callbackRegistry = new BitfinexApiCallbackRegistry();
 
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker, executorService, callbackRegistry);
+		Mockito.when(bitfinexApiBroker.getCallbacks()).thenReturn(new BitfinexApiCallbackRegistry());
+
+		final QuoteManager tickerManager = new QuoteManager(bitfinexApiBroker, executorService);
 		Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(tickerManager);
 
 		final AtomicInteger counter = new AtomicInteger(0);

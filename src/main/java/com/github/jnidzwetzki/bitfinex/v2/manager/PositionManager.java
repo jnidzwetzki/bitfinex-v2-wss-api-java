@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Position;
 
 public class PositionManager extends SimpleCallbackManager<Position> {
@@ -32,10 +31,10 @@ public class PositionManager extends SimpleCallbackManager<Position> {
 	 */
 	private final List<Position> positions;
 
-	public PositionManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService, BitfinexApiCallbackRegistry callbackRegistry) {
+	public PositionManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
 		super(executorService, bitfinexApiBroker);
 		this.positions = new ArrayList<>();
-		callbackRegistry.onPositionsEvent(positions -> positions.forEach(this::updatePosition));
+		bitfinexApiBroker.getCallbacks().onPositionsEvent(positions -> positions.forEach(this::updatePosition));
 	}
 
 	/**

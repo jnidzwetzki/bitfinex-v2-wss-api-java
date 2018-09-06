@@ -19,6 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2.test.handler;
 
 import java.util.concurrent.ExecutorService;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import org.json.JSONArray;
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,7 +32,6 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
-import com.google.common.util.concurrent.MoreExecutors;
 
 public class ExecutedTradesHandlerTest {
 
@@ -57,7 +57,8 @@ public class ExecutedTradesHandlerTest {
 
         final ExecutorService executorService = MoreExecutors.newDirectExecutorService();
         final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-        final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker, executorService, new BitfinexApiCallbackRegistry());
+        Mockito.doReturn(new BitfinexApiCallbackRegistry()).when(bitfinexApiBroker).getCallbacks();
+        final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker, executorService);
         Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(quoteManager);
 
         quoteManager.registerExecutedTradeCallback(symbol, (s, c) -> {
@@ -89,7 +90,8 @@ public class ExecutedTradesHandlerTest {
 
         final ExecutorService executorService = MoreExecutors.newDirectExecutorService();
         final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-        final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker, executorService, new BitfinexApiCallbackRegistry());
+        Mockito.when(bitfinexApiBroker.getCallbacks()).thenReturn(new BitfinexApiCallbackRegistry());
+        final QuoteManager quoteManager = new QuoteManager(bitfinexApiBroker, executorService);
         Mockito.when(bitfinexApiBroker.getQuoteManager()).thenReturn(quoteManager);
 
         quoteManager.registerExecutedTradeCallback(symbol, (s, c) -> {
