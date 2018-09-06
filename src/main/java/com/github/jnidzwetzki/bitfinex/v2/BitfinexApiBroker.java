@@ -833,6 +833,10 @@ public class BitfinexApiBroker implements Closeable {
 		return authenticated;
 	}
 
+	public ConnectionCapabilities getCapabilities() {
+		return capabilities;
+	}
+
 	public AtomicLong getLastHeartbeat() {
 		return lastHeartbeat;
 	}
