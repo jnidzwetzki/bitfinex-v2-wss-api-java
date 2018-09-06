@@ -29,25 +29,22 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
 import com.github.jnidzwetzki.bitfinex.v2.SequenceNumberAuditor;
-import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExecutedTrade;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookEntry;
-import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
 public class IntegrationTest {
 
@@ -93,12 +90,12 @@ public class IntegrationTest {
 		final CountDownLatch latch = new CountDownLatch(10);
 		try {
 			bitfinexClient.connect();
-			final OrderbookConfiguration orderbookConfiguration = new OrderbookConfiguration(
-					BitfinexCurrencyPair.of("BTC","USD"), OrderBookPrecision.P0, OrderBookFrequency.F0, 25);
+			final BitfinexOrderBookSymbol orderbookConfiguration = BitfinexSymbols.orderBook(
+					BitfinexCurrencyPair.of("BTC","USD"), BitfinexOrderBookSymbol.Precision.P0, BitfinexOrderBookSymbol.Frequency.F0, 25);
 
 			final OrderbookManager orderbookManager = bitfinexClient.getOrderbookManager();
 
-			final BiConsumer<OrderbookConfiguration, OrderbookEntry> callback = (c, o) -> {
+			final BiConsumer<BitfinexOrderBookSymbol, BitfinexOrderBookEntry> callback = (c, o) -> {
 				Assert.assertTrue(o.getAmount().doubleValue() != 0);
 				Assert.assertTrue(o.getPrice().doubleValue() != 0);
 				Assert.assertTrue(o.getCount().doubleValue() != 0);
@@ -135,12 +132,11 @@ public class IntegrationTest {
 		final CountDownLatch latch = new CountDownLatch(20);
 		try {
 			bitfinexClient.connect();
-			final RawOrderbookConfiguration orderbookConfiguration = new RawOrderbookConfiguration(
-					BitfinexCurrencyPair.of("BTC", "USD"));
+			BitfinexOrderBookSymbol orderbookConfiguration = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("BTC", "USD"));
 
 			final RawOrderbookManager rawOrderbookManager = bitfinexClient.getRawOrderbookManager();
 
-			final BiConsumer<RawOrderbookConfiguration, RawOrderbookEntry> callback = (c, o) -> {
+			final BiConsumer<BitfinexOrderBookSymbol, BitfinexOrderBookEntry> callback = (c, o) -> {
 				Assert.assertTrue(o.getAmount().doubleValue() != 0);
 				Assert.assertTrue(o.getPrice().doubleValue() != 0);
 				Assert.assertTrue(o.getOrderId() >= 0);

@@ -15,8 +15,25 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.entity.symbol;
+package com.github.jnidzwetzki.bitfinex.v2.exception;
 
-public interface BitfinexStreamSymbol {
-	// Tagging interface
+public class APIException extends Exception {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6230854947150239935L;
+
+	public APIException(final String message) {
+		super(message);
+	}
+
+	public APIException(final Throwable cause) {
+		super(cause);
+	}
+
+	public APIException(final String message, final Throwable cause) {
+		super(message, cause);
+	}
+
 }

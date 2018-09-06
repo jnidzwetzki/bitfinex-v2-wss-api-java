@@ -23,7 +23,7 @@ import java.util.function.Function;
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexStreamSymbolToChannelIdResolverAware;
 
 public class UnsubscribeChannelCommand extends AbstractAPICommand implements BitfinexStreamSymbolToChannelIdResolverAware {

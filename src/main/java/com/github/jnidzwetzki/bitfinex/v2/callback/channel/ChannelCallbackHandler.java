@@ -19,8 +19,8 @@ package com.github.jnidzwetzki.bitfinex.v2.callback.channel;
 
 import org.json.JSONArray;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
 public interface ChannelCallbackHandler {
 

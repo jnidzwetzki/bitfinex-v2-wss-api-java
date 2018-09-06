@@ -26,20 +26,18 @@ import java.util.function.Consumer;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExecutedTrade;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookEntry;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Position;
-import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Trade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
 public class BitfinexApiCallbackListeners {
 
@@ -52,11 +50,11 @@ public class BitfinexApiCallbackListeners {
     protected final Queue<Consumer<Collection<Wallet>>> walletConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexCandlestickSymbol, Collection<BitfinexCandle>>> candlesConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexExecutedTradeSymbol, Collection<ExecutedTrade>>> executedTradesConsumers = new ConcurrentLinkedQueue<>();
-    protected final Queue<BiConsumer<OrderbookConfiguration, Collection<OrderbookEntry>>> orderbookEntryConsumers = new ConcurrentLinkedQueue<>();
-    protected final Queue<BiConsumer<RawOrderbookConfiguration, Collection<RawOrderbookEntry>>> rawOrderbookEntryConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>>> orderbookEntryConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>>> rawOrderbookEntryConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexTickerSymbol, BitfinexTick>> tickConsumers = new ConcurrentLinkedQueue<>();
-    protected final Queue<Consumer<ConnectionCapabilities>> authSuccessConsumers = new ConcurrentLinkedQueue<>();
-    protected final Queue<Consumer<ConnectionCapabilities>> authFailedConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<Consumer<BitfinexApiKeyPermissions>> authSuccessConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<Consumer<BitfinexApiKeyPermissions>> authFailedConsumers = new ConcurrentLinkedQueue<>();
 
     public Closeable onSubscribeChannelEvent(final Consumer<BitfinexStreamSymbol> consumer) {
         subscribeChannelConsumers.offer(consumer);
@@ -103,12 +101,12 @@ public class BitfinexApiCallbackListeners {
         return () -> executedTradesConsumers.remove(consumer);
     }
 
-    public Closeable onOrderbookEvent(final BiConsumer<OrderbookConfiguration, Collection<OrderbookEntry>> consumer) {
+    public Closeable onOrderbookEvent(final BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>> consumer) {
         orderbookEntryConsumers.offer(consumer);
         return () -> orderbookEntryConsumers.remove(consumer);
     }
 
-    public Closeable onRawOrderbookEvent(final BiConsumer<RawOrderbookConfiguration, Collection<RawOrderbookEntry>> consumer) {
+    public Closeable onRawOrderbookEvent(final BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>> consumer) {
         rawOrderbookEntryConsumers.offer(consumer);
         return () -> rawOrderbookEntryConsumers.remove(consumer);
     }
@@ -118,12 +116,12 @@ public class BitfinexApiCallbackListeners {
         return () -> tickConsumers.remove(consumer);
     }
 
-    public Closeable onAuthenticationSuccessEvent(final Consumer<ConnectionCapabilities> consumer) {
+    public Closeable onAuthenticationSuccessEvent(final Consumer<BitfinexApiKeyPermissions> consumer) {
         authSuccessConsumers.offer(consumer);
         return () -> authSuccessConsumers.remove(consumer);
     }
 
-    public Closeable onAuthenticationFailedEvent(final Consumer<ConnectionCapabilities> consumer) {
+    public Closeable onAuthenticationFailedEvent(final Consumer<BitfinexApiKeyPermissions> consumer) {
         authFailedConsumers.offer(consumer);
         return () -> authFailedConsumers.remove(consumer);
     }

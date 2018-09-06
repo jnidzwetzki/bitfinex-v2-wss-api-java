@@ -19,7 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2.callback.api;
 
 import org.json.JSONArray;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 
 public class DoNothingHandler implements APICallbackHandler {
 

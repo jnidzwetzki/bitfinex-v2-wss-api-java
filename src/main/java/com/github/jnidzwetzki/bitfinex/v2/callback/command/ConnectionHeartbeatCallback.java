@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 
 public class ConnectionHeartbeatCallback implements CommandCallbackHandler {
 

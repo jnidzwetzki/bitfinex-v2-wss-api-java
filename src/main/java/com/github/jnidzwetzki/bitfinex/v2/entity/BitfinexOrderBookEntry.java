@@ -19,17 +19,22 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import java.math.BigDecimal;
 
-public class OrderbookEntry {
-	
+public class BitfinexOrderBookEntry {
 
+	private final Long orderId;
 	private final BigDecimal price;
 	private final BigDecimal amount;
-	private final BigDecimal count;
-	
-	public OrderbookEntry(BigDecimal price, BigDecimal count, BigDecimal amount) {
+	private final Integer count;
+
+	public BitfinexOrderBookEntry(Long orderId, BigDecimal price, BigDecimal amount, Integer count) {
+		this.orderId = orderId;
 		this.price = price;
-		this.count = count;
 		this.amount = amount;
+		this.count = count;
+	}
+
+	public Long getOrderId() {
+		return orderId;
 	}
 
 	public BigDecimal getPrice() {
@@ -40,7 +45,7 @@ public class OrderbookEntry {
 		return amount;
 	}
 
-	public BigDecimal getCount() {
+	public Integer getCount() {
 		return count;
 	}
 

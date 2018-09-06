@@ -18,6 +18,7 @@
 package com.github.jnidzwetzki.bitfinex.v2.commands;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 
 public abstract class AbstractAPICommand {
 

@@ -19,7 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2.callback.command;
 
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 
 public interface CommandCallbackHandler {
 	
