@@ -46,8 +46,6 @@ public class OrderbookManager extends AbstractManager {
 	
 	/**
 	 * Register a new trading orderbook callback
-	 * @param symbol
-	 * @param callback
 	 * @throws APIException
 	 */
 	public void registerOrderbookCallback(final OrderbookConfiguration orderbookConfiguration, 
@@ -58,10 +56,6 @@ public class OrderbookManager extends AbstractManager {
 	
 	/**
 	 * Remove the a trading orderbook callback
-	 * @param symbol
-	 * @param callback
-	 * @return
-	 * @throws APIException
 	 */
 	public boolean removeOrderbookCallback(final OrderbookConfiguration orderbookConfiguration, 
 			final BiConsumer<OrderbookConfiguration, OrderbookEntry> callback) throws APIException {
@@ -71,10 +65,6 @@ public class OrderbookManager extends AbstractManager {
 	
 	/**
 	 * Subscribe a orderbook
-	 * @param currencyPair
-	 * @param orderBookPrecision
-	 * @param orderBookFrequency
-	 * @param pricePoints
 	 */
 	public void subscribeOrderbook(final OrderbookConfiguration orderbookConfiguration) {
 		
@@ -86,21 +76,14 @@ public class OrderbookManager extends AbstractManager {
 	
 	/**
 	 * Unsubscribe a orderbook
-	 * @param currencyPair
-	 * @param orderBookPrecision
-	 * @param orderBookFrequency
-	 * @param pricePoints
 	 */
 	public void unsubscribeOrderbook(final OrderbookConfiguration orderbookConfiguration) {
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(orderbookConfiguration);
 		bitfinexApiBroker.sendCommand(command);
-		bitfinexApiBroker.removeChannelForSymbol(orderbookConfiguration);
 	}
 	
 	/**
 	 * Handle a new orderbook entry
-	 * @param symbol
-	 * @param tick
 	 */
 	public void handleNewOrderbookEntry(final OrderbookConfiguration configuration, 
 			final OrderbookEntry entry) {

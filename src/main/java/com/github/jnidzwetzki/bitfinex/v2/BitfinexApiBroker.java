@@ -19,6 +19,8 @@ package com.github.jnidzwetzki.bitfinex.v2;
 
 import java.io.Closeable;
 import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -305,14 +307,19 @@ public class BitfinexApiBroker implements Closeable {
 				channelIdSymbolMap.put(channelId, symbol);
 				channelIdSymbolMap.notifyAll();
 			}
+			callbackRegistry.acceptSubscribeChannelEvent(symbol);
 		});
 		commandCallbacks.put("subscribed", subscribed);
 
 		UnsubscribedCallback unsubscribed = new UnsubscribedCallback();
 		unsubscribed.onUnsubscribedChannelEvent(channelId -> {
+			BitfinexStreamSymbol removed;
 			synchronized (channelIdSymbolMap) {
-				channelIdSymbolMap.remove(channelId);
+				removed = channelIdSymbolMap.remove(channelId);
 				channelIdSymbolMap.notifyAll();
+			}
+			if (removed != null) {
+				callbackRegistry.acceptUnsubscribeChannelEvent(removed);
 			}
 		});
 		commandCallbacks.put("unsubscribed", unsubscribed);
@@ -427,8 +434,8 @@ public class BitfinexApiBroker implements Closeable {
 			if (apiCommand instanceof BitfinexStreamSymbolToChannelIdResolverAware) {
 				BitfinexStreamSymbolToChannelIdResolverAware aware = (BitfinexStreamSymbolToChannelIdResolverAware) apiCommand;
 				aware.setResolver(symbol -> {
-					final int channelId = getChannelForSymbol(symbol);
-					if (channelId == -1) {
+					final Integer channelId = getChannelForSymbol(symbol);
+					if (channelId == null) {
 						throw new IllegalArgumentException("Unknown symbol: " + symbol);
 					}
 					return channelId;
@@ -622,7 +629,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * @return
 	 */
 	public boolean isTickerActive(final BitfinexTickerSymbol symbol) {
-		return getChannelForSymbol(symbol) != -1;
+		return getChannelForSymbol(symbol) != null;
 	}
 
 	/**
@@ -630,33 +637,14 @@ public class BitfinexApiBroker implements Closeable {
 	 * @param symbol
 	 * @return
 	 */
-	private int getChannelForSymbol(final BitfinexStreamSymbol symbol) {
+	private Integer getChannelForSymbol(final BitfinexStreamSymbol symbol) {
 		synchronized (channelIdSymbolMap) {
 			return channelIdSymbolMap.entrySet()
 					.stream()
 					.filter((v) -> v.getValue().equals(symbol))
 					.map(Map.Entry::getKey)
-					.findAny().orElse(-1);
+					.findAny().orElse(null);
 		}
-	}
-	
-	/**
-	 * Remove the channel for the given symbol
-	 * @param symbol
-	 * @return
-	 */
-	public boolean removeChannelForSymbol(final BitfinexStreamSymbol symbol) {
-		final int channel = getChannelForSymbol(symbol);
-		
-		if(channel != -1) {
-			synchronized (channelIdSymbolMap) {
-				channelIdSymbolMap.remove(channel);
-			}
-			
-			return true;
-		}
-		
-		return false;
 	}
 	
 	/**
@@ -815,21 +803,21 @@ public class BitfinexApiBroker implements Closeable {
 
 	/**
 	 * Wait for unsubscription complete
-	 * 
+	 *
 	 * @throws InterruptedException
 	 */
 	public boolean unsubscribeAllChannels() throws InterruptedException {
-		
+
 		for(final BitfinexStreamSymbol symbol : channelIdSymbolMap.values()) {
 			sendCommand(new UnsubscribeChannelCommand(symbol));
 		}
 
 		final Stopwatch stopwatch = Stopwatch.createStarted();
-		
+
 		synchronized (channelIdSymbolMap) {
 			while(! channelIdSymbolMap.isEmpty()) {
 				channelIdSymbolMap.wait(500);
-				
+
 				// Wait max 1 minute for unsubscription complete
 				if(stopwatch.elapsed(TimeUnit.SECONDS) >= 60) {
 					logger.error("Unable to unsubscribe channels in 60 seconds");
@@ -837,115 +825,61 @@ public class BitfinexApiBroker implements Closeable {
 				}
 			}
 		}
-		
+
 		return true;
 	}
-	
-	/**
-	 * Get the last heartbeat value
-	 * @return
-	 */
-	public AtomicLong getLastHeartbeat() {
-		return lastHeartbeat;
-	}
-	
-	/**
-	 * Get the wallet manager
-	 * @return
-	 */
-	public WalletManager getWalletManager() {
-		return walletManager;
-	}
 
-	/**
-	 * Get the ticker manager
-	 * @return
-	 */
-	public QuoteManager getQuoteManager() {
-		return quoteManager;
-	}
-	
-	/**
-	 * Get the order manager
-	 * @return
-	 */
-	public OrderManager getOrderManager() {
-		return orderManager;
-	}
-	
-	/**
-	 * Get the trade manager
-	 * @return
-	 */
-	public TradeManager getTradeManager() {
-		return tradeManager;
-	}
-	
-	/**
-	 * Get the orderbook manager
-	 * @return
-	 */
-	public OrderbookManager getOrderbookManager() {
-		return orderbookManager;
-	}
-
-	/**
-	 * Get the raw orderbook manager
-	 * @return
-	 */
-	public RawOrderbookManager getRawOrderbookManager() {
-		return rawOrderbookManager;
-	}
-	
-	/**
-	 * Get the position manager
-	 * @return
-	 */
-	public PositionManager getPositionManager() {
-		return positionManager;
-	}
-
-	/**
-	 * Get the connection capabilities
-	 * @return
-	 */
-	public ConnectionCapabilities getCapabilities() {
-		return capabilities;
-	}
-	
-	/**
-	 * Is the connection authenticated
-	 * @return
-	 */
 	public boolean isAuthenticated() {
 		return authenticated;
 	}
 
-	/**
-	 * Get the connection feature manager
-	 * @return
-	 */
-	public ConnectionFeatureManager getConnectionFeatureManager() {
-		return connectionFeatureManager;
+	public AtomicLong getLastHeartbeat() {
+		return lastHeartbeat;
 	}
-	
-	/**
-	 * Get the sequence number auditor
-	 * @return
-	 */
-	public SequenceNumberAuditor getSequenceNumberAuditor() {
-		return sequenceNumberAuditor;
-	}
-	
-	/**
-	 * Get the channel id symbol map
-	 * @return
-	 */
-	public Map<Integer, BitfinexStreamSymbol> getChannelIdSymbolMap() {
-		return channelIdSymbolMap;
+
+	public Collection<BitfinexStreamSymbol> getSubscribedChannels() {
+		return Collections.unmodifiableCollection(channelIdSymbolMap.values());
 	}
 
 	public BitfinexApiBrokerConfig getConfiguration() {
-		return configuration;
+		return new BitfinexApiBrokerConfig(configuration);
+	}
+
+	// managers getters
+
+	public QuoteManager getQuoteManager() {
+		return quoteManager;
+	}
+
+	public OrderbookManager getOrderbookManager() {
+		return orderbookManager;
+	}
+
+	public RawOrderbookManager getRawOrderbookManager() {
+		return rawOrderbookManager;
+	}
+
+	public PositionManager getPositionManager() {
+		return positionManager;
+	}
+
+	public OrderManager getOrderManager() {
+		return orderManager;
+	}
+
+	public TradeManager getTradeManager() {
+		return tradeManager;
+	}
+
+	public WalletManager getWalletManager() {
+		return walletManager;
+	}
+
+	public ConnectionFeatureManager getConnectionFeatureManager() {
+		return connectionFeatureManager;
+	}
+
+	public SequenceNumberAuditor getSequenceNumberAuditor() {
+		return sequenceNumberAuditor;
 	}
 }

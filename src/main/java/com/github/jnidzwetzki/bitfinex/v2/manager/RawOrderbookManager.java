@@ -94,7 +94,6 @@ public class RawOrderbookManager extends AbstractManager {
 	public void unsubscribeOrderbook(final RawOrderbookConfiguration orderbookConfiguration) {
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(orderbookConfiguration);
 		bitfinexApiBroker.sendCommand(command);
-		bitfinexApiBroker.removeChannelForSymbol(orderbookConfiguration);
 	}
 	
 	/**
