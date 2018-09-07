@@ -33,7 +33,7 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Position;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
@@ -47,7 +47,7 @@ public class BitfinexApiCallbackListeners {
     protected final Queue<Consumer<Collection<ExchangeOrder>>> exchangeOrdersConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<Collection<Position>>> positionConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<BitfinexMyExecutedTrade>> tradeConsumers = new ConcurrentLinkedQueue<>();
-    protected final Queue<Consumer<Collection<Wallet>>> walletConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<Consumer<Collection<BitfinexWallet>>> walletConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexCandlestickSymbol, Collection<BitfinexCandle>>> candlesConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexExecutedTradeSymbol, Collection<BitfinexExecutedTrade>>> executedTradesConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>>> orderbookEntryConsumers = new ConcurrentLinkedQueue<>();
@@ -86,7 +86,7 @@ public class BitfinexApiCallbackListeners {
         return () -> tradeConsumers.remove(consumer);
     }
 
-    public Closeable onWalletsEvent(final Consumer<Collection<Wallet>> consumer) {
+    public Closeable onWalletsEvent(final Consumer<Collection<BitfinexWallet>> consumer) {
         walletConsumers.offer(consumer);
         return () -> walletConsumers.remove(consumer);
     }
