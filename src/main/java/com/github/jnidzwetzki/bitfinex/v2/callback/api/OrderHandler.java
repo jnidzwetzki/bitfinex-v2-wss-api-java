@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.json.JSONArray;
 import org.slf4j.Logger;
@@ -72,47 +71,45 @@ public class OrderHandler implements APICallbackHandler {
     private BitfinexSubmittedOrder jsonToBitfinexSubmittedOrder(final JSONArray json) {
         final BitfinexSubmittedOrder order = new BitfinexSubmittedOrder();
         order.setOrderId(json.getLong(0));
-        order.setClientGroupId(json.optInt(1, -1));
-        if (order.getClientGroupId() == -1) {
-            order.setClientGroupId(null);
+        final String gid = json.optString(1, null);
+        if (gid != null) {
+            order.setClientGroupId(Integer.parseInt(gid));
         }
-        order.setClientId(json.optLong(2, -1));
-        if (order.getClientId() == -1) {
-            order.setClientId(null);
+        final String cid = json.optString(2, null);
+        if (cid != null) {
+            order.setClientId(Long.parseLong(cid));
         }
         order.setSymbol(BitfinexCurrencyPair.fromSymbolString(json.getString(3)));
         order.setCreatedTimestamp(json.getLong(4));
-        order.setUpdatedTimestamp(json.optLong(5, -1));
-        if (order.getUpdatedTimestamp() == -1) {
-            order.setUpdatedTimestamp(null);
+        final String updatedTimestamp = json.optString(5, null);
+        if (updatedTimestamp != null) {
+            order.setUpdatedTimestamp(Long.parseLong(updatedTimestamp));
         }
         order.setAmount(json.getBigDecimal(6));
         order.setAmountAtCreation(json.getBigDecimal(7));
         order.setOrderType(BitfinexOrderType.fromBifinexString(json.getString(8)));
-
         // FIXME: investigate here - documentation is not specifying any numbers
         // FIXME: https://docs.bitfinex.com/v2/reference#ws-auth-orders
         final int flags = json.getInt(12);
         if (flags > 0) {
             logger.info("Flags set on order: " + flags);
         }
-
-        final BitfinexSubmittedOrderStatus orderState = BitfinexSubmittedOrderStatus.fromString(json.getString(13));
-        order.setStatus(orderState);
-
+        final String orderStatus = json.getString(13);
+        if (orderStatus != null) {
+            order.setStatus(BitfinexSubmittedOrderStatus.fromString(orderStatus));
+        }
         order.setPrice(json.optBigDecimal(16, null));
         order.setPriceAverage(json.optBigDecimal(17, null));
         order.setPriceTrailing(json.optBigDecimal(18, null));
         order.setPriceAuxLimit(json.optBigDecimal(19, null));
         order.setNotify(json.getInt(23) == 1);
         order.setHidden(json.getInt(24) == 1); // TODO: remove it, hidden is passed through flags
-
-        order.setParentOrderId(json.optLong(25, -1));
-        if (order.getParentOrderId() == -1) {
-            order.setParentOrderId(null);
+        final String parentOrderId = json.optString(25, null);
+        if (parentOrderId != null) {
+            order.setParentOrderId(Long.parseLong(parentOrderId));
         }
         final String parentOrderType = json.optString(9, null);
-        if (!Strings.isNullOrEmpty(parentOrderType)) {
+        if (parentOrderType != null) {
             order.setParentOrderType(BitfinexOrderType.fromBifinexString(parentOrderType));
         }
         return order;
