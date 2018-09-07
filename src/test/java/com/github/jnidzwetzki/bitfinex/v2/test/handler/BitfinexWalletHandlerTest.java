@@ -27,11 +27,11 @@ import org.mockito.Mockito;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.WalletHandler;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
 import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
 
 
-public class WalletHandlerTest {
+public class BitfinexWalletHandlerTest {
 
 	/**
 	 * The delta for double compares
@@ -49,7 +49,7 @@ public class WalletHandlerTest {
 		final String callbackValue = "[0,\"ws\",[\"exchange\",\"ETH\",9,0,null]]";
 		final JSONArray jsonArray = new JSONArray(callbackValue);
 		
-		final Table<String, String, Wallet> walletTable = HashBasedTable.create();
+		final Table<BitfinexWallet.Type, String, BitfinexWallet> walletTable = HashBasedTable.create();
 
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		final WalletManager walletManager = Mockito.mock(WalletManager.class);
@@ -61,10 +61,10 @@ public class WalletHandlerTest {
 		
 		final WalletHandler walletHandler = new WalletHandler();
 		walletHandler.onWalletsEvent(wallets -> {
-			for (Wallet wallet : wallets) {
+			for (BitfinexWallet wallet : wallets) {
 				try {
-					Table<String, String, Wallet> wt = walletManager.getWalletTable();
-					wt.put(wallet.getWalletType(), wallet.getCurreny(), wallet);
+					Table<BitfinexWallet.Type, String, BitfinexWallet> wt = walletManager.getWalletTable();
+					wt.put(wallet.getWalletType(), wallet.getCurrency(), wallet);
 				} catch (APIException e) {
 					e.printStackTrace();
 				}
@@ -73,9 +73,9 @@ public class WalletHandlerTest {
 		walletHandler.handleChannelData(jsonArray);
 
 		Assert.assertEquals(1, walletTable.size());
-		Assert.assertEquals(9, walletTable.get("exchange", "ETH").getBalance().doubleValue(), DELTA);
-		Assert.assertNull(walletTable.get("exchange", "ETH").getBalanceAvailable());
-		Assert.assertEquals(0, walletTable.get("exchange", "ETH").getUnsettledInterest().doubleValue(), DELTA);
+		Assert.assertEquals(9, walletTable.get(BitfinexWallet.Type.EXCHANGE, "ETH").getBalance().doubleValue(), DELTA);
+		Assert.assertNull(walletTable.get(BitfinexWallet.Type.EXCHANGE, "ETH").getBalanceAvailable());
+		Assert.assertEquals(0, walletTable.get(BitfinexWallet.Type.EXCHANGE, "ETH").getUnsettledInterest().doubleValue(), DELTA);
 	}
 	
 	/**
@@ -89,7 +89,7 @@ public class WalletHandlerTest {
 		final String callbackValue = "[0,\"ws\",[[\"exchange\",\"ETH\",9,0,null],[\"exchange\",\"USD\",1826.56468323,0,null],[\"margin\",\"USD\",0,0,null],[\"exchange\",\"XRP\",0,0,null],[\"exchange\",\"EOS\",0,0,null],[\"exchange\",\"NEO\",0,0,null],[\"exchange\",\"LTC\",0,0,null],[\"exchange\",\"IOT\",0,0,null],[\"exchange\",\"BTC\",0,0,null]]]";
 		final JSONArray jsonArray = new JSONArray(callbackValue);
 		
-		final Table<String, String, Wallet> walletTable = HashBasedTable.create();
+		final Table<BitfinexWallet.Type, String, BitfinexWallet> walletTable = HashBasedTable.create();
 
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
 		final WalletManager walletManager = Mockito.mock(WalletManager.class);
@@ -101,10 +101,10 @@ public class WalletHandlerTest {
 		
 		final WalletHandler walletHandler = new WalletHandler();
 		walletHandler.onWalletsEvent(wallets -> {
-			for (Wallet wallet : wallets) {
+			for (BitfinexWallet wallet : wallets) {
 				try {
-					Table<String, String, Wallet> wt = walletManager.getWalletTable();
-					wt.put(wallet.getWalletType(), wallet.getCurreny(), wallet);
+					Table<BitfinexWallet.Type, String, BitfinexWallet> wt = walletManager.getWalletTable();
+					wt.put(wallet.getWalletType(), wallet.getCurrency(), wallet);
 				} catch (APIException e) {
 					e.printStackTrace();
 				}
@@ -114,19 +114,19 @@ public class WalletHandlerTest {
 
 		Assert.assertEquals(9, walletTable.size());
 		
-		Assert.assertEquals(9, walletTable.get("exchange", "ETH").getBalance().doubleValue(), DELTA);
-		Assert.assertEquals(null, walletTable.get("exchange", "ETH").getBalanceAvailable());
-		Assert.assertEquals(0, walletTable.get("exchange", "ETH").getUnsettledInterest().doubleValue(), DELTA);
+		Assert.assertEquals(9, walletTable.get(BitfinexWallet.Type.EXCHANGE, "ETH").getBalance().doubleValue(), DELTA);
+		Assert.assertEquals(null, walletTable.get(BitfinexWallet.Type.EXCHANGE, "ETH").getBalanceAvailable());
+		Assert.assertEquals(0, walletTable.get(BitfinexWallet.Type.EXCHANGE, "ETH").getUnsettledInterest().doubleValue(), DELTA);
 		
-		Assert.assertEquals(1826.56468323, walletTable.get("exchange", "USD").getBalance().doubleValue(), DELTA);
-		Assert.assertEquals(null, walletTable.get("exchange", "ETH").getBalanceAvailable());
-		Assert.assertEquals(0, walletTable.get("exchange", "ETH").getUnsettledInterest().doubleValue(), DELTA);
+		Assert.assertEquals(1826.56468323, walletTable.get(BitfinexWallet.Type.EXCHANGE, "USD").getBalance().doubleValue(), DELTA);
+		Assert.assertEquals(null, walletTable.get(BitfinexWallet.Type.EXCHANGE, "ETH").getBalanceAvailable());
+		Assert.assertEquals(0, walletTable.get(BitfinexWallet.Type.EXCHANGE, "ETH").getUnsettledInterest().doubleValue(), DELTA);
 		
-		Assert.assertEquals(0, walletTable.get("margin", "USD").getBalance().doubleValue(), DELTA);
-		Assert.assertEquals(null, walletTable.get("margin", "USD").getBalanceAvailable());
-		Assert.assertEquals(0, walletTable.get("margin", "USD").getUnsettledInterest().doubleValue(), DELTA);
+		Assert.assertEquals(0, walletTable.get(BitfinexWallet.Type.MARGIN, "USD").getBalance().doubleValue(), DELTA);
+		Assert.assertEquals(null, walletTable.get(BitfinexWallet.Type.MARGIN, "USD").getBalanceAvailable());
+		Assert.assertEquals(0, walletTable.get(BitfinexWallet.Type.MARGIN, "USD").getUnsettledInterest().doubleValue(), DELTA);
 		
-		Assert.assertTrue(walletTable.get("margin", "USD").toString().length() > 0);
+		Assert.assertTrue(walletTable.get(BitfinexWallet.Type.MARGIN, "USD").toString().length() > 0);
 	}
 	
 }

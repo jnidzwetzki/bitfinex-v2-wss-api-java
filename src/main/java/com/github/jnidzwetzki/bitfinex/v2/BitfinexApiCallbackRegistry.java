@@ -28,7 +28,7 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Position;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
@@ -60,7 +60,7 @@ public final class BitfinexApiCallbackRegistry extends BitfinexApiCallbackListen
         tradeConsumers.forEach(consumer -> consumer.accept(event));
     }
 
-    public void acceptWalletsEvent(final Collection<Wallet> event) {
+    public void acceptWalletsEvent(final Collection<BitfinexWallet> event) {
         walletConsumers.forEach(consumer -> consumer.accept(event));
     }
 
