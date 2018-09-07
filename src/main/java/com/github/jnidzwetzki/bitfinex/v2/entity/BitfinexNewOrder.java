@@ -207,8 +207,8 @@ public class BitfinexNewOrder {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BitfinexNewOrder that = (BitfinexNewOrder) o;
-        return clientId == that.clientId &&
-                clientGroupId == that.clientGroupId &&
+        return Objects.equals(clientId, that.clientId) &&
+                Objects.equals(clientGroupId, that.clientGroupId) &&
                 postOnly == that.postOnly &&
                 hidden == that.hidden &&
                 close == that.close &&
