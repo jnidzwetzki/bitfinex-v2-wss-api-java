@@ -19,19 +19,21 @@ package com.github.jnidzwetzki.bitfinex.v2.callback.api;
 
 import java.util.function.Consumer;
 
+import com.google.common.base.Strings;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrder;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrderState;
 
 public class NotificationHandler implements APICallbackHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(NotificationHandler.class);
 
-    private Consumer<ExchangeOrder> exchangeOrderConsumer = ex -> {};
+    private Consumer<BitfinexSubmittedOrder> exchangeOrderConsumer = ex -> {};
 
     /**
      * {@inheritDoc}
@@ -51,43 +53,45 @@ public class NotificationHandler implements APICallbackHandler {
         if ("on-req".equals(array.getString(1))) {
             final String state = array.optString(6);
             if ("ERROR".equals(state)) {
-                ExchangeOrder exchangeOrder = jsonToExchangeOrder(array);
+                BitfinexSubmittedOrder exchangeOrder = jsonToBitfinexSubmittedOrder(array);
                 exchangeOrderConsumer.accept(exchangeOrder);
             }
         }
     }
 
-    private ExchangeOrder jsonToExchangeOrder(JSONArray array) {
+    private BitfinexSubmittedOrder jsonToBitfinexSubmittedOrder(JSONArray array) {
         final JSONArray orderJson = array.optJSONArray(4);
         final long oid = orderJson.optLong(0, -1);
         final int gid = orderJson.optInt(1, -1);
-        final long cid = orderJson.getLong(2);
+        final long cid = orderJson.optLong(2, -1);
         final String symbol = orderJson.optString(3);
         final String stateValue = array.optString(7);
         final String state = array.optString(6);
 
-        final ExchangeOrder exchangeOrder = new ExchangeOrder();
-        if(oid != -1 ){
-            exchangeOrder.setOrderId(oid);
+        final BitfinexSubmittedOrder submittedOrder = new BitfinexSubmittedOrder();
+        if (oid != -1) {
+            submittedOrder.setOrderId(oid);
         }
-        if(gid != -1 ){
-            exchangeOrder.setGroupId(gid);
+        if (gid != -1) {
+            submittedOrder.setClientGroupId(gid);
         }
-        exchangeOrder.setCid(cid);
-        exchangeOrder.setSymbol(symbol);
+        if( cid != -1) {
+            submittedOrder.setClientId(cid);
+        }
 
-        exchangeOrder.setState(ExchangeOrderState.STATE_ERROR);
-
-        logger.error("State for order {} is {}, reason is {}", exchangeOrder.getOrderId(), state, stateValue);
-        return exchangeOrder;
-
+        if (!Strings.isNullOrEmpty(symbol)) {
+            submittedOrder.setSymbol(BitfinexCurrencyPair.fromSymbolString(symbol));
+        }
+        submittedOrder.setStatus(BitfinexSubmittedOrderStatus.ERROR);
+        logger.error("State for order {} is {}, reason is {}", submittedOrder.getOrderId(), state, stateValue);
+        return submittedOrder;
     }
 
     /**
      * exchange order notification consumer
      * @param consumer of event
      */
-    public void onExchangeOrderNotification(Consumer<ExchangeOrder> consumer) {
+    public void onOrderNotification(Consumer<BitfinexSubmittedOrder> consumer) {
         this.exchangeOrderConsumer = consumer;
     }
 }

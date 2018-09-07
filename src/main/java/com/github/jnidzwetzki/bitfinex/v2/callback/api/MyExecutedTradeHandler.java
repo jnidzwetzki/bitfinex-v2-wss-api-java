@@ -23,10 +23,10 @@ import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 
 public class MyExecutedTradeHandler implements APICallbackHandler {
 
@@ -64,7 +64,7 @@ public class MyExecutedTradeHandler implements APICallbackHandler {
 
         final String orderTypeString = json.optString(6, null);
         if (orderTypeString != null) {
-            trade.setOrderType(BitfinexOrderType.fromString(orderTypeString));
+            trade.setOrderType(BitfinexOrderType.fromBifinexString(orderTypeString));
         }
 
         trade.setOrderPrice(json.optBigDecimal(7, null));

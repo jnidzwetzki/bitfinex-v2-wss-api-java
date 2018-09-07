@@ -20,10 +20,11 @@ package com.github.jnidzwetzki.bitfinex.v2.manager;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
+import com.google.common.collect.Sets;
+
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SetConnectionFeaturesCommand;
-import com.google.common.collect.Sets;
 
 public class ConnectionFeatureManager extends AbstractManager {
 	

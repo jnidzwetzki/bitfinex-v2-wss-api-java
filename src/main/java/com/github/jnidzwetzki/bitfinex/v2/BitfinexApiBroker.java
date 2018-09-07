@@ -38,10 +38,10 @@ import org.slf4j.LoggerFactory;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.APICallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.DoNothingHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.HeartbeatHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.api.MyExecutedTradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.NotificationHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.OrderHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.PositionHandler;
-import com.github.jnidzwetzki.bitfinex.v2.callback.api.MyExecutedTradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.WalletHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.CandlestickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandler;
@@ -251,9 +251,9 @@ public class BitfinexApiBroker implements Closeable {
 		channelHandler.put("wu", walletHandler);
 
 		final OrderHandler orderHandler = new OrderHandler();
-		orderHandler.onExchangeOrdersEvent(exchangeOrders -> {
-			exchangeOrders.forEach(eo ->  eo.setApikey(configuration.getApiKey()));
-			callbackRegistry.acceptExchangeOrdersEvent(exchangeOrders);
+		orderHandler.onSubmittedOrderEvent(exchangeOrders -> {
+			exchangeOrders.forEach(eo ->  eo.setApiKey(configuration.getApiKey()));
+			callbackRegistry.acceptSubmittedOrderEvent(exchangeOrders);
 		});
     
 		// Order snapshot
@@ -278,9 +278,9 @@ public class BitfinexApiBroker implements Closeable {
 
 		final NotificationHandler notificationHandler = new NotificationHandler();
 		
-		notificationHandler.onExchangeOrderNotification(eo -> {
-			eo.setApikey(configuration.getApiKey());
-			callbackRegistry.acceptExchangeOrderNotification(eo);
+		notificationHandler.onOrderNotification(eo -> {
+			eo.setApiKey(configuration.getApiKey());
+			callbackRegistry.acceptOrderNotification(eo);
 		});
 		
 		// General notification
@@ -360,7 +360,7 @@ public class BitfinexApiBroker implements Closeable {
 			Closeable walletsInitCallback = callbackRegistry.onWalletsEvent(wallets -> {
 				connectionReadyLatch.countDown();
 			});
-			Closeable orderInitCallback = callbackRegistry.onExchangeOrdersEvent(exchangeOrders -> {
+			Closeable orderInitCallback = callbackRegistry.onSubmittedOrderEvent(exchangeOrders -> {
 				connectionReadyLatch.countDown();
 			});
 
@@ -602,11 +602,11 @@ public class BitfinexApiBroker implements Closeable {
 			final ChannelCallbackHandler handler;
 			if(orderBookSymbol.isRawOrderBook()) {
 				final RawOrderbookHandler rawOrderBookHandler = new RawOrderbookHandler();
-				rawOrderBookHandler.onOrderbookEvent(callbackRegistry::acceptRawOrderbookEvent);
+				rawOrderBookHandler.onOrderbookEvent(callbackRegistry::acceptRawOrderBookEvent);
 				handler = rawOrderBookHandler;
 			} else {
 				final OrderbookHandler orderbookHandler = new OrderbookHandler();
-				orderbookHandler.onOrderBookEvent(callbackRegistry::acceptOrderbookEvent);
+				orderbookHandler.onOrderBookEvent(callbackRegistry::acceptOrderBookEvent);
 				handler = orderbookHandler;
 			}
 			handler.handleChannelData(channelSymbol, jsonArray);
@@ -677,7 +677,7 @@ public class BitfinexApiBroker implements Closeable {
 			Closeable walletsInitCallback = callbackRegistry.onWalletsEvent(wallets -> {
 				connectionReadyLatch.countDown();
 			});
-			Closeable orderInitCallback = callbackRegistry.onExchangeOrdersEvent(exchangeOrders -> {
+			Closeable orderInitCallback = callbackRegistry.onSubmittedOrderEvent(exchangeOrders -> {
 				connectionReadyLatch.countDown();
 			});
 

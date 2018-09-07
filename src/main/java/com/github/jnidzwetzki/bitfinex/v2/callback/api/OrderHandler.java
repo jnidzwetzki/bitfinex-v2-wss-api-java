@@ -21,20 +21,23 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrder;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrderState;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 
 public class OrderHandler implements APICallbackHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(OrderHandler.class);
-    private Consumer<Collection<ExchangeOrder>> exchangeOrdersConsumer = eos -> {};
+    private Consumer<Collection<BitfinexSubmittedOrder>> exchangeOrdersConsumer = eos -> {
+    };
 
     /**
      * {@inheritDoc}
@@ -52,51 +55,76 @@ public class OrderHandler implements APICallbackHandler {
         }
 
         // Snapshot or update
-        List<ExchangeOrder> orders = Lists.newArrayList();
+        List<BitfinexSubmittedOrder> orders = Lists.newArrayList();
         if (json.get(0) instanceof JSONArray) {
             for (int orderPos = 0; orderPos < json.length(); orderPos++) {
                 final JSONArray orderArray = json.getJSONArray(orderPos);
-                ExchangeOrder exchangeOrder = jsonToExchangeOrder(orderArray);
+                BitfinexSubmittedOrder exchangeOrder = jsonToBitfinexSubmittedOrder(orderArray);
                 orders.add(exchangeOrder);
             }
         } else {
-            ExchangeOrder exchangeOrder = jsonToExchangeOrder(json);
+            BitfinexSubmittedOrder exchangeOrder = jsonToBitfinexSubmittedOrder(json);
             orders.add(exchangeOrder);
         }
         exchangeOrdersConsumer.accept(orders);
     }
 
-    private ExchangeOrder jsonToExchangeOrder(final JSONArray json) {
-        final ExchangeOrder exchangeOrder = new ExchangeOrder();
-        exchangeOrder.setOrderId(json.getLong(0));
-        exchangeOrder.setGroupId(json.optInt(1, -1));
-        exchangeOrder.setCid(json.optLong(2, -1));
-        exchangeOrder.setSymbol(json.getString(3));
-        exchangeOrder.setCreated(json.getLong(4));
-        exchangeOrder.setUpdated(json.getLong(5));
-        exchangeOrder.setAmount(json.getBigDecimal(6));
-        exchangeOrder.setAmountAtCreation(json.getBigDecimal(7));
-        exchangeOrder.setOrderType(BitfinexOrderType.fromString(json.getString(8)));
+    private BitfinexSubmittedOrder jsonToBitfinexSubmittedOrder(final JSONArray json) {
+        final BitfinexSubmittedOrder order = new BitfinexSubmittedOrder();
+        order.setOrderId(json.getLong(0));
+        order.setClientGroupId(json.optInt(1, -1));
+        if (order.getClientGroupId() == -1) {
+            order.setClientGroupId(null);
+        }
+        order.setClientId(json.optLong(2, -1));
+        if (order.getClientId() == -1) {
+            order.setClientId(null);
+        }
+        order.setSymbol(BitfinexCurrencyPair.fromSymbolString(json.getString(3)));
+        order.setCreatedTimestamp(json.getLong(4));
+        order.setUpdatedTimestamp(json.optLong(5, -1));
+        if (order.getUpdatedTimestamp() == -1) {
+            order.setUpdatedTimestamp(null);
+        }
+        order.setAmount(json.getBigDecimal(6));
+        order.setAmountAtCreation(json.getBigDecimal(7));
+        order.setOrderType(BitfinexOrderType.fromBifinexString(json.getString(8)));
 
-        final ExchangeOrderState orderState = ExchangeOrderState.fromString(json.getString(13));
-        exchangeOrder.setState(orderState);
+        // FIXME: investigate here - documentation is not specifying any numbers
+        // FIXME: https://docs.bitfinex.com/v2/reference#ws-auth-orders
+        final int flags = json.getInt(12);
+        if (flags > 0) {
+            logger.info("Flags set on order: " + flags);
+        }
 
-        exchangeOrder.setPrice(json.optBigDecimal(16, null));
-        exchangeOrder.setPriceAvg(json.optBigDecimal(17, null));
-        exchangeOrder.setPriceTrailing(json.optBigDecimal(18, null));
-        exchangeOrder.setPriceAuxLimit(json.optBigDecimal(19, null));
-        exchangeOrder.setNotify(json.getInt(23) == 1);
-        exchangeOrder.setHidden(json.getInt(24) == 1);
+        final BitfinexSubmittedOrderStatus orderState = BitfinexSubmittedOrderStatus.fromString(json.getString(13));
+        order.setStatus(orderState);
 
-        return exchangeOrder;
+        order.setPrice(json.optBigDecimal(16, null));
+        order.setPriceAverage(json.optBigDecimal(17, null));
+        order.setPriceTrailing(json.optBigDecimal(18, null));
+        order.setPriceAuxLimit(json.optBigDecimal(19, null));
+        order.setNotify(json.getInt(23) == 1);
+        order.setHidden(json.getInt(24) == 1); // TODO: remove it, hidden is passed through flags
 
+        order.setParentOrderId(json.optLong(25, -1));
+        if (order.getParentOrderId() == -1) {
+            order.setParentOrderId(null);
+        }
+        final String parentOrderType = json.optString(9, null);
+        if (!Strings.isNullOrEmpty(parentOrderType)) {
+            order.setParentOrderType(BitfinexOrderType.fromBifinexString(parentOrderType));
+        }
+        return order;
     }
 
     /**
      * exchange order event consumer
+     *
      * @param consumer of event
      */
-    public void onExchangeOrdersEvent(Consumer<Collection<ExchangeOrder>> consumer) {
+    public void onSubmittedOrderEvent(Consumer<Collection<BitfinexSubmittedOrder>> consumer) {
         this.exchangeOrdersConsumer = consumer;
     }
+
 }

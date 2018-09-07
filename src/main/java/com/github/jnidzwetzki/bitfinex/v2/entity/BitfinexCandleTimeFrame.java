@@ -19,7 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import java.util.concurrent.TimeUnit;
 
-public enum Timeframe {
+public enum BitfinexCandleTimeFrame {
 
 	MINUTES_1(TimeUnit.MINUTES.toMillis(1), "1m"),
 	MINUTES_5(TimeUnit.MINUTES.toMillis(5), "5m"),
@@ -33,7 +33,7 @@ public enum Timeframe {
 	DAY_14(TimeUnit.DAYS.toMillis(14), "14D"),
 	MONTH_1(TimeUnit.DAYS.toMillis(30), "1M");
 
-	private Timeframe(final long milliseconds, final String bitfinexString) {
+	BitfinexCandleTimeFrame(final long milliseconds, final String bitfinexString) {
 		this.milliseconds = milliseconds;
 		this.bitfinexString = bitfinexString;
 	}
@@ -55,8 +55,8 @@ public enum Timeframe {
 	 * @param symbolString
 	 * @return
 	 */
-	public static Timeframe fromSymbolString(final String symbolString) {
-		for (final Timeframe timeframe : Timeframe.values()) {
+	public static BitfinexCandleTimeFrame fromSymbolString(final String symbolString) {
+		for (final BitfinexCandleTimeFrame timeframe : BitfinexCandleTimeFrame.values()) {
 			if (timeframe.getBitfinexString().equals(symbolString)) {
 				return timeframe;
 			}

@@ -22,19 +22,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
 import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 
 public class OrderCommand extends AbstractAPICommand {
 
-	private final BitfinexOrder bitfinexOrder;
+	private final BitfinexNewOrder bitfinexOrder;
 	
 	/**
 	 * The Logger
 	 */
 	private final static Logger logger = LoggerFactory.getLogger(OrderCommand.class);
 
-	public OrderCommand(final BitfinexOrder bitfinexOrder) {
+	public OrderCommand(final BitfinexNewOrder bitfinexOrder) {
 		this.bitfinexOrder = bitfinexOrder;
 	}
 
@@ -42,8 +42,7 @@ public class OrderCommand extends AbstractAPICommand {
 	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) throws CommandException {
 		
 		final JSONObject orderJson = new JSONObject();
-		orderJson.put("cid", bitfinexOrder.getCid());
-		orderJson.put("type", bitfinexOrder.getType().getBifinexString());
+		orderJson.put("type", bitfinexOrder.getOrderType().getBifinexString());
 		orderJson.put("symbol", bitfinexOrder.getSymbol().toBitfinexString());
 		orderJson.put("amount",  bitfinexOrder.getAmount().toString());
 		
@@ -54,23 +53,33 @@ public class OrderCommand extends AbstractAPICommand {
 		if(bitfinexOrder.getPriceTrailing() != null) {
 			orderJson.put("price_trailing", bitfinexOrder.getPriceTrailing().toString());
 		}
-		
+
 		if(bitfinexOrder.getPriceAuxLimit() != null) {
 			orderJson.put("price_aux_limit", bitfinexOrder.getPriceAuxLimit().toString());
 		}
-		
+		if(bitfinexOrder.getPriceOcoStop() != null) {
+			orderJson.put("price_oco_stop", bitfinexOrder.getPriceOcoStop().toString());
+		}
+
+		// FIXME: it's no longer valid - not bitfinex exepcts "flags" field
+		// FIXME: https://docs.bitfinex.com/v2/reference#ws-input-order-new
+		// FIXME: if it works, it's by luck (backward compatibility) - and we don't know how much longer it will work for
 		if(bitfinexOrder.isHidden()) {
 			orderJson.put("hidden", 1);
 		} else {
 			orderJson.put("hidden", 0);
 		}
-		
+		// FIXME: same
 		if(bitfinexOrder.isPostOnly()) {
 			orderJson.put("postonly", 1);
 		}
-		
-		if(bitfinexOrder.getGroupId() > 0) {
-			orderJson.put("gid", bitfinexOrder.getGroupId());
+
+		if(bitfinexOrder.getClientId() != null) {
+			orderJson.put("cid", bitfinexOrder.getClientId());
+		}
+
+		if(bitfinexOrder.getClientGroupId() != null) {
+			orderJson.put("gid", bitfinexOrder.getClientGroupId());
 		}
 		
 		final StringBuilder sb = new StringBuilder();
