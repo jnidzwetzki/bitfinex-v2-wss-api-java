@@ -19,25 +19,25 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import java.math.BigDecimal;
 
-public class Position {
+public class BitfinexPosition {
 
-	private final BitfinexCurrencyPair curreny;
+	private final BitfinexCurrencyPair currency;
 	private String status;
 	private BigDecimal amount;
 	private BigDecimal basePrice;
 	private BigDecimal marginFunding;
 	private int marginFundingType;
-	private BigDecimal pl;
-	private BigDecimal plPercent;
+	private BigDecimal profitLoss;
+	private BigDecimal profitLossPercent;
 	private BigDecimal priceLiquidation;
 	private BigDecimal leverage;
 	
-	public Position(final BitfinexCurrencyPair curreny) {
-		this.curreny = curreny;
+	public BitfinexPosition(final BitfinexCurrencyPair currency) {
+		this.currency = currency;
 	}
 
-	public BitfinexCurrencyPair getCurreny() {
-		return curreny;
+	public BitfinexCurrencyPair getCurrency() {
+		return currency;
 	}
 	
 	public String getStatus() {
@@ -80,12 +80,12 @@ public class Position {
 		this.marginFundingType = marginFundingType;
 	}
 	
-	public BigDecimal getPl() {
-		return pl;
+	public BigDecimal getProfitLoss() {
+		return profitLoss;
 	}
 	
-	public void setPl(final BigDecimal pl) {
-		this.pl = pl;
+	public void setProfitLoss(final BigDecimal pl) {
+		this.profitLoss = pl;
 	}
 	
 	public BigDecimal getPriceLiquidation() {
@@ -104,19 +104,19 @@ public class Position {
 		this.leverage = leverage;
 	}
 
-	public BigDecimal getPlPercent() {
-		return plPercent;
+	public BigDecimal getProfitLossPercent() {
+		return profitLossPercent;
 	}
 	
-	public void setPlPercent(final BigDecimal plPercent) {
-		this.plPercent = plPercent;
+	public void setProfitLossPercent(final BigDecimal profitLossPercent) {
+		this.profitLossPercent = profitLossPercent;
 	}
 
 	@Override
 	public String toString() {
-		return "Position [curreny=" + curreny + ", status=" + status + ", amount=" + amount + ", basePrice=" + basePrice
-				+ ", marginFunding=" + marginFunding + ", marginFundingType=" + marginFundingType + ", pl=" + pl
-				+ ", plPercent=" + plPercent + ", priceLiquidation=" + priceLiquidation + ", leverage=" + leverage
+		return "BitfinexPosition [currency=" + currency + ", status=" + status + ", amount=" + amount + ", basePrice=" + basePrice
+				+ ", marginFunding=" + marginFunding + ", marginFundingType=" + marginFundingType + ", profitLoss=" + profitLoss
+				+ ", profitLossPercent=" + profitLossPercent + ", priceLiquidation=" + priceLiquidation + ", leverage=" + leverage
 				+ "]";
 	}
 	

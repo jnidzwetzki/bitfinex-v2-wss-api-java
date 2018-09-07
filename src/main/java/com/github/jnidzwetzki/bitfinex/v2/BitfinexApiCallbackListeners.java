@@ -24,18 +24,18 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrder;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExecutedTrade;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Position;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Trade;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
@@ -43,13 +43,13 @@ public class BitfinexApiCallbackListeners {
 
     protected final Queue<Consumer<BitfinexStreamSymbol>> subscribeChannelConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<BitfinexStreamSymbol>> unsubscribeChannelConsumers = new ConcurrentLinkedQueue<>();
-    protected final Queue<Consumer<ExchangeOrder>> exchangeOrderConsumers = new ConcurrentLinkedQueue<>();
-    protected final Queue<Consumer<Collection<ExchangeOrder>>> exchangeOrdersConsumers = new ConcurrentLinkedQueue<>();
-    protected final Queue<Consumer<Collection<Position>>> positionConsumers = new ConcurrentLinkedQueue<>();
-    protected final Queue<Consumer<Trade>> tradeConsumers = new ConcurrentLinkedQueue<>();
-    protected final Queue<Consumer<Collection<Wallet>>> walletConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<Consumer<BitfinexSubmittedOrder>> newOrderConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<Consumer<Collection<BitfinexSubmittedOrder>>> submittedOrderConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<Consumer<Collection<BitfinexPosition>>> positionConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<Consumer<BitfinexMyExecutedTrade>> tradeConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<Consumer<Collection<BitfinexWallet>>> walletConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexCandlestickSymbol, Collection<BitfinexCandle>>> candlesConsumers = new ConcurrentLinkedQueue<>();
-    protected final Queue<BiConsumer<BitfinexExecutedTradeSymbol, Collection<ExecutedTrade>>> executedTradesConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<BiConsumer<BitfinexExecutedTradeSymbol, Collection<BitfinexExecutedTrade>>> executedTradesConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>>> orderbookEntryConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>>> rawOrderbookEntryConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexTickerSymbol, BitfinexTick>> tickConsumers = new ConcurrentLinkedQueue<>();
@@ -66,27 +66,27 @@ public class BitfinexApiCallbackListeners {
         return () -> unsubscribeChannelConsumers.remove(consumer);
     }
 
-    public Closeable onExchangeOrderNotification(final Consumer<ExchangeOrder> consumer) {
-        exchangeOrderConsumers.offer(consumer);
-        return () -> exchangeOrderConsumers.remove(consumer);
+    public Closeable onOrderNotification(final Consumer<BitfinexSubmittedOrder> consumer) {
+        newOrderConsumers.offer(consumer);
+        return () -> newOrderConsumers.remove(consumer);
     }
 
-    public Closeable onExchangeOrdersEvent(final Consumer<Collection<ExchangeOrder>> consumer) {
-        exchangeOrdersConsumers.offer(consumer);
-        return () -> exchangeOrdersConsumers.remove(consumer);
+    public Closeable onSubmittedOrderEvent(final Consumer<Collection<BitfinexSubmittedOrder>> consumer) {
+        submittedOrderConsumers.offer(consumer);
+        return () -> submittedOrderConsumers.remove(consumer);
     }
 
-    public Closeable onPositionsEvent(final Consumer<Collection<Position>> consumer) {
+    public Closeable onPositionsEvent(final Consumer<Collection<BitfinexPosition>> consumer) {
         positionConsumers.offer(consumer);
         return () -> positionConsumers.remove(consumer);
     }
 
-    public Closeable onTradeEvent(final Consumer<Trade> consumer) {
+    public Closeable onTradeEvent(final Consumer<BitfinexMyExecutedTrade> consumer) {
         tradeConsumers.offer(consumer);
         return () -> tradeConsumers.remove(consumer);
     }
 
-    public Closeable onWalletsEvent(final Consumer<Collection<Wallet>> consumer) {
+    public Closeable onWalletsEvent(final Consumer<Collection<BitfinexWallet>> consumer) {
         walletConsumers.offer(consumer);
         return () -> walletConsumers.remove(consumer);
     }
@@ -96,7 +96,7 @@ public class BitfinexApiCallbackListeners {
         return () -> candlesConsumers.remove(consumer);
     }
 
-    public Closeable onExecutedTradeEvent(final BiConsumer<BitfinexExecutedTradeSymbol, Collection<ExecutedTrade>> consumer) {
+    public Closeable onExecutedTradeEvent(final BiConsumer<BitfinexExecutedTradeSymbol, Collection<BitfinexExecutedTrade>> consumer) {
         executedTradesConsumers.offer(consumer);
         return () -> executedTradesConsumers.remove(consumer);
     }

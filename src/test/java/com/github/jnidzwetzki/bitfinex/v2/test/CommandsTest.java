@@ -15,6 +15,7 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.AbstractAPICommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AuthCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderGroupCommand;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
 import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 import com.github.jnidzwetzki.bitfinex.v2.commands.OrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.PingCommand;
@@ -25,9 +26,8 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
@@ -44,11 +44,11 @@ public class CommandsTest {
 	@Test
 	public void testCommandsJSON() throws CommandException {
 
-		final BitfinexOrder order
+		final BitfinexNewOrder order
 			= BitfinexOrderBuilder.create(
 					BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderType.EXCHANGE_STOP, 2).build();
 
-		final BitfinexCandlestickSymbol candleSymbol = BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BCH","USD"), Timeframe.HOUR_1);
+		final BitfinexCandlestickSymbol candleSymbol = BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BCH","USD"), BitfinexCandleTimeFrame.HOUR_1);
 
 		BitfinexOrderBookSymbol orderbookConfiguration = BitfinexSymbols.orderBook(BitfinexCurrencyPair.of("BCH", "USD"), BitfinexOrderBookSymbol.Precision.P0,
 				BitfinexOrderBookSymbol.Frequency.F0, 50);
@@ -87,7 +87,7 @@ public class CommandsTest {
 	 */
 	@Test
 	public void testOrderCommand() throws CommandException {
-		final BitfinexOrder order
+		final BitfinexNewOrder order
 			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderType.EXCHANGE_STOP, 2)
 			.setHidden()
 			.setPostOnly()

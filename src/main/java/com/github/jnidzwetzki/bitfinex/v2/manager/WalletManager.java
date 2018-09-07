@@ -26,26 +26,24 @@ import com.google.common.collect.Table;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CalculateCommand;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 
 public class WalletManager extends AbstractManager {
 
 	/**
-	 * Wallets
-	 *
-	 *  Currency, Wallet-Type, Wallet
+	 * WalletTable aggregator - key(Wallet-Type, Currency) = Wallet
 	 */
-	private final Table<String, String, Wallet> walletTable;
+	private final Table<BitfinexWallet.Type, String, BitfinexWallet> walletTable;
 
 	public WalletManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
 		super(bitfinexApiBroker, executorService);
 		this.walletTable = HashBasedTable.create();
 		bitfinexApiBroker.getCallbacks().onWalletsEvent(wallets -> wallets.forEach(wallet -> {
             try {
-                Table<String, String, Wallet> walletTable = getWalletTable();
+                Table<BitfinexWallet.Type, String, BitfinexWallet> walletTable = getWalletTable();
                 synchronized (walletTable) {
-                    walletTable.put(wallet.getWalletType(), wallet.getCurreny(), wallet);
+                    walletTable.put(wallet.getWalletType(), wallet.getCurrency(), wallet);
                     walletTable.notifyAll();
                 }
             } catch (APIException e) {
@@ -59,7 +57,7 @@ public class WalletManager extends AbstractManager {
 	 * @return
 	 * @throws APIException
 	 */
-	public Collection<Wallet> getWallets() throws APIException {
+	public Collection<BitfinexWallet> getWallets() throws APIException {
 
 		throwExceptionIfUnauthenticated();
 
@@ -73,7 +71,7 @@ public class WalletManager extends AbstractManager {
 	 * @return
 	 * @throws APIException
 	 */
-	public Table<String, String, Wallet> getWalletTable() throws APIException {
+	public Table<BitfinexWallet.Type, String, BitfinexWallet> getWalletTable() throws APIException {
 		return walletTable;
 	}
 

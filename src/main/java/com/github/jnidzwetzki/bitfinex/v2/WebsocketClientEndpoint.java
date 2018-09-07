@@ -17,12 +17,6 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.net.URI;
-import java.util.concurrent.CountDownLatch;
-import java.util.function.Consumer;
-
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
 import javax.websocket.CloseReason.CloseCodes;
@@ -34,11 +28,15 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.Closeable;
+import java.io.IOException;
+import java.net.URI;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.Consumer;
 
 import com.google.common.base.Throwables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ClientEndpoint
 public class WebsocketClientEndpoint implements Closeable {

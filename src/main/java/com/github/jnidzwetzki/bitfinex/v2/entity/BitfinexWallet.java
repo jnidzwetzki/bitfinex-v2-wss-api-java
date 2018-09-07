@@ -18,26 +18,41 @@
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
-public class Wallet {
+public class BitfinexWallet {
 
-	private final String walletType;
-	private final String curreny;
+	public enum Type {
+		EXCHANGE("exchange"),
+		MARGIN("margin"),
+		FUNDING("funding");
+
+		private final String type;
+
+		Type(String type) {
+			this.type = type;
+		}
+
+		static Type findValue(String value) {
+			for (Type type : values()) {
+				if (Objects.equals(type.type, value)) {
+					return type;
+				}
+			}
+			throw new IllegalArgumentException("Type not handled: " + value);
+		}
+	}
+
+	private final Type walletType;
+	private final String currency;
 	private final BigDecimal balance;
 	private final BigDecimal unsettledInterest;
 	private final BigDecimal balanceAvailable;
-	
-	public final static String WALLET_TYPE_EXCHANGE = "exchange";
-	
-	public final static String WALLET_TYPE_MARGIN = "margin";
-	
-	public final static String WALLET_TYPE_FUNDING = "funding";
 
-	public Wallet(final String walletType, final String curreny, BigDecimal balance, 
-			BigDecimal unsettledInterest, BigDecimal balanceAvailable) {
-		
-		this.walletType = walletType;
-		this.curreny = curreny;
+	public BitfinexWallet(final String walletType, final String currency, BigDecimal balance,
+						  BigDecimal unsettledInterest, BigDecimal balanceAvailable) {
+		this.walletType = Type.findValue(walletType);
+		this.currency = currency;
 		this.balance = balance;
 		this.unsettledInterest = unsettledInterest;
 		this.balanceAvailable = balanceAvailable;
@@ -45,16 +60,16 @@ public class Wallet {
 
 	@Override
 	public String toString() {
-		return "Wallet [walletType=" + walletType + ", curreny=" + curreny + ", balance=" + balance
+		return "BitfinexWallet [walletType=" + walletType + ", currency=" + currency + ", balance=" + balance
 				+ ", unsettledInterest=" + unsettledInterest + ", balanceAvailable=" + balanceAvailable + "]";
 	}
 
-	public String getWalletType() {
+	public Type getWalletType() {
 		return walletType;
 	}
 	
-	public String getCurreny() {
-		return curreny;
+	public String getCurrency() {
+		return currency;
 	}
 	
 	public BigDecimal getBalance() {
