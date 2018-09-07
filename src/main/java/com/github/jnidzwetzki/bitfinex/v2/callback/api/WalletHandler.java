@@ -25,8 +25,8 @@ import java.util.function.Consumer;
 import com.google.common.collect.Lists;
 import org.json.JSONArray;
 
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 
 public class WalletHandler implements APICallbackHandler {
 

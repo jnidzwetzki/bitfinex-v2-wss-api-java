@@ -26,15 +26,13 @@ import com.google.common.collect.Table;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CalculateCommand;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 
 public class WalletManager extends AbstractManager {
 
 	/**
-	 * Wallets
-	 *
-	 *  Currency, Wallet-Type, Wallet
+	 * WalletTable aggregator - key(Wallet-Type, Currency) = Wallet
 	 */
 	private final Table<BitfinexWallet.Type, String, BitfinexWallet> walletTable;
 

@@ -28,13 +28,13 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexOrderBuilder;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.NotificationHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.OrderHandler;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrder;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrderState;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 
 
@@ -51,17 +51,17 @@ public class OrderManagerTest {
         final String jsonString = "[0,\"n\",[null,\"on-req\",null,null,[null,null,1513970684865000,\"tBTCUSD\",null,null,0.001,0.001,\"EXCHANGE MARKET\",null,null,null,null,null,null,null,12940,null,null,null,null,null,null,0,null,null],null,\"ERROR\",\"Invalid order: minimum size for BTC/USD is 0.002\"]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
 
-        final Consumer<ExchangeOrder> orderCallback = (e) -> {
-            Assert.assertEquals(ExchangeOrderState.STATE_ERROR, e.getState());
-            Assert.assertEquals(TestHelper.API_KEY, e.getApikey());
-            Assert.assertEquals(1513970684865000l, e.getCid());
-            Assert.assertEquals(BitfinexCurrencyPair.of("BTC", "USD").toBitfinexString(), e.getSymbol());
+        final Consumer<BitfinexSubmittedOrder> orderCallback = (e) -> {
+            Assert.assertEquals(BitfinexSubmittedOrderStatus.ERROR, e.getStatus());
+            Assert.assertEquals(TestHelper.API_KEY, e.getApiKey());
+            Assert.assertEquals(1513970684865000L, (long)e.getClientId());
+            Assert.assertEquals(BitfinexCurrencyPair.of("BTC", "USD").toBitfinexString(), e.getSymbol().toBitfinexString());
         };
 
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         bitfinexApiBroker.getOrderManager().registerCallback(orderCallback);
         final NotificationHandler notificationHandler = new NotificationHandler();
-        notificationHandler.onExchangeOrderNotification(eo -> {
+        notificationHandler.onOrderNotification(eo -> {
             bitfinexApiBroker.getOrderManager().updateOrder(eo);
         });
 
@@ -80,11 +80,11 @@ public class OrderManagerTest {
         final String jsonString = "[0,\"n\",[1523930407542,\"on-req\",null,null,[null,null,1523930407442000,null,null,null,0.0001,null,\"LIMIT\",null,null,null,null,null,null,null,6800,null,null,null,null,null,null,0,0,null,null,null,null,null,null,null],null,\"ERROR\",\"amount: invalid\"]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
 
-        final Consumer<ExchangeOrder> orderCallback = (e) -> {
-            Assert.assertEquals(ExchangeOrderState.STATE_ERROR, e.getState());
-            Assert.assertEquals(TestHelper.API_KEY, e.getApikey());
-            Assert.assertEquals(1523930407442000l, e.getCid());
-            Assert.assertEquals("", e.getSymbol());
+        final Consumer<BitfinexSubmittedOrder> orderCallback = (e) -> {
+            Assert.assertEquals(BitfinexSubmittedOrderStatus.ERROR, e.getStatus());
+            Assert.assertEquals(TestHelper.API_KEY, e.getApiKey());
+            Assert.assertEquals(1523930407442000L, (long) e.getClientId());
+            Assert.assertNull(e.getSymbol());
         };
 
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
@@ -92,7 +92,7 @@ public class OrderManagerTest {
         final NotificationHandler notificationHandler = new NotificationHandler();
 
         notificationHandler.handleChannelData(jsonArray);
-        notificationHandler.onExchangeOrderNotification(eo -> {
+        notificationHandler.onOrderNotification(eo -> {
             bitfinexApiBroker.getOrderManager().updateOrder(eo);
         });
     }
@@ -108,8 +108,8 @@ public class OrderManagerTest {
         final String jsonString = "[0,\"on\",[6784335053,null,1514956504945000,\"tIOTUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
         final OrderHandler orderHandler = new OrderHandler();
-        orderHandler.onExchangeOrdersEvent(eos -> {
-            for (ExchangeOrder exchangeOrder : eos) {
+        orderHandler.onSubmittedOrderEvent(eos -> {
+            for (BitfinexSubmittedOrder exchangeOrder : eos) {
                 bitfinexApiBroker.getOrderManager().updateOrder(exchangeOrder);
             }
         });
@@ -119,7 +119,7 @@ public class OrderManagerTest {
         orderHandler.handleChannelData(jsonArray);
         Assert.assertEquals(1, orderManager.getOrders().size());
 
-        Assert.assertEquals(ExchangeOrderState.STATE_ACTIVE, orderManager.getOrders().get(0).getState());
+        Assert.assertEquals(BitfinexSubmittedOrderStatus.ACTIVE, orderManager.getOrders().get(0).getStatus());
     }
 
     /**
@@ -133,8 +133,8 @@ public class OrderManagerTest {
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         final OrderHandler orderHandler = new OrderHandler();
-        orderHandler.onExchangeOrdersEvent(eos -> {
-            for (ExchangeOrder exchangeOrder : eos) {
+        orderHandler.onSubmittedOrderEvent(eos -> {
+            for (BitfinexSubmittedOrder exchangeOrder : eos) {
                 bitfinexApiBroker.getOrderManager().updateOrder(exchangeOrder);
             }
         });
@@ -144,8 +144,8 @@ public class OrderManagerTest {
         orderHandler.handleChannelData(jsonArray);
         Assert.assertEquals(2, orderManager.getOrders().size());
 
-        Assert.assertEquals(ExchangeOrderState.STATE_ACTIVE, orderManager.getOrders().get(0).getState());
-        Assert.assertEquals(ExchangeOrderState.STATE_ACTIVE, orderManager.getOrders().get(1).getState());
+        Assert.assertEquals(BitfinexSubmittedOrderStatus.ACTIVE, orderManager.getOrders().get(0).getStatus());
+        Assert.assertEquals(BitfinexSubmittedOrderStatus.ACTIVE, orderManager.getOrders().get(1).getStatus());
 
         orderManager.clear();
         Assert.assertTrue(orderManager.getOrders().isEmpty());
@@ -163,8 +163,8 @@ public class OrderManagerTest {
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         final OrderHandler orderHandler = new OrderHandler();
-        orderHandler.onExchangeOrdersEvent(eos -> {
-            for (ExchangeOrder exchangeOrder : eos) {
+        orderHandler.onSubmittedOrderEvent(eos -> {
+            for (BitfinexSubmittedOrder exchangeOrder : eos) {
                 bitfinexApiBroker.getOrderManager().updateOrder(exchangeOrder);
             }
         });
@@ -173,7 +173,7 @@ public class OrderManagerTest {
         Assert.assertTrue(orderManager.getOrders().isEmpty());
         orderHandler.handleChannelData(jsonArray);
         Assert.assertEquals(1, orderManager.getOrders().size());
-        Assert.assertEquals(ExchangeOrderState.STATE_ACTIVE, orderManager.getOrders().get(0).getState());
+        Assert.assertEquals(BitfinexSubmittedOrderStatus.ACTIVE, orderManager.getOrders().get(0).getStatus());
     }
 
     /**
@@ -188,8 +188,8 @@ public class OrderManagerTest {
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         final OrderHandler orderHandler = new OrderHandler();
-        orderHandler.onExchangeOrdersEvent(eos -> {
-            for (ExchangeOrder exchangeOrder : eos) {
+        orderHandler.onSubmittedOrderEvent(eos -> {
+            for (BitfinexSubmittedOrder exchangeOrder : eos) {
                 bitfinexApiBroker.getOrderManager().updateOrder(exchangeOrder);
             }
         });
@@ -198,7 +198,7 @@ public class OrderManagerTest {
         Assert.assertTrue(orderManager.getOrders().isEmpty());
         orderHandler.handleChannelData(jsonArray);
         Assert.assertEquals(1, orderManager.getOrders().size());
-        Assert.assertEquals(ExchangeOrderState.STATE_PARTIALLY_FILLED, orderManager.getOrders().get(0).getState());
+        Assert.assertEquals(BitfinexSubmittedOrderStatus.PARTIALLY_FILLED, orderManager.getOrders().get(0).getStatus());
     }
 
     /**
@@ -235,9 +235,9 @@ public class OrderManagerTest {
             } catch (InterruptedException e) {
                 return;
             }
-            final ExchangeOrder exchangeOrder = new ExchangeOrder();
-            exchangeOrder.setOrderId(12);
-            exchangeOrder.setState(ExchangeOrderState.STATE_CANCELED);
+            final BitfinexSubmittedOrder exchangeOrder = new BitfinexSubmittedOrder();
+            exchangeOrder.setOrderId(12L);
+            exchangeOrder.setStatus(BitfinexSubmittedOrderStatus.CANCELED);
             orderManager.updateOrder(exchangeOrder);
         };
 
@@ -261,7 +261,7 @@ public class OrderManagerTest {
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 
-        final BitfinexOrder order
+        final BitfinexNewOrder order
                 = BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH", "USD"), BitfinexOrderType.MARKET, 12).build();
 
         orderManager.placeOrderAndWaitUntilActive(order);
@@ -282,7 +282,7 @@ public class OrderManagerTest {
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 
-        final BitfinexOrder order
+        final BitfinexNewOrder order
                 = BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH", "USD"), BitfinexOrderType.MARKET, 1).build();
 
         final Runnable r = () -> {
@@ -291,9 +291,9 @@ public class OrderManagerTest {
             } catch (InterruptedException e) {
                 return;
             }
-            final ExchangeOrder exchangeOrder = new ExchangeOrder();
-            exchangeOrder.setCid(order.getCid());
-            exchangeOrder.setState(ExchangeOrderState.STATE_ACTIVE);
+            final BitfinexSubmittedOrder exchangeOrder = new BitfinexSubmittedOrder();
+            exchangeOrder.setClientId(order.getClientId());
+            exchangeOrder.setStatus(BitfinexSubmittedOrderStatus.ACTIVE);
             orderManager.updateOrder(exchangeOrder);
         };
 

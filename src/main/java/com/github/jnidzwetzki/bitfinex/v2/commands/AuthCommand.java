@@ -19,16 +19,14 @@ package com.github.jnidzwetzki.bitfinex.v2.commands;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.util.Objects;
+import java.util.function.Supplier;
 
+import com.google.common.io.BaseEncoding;
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
-
-import com.google.common.io.BaseEncoding;
-
-import java.util.Objects;
-import java.util.function.Supplier;
 
 public class AuthCommand extends AbstractAPICommand {
 

@@ -20,7 +20,7 @@ package com.github.jnidzwetzki.bitfinex.v2;
 import java.math.BigDecimal;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
 
 public class BitfinexOrderBuilder {
@@ -100,10 +100,19 @@ public class BitfinexOrderBuilder {
 		this.groupid = groupId;
 		return this;
 	}
-	
-	public BitfinexOrder build() {
-		return new BitfinexOrder(symbol, type, price, 
-				amount, priceTrailing, priceAuxLimit, postOnly, hidden, groupid);
+
+	public BitfinexNewOrder build() {
+		BitfinexNewOrder order = new BitfinexNewOrder();
+		order.setSymbol(symbol);
+		order.setOrderType(type);
+		order.setPrice(price);
+		order.setAmount(amount);
+		order.setPriceTrailing(priceTrailing);
+		order.setPriceAuxLimit(priceAuxLimit);
+		order.setPostOnly(postOnly);
+		order.setHidden(hidden);
+		order.setClientGroupId(groupid);
+		return order;
 	}
 
 }

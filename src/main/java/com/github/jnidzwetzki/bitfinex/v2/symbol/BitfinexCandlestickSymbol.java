@@ -17,8 +17,8 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.symbol;
 
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
 
 public class BitfinexCandlestickSymbol implements BitfinexStreamSymbol {
 	
@@ -30,9 +30,9 @@ public class BitfinexCandlestickSymbol implements BitfinexStreamSymbol {
 	/**
 	 * The timeframe
 	 */
-	private final Timeframe timeframe;
+	private final BitfinexCandleTimeFrame timeframe;
 
-	public BitfinexCandlestickSymbol(final BitfinexCurrencyPair symbol, final Timeframe timeframe) {
+	public BitfinexCandlestickSymbol(final BitfinexCurrencyPair symbol, final BitfinexCandleTimeFrame timeframe) {
 		this.symbol = symbol;
 		this.timeframe = timeframe;
 	}
@@ -41,7 +41,7 @@ public class BitfinexCandlestickSymbol implements BitfinexStreamSymbol {
 		return symbol;
 	}
 
-	public Timeframe getTimeframe() {
+	public BitfinexCandleTimeFrame getTimeframe() {
 		return timeframe;
 	}
 	
@@ -75,7 +75,7 @@ public class BitfinexCandlestickSymbol implements BitfinexStreamSymbol {
 		
 		return new BitfinexCandlestickSymbol(
 				BitfinexCurrencyPair.fromSymbolString(symbolString), 
-				Timeframe.fromSymbolString(timeframeString));
+				BitfinexCandleTimeFrame.fromSymbolString(timeframeString));
 	}
 
 	@Override

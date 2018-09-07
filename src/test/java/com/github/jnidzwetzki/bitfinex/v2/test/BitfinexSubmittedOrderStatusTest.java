@@ -20,21 +20,21 @@ package com.github.jnidzwetzki.bitfinex.v2.test;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrderState;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
 
-public class ExchangeOrderStateTest {
+public class BitfinexSubmittedOrderStatusTest {
 
 	@Test
 	public void testStateFromString() {
-		Assert.assertEquals(ExchangeOrderState.STATE_ACTIVE, ExchangeOrderState.fromString("ACTIVE"));
-		Assert.assertEquals(ExchangeOrderState.STATE_EXECUTED, ExchangeOrderState.fromString("EXECUTED @ 18867.0(-0.01)"));
-		Assert.assertEquals(ExchangeOrderState.STATE_CANCELED, ExchangeOrderState.fromString("CANCELED"));
-		Assert.assertEquals(ExchangeOrderState.STATE_PARTIALLY_FILLED, ExchangeOrderState.fromString("PARTIALLY FILLED"));
-		Assert.assertEquals(ExchangeOrderState.STATE_POSTONLY_CANCELED, ExchangeOrderState.fromString("POSTONLY CANCELED"));		
+		Assert.assertEquals(BitfinexSubmittedOrderStatus.ACTIVE, BitfinexSubmittedOrderStatus.fromString("ACTIVE"));
+		Assert.assertEquals(BitfinexSubmittedOrderStatus.EXECUTED, BitfinexSubmittedOrderStatus.fromString("EXECUTED @ 18867.0(-0.01)"));
+		Assert.assertEquals(BitfinexSubmittedOrderStatus.CANCELED, BitfinexSubmittedOrderStatus.fromString("CANCELED"));
+		Assert.assertEquals(BitfinexSubmittedOrderStatus.PARTIALLY_FILLED, BitfinexSubmittedOrderStatus.fromString("PARTIALLY FILLED"));
+		Assert.assertEquals(BitfinexSubmittedOrderStatus.POSTONLY_CANCELED, BitfinexSubmittedOrderStatus.fromString("POSTONLY CANCELED"));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testStateFromStringInvalid() {
-		ExchangeOrderState.fromString("ABC");
+		BitfinexSubmittedOrderStatus.fromString("ABC");
 	}
 }
