@@ -32,7 +32,7 @@ import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExecutedTrade;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
@@ -58,7 +58,7 @@ public class QuoteManager extends AbstractManager {
 	/**
 	 * The channel callbacks
 	 */
-	private final BiConsumerCallbackManager<BitfinexExecutedTradeSymbol, ExecutedTrade> tradesCallbacks;
+	private final BiConsumerCallbackManager<BitfinexExecutedTradeSymbol, BitfinexExecutedTrade> tradesCallbacks;
 
 	/**
 	 * The bitfinex API
@@ -250,7 +250,7 @@ public class QuoteManager extends AbstractManager {
 	 * @throws APIException
 	 */
 	public void registerExecutedTradeCallback(final BitfinexExecutedTradeSymbol orderbookConfiguration,
-			final BiConsumer<BitfinexExecutedTradeSymbol, ExecutedTrade> callback) throws APIException {
+			final BiConsumer<BitfinexExecutedTradeSymbol, BitfinexExecutedTrade> callback) throws APIException {
 
 		tradesCallbacks.registerCallback(orderbookConfiguration, callback);
 	}
@@ -263,7 +263,7 @@ public class QuoteManager extends AbstractManager {
 	 * @throws APIException
 	 */
 	public boolean removeExecutedTradeCallback(final BitfinexExecutedTradeSymbol tradeSymbol,
-			final BiConsumer<BitfinexExecutedTradeSymbol, ExecutedTrade> callback) throws APIException {
+			final BiConsumer<BitfinexExecutedTradeSymbol, BitfinexExecutedTrade> callback) throws APIException {
 
 		return tradesCallbacks.removeCallback(tradeSymbol, callback);
 	}
@@ -301,7 +301,7 @@ public class QuoteManager extends AbstractManager {
 	 * @param tick
 	 */
 	public void handleExecutedTradeEntry(final BitfinexExecutedTradeSymbol tradeSymbol,
-			final ExecutedTrade entry) {
+			final BitfinexExecutedTrade entry) {
 
 		tradesCallbacks.handleEvent(tradeSymbol, entry);
 	}

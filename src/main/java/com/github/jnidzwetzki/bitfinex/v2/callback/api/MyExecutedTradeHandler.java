@@ -26,13 +26,13 @@ import org.slf4j.LoggerFactory;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Trade;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
 
-public class TradeHandler implements APICallbackHandler {
+public class MyExecutedTradeHandler implements APICallbackHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(TradeHandler.class);
+    private final static Logger logger = LoggerFactory.getLogger(MyExecutedTradeHandler.class);
 
-    private Consumer<Trade> tradeConsumer = t -> {};
+    private Consumer<BitfinexMyExecutedTrade> tradeConsumer = t -> {};
 
     /**
      * {@inheritDoc}
@@ -44,25 +44,23 @@ public class TradeHandler implements APICallbackHandler {
         final String type = jsonArray.getString(1);
         final JSONArray message = jsonArray.getJSONArray(2);
 
-        // Executed or update
-        boolean executed = true;
-        if ("tu".equals(type)) {
-            executed = false;
-        }
+        BitfinexMyExecutedTrade trade = jsonToTrade(message);
 
-        Trade trade = jsonToTrade(message, executed);
+        // Executed or update
+        if ("tu".equals(type)) {
+            trade.setUpdate(true);
+        }
         tradeConsumer.accept(trade);
     }
 
-    private Trade jsonToTrade(final JSONArray json, final boolean executed) {
-        final Trade trade = new Trade();
-        trade.setExecuted(executed);
-        trade.setId(json.getLong(0));
+    private BitfinexMyExecutedTrade jsonToTrade(final JSONArray json) {
+        final BitfinexMyExecutedTrade trade = new BitfinexMyExecutedTrade();
+        trade.setTradeId(json.getLong(0));
         trade.setCurrency(BitfinexCurrencyPair.fromSymbolString(json.getString(1)));
-        trade.setMtsCreate(json.getLong(2));
+        trade.setTimestamp(json.getLong(2));
         trade.setOrderId(json.getLong(3));
-        trade.setExecAmount(json.getBigDecimal(4));
-        trade.setExecPrice(json.getBigDecimal(5));
+        trade.setAmount(json.getBigDecimal(4));
+        trade.setPrice(json.getBigDecimal(5));
 
         final String orderTypeString = json.optString(6, null);
         if (orderTypeString != null) {
@@ -72,11 +70,11 @@ public class TradeHandler implements APICallbackHandler {
         trade.setOrderPrice(json.optBigDecimal(7, null));
         trade.setMaker(json.getInt(8) == 1);
         trade.setFee(json.optBigDecimal(9, null));
-        trade.setFeeCurrency(json.optString(10, ""));
+        trade.setFeeCurrency(json.optString(10, null));
         return trade;
     }
 
-    public void onTradeEvent(Consumer<Trade> tradeConsumer) {
+    public void onTradeEvent(Consumer<BitfinexMyExecutedTrade> tradeConsumer) {
         this.tradeConsumer = tradeConsumer;
     }
 }

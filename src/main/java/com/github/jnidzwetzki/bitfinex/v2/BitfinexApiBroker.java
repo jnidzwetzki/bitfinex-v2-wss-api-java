@@ -41,7 +41,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.api.HeartbeatHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.NotificationHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.OrderHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.PositionHandler;
-import com.github.jnidzwetzki.bitfinex.v2.callback.api.TradeHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.api.MyExecutedTradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.WalletHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.CandlestickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandler;
@@ -265,9 +265,9 @@ public class BitfinexApiBroker implements Closeable {
 		// Order cancellation
 		channelHandler.put("oc", orderHandler);
 
-		final TradeHandler tradeHandler = new TradeHandler();
+		final MyExecutedTradeHandler tradeHandler = new MyExecutedTradeHandler();
 		tradeHandler.onTradeEvent(trade -> {
-			trade.setApikey(configuration.getApiKey());
+			trade.setApiKey(configuration.getApiKey());
 			callbackRegistry.acceptTradeEvent(trade);
 		});
 

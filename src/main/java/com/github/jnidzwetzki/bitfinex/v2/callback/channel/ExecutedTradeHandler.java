@@ -27,13 +27,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExecutedTrade;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
 public class ExecutedTradeHandler implements ChannelCallbackHandler {
 
-    private BiConsumer<BitfinexExecutedTradeSymbol, Collection<ExecutedTrade>> executedTradesConsumer = (s, t) -> {};
+    private BiConsumer<BitfinexExecutedTradeSymbol, Collection<BitfinexExecutedTrade>> executedTradesConsumer = (s, t) -> {};
 
     /**
      * {@inheritDoc}
@@ -42,17 +42,17 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
     public void handleChannelData(final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
         try {
             final BitfinexExecutedTradeSymbol config = (BitfinexExecutedTradeSymbol) channelSymbol;
-            final List<ExecutedTrade> trades = new ArrayList<>();
+            final List<BitfinexExecutedTrade> trades = new ArrayList<>();
 
             // Snapshots contain multiple executes entries, updates only one
             if (jsonArray.get(0) instanceof JSONArray) {
                 for (int pos = 0; pos < jsonArray.length(); pos++) {
                     final JSONArray parts = jsonArray.getJSONArray(pos);
-                    ExecutedTrade trade = jsonToExecutedTrade(parts);
+                    BitfinexExecutedTrade trade = jsonToExecutedTrade(parts);
                     trades.add(trade);
                 }
             } else {
-                ExecutedTrade trade = jsonToExecutedTrade(jsonArray);
+                BitfinexExecutedTrade trade = jsonToExecutedTrade(jsonArray);
                 trades.add(trade);
             }
             executedTradesConsumer.accept(config, trades);
@@ -61,11 +61,11 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
         }
     }
 
-    private ExecutedTrade jsonToExecutedTrade(final JSONArray jsonArray) {
-        final ExecutedTrade executedTrade = new ExecutedTrade();
+    private BitfinexExecutedTrade jsonToExecutedTrade(final JSONArray jsonArray) {
+        final BitfinexExecutedTrade executedTrade = new BitfinexExecutedTrade();
 
         final long id = jsonArray.getNumber(0).longValue();
-        executedTrade.setId(id);
+        executedTrade.setTradeId(id);
 
         final long timestamp = jsonArray.getNumber(1).longValue();
         executedTrade.setTimestamp(timestamp);
@@ -78,7 +78,7 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
             final BigDecimal rate = jsonArray.getBigDecimal(3);
             executedTrade.setRate(rate);
 
-            final int period = jsonArray.getNumber(4).intValue();
+            final Long period = jsonArray.getLong(4);
             executedTrade.setPeriod(period);
         } else {
             final BigDecimal price = jsonArray.getBigDecimal(3);
@@ -92,7 +92,7 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
      *
      * @param consumer of event
      */
-    public void onExecutedTradeEvent(BiConsumer<BitfinexExecutedTradeSymbol, Collection<ExecutedTrade>> consumer) {
+    public void onExecutedTradeEvent(BiConsumer<BitfinexExecutedTradeSymbol, Collection<BitfinexExecutedTrade>> consumer) {
         this.executedTradesConsumer = consumer;
     }
 }

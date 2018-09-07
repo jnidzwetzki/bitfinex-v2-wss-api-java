@@ -33,7 +33,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExecutedTrade;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
@@ -220,7 +220,7 @@ public class IntegrationTest {
 
 			final QuoteManager executedTradeManager = bitfinexClient.getQuoteManager();
 
-			final BiConsumer<BitfinexExecutedTradeSymbol, ExecutedTrade> callback = (c, o) -> {
+			final BiConsumer<BitfinexExecutedTradeSymbol, BitfinexExecutedTrade> callback = (c, o) -> {
 				latch.countDown();
 			};
 
