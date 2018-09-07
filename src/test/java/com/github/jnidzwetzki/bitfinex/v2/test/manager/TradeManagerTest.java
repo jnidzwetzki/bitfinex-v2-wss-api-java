@@ -29,10 +29,10 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.TradeHandler;
-import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
 
 public class TradeManagerTest {
@@ -129,7 +129,7 @@ public class TradeManagerTest {
         Mockito.when(bitfinexApiBroker.getConfiguration()).thenReturn(config);
         Mockito.when(config.getApiKey()).thenReturn(API_KEY);
         Mockito.when(bitfinexApiBroker.isAuthenticated()).thenReturn(true);
-        Mockito.when(bitfinexApiBroker.getCapabilities()).thenReturn(ConnectionCapabilities.ALL_CAPABILITIES);
+        Mockito.when(bitfinexApiBroker.getApiKeyPermissions()).thenReturn(BitfinexApiKeyPermissions.ALL_PERMISSIONS);
         Mockito.when(bitfinexApiBroker.getCallbacks()).thenReturn(new BitfinexApiCallbackRegistry());
 
 

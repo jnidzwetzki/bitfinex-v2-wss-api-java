@@ -20,7 +20,7 @@ package com.github.jnidzwetzki.bitfinex.v2.commands;
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 
 public class SubscribeTradesCommand extends AbstractAPICommand {
 

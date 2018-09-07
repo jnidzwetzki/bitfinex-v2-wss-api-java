@@ -23,13 +23,12 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
 public class SubscribedCallback implements CommandCallbackHandler {
 
@@ -79,10 +78,10 @@ public class SubscribedCallback implements CommandCallbackHandler {
 	private BitfinexStreamSymbol handleBookCallback(final JSONObject jsonObject) {
 		BitfinexStreamSymbol symbol;
 		if("R0".equals(jsonObject.getString("prec"))) {
-			symbol = RawOrderbookConfiguration.fromJSON(jsonObject);
+			symbol = BitfinexOrderBookSymbol.fromJSON(jsonObject);
 			logger.info("Registering raw book {}", jsonObject);
 		} else {
-			symbol = OrderbookConfiguration.fromJSON(jsonObject);
+			symbol = BitfinexOrderBookSymbol.fromJSON(jsonObject);
 			logger.info("Registering book {}", jsonObject);
 		}
 		return symbol;

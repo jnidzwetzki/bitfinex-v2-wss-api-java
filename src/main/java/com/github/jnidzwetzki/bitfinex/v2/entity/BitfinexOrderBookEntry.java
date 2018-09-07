@@ -17,9 +17,41 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
-public enum OrderBookPrecision {
-	P0,
-	P1,
-	P2,
-	P3;
+import java.math.BigDecimal;
+
+public class BitfinexOrderBookEntry {
+
+	private final Long orderId;
+	private final BigDecimal price;
+	private final BigDecimal amount;
+	private final Integer count;
+
+	public BitfinexOrderBookEntry(Long orderId, BigDecimal price, BigDecimal amount, Integer count) {
+		this.orderId = orderId;
+		this.price = price;
+		this.amount = amount;
+		this.count = count;
+	}
+
+	public Long getOrderId() {
+		return orderId;
+	}
+
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
+	public Integer getCount() {
+		return count;
+	}
+
+	@Override
+	public String toString() {
+		return "BitfinexOrderBookEntry [price=" + price + ", count=" + count + ", amount=" + amount + "]";
+	}
+
 }

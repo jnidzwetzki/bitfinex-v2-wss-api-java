@@ -25,7 +25,7 @@ import org.mockito.Mockito;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
 
@@ -49,7 +49,7 @@ public class TestHelper {
 		Mockito.when(bitfinexApiBroker.getConfiguration()).thenReturn(config);
 		Mockito.when(config.getApiKey()).thenReturn(API_KEY);
 		Mockito.when(bitfinexApiBroker.isAuthenticated()).thenReturn(true);
-		Mockito.when(bitfinexApiBroker.getCapabilities()).thenReturn(ConnectionCapabilities.ALL_CAPABILITIES);
+		Mockito.when(bitfinexApiBroker.getApiKeyPermissions()).thenReturn(BitfinexApiKeyPermissions.ALL_PERMISSIONS);
 		Mockito.when(bitfinexApiBroker.getCallbacks()).thenReturn(new BitfinexApiCallbackRegistry());
 
 		final OrderManager orderManager = new OrderManager(bitfinexApiBroker, executorService);

@@ -15,37 +15,31 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.entity;
+package com.github.jnidzwetzki.bitfinex.v2.symbol;
 
-import org.json.JSONObject;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
-
-public class RawOrderbookConfiguration implements BitfinexStreamSymbol {
+public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 	
 	/**
 	 * The currency pair
 	 */
-	protected final BitfinexCurrencyPair currencyPair;
-	
-	public RawOrderbookConfiguration(final BitfinexCurrencyPair currencyPair) {
-		this.currencyPair = currencyPair;
+	private final BitfinexCurrencyPair bitfinexCurrencyPair;
+
+	public BitfinexTickerSymbol(final BitfinexCurrencyPair bitfinexCurrencyPair) {
+		this.bitfinexCurrencyPair = bitfinexCurrencyPair;
 	}
 
 	@Override
 	public String toString() {
-		return "RawOrderbookConfiguration [currencyPair=" + currencyPair + "]";
-	}
-
-	public BitfinexCurrencyPair getCurrencyPair() {
-		return currencyPair;
+		return "BitfinexTickerSymbol [bitfinexCurrencyPair=" + bitfinexCurrencyPair + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((currencyPair == null) ? 0 : currencyPair.hashCode());
+		result = prime * result + ((bitfinexCurrencyPair == null) ? 0 : bitfinexCurrencyPair.hashCode());
 		return result;
 	}
 
@@ -57,20 +51,28 @@ public class RawOrderbookConfiguration implements BitfinexStreamSymbol {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RawOrderbookConfiguration other = (RawOrderbookConfiguration) obj;
-		if (currencyPair != other.currencyPair)
+		BitfinexTickerSymbol other = (BitfinexTickerSymbol) obj;
+		if (bitfinexCurrencyPair != other.bitfinexCurrencyPair)
 			return false;
 		return true;
 	}
-
+	
 	/**
-	 * Build from JSON Array
-	 * @param jsonObject
+	 * Build from bitfinex string
+	 * @param symbol
 	 * @return
 	 */
-	public static RawOrderbookConfiguration fromJSON(final JSONObject jsonObject) {
-		return new RawOrderbookConfiguration(
-				BitfinexCurrencyPair.fromSymbolString(jsonObject.getString("symbol")));
+	public static BitfinexTickerSymbol fromBitfinexString(final String symbol) {
+		final BitfinexCurrencyPair bitfinexCurrencyPair = BitfinexCurrencyPair.fromSymbolString(symbol);
+		return new BitfinexTickerSymbol(bitfinexCurrencyPair);
+	}
+
+	/**
+	 * Get the currency pair
+	 * @return
+	 */
+	public BitfinexCurrencyPair getBitfinexCurrencyPair() {
+		return bitfinexCurrencyPair;
 	}
 	
 }

@@ -15,32 +15,8 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.commands;
+package com.github.jnidzwetzki.bitfinex.v2.symbol;
 
-public class CommandException extends Exception {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2320930066822999221L;
-
-	public CommandException() {
-	}
-
-	public CommandException(final String message) {
-		super(message);
-	}
-
-	public CommandException(final Throwable cause) {
-		super(cause);
-	}
-
-	public CommandException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
-
-	public CommandException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
+public interface BitfinexStreamSymbol {
+	// Tagging interface
 }

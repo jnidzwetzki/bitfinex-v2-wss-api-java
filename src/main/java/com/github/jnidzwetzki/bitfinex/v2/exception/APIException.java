@@ -15,38 +15,25 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.entity;
+package com.github.jnidzwetzki.bitfinex.v2.exception;
 
-import java.math.BigDecimal;
+public class APIException extends Exception {
 
-public class OrderbookEntry {
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6230854947150239935L;
 
-	private final BigDecimal price;
-	private final BigDecimal amount;
-	private final BigDecimal count;
-	
-	public OrderbookEntry(BigDecimal price, BigDecimal count, BigDecimal amount) {
-		this.price = price;
-		this.count = count;
-		this.amount = amount;
+	public APIException(final String message) {
+		super(message);
 	}
 
-	public BigDecimal getPrice() {
-		return price;
+	public APIException(final Throwable cause) {
+		super(cause);
 	}
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
-
-	public BigDecimal getCount() {
-		return count;
-	}
-
-	@Override
-	public String toString() {
-		return "OrderbookEntry [price=" + price + ", count=" + count + ", amount=" + amount + "]";
+	public APIException(final String message, final Throwable cause) {
+		super(message, cause);
 	}
 
 }

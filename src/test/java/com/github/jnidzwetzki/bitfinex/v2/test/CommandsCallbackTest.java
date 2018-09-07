@@ -21,9 +21,9 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.command.AuthCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.ConnectionHeartbeatCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.SubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.UnsubscribedCallback;
-import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,7 +40,7 @@ public class CommandsCallbackTest {
 
 		final AuthCallback authCallbackHandler = new AuthCallback();
 		authCallbackHandler.onAuthenticationSuccessEvent(capabilities -> {
-			Assert.assertEquals(ConnectionCapabilities.ALL_CAPABILITIES, capabilities);
+			Assert.assertEquals(BitfinexApiKeyPermissions.ALL_PERMISSIONS, capabilities);
 			Assert.assertTrue(capabilities.toString().length() > 10);
 		});
 		authCallbackHandler.handleChannelData(new JSONObject(authSuccessJson));
@@ -56,7 +56,7 @@ public class CommandsCallbackTest {
 
 		final AuthCallback authCallbackHandler = new AuthCallback();
 		authCallbackHandler.onAuthenticationFailedEvent(capabilities -> {
-			Assert.assertEquals(ConnectionCapabilities.NO_CAPABILITIES, capabilities);
+			Assert.assertEquals(BitfinexApiKeyPermissions.NO_PERMISSIONS, capabilities);
 			Assert.assertTrue(capabilities.toString().length() > 10);
 		});
 

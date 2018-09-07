@@ -26,7 +26,7 @@ import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.WalletHandler;
-import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
 

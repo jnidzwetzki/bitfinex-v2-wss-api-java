@@ -33,9 +33,9 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderGroupCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.OrderCommand;
-import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrderState;
 
@@ -124,9 +124,9 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	 */
 	public void placeOrderAndWaitUntilActive(final BitfinexOrder order) throws APIException, InterruptedException {
 
-		final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
+		final BitfinexApiKeyPermissions capabilities = bitfinexApiBroker.getApiKeyPermissions();
 
-		if(! capabilities.isHavingOrdersWriteCapability()) {
+		if(! capabilities.isOrderWritePermission()) {
 			throw new APIException("Unable to wait for order " + order + " connection has not enough capabilities: " + capabilities);
 		}
 
@@ -211,9 +211,9 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	 */
 	public void cancelOrderAndWaitForCompletion(final long id) throws APIException, InterruptedException {
 
-		final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
+		final BitfinexApiKeyPermissions capabilities = bitfinexApiBroker.getApiKeyPermissions();
 
-		if(! capabilities.isHavingOrdersWriteCapability()) {
+		if(! capabilities.isOrderWritePermission()) {
 			throw new APIException("Unable to cancel order " + id + " connection has not enough capabilities: " + capabilities);
 		}
 
@@ -281,9 +281,9 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	 */
 	public void placeOrder(final BitfinexOrder order) throws APIException {
 
-		final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
+		final BitfinexApiKeyPermissions capabilities = bitfinexApiBroker.getApiKeyPermissions();
 
-		if(! capabilities.isHavingOrdersWriteCapability()) {
+		if(! capabilities.isOrderWritePermission()) {
 			throw new APIException("Unable to place order " + order + " connection has not enough capabilities: " + capabilities);
 		}
 
@@ -299,9 +299,9 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	 */
 	public void cancelOrder(final long id) throws APIException {
 
-		final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
+		final BitfinexApiKeyPermissions capabilities = bitfinexApiBroker.getApiKeyPermissions();
 
-		if(! capabilities.isHavingOrdersWriteCapability()) {
+		if(! capabilities.isOrderWritePermission()) {
 			throw new APIException("Unable to cancel order " + id + " connection has not enough capabilities: " + capabilities);
 		}
 
@@ -317,9 +317,9 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	 */
 	public void cancelOrderGroup(final int id) throws APIException {
 
-		final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
+		final BitfinexApiKeyPermissions capabilities = bitfinexApiBroker.getApiKeyPermissions();
 
-		if(! capabilities.isHavingOrdersWriteCapability()) {
+		if(! capabilities.isOrderWritePermission()) {
 			throw new APIException("Unable to cancel order group " + id + " connection has not enough capabilities: " + capabilities);
 		}
 

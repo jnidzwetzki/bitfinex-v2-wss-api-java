@@ -26,14 +26,14 @@ import java.util.function.BiConsumer;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookEntry;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
 public class OrderbookHandler implements ChannelCallbackHandler {
 
-    private BiConsumer<OrderbookConfiguration, Collection<OrderbookEntry>> orderbookEntryConsumer = (sym, e) -> {};
+    private BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>> orderBookEntryConsumer = (sym, e) -> {};
 
     /**
      * {@inheritDoc}
@@ -42,35 +42,35 @@ public class OrderbookHandler implements ChannelCallbackHandler {
     public void handleChannelData(final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
         // Example: [13182,1,-0.1]
         try {
-            final OrderbookConfiguration config = (OrderbookConfiguration) channelSymbol;
-            final List<OrderbookEntry> entries = new ArrayList<>();
+            final BitfinexOrderBookSymbol config = (BitfinexOrderBookSymbol) channelSymbol;
+            final List<BitfinexOrderBookEntry> entries = new ArrayList<>();
 
             // Snapshots contain multiple Orderbook entries, updates only one
             if (jsonArray.get(0) instanceof JSONArray) {
                 for (int pos = 0; pos < jsonArray.length(); pos++) {
                     final JSONArray parts = jsonArray.getJSONArray(pos);
-                    OrderbookEntry entry = jsonToOrderbookEntry(parts);
+                    BitfinexOrderBookEntry entry = jsonToOrderBookEntry(parts);
                     entries.add(entry);
                 }
             } else {
-                OrderbookEntry entry = jsonToOrderbookEntry(jsonArray);
+                BitfinexOrderBookEntry entry = jsonToOrderBookEntry(jsonArray);
                 entries.add(entry);
             }
-            orderbookEntryConsumer.accept(config, entries);
+            orderBookEntryConsumer.accept(config, entries);
         } catch (JSONException e) {
             throw new APIException(e);
         }
     }
 
-    private OrderbookEntry jsonToOrderbookEntry(final JSONArray jsonArray) {
+    private BitfinexOrderBookEntry jsonToOrderBookEntry(final JSONArray jsonArray) {
         final BigDecimal price = jsonArray.getBigDecimal(0);
-        final BigDecimal count = jsonArray.getBigDecimal(1);
+        final Integer count = jsonArray.getInt(1);
         final BigDecimal amount = jsonArray.getBigDecimal(2);
 
-        return new OrderbookEntry(price, count, amount);
+        return new BitfinexOrderBookEntry(null, price, amount, count);
     }
 
-    public void onOrderbookEvent(BiConsumer<OrderbookConfiguration, Collection<OrderbookEntry>> consumer) {
-        this.orderbookEntryConsumer = consumer;
+    public void onOrderBookEvent(BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>> consumer) {
+        this.orderBookEntryConsumer = consumer;
     }
 }

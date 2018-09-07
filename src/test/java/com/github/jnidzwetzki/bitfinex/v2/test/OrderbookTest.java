@@ -23,9 +23,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookFrequency;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderBookPrecision;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
 public class OrderbookTest {
 
@@ -34,18 +33,18 @@ public class OrderbookTest {
 	 */
 	@Test
 	public void testTradingOrderbookEquals() {
-		final OrderbookConfiguration configuration1 = new OrderbookConfiguration(
-				BitfinexCurrencyPair.of("BCH","USD"), OrderBookPrecision.P1, OrderBookFrequency.F1, 50);
+		final BitfinexOrderBookSymbol configuration1 = BitfinexSymbols.orderBook(
+				BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderBookSymbol.Precision.P1, BitfinexOrderBookSymbol.Frequency.F1, 50);
 		
-		final OrderbookConfiguration configuration2 = new OrderbookConfiguration(
-				BitfinexCurrencyPair.of("BCH","USD"), OrderBookPrecision.P1, OrderBookFrequency.F1, 50);
+		final BitfinexOrderBookSymbol configuration2 = BitfinexSymbols.orderBook(
+				BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderBookSymbol.Precision.P1, BitfinexOrderBookSymbol.Frequency.F1, 50);
 		
-		final OrderbookConfiguration configuration3 = new OrderbookConfiguration(
-				BitfinexCurrencyPair.of("BCH","USD"), OrderBookPrecision.P0, OrderBookFrequency.F1, 50);
+		final BitfinexOrderBookSymbol configuration3 = BitfinexSymbols.orderBook(
+				BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderBookSymbol.Precision.P0, BitfinexOrderBookSymbol.Frequency.F1, 50);
 		
 		Assert.assertEquals(configuration1.hashCode(), configuration2.hashCode());
 		Assert.assertEquals(configuration1, configuration2);
-		Assert.assertFalse(configuration1.equals(configuration3));
+		Assert.assertNotEquals(configuration1, configuration3);
 	}
 	
 	/**
@@ -57,13 +56,13 @@ public class OrderbookTest {
 		final JSONTokener tokener = new JSONTokener(message);
 		final JSONObject jsonObject = new JSONObject(tokener);
 
-		final OrderbookConfiguration configuration 
-			= OrderbookConfiguration.fromJSON(jsonObject);
+		final BitfinexOrderBookSymbol configuration
+			= BitfinexOrderBookSymbol.fromJSON(jsonObject);
 	
 		Assert.assertEquals(BitfinexCurrencyPair.of("BTC","USD"), configuration.getCurrencyPair());
-		Assert.assertEquals(OrderBookFrequency.F0, configuration.getOrderBookFrequency());
-		Assert.assertEquals(OrderBookPrecision.P0, configuration.getOrderBookPrecision());
-		Assert.assertEquals(25, configuration.getPricePoints());
+		Assert.assertEquals(BitfinexOrderBookSymbol.Frequency.F0, configuration.getFrequency());
+		Assert.assertEquals(BitfinexOrderBookSymbol.Precision.P0, configuration.getPrecision());
+		Assert.assertEquals(25, (int) configuration.getPricePoints());
 	}
 
 }

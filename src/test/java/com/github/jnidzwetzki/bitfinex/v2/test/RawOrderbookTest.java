@@ -23,7 +23,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
 public class RawOrderbookTest {
 
@@ -32,14 +33,9 @@ public class RawOrderbookTest {
 	 */
 	@Test
 	public void testTradingOrderbookEquals() {
-		final RawOrderbookConfiguration configuration1 = new RawOrderbookConfiguration(
-				BitfinexCurrencyPair.of("BCH","USD"));
-		
-		final RawOrderbookConfiguration configuration2 = new RawOrderbookConfiguration(
-				BitfinexCurrencyPair.of("BCH","USD"));
-		
-		final RawOrderbookConfiguration configuration3 = new RawOrderbookConfiguration(
-				BitfinexCurrencyPair.of("AVT","BTC"));
+		BitfinexOrderBookSymbol configuration1 = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("BCH","USD"));
+		BitfinexOrderBookSymbol configuration2 = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("BCH","USD"));
+		BitfinexOrderBookSymbol configuration3 = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("AVT","BTC"));
 		
 		Assert.assertEquals(configuration1.hashCode(), configuration2.hashCode());
 		Assert.assertEquals(configuration1, configuration2);
@@ -50,13 +46,13 @@ public class RawOrderbookTest {
 	 * Test the build from JSON array
 	 */
 	@Test
-	public void createRawOrderbookConfigurationFromJSON() {
+	public void createBitfinexOrderBookSymbolFromJSON() {
 		final String message = "{\"event\":\"subscribed\",\"channel\":\"book\",\"chanId\":3829,\"symbol\":\"tBTCUSD\",\"prec\":\"R0\",\"pair\":\"BTCUSD\"}";
 		final JSONTokener tokener = new JSONTokener(message);
 		final JSONObject jsonObject = new JSONObject(tokener);
 
-		final RawOrderbookConfiguration configuration 
-			= RawOrderbookConfiguration.fromJSON(jsonObject);
+		final BitfinexOrderBookSymbol configuration
+			= BitfinexOrderBookSymbol.fromJSON(jsonObject);
 	
 		Assert.assertEquals(BitfinexCurrencyPair.of("BTC","USD"), configuration.getCurrencyPair());
 	}

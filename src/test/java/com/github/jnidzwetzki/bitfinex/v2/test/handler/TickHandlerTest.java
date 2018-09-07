@@ -28,9 +28,9 @@ import org.mockito.Mockito;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.TickHandler;
-import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 
 

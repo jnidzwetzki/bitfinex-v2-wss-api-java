@@ -59,21 +59,14 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.command.SubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.UnsubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AbstractAPICommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.AuthCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.CommandException;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeOrderbookCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeRawOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
-import com.github.jnidzwetzki.bitfinex.v2.entity.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ConnectionCapabilities;
-import com.github.jnidzwetzki.bitfinex.v2.entity.OrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.RawOrderbookConfiguration;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexCandlestickSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexExecutedTradeSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexTickerSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
@@ -82,6 +75,11 @@ import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexStreamSymbolToChannelIdResolverAware;
 
 public class BitfinexApiBroker implements Closeable {
@@ -162,9 +160,9 @@ public class BitfinexApiBroker implements Closeable {
 	private Thread heartbeatThread;
 
 	/**
-	 * The capabilities of the connection
+	 * The permissions of the connection
 	 */
-	private ConnectionCapabilities capabilities = ConnectionCapabilities.NO_CAPABILITIES;
+	private BitfinexApiKeyPermissions permissions;
 	
 	/**
 	 * Is the connection authenticated?
@@ -198,7 +196,7 @@ public class BitfinexApiBroker implements Closeable {
 		this.channelHandler = new HashMap<>();
 
 		this.channelIdSymbolMap = new ConcurrentHashMap<>();
-		this.capabilities = ConnectionCapabilities.NO_CAPABILITIES;
+		this.permissions = BitfinexApiKeyPermissions.NO_PERMISSIONS;
 		this.sequenceNumberAuditor = new SequenceNumberAuditor();
 		this.lastHeartbeat = new AtomicLong();
 		this.quoteManager = new QuoteManager(this, configuration.getExecutorService());
@@ -345,12 +343,12 @@ public class BitfinexApiBroker implements Closeable {
 			CountDownLatch connectionReadyLatch = new CountDownLatch(4);
 
 			Closeable authSuccessEventCallback = callbackRegistry.onAuthenticationSuccessEvent(c -> {
-				capabilities = c;
+				permissions = c;
 				authenticated = true;
 				connectionReadyLatch.countDown();
 			});
 			Closeable authFailedCallback = callbackRegistry.onAuthenticationFailedEvent(c -> {
-				capabilities = c;
+				permissions = c;
 				authenticated = false;
 				while (connectionReadyLatch.getCount() != 0) {
 					connectionReadyLatch.countDown();
@@ -405,7 +403,7 @@ public class BitfinexApiBroker implements Closeable {
 		latch.await(10, TimeUnit.SECONDS);
 
 		if (!authenticated) {
-			throw new APIException("Unable to perform authentication, capabilities are: " + capabilities);
+			throw new APIException("Unable to perform authentication, permissions are: " + permissions);
 		}
 	}
 
@@ -599,13 +597,18 @@ public class BitfinexApiBroker implements Closeable {
 			final CandlestickHandler handler = new CandlestickHandler();
 			handler.onCandlesticksEvent(callbackRegistry::acceptCandlesticksEvent);
 			handler.handleChannelData(channelSymbol, jsonArray);
-		} else if(channelSymbol instanceof RawOrderbookConfiguration) {
-			final RawOrderbookHandler handler = new RawOrderbookHandler();
-			handler.onOrderbookEvent(callbackRegistry::acceptRawOrderbookEvent);
-			handler.handleChannelData(channelSymbol, jsonArray);
-		} else if(channelSymbol instanceof OrderbookConfiguration) {
-			final OrderbookHandler handler = new OrderbookHandler();
-			handler.onOrderbookEvent(callbackRegistry::acceptOrderbookEvent);
+		} else if(channelSymbol instanceof BitfinexOrderBookSymbol) {
+			BitfinexOrderBookSymbol orderBookSymbol = (BitfinexOrderBookSymbol) channelSymbol;
+			final ChannelCallbackHandler handler;
+			if(orderBookSymbol.isRawOrderBook()) {
+				final RawOrderbookHandler rawOrderBookHandler = new RawOrderbookHandler();
+				rawOrderBookHandler.onOrderbookEvent(callbackRegistry::acceptRawOrderbookEvent);
+				handler = rawOrderBookHandler;
+			} else {
+				final OrderbookHandler orderbookHandler = new OrderbookHandler();
+				orderbookHandler.onOrderBookEvent(callbackRegistry::acceptOrderbookEvent);
+				handler = orderbookHandler;
+			}
 			handler.handleChannelData(channelSymbol, jsonArray);
 		} else if(channelSymbol instanceof BitfinexTickerSymbol) {
 			final TickHandler handler = new TickHandler();
@@ -644,7 +647,7 @@ public class BitfinexApiBroker implements Closeable {
 			logger.info("Performing reconnect");
 			websocketEndpoint.close();
 
-			capabilities = ConnectionCapabilities.NO_CAPABILITIES;
+			permissions = BitfinexApiKeyPermissions.NO_PERMISSIONS;
 			authenticated = false;
 			sequenceNumberAuditor.reset();
 			connectionFeatureManager.setActiveConnectionFeatures(0);
@@ -657,12 +660,12 @@ public class BitfinexApiBroker implements Closeable {
 			CountDownLatch connectionReadyLatch = new CountDownLatch(4);
 
 			Closeable authSuccessEventCallback = callbackRegistry.onAuthenticationSuccessEvent(c -> {
-				capabilities = c;
+				permissions = c;
 				authenticated = true;
 				connectionReadyLatch.countDown();
 			});
 			Closeable authFailedCallback = callbackRegistry.onAuthenticationFailedEvent(c -> {
-				capabilities = c;
+				permissions = c;
 				authenticated = false;
 				while (connectionReadyLatch.getCount() != 0) {
 					connectionReadyLatch.countDown();
@@ -724,10 +727,8 @@ public class BitfinexApiBroker implements Closeable {
 				sendCommand(new SubscribeTradesCommand((BitfinexExecutedTradeSymbol) symbol));
 			} else if(symbol instanceof BitfinexCandlestickSymbol) {
 				sendCommand(new SubscribeCandlesCommand((BitfinexCandlestickSymbol) symbol));
-			} else if(symbol instanceof OrderbookConfiguration) {
-				sendCommand(new SubscribeOrderbookCommand((OrderbookConfiguration) symbol));
-			} else if(symbol instanceof RawOrderbookConfiguration) {
-				sendCommand(new SubscribeRawOrderbookCommand((RawOrderbookConfiguration) symbol));
+			} else if(symbol instanceof BitfinexOrderBookSymbol) {
+				sendCommand(new SubscribeOrderbookCommand((BitfinexOrderBookSymbol) symbol));
 			} else {
 				logger.error("Unknown stream symbol: {}", symbol);
 			}
@@ -821,8 +822,8 @@ public class BitfinexApiBroker implements Closeable {
 		return authenticated;
 	}
 
-	public ConnectionCapabilities getCapabilities() {
-		return capabilities;
+	public BitfinexApiKeyPermissions getApiKeyPermissions() {
+		return permissions;
 	}
 
 	public AtomicLong getLastHeartbeat() {

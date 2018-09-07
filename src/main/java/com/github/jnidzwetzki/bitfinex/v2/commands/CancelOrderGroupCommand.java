@@ -20,6 +20,7 @@ package com.github.jnidzwetzki.bitfinex.v2.commands;
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 
 public class CancelOrderGroupCommand extends AbstractAPICommand {
 

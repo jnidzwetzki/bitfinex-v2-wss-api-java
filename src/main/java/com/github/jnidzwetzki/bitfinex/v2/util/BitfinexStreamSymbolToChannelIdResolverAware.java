@@ -20,7 +20,7 @@ package com.github.jnidzwetzki.bitfinex.v2.util;
 
 import java.util.function.Function;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
 public interface BitfinexStreamSymbolToChannelIdResolverAware {
 

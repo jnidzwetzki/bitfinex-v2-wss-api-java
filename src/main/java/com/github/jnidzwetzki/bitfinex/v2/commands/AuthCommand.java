@@ -23,6 +23,8 @@ import javax.crypto.spec.SecretKeySpec;
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
+
 import com.google.common.io.BaseEncoding;
 
 import java.util.Objects;
