@@ -82,7 +82,7 @@ public class IntegrationTest {
 	/**
 	 * Test the orderbook stream
 	 */
-	@Test(timeout=10000)
+	@Test(timeout=30000)
 	public void testOrderbookStream() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
 
@@ -124,7 +124,7 @@ public class IntegrationTest {
 	/**
 	 * Test the raw orderbook stream
 	 */
-	@Test(timeout=10000)
+	@Test(timeout=30000)
 	public void testRawOrderbookStream() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
 
@@ -165,7 +165,7 @@ public class IntegrationTest {
 	/**
 	 * Test the candle stream
 	 */
-	@Test(timeout=10000)
+	@Test(timeout=30000)
 	public void testCandleStream() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
 
@@ -430,7 +430,7 @@ public class IntegrationTest {
 	/**
 	 * Test the error callback
 	 */
-	@Test(timeout=10000)
+	@Test(timeout=30000)
 	public void testErrorCallback() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
 
