@@ -28,7 +28,7 @@ import org.mockito.Mockito;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
-import com.github.jnidzwetzki.bitfinex.v2.callback.api.TradeHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.api.MyExecutedTradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
@@ -59,19 +59,19 @@ public class TradeManagerTest {
         final String jsonString = "[0,\"te\",[106655593,\"tBTCUSD\",1512247319827,5691690918,-0.002,10894,null,null,-1]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
-        final TradeHandler tradeHandler = new TradeHandler();
+        final MyExecutedTradeHandler tradeHandler = new MyExecutedTradeHandler();
         tradeHandler.onTradeEvent(trade -> {
             bitfinexApiBroker.getTradeManager().updateTrade(trade);
         });
 
         bitfinexApiBroker.getTradeManager().registerCallback((t) -> {
-            Assert.assertTrue(t.isExecuted());
-            Assert.assertEquals(106655593, t.getId());
+            Assert.assertFalse(t.isUpdate());
+            Assert.assertEquals(106655593L, (long) t.getTradeId());
             Assert.assertEquals(BitfinexCurrencyPair.of("BTC", "USD"), t.getCurrency());
-            Assert.assertEquals(1512247319827l, t.getMtsCreate());
-            Assert.assertEquals(5691690918l, t.getOrderId());
-            Assert.assertEquals(-0.002, t.getExecAmount().doubleValue(), DELTA);
-            Assert.assertEquals(10894, t.getExecPrice().doubleValue(), DELTA);
+            Assert.assertEquals(1512247319827L, (long) t.getTimestamp());
+            Assert.assertEquals(5691690918L, (long) t.getOrderId());
+            Assert.assertEquals(-0.002, t.getAmount().doubleValue(), DELTA);
+            Assert.assertEquals(10894, t.getPrice().doubleValue(), DELTA);
 
             Assert.assertTrue(t.toString().length() > 0);
         });
@@ -91,19 +91,19 @@ public class TradeManagerTest {
 
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
-        final TradeHandler tradeHandler = new TradeHandler();
+        final MyExecutedTradeHandler tradeHandler = new MyExecutedTradeHandler();
         tradeHandler.onTradeEvent(trade -> {
             bitfinexApiBroker.getTradeManager().updateTrade(trade);
         });
 
         bitfinexApiBroker.getTradeManager().registerCallback((t) -> {
-            Assert.assertFalse(t.isExecuted());
-            Assert.assertEquals(106655593, t.getId());
+            Assert.assertFalse(t.isUpdate());
+            Assert.assertEquals(106655593, (long) t.getTradeId());
             Assert.assertEquals(BitfinexCurrencyPair.of("BTC", "USD"), t.getCurrency());
-            Assert.assertEquals(1512247319827l, t.getMtsCreate());
-            Assert.assertEquals(5691690918l, t.getOrderId());
-            Assert.assertEquals(-0.002, t.getExecAmount().doubleValue(), DELTA);
-            Assert.assertEquals(10894, t.getExecPrice().doubleValue(), DELTA);
+            Assert.assertEquals(1512247319827L, (long) t.getTimestamp());
+            Assert.assertEquals(5691690918L, (long) t.getOrderId());
+            Assert.assertEquals(-0.002, t.getAmount().doubleValue(), DELTA);
+            Assert.assertEquals(10894, t.getPrice().doubleValue(), DELTA);
             Assert.assertEquals(BitfinexOrderType.EXCHANGE_MARKET, t.getOrderType());
             Assert.assertEquals(10894, t.getOrderPrice().doubleValue(), DELTA);
             Assert.assertFalse(t.isMaker());
