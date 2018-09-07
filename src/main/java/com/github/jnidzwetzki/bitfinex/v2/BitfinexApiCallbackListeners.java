@@ -31,7 +31,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Position;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
@@ -45,7 +45,7 @@ public class BitfinexApiCallbackListeners {
     protected final Queue<Consumer<BitfinexStreamSymbol>> unsubscribeChannelConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<ExchangeOrder>> exchangeOrderConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<Collection<ExchangeOrder>>> exchangeOrdersConsumers = new ConcurrentLinkedQueue<>();
-    protected final Queue<Consumer<Collection<Position>>> positionConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<Consumer<Collection<BitfinexPosition>>> positionConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<BitfinexMyExecutedTrade>> tradeConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<Collection<BitfinexWallet>>> walletConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexCandlestickSymbol, Collection<BitfinexCandle>>> candlesConsumers = new ConcurrentLinkedQueue<>();
@@ -76,7 +76,7 @@ public class BitfinexApiCallbackListeners {
         return () -> exchangeOrdersConsumers.remove(consumer);
     }
 
-    public Closeable onPositionsEvent(final Consumer<Collection<Position>> consumer) {
+    public Closeable onPositionsEvent(final Consumer<Collection<BitfinexPosition>> consumer) {
         positionConsumers.offer(consumer);
         return () -> positionConsumers.remove(consumer);
     }
