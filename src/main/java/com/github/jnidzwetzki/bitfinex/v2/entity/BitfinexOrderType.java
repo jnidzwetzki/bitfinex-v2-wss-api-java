@@ -34,7 +34,7 @@ public enum BitfinexOrderType {
 
 	private final String bifinexString;
 
-	private BitfinexOrderType(final String bifinexString) {
+	BitfinexOrderType(final String bifinexString) {
 		this.bifinexString = bifinexString;
 	}
 
@@ -42,12 +42,12 @@ public enum BitfinexOrderType {
 		return bifinexString;
 	}
 
-	public static BitfinexOrderType fromString(String orderTypeText) {
+	public static BitfinexOrderType fromBifinexString(String value) {
 		for (BitfinexOrderType orderType : BitfinexOrderType.values()) {
-			if (orderType.getBifinexString().equalsIgnoreCase(orderTypeText)) {
+			if (orderType.getBifinexString().equalsIgnoreCase(value)) {
 				return orderType;
 			}
 		}
-		throw new IllegalArgumentException("Unable to find order type for: " + orderTypeText);
+		throw new IllegalArgumentException("Unable to find order type for: " + value);
 	}
 }

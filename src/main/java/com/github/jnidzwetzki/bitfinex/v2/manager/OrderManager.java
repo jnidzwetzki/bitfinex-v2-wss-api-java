@@ -19,6 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2.manager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -33,18 +34,18 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderGroupCommand;
 import com.github.jnidzwetzki.bitfinex.v2.commands.OrderCommand;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrder;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExchangeOrderState;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 
-public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
+public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> {
 
 	/**
 	 * The orders
 	 */
-	private final List<ExchangeOrder> orders;
+	private final List<BitfinexSubmittedOrder> orders;
 
 	/**
 	 * The order timeout
@@ -70,8 +71,8 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	public OrderManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
 		super(executorService, bitfinexApiBroker);
 		this.orders = new ArrayList<>();
-		bitfinexApiBroker.getCallbacks().onExchangeOrdersEvent(eos -> eos.forEach(this::updateOrder));
-		bitfinexApiBroker.getCallbacks().onExchangeOrderNotification(this::updateOrder);
+		bitfinexApiBroker.getCallbacks().onSubmittedOrderEvent(eos -> eos.forEach(this::updateOrder));
+		bitfinexApiBroker.getCallbacks().onOrderNotification(this::updateOrder);
 	}
 
 	/**
@@ -88,7 +89,7 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	 * @return
 	 * @throws APIException
 	 */
-	public List<ExchangeOrder> getOrders() throws APIException {
+	public List<BitfinexSubmittedOrder> getOrders() throws APIException {
 		synchronized (orders) {
 			return orders;
 		}
@@ -98,14 +99,14 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	 * Update a exchange order
 	 * @param exchangeOrder
 	 */
-	public void updateOrder(final ExchangeOrder exchangeOrder) {
+	public void updateOrder(final BitfinexSubmittedOrder exchangeOrder) {
 
 		synchronized (orders) {
 			// Replace order
 			orders.removeIf(o -> o.getOrderId() == exchangeOrder.getOrderId());
 
 			// Remove canceled orders
-			if(exchangeOrder.getState() != ExchangeOrderState.STATE_CANCELED) {
+			if(exchangeOrder.getStatus() != BitfinexSubmittedOrderStatus.CANCELED) {
 				orders.add(exchangeOrder);
 			}
 
@@ -122,7 +123,7 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	 * @throws APIException
 	 * @throws InterruptedException
 	 */
-	public void placeOrderAndWaitUntilActive(final BitfinexOrder order) throws APIException, InterruptedException {
+	public void placeOrderAndWaitUntilActive(final BitfinexNewOrder order) throws APIException, InterruptedException {
 
 		final BitfinexApiKeyPermissions capabilities = bitfinexApiBroker.getApiKeyPermissions();
 
@@ -130,7 +131,7 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 			throw new APIException("Unable to wait for order " + order + " connection has not enough capabilities: " + capabilities);
 		}
 
-		order.setApikey(bitfinexApiBroker.getConfiguration().getApiKey());
+		order.setApiKey(bitfinexApiBroker.getConfiguration().getApiKey());
 
 		final Callable<Boolean> orderCallable = () -> placeOrderOrderOnAPI(order);
 
@@ -164,11 +165,11 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean placeOrderOrderOnAPI(final BitfinexOrder order) throws Exception {
+	private boolean placeOrderOrderOnAPI(final BitfinexNewOrder order) throws Exception {
 		final CountDownLatch waitLatch = new CountDownLatch(1);
 
-		final Consumer<ExchangeOrder> ordercallback = (o) -> {
-			if(o.getCid() == order.getCid()) {
+		final Consumer<BitfinexSubmittedOrder> ordercallback = (o) -> {
+			if(Objects.equals(o.getClientId(), order.getClientId())) {
 				waitLatch.countDown();
 			}
 		};
@@ -189,8 +190,8 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 					.getOrderManager()
 					.getOrders()
 					.stream()
-					.filter(o -> o.getCid() == order.getCid())
-					.anyMatch(o -> o.getState() == ExchangeOrderState.STATE_ERROR);
+					.filter(o -> o.getClientId() == order.getClientId())
+					.anyMatch(o -> o.getStatus() == BitfinexSubmittedOrderStatus.ERROR);
 
 			if(orderInErrorState) {
 				throw new APIException("Unable to place order " + order);
@@ -249,8 +250,8 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	private boolean cancelOrderOnAPI(final long id) throws APIException, InterruptedException {
 		final CountDownLatch waitLatch = new CountDownLatch(1);
 
-		final Consumer<ExchangeOrder> ordercallback = (o) -> {
-			if(o.getOrderId() == id && o.getState() == ExchangeOrderState.STATE_CANCELED) {
+		final Consumer<BitfinexSubmittedOrder> ordercallback = (o) -> {
+			if(o.getOrderId() == id && o.getStatus() == BitfinexSubmittedOrderStatus.CANCELED) {
 				waitLatch.countDown();
 			}
 		};
@@ -279,7 +280,7 @@ public class OrderManager extends SimpleCallbackManager<ExchangeOrder> {
 	 * Place a new order
 	 * @throws APIException
 	 */
-	public void placeOrder(final BitfinexOrder order) throws APIException {
+	public void placeOrder(final BitfinexNewOrder order) throws APIException {
 
 		final BitfinexApiKeyPermissions capabilities = bitfinexApiBroker.getApiKeyPermissions();
 

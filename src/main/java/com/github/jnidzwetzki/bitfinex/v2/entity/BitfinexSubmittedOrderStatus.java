@@ -19,42 +19,34 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import java.util.Objects;
 
-public enum ExchangeOrderState {
+public enum BitfinexSubmittedOrderStatus {
 	
-	STATE_ACTIVE("ACTIVE"),
-	STATE_EXECUTED("EXECUTED"),
-	STATE_PARTIALLY_FILLED("PARTIALLY FILLED"),
-	STATE_POSTONLY_CANCELED("POSTONLY CANCELED"),
-	STATE_CANCELED("CANCELED"),
-	STATE_ERROR("ERROR");
+	ACTIVE("ACTIVE"),
+	EXECUTED("EXECUTED"),
+	PARTIALLY_FILLED("PARTIALLY FILLED"),
+	POSTONLY_CANCELED("POSTONLY CANCELED"),
+	CANCELED("CANCELED"),
+	ERROR("ERROR");
 
 	private String bitfinexString;
 	
-	private ExchangeOrderState(final String bitfinexString) {
+	BitfinexSubmittedOrderStatus(final String bitfinexString) {
 		this.bitfinexString = bitfinexString;
 	}
 	
-	public String getBitfinexString() {
-		return bitfinexString;
-	}
-	
-	public static ExchangeOrderState fromString(final String string) {
-		
+	public static BitfinexSubmittedOrderStatus fromString(final String string) {
 		Objects.requireNonNull(string);
-		
-		for (ExchangeOrderState state : ExchangeOrderState.values()) {
-			if (string.startsWith(state.getBitfinexString())) {
+		for (BitfinexSubmittedOrderStatus state : BitfinexSubmittedOrderStatus.values()) {
+			if (string.startsWith(state.bitfinexString)) {
 				return state;
 			}
 		}
 
 		// Handle special cases
-		//
 		// Case1: INSUFFICIENT BALANCE (G1) was: ACTIVE (note:POSCLOSE), PARTIALLY FILLED
 		if(string.contains(", PARTIALLY FILLED")) {
-			return ExchangeOrderState.STATE_PARTIALLY_FILLED;
+			return BitfinexSubmittedOrderStatus.PARTIALLY_FILLED;
 		}
-		
 		throw new IllegalArgumentException("Unable to find order type for: " + string);
 	}
 }

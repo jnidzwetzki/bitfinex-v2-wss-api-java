@@ -25,12 +25,12 @@ import java.util.function.Consumer;
 import com.google.common.collect.Lists;
 import org.json.JSONArray;
 
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Wallet;
 
 public class WalletHandler implements APICallbackHandler {
 
-	private Consumer<Collection<Wallet>> walletConsumer = w -> {};
+	private Consumer<Collection<BitfinexWallet>> walletConsumer = w -> {};
 
 	/**
 	 * {@inheritDoc}
@@ -38,7 +38,7 @@ public class WalletHandler implements APICallbackHandler {
 	@Override
 	public void handleChannelData(final JSONArray jsonArray) throws APIException {
 		final JSONArray json = jsonArray.getJSONArray(2);
-		List<Wallet> wallets = Lists.newArrayList();
+		List<BitfinexWallet> wallets = Lists.newArrayList();
 
 		if (json.length() == 0) {
 			walletConsumer.accept(wallets);
@@ -49,32 +49,32 @@ public class WalletHandler implements APICallbackHandler {
 			// snapshot
 			for (int walletPos = 0; walletPos < json.length(); walletPos++) {
 				final JSONArray walletArray = json.getJSONArray(walletPos);
-				Wallet wallet = jsonArrayToWallet(walletArray);
+				BitfinexWallet wallet = jsonArrayToWallet(walletArray);
 				wallets.add(wallet);
 			}
 		} else {
 			// update
-			Wallet wallet = jsonArrayToWallet(json);
+			BitfinexWallet wallet = jsonArrayToWallet(json);
 			wallets.add(wallet);
 		}
 		walletConsumer.accept(wallets);
 	}
 
-	private Wallet jsonArrayToWallet(final JSONArray json) {
+	private BitfinexWallet jsonArrayToWallet(final JSONArray json) {
 		final String walletType = json.getString(0);
 		final String currency = json.getString(1);
 		final BigDecimal balance = json.getBigDecimal(2);
 		final BigDecimal unsettledInterest = json.getBigDecimal(3);
 		final BigDecimal balanceAvailable = json.optBigDecimal(4, null);
 		
-		return new Wallet(walletType, currency, balance, unsettledInterest, balanceAvailable);
+		return new BitfinexWallet(walletType, currency, balance, unsettledInterest, balanceAvailable);
 	}
 
 	/**
 	 * wallet event consumer
 	 * @param consumer of event
 	 */
-	public void onWalletsEvent(Consumer<Collection<Wallet>> consumer) {
+	public void onWalletsEvent(Consumer<Collection<BitfinexWallet>> consumer) {
 		this.walletConsumer = consumer;
 	}
 }

@@ -33,7 +33,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 
-public class ExecutedTradesHandlerTest {
+public class BitfinexExecutedTradesHandlerTest {
 
     /**
      * The delta for double compares
@@ -63,8 +63,8 @@ public class ExecutedTradesHandlerTest {
 
         quoteManager.registerExecutedTradeCallback(symbol, (s, c) -> {
             Assert.assertEquals(symbol, s);
-            Assert.assertEquals(190631057, c.getId());
-            Assert.assertEquals(1518037080162l, c.getTimestamp());
+            Assert.assertEquals(190631057L, (long) c.getTradeId());
+            Assert.assertEquals(1518037080162L, (long) c.getTimestamp());
             Assert.assertEquals(0.007, c.getAmount().doubleValue(), DELTA);
             Assert.assertEquals(8175.9, c.getPrice().doubleValue(), DELTA);
         });
@@ -96,14 +96,12 @@ public class ExecutedTradesHandlerTest {
 
         quoteManager.registerExecutedTradeCallback(symbol, (s, c) -> {
             Assert.assertEquals(symbol, s);
-            if (c.getId() == 190631057) {
-                Assert.assertEquals(190631057, c.getId());
-                Assert.assertEquals(1518037080162l, c.getTimestamp());
+            if (c.getTradeId() == 190631057) {
+                Assert.assertEquals(1518037080162L, (long) c.getTimestamp());
                 Assert.assertEquals(0.007, c.getAmount().doubleValue(), DELTA);
                 Assert.assertEquals(8175.9, c.getPrice().doubleValue(), DELTA);
-            } else if (c.getId() == 190631052) {
-                Assert.assertEquals(190631052, c.getId());
-                Assert.assertEquals(1518037080110l, c.getTimestamp());
+            } else if (c.getTradeId() == 190631052) {
+                Assert.assertEquals(1518037080110L, (long) c.getTimestamp());
                 Assert.assertEquals(-0.25, c.getAmount().doubleValue(), DELTA);
                 Assert.assertEquals(8175.8, c.getPrice().doubleValue(), DELTA);
             } else {

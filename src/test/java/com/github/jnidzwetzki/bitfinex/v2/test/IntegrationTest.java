@@ -33,8 +33,8 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
-import com.github.jnidzwetzki.bitfinex.v2.entity.ExecutedTrade;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
@@ -82,7 +82,7 @@ public class IntegrationTest {
 	/**
 	 * Test the orderbook stream
 	 */
-	@Test(timeout=10000)
+	@Test(timeout=30000)
 	public void testOrderbookStream() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
 
@@ -124,7 +124,7 @@ public class IntegrationTest {
 	/**
 	 * Test the raw orderbook stream
 	 */
-	@Test(timeout=10000)
+	@Test(timeout=30000)
 	public void testRawOrderbookStream() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
 
@@ -165,16 +165,16 @@ public class IntegrationTest {
 	/**
 	 * Test the candle stream
 	 */
-	@Test(timeout=10000)
+	@Test(timeout=30000)
 	public void testCandleStream() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
 
 		try {
 			bitfinexClient.connect();
 			final List<BitfinexCandlestickSymbol> symbols = Arrays.asList(
-						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), Timeframe.MINUTES_1),
-						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), Timeframe.DAY_1),
-						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), Timeframe.MONTH_1)
+						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MINUTES_1),
+						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.DAY_1),
+						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MONTH_1)
 						);
 
 			final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
@@ -220,7 +220,7 @@ public class IntegrationTest {
 
 			final QuoteManager executedTradeManager = bitfinexClient.getQuoteManager();
 
-			final BiConsumer<BitfinexExecutedTradeSymbol, ExecutedTrade> callback = (c, o) -> {
+			final BiConsumer<BitfinexExecutedTradeSymbol, BitfinexExecutedTrade> callback = (c, o) -> {
 				latch.countDown();
 			};
 
@@ -430,7 +430,7 @@ public class IntegrationTest {
 	/**
 	 * Test the error callback
 	 */
-	@Test(timeout=10000)
+	@Test(timeout=30000)
 	public void testErrorCallback() {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
 
@@ -439,7 +439,7 @@ public class IntegrationTest {
 		try {
 			bitfinexClient.connect();
 			final BitfinexCandlestickSymbol symbol = new BitfinexCandlestickSymbol(
-					BitfinexCurrencyPair.of("BTC","USD"), Timeframe.MINUTES_1);
+					BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MINUTES_1);
 
 			final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
 

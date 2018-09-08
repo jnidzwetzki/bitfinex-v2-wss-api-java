@@ -317,9 +317,9 @@ public class BitfinexCurrencyPair {
 	 * @return
 	 */
 	public static BitfinexCurrencyPair fromSymbolString(final String symbolString) {
-		for (final BitfinexCurrencyPair curency : BitfinexCurrencyPair.values()) {
-			if (curency.toBitfinexString().equalsIgnoreCase(symbolString)) {
-				return curency;
+		for (final BitfinexCurrencyPair currency : BitfinexCurrencyPair.values()) {
+			if (currency.toBitfinexString().equalsIgnoreCase(symbolString)) {
+				return currency;
 			}
 		}
 		throw new IllegalArgumentException("Unable to find currency pair for: " + symbolString);

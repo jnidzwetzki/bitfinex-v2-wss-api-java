@@ -29,11 +29,11 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.callback.api.PositionHandler;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Position;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
 import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
 
 
-public class PositionTest {
+public class BitfinexPositionTest {
 	
 	/**
 	 * Test the position handler
@@ -48,7 +48,7 @@ public class PositionTest {
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
 		final PositionHandler positionHandler = new PositionHandler();
 		positionHandler.onPositionsEvent(positions -> {
-			for (Position position : positions) {
+			for (BitfinexPosition position : positions) {
 				bitfinexApiBroker.getPositionManager().updatePosition(position);
 			}
 		});
@@ -71,7 +71,7 @@ public class PositionTest {
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
 		final PositionHandler positionHandler = new PositionHandler();
 		positionHandler.onPositionsEvent(positions -> {
-			for (Position position : positions) {
+			for (BitfinexPosition position : positions) {
 				bitfinexApiBroker.getPositionManager().updatePosition(position);
 			}
 		});
@@ -94,7 +94,7 @@ public class PositionTest {
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
 		final PositionHandler positionHandler = new PositionHandler();
 		positionHandler.onPositionsEvent(positions -> {
-			for (Position position : positions) {
+			for (BitfinexPosition position : positions) {
 				bitfinexApiBroker.getPositionManager().updatePosition(position);
 			}
 		});

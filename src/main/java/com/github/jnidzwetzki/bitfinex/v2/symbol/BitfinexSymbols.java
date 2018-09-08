@@ -1,7 +1,7 @@
 package com.github.jnidzwetzki.bitfinex.v2.symbol;
 
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.Timeframe;
 
 public final class BitfinexSymbols {
 
@@ -9,7 +9,7 @@ public final class BitfinexSymbols {
 
     }
 
-    public static BitfinexCandlestickSymbol candlesticks(BitfinexCurrencyPair currencyPair, Timeframe timeframe) {
+    public static BitfinexCandlestickSymbol candlesticks(BitfinexCurrencyPair currencyPair, BitfinexCandleTimeFrame timeframe) {
         return new BitfinexCandlestickSymbol(currencyPair, timeframe);
     }
 
