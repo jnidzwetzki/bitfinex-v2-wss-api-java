@@ -52,11 +52,6 @@ public class WebsocketClientEndpoint implements Closeable {
 	private final Consumer<String> messageConsumer;
 	
 	/**
-	 * The wait for connection latch
-	 */
-	private final CountDownLatch connectLatch = new CountDownLatch(1);
-
-	/**
 	 * The endpoint URL
 	 */
 	private final URI endpointURI;
@@ -65,6 +60,11 @@ public class WebsocketClientEndpoint implements Closeable {
 	 * The Logger
 	 */
 	private final static Logger logger = LoggerFactory.getLogger(BitfinexApiBroker.class);
+
+	/**
+	 * The wait for connection latch
+	 */
+	private CountDownLatch connectLatch = new CountDownLatch(0);
 
 	public WebsocketClientEndpoint(URI bitfinexURI, Consumer<String> consumer) {
 		this.endpointURI = bitfinexURI;
@@ -80,6 +80,7 @@ public class WebsocketClientEndpoint implements Closeable {
 	 */
 	public void connect() throws DeploymentException, IOException, InterruptedException {
 		final WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+		connectLatch = new CountDownLatch(1);
 		this.userSession = container.connectToServer(this, endpointURI);
 		connectLatch.await();
 	}
@@ -104,6 +105,7 @@ public class WebsocketClientEndpoint implements Closeable {
 	@OnError
     public void onError(final Session session, final Throwable t) {
         logger.error("OnError called {}", Throwables.getStackTraceAsString(t));
+		connectLatch.countDown();
     }
 
 	/**
