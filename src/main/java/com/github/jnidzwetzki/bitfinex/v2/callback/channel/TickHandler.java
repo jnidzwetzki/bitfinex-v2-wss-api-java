@@ -29,16 +29,33 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
 public class TickHandler implements ChannelCallbackHandler {
 
+    private final int channelId;
+    private final BitfinexTickerSymbol symbol;
+
     private BiConsumer<BitfinexTickerSymbol, BitfinexTick> tickConsumer = (s, t) -> {};
+
+    public TickHandler(int channelId, final BitfinexTickerSymbol symbol) {
+        this.channelId = channelId;
+        this.symbol = symbol;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
-        final BitfinexTickerSymbol symbol = (BitfinexTickerSymbol) channelSymbol;
+    public void handleChannelData(final JSONArray jsonArray) throws APIException {
         BitfinexTick tick = jsonToBitfinexTick(jsonArray);
         tickConsumer.accept(symbol, tick);
+    }
+
+    @Override
+    public BitfinexStreamSymbol getSymbol() {
+        return symbol;
+    }
+
+    @Override
+    public int getChannelId() {
+        return channelId;
     }
 
     private BitfinexTick jsonToBitfinexTick(final JSONArray jsonArray) {

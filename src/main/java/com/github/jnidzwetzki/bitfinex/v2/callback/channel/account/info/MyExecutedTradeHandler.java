@@ -15,24 +15,35 @@
  *    limitations under the License. 
  *
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.callback.api;
+package com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
-public class MyExecutedTradeHandler implements APICallbackHandler {
+public class MyExecutedTradeHandler implements ChannelCallbackHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(MyExecutedTradeHandler.class);
 
-    private Consumer<BitfinexMyExecutedTrade> tradeConsumer = t -> {};
+    private final int channelId;
+    private final BitfinexAccountSymbol symbol;
+
+    private BiConsumer<BitfinexAccountSymbol, BitfinexMyExecutedTrade> tradeConsumer = (s, t) -> {};
+
+    public MyExecutedTradeHandler(int channelId, final BitfinexAccountSymbol symbol) {
+        this.channelId = channelId;
+        this.symbol = symbol;
+    }
 
     /**
      * {@inheritDoc}
@@ -50,7 +61,17 @@ public class MyExecutedTradeHandler implements APICallbackHandler {
         if ("tu".equals(type)) {
             trade.setUpdate(true);
         }
-        tradeConsumer.accept(trade);
+        tradeConsumer.accept(symbol, trade);
+    }
+
+    @Override
+    public BitfinexStreamSymbol getSymbol() {
+        return symbol;
+    }
+
+    @Override
+    public int getChannelId() {
+        return channelId;
     }
 
     private BitfinexMyExecutedTrade jsonToTrade(final JSONArray json) {
@@ -74,7 +95,7 @@ public class MyExecutedTradeHandler implements APICallbackHandler {
         return trade;
     }
 
-    public void onTradeEvent(Consumer<BitfinexMyExecutedTrade> tradeConsumer) {
+    public void onTradeEvent(BiConsumer<BitfinexAccountSymbol, BitfinexMyExecutedTrade> tradeConsumer) {
         this.tradeConsumer = tradeConsumer;
     }
 }

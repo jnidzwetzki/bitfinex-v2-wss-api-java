@@ -15,25 +15,37 @@
  *    limitations under the License. 
  *
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.callback.api;
+package com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import com.google.common.collect.Lists;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
-public class PositionHandler implements APICallbackHandler {
+public class PositionHandler implements ChannelCallbackHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(PositionHandler.class);
-    private Consumer<Collection<BitfinexPosition>> positionConsumer = p -> {};
+
+    private final int channelId;
+    private final BitfinexAccountSymbol symbol;
+
+    private BiConsumer<BitfinexAccountSymbol, Collection<BitfinexPosition>> positionConsumer = (s, p) -> {};
+
+    public PositionHandler(int channelId, final BitfinexAccountSymbol symbol) {
+        this.channelId = channelId;
+        this.symbol = symbol;
+    }
 
     /**
      * {@inheritDoc}
@@ -46,7 +58,7 @@ public class PositionHandler implements APICallbackHandler {
         ArrayList<BitfinexPosition> positions = Lists.newArrayList();
         // No positions active
         if (json.length() == 0) {
-            positionConsumer.accept(positions);
+            positionConsumer.accept(symbol, positions);
             return;
         }
 
@@ -62,7 +74,17 @@ public class PositionHandler implements APICallbackHandler {
             BitfinexPosition position = jsonArrayToPosition(json);
             positions.add(position);
         }
-        positionConsumer.accept(positions);
+        positionConsumer.accept(symbol, positions);
+    }
+
+    @Override
+    public BitfinexStreamSymbol getSymbol() {
+        return symbol;
+    }
+
+    @Override
+    public int getChannelId() {
+        return channelId;
     }
 
     private BitfinexPosition jsonArrayToPosition(final JSONArray json) {
@@ -87,7 +109,7 @@ public class PositionHandler implements APICallbackHandler {
      * positions event consumer
      * @param consumer of event
      */
-    public void onPositionsEvent(Consumer<Collection<BitfinexPosition>> consumer) {
+    public void onPositionsEvent(BiConsumer<BitfinexAccountSymbol, Collection<BitfinexPosition>> consumer) {
         this.positionConsumer = consumer;
     }
 }

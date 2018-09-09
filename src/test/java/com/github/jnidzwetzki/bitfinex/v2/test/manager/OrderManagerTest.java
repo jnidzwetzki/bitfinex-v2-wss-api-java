@@ -26,8 +26,8 @@ import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexOrderBuilder;
-import com.github.jnidzwetzki.bitfinex.v2.callback.api.NotificationHandler;
-import com.github.jnidzwetzki.bitfinex.v2.callback.api.OrderHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.NotificationHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.OrderHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
@@ -36,6 +36,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 
 
 public class OrderManagerTest {
@@ -60,9 +61,9 @@ public class OrderManagerTest {
 
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         bitfinexApiBroker.getOrderManager().registerCallback(orderCallback);
-        final NotificationHandler notificationHandler = new NotificationHandler();
-        notificationHandler.onOrderNotification(eo -> {
-            bitfinexApiBroker.getOrderManager().updateOrder(eo);
+        final NotificationHandler notificationHandler = new NotificationHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        notificationHandler.onOrderNotification((a, eo) -> {
+            bitfinexApiBroker.getOrderManager().updateOrder(a, eo);
         });
 
         notificationHandler.handleChannelData(jsonArray);
@@ -89,11 +90,11 @@ public class OrderManagerTest {
 
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         bitfinexApiBroker.getOrderManager().registerCallback(orderCallback);
-        final NotificationHandler notificationHandler = new NotificationHandler();
+        final NotificationHandler notificationHandler = new NotificationHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 
         notificationHandler.handleChannelData(jsonArray);
-        notificationHandler.onOrderNotification(eo -> {
-            bitfinexApiBroker.getOrderManager().updateOrder(eo);
+        notificationHandler.onOrderNotification((a, eo) -> {
+            bitfinexApiBroker.getOrderManager().updateOrder(a, eo);
         });
     }
 
@@ -107,10 +108,10 @@ public class OrderManagerTest {
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         final String jsonString = "[0,\"on\",[6784335053,null,1514956504945000,\"tIOTUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
-        final OrderHandler orderHandler = new OrderHandler();
-        orderHandler.onSubmittedOrderEvent(eos -> {
+        final OrderHandler orderHandler = new OrderHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        orderHandler.onSubmittedOrderEvent((a, eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
-                bitfinexApiBroker.getOrderManager().updateOrder(exchangeOrder);
+                bitfinexApiBroker.getOrderManager().updateOrder(a, exchangeOrder);
             }
         });
 
@@ -132,10 +133,10 @@ public class OrderManagerTest {
         final String jsonString = "[0,\"on\",[[6784335053,null,1514956504945000,\"tIOTUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0], [67843353243,null,1514956234945000,\"tBTCUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0]]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
-        final OrderHandler orderHandler = new OrderHandler();
-        orderHandler.onSubmittedOrderEvent(eos -> {
+        final OrderHandler orderHandler = new OrderHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        orderHandler.onSubmittedOrderEvent((a, eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
-                bitfinexApiBroker.getOrderManager().updateOrder(exchangeOrder);
+                bitfinexApiBroker.getOrderManager().updateOrder(a, exchangeOrder);
             }
         });
 
@@ -162,10 +163,10 @@ public class OrderManagerTest {
 
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
-        final OrderHandler orderHandler = new OrderHandler();
-        orderHandler.onSubmittedOrderEvent(eos -> {
+        final OrderHandler orderHandler = new OrderHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        orderHandler.onSubmittedOrderEvent((a,eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
-                bitfinexApiBroker.getOrderManager().updateOrder(exchangeOrder);
+                bitfinexApiBroker.getOrderManager().updateOrder(a, exchangeOrder);
             }
         });
 
@@ -187,10 +188,10 @@ public class OrderManagerTest {
 
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
-        final OrderHandler orderHandler = new OrderHandler();
-        orderHandler.onSubmittedOrderEvent(eos -> {
+        final OrderHandler orderHandler = new OrderHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        orderHandler.onSubmittedOrderEvent((a, eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
-                bitfinexApiBroker.getOrderManager().updateOrder(exchangeOrder);
+                bitfinexApiBroker.getOrderManager().updateOrder(a, exchangeOrder);
             }
         });
 
@@ -228,6 +229,7 @@ public class OrderManagerTest {
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
+        BitfinexAccountSymbol symbol = new BitfinexAccountSymbol("apiKey", BitfinexApiKeyPermissions.ALL_PERMISSIONS);
 
         final Runnable r = () -> {
             try {
@@ -238,7 +240,7 @@ public class OrderManagerTest {
             final BitfinexSubmittedOrder exchangeOrder = new BitfinexSubmittedOrder();
             exchangeOrder.setOrderId(12L);
             exchangeOrder.setStatus(BitfinexSubmittedOrderStatus.CANCELED);
-            orderManager.updateOrder(exchangeOrder);
+            orderManager.updateOrder(symbol, exchangeOrder);
         };
 
         // Cancel event
@@ -284,6 +286,7 @@ public class OrderManagerTest {
 
         final BitfinexNewOrder order
                 = BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH", "USD"), BitfinexOrderType.MARKET, 1).build();
+        BitfinexAccountSymbol symbol = new BitfinexAccountSymbol("apiKey", BitfinexApiKeyPermissions.ALL_PERMISSIONS);
 
         final Runnable r = () -> {
             try {
@@ -294,7 +297,7 @@ public class OrderManagerTest {
             final BitfinexSubmittedOrder exchangeOrder = new BitfinexSubmittedOrder();
             exchangeOrder.setClientId(order.getClientId());
             exchangeOrder.setStatus(BitfinexSubmittedOrderStatus.ACTIVE);
-            orderManager.updateOrder(exchangeOrder);
+            orderManager.updateOrder(symbol, exchangeOrder);
         };
 
         // Cancel event

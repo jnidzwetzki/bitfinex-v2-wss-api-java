@@ -69,8 +69,8 @@ public class BitfinexExecutedTradesHandlerTest {
             Assert.assertEquals(8175.9, c.getPrice().doubleValue(), DELTA);
         });
 
-        final ExecutedTradeHandler handler = new ExecutedTradeHandler();
-        handler.handleChannelData(symbol, jsonArray);
+        final ExecutedTradeHandler handler = new ExecutedTradeHandler(10, symbol);
+        handler.handleChannelData(jsonArray);
     }
 
     /**
@@ -109,11 +109,11 @@ public class BitfinexExecutedTradesHandlerTest {
             }
         });
 
-        final ExecutedTradeHandler handler = new ExecutedTradeHandler();
+        final ExecutedTradeHandler handler = new ExecutedTradeHandler(10, symbol);
         handler.onExecutedTradeEvent((sym, trades) -> {
             trades.forEach(t -> quoteManager.handleExecutedTradeEntry(sym, t));
         });
-        handler.handleChannelData(symbol, jsonArray);
+        handler.handleChannelData(jsonArray);
     }
 
 }

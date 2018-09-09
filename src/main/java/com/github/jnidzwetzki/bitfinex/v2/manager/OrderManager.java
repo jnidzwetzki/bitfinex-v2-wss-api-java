@@ -39,6 +39,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 
 public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> {
 
@@ -71,7 +72,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	public OrderManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
 		super(executorService, bitfinexApiBroker);
 		this.orders = new ArrayList<>();
-		bitfinexApiBroker.getCallbacks().onSubmittedOrderEvent(eos -> eos.forEach(this::updateOrder));
+		bitfinexApiBroker.getCallbacks().onSubmittedOrderEvent((a, e) -> e.forEach(i -> updateOrder(a, i)));
 		bitfinexApiBroker.getCallbacks().onOrderNotification(this::updateOrder);
 	}
 
@@ -99,11 +100,11 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	 * Update a exchange order
 	 * @param exchangeOrder
 	 */
-	public void updateOrder(final BitfinexSubmittedOrder exchangeOrder) {
+	public void updateOrder(final BitfinexAccountSymbol account, final BitfinexSubmittedOrder exchangeOrder) {
 
 		synchronized (orders) {
 			// Replace order
-			orders.removeIf(o -> o.getOrderId() == exchangeOrder.getOrderId());
+			orders.removeIf(o -> Objects.equals(o.getOrderId(), exchangeOrder.getOrderId()));
 
 			// Remove canceled orders
 			if(exchangeOrder.getStatus() != BitfinexSubmittedOrderStatus.CANCELED) {

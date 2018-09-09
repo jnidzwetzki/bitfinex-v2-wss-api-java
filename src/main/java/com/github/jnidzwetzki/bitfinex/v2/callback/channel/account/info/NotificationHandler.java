@@ -15,25 +15,35 @@
  *    limitations under the License. 
  *
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.callback.api;
+package com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import com.google.common.base.Strings;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
-public class NotificationHandler implements APICallbackHandler {
+public class NotificationHandler implements ChannelCallbackHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(NotificationHandler.class);
+    private final int channelId;
+    private final BitfinexAccountSymbol symbol;
 
-    private Consumer<BitfinexSubmittedOrder> exchangeOrderConsumer = ex -> {};
+    private BiConsumer<BitfinexAccountSymbol, BitfinexSubmittedOrder> submittedOrderConsumer = (s, e) -> {};
+
+    public NotificationHandler(int channelId, final BitfinexAccountSymbol symbol) {
+        this.channelId = channelId;
+        this.symbol = symbol;
+    }
 
     /**
      * {@inheritDoc}
@@ -54,9 +64,19 @@ public class NotificationHandler implements APICallbackHandler {
             final String state = array.optString(6);
             if ("ERROR".equals(state)) {
                 BitfinexSubmittedOrder exchangeOrder = jsonToBitfinexSubmittedOrder(array);
-                exchangeOrderConsumer.accept(exchangeOrder);
+                submittedOrderConsumer.accept(symbol, exchangeOrder);
             }
         }
+    }
+
+    @Override
+    public BitfinexStreamSymbol getSymbol() {
+        return symbol;
+    }
+
+    @Override
+    public int getChannelId() {
+        return channelId;
     }
 
     private BitfinexSubmittedOrder jsonToBitfinexSubmittedOrder(JSONArray array) {
@@ -91,7 +111,7 @@ public class NotificationHandler implements APICallbackHandler {
      * exchange order notification consumer
      * @param consumer of event
      */
-    public void onOrderNotification(Consumer<BitfinexSubmittedOrder> consumer) {
-        this.exchangeOrderConsumer = consumer;
+    public void onOrderNotification(BiConsumer<BitfinexAccountSymbol, BitfinexSubmittedOrder> consumer) {
+        this.submittedOrderConsumer = consumer;
     }
 }
