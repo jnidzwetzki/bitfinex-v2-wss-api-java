@@ -86,7 +86,7 @@ public class HeartbeatManagerTest {
 		long heartbeat = System.currentTimeMillis();
 		handler.onHeartbeatEvent(timestamp -> Assert.assertTrue(timestamp > heartbeat));
 		Thread.sleep(50);
-		handler.handleChannelData(null);
+		handler.handleChannelData(null, null);
 	}
 
 	/**

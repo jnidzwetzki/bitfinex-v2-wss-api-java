@@ -81,7 +81,7 @@ public class TickHandlerTest {
         final TickHandler tickHandler = new TickHandler(0, symbol);
         tickHandler.onTickEvent(tickerManager::handleNewTick);
 
-        tickHandler.handleChannelData(jsonArray);
+        tickHandler.handleChannelData(null, jsonArray);
 
         Assert.assertTrue(tickerManager.getHeartbeatForSymbol(symbol) != -1);
     }

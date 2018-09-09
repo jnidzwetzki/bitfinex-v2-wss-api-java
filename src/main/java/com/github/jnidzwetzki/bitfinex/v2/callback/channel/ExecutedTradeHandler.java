@@ -47,9 +47,13 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final JSONArray jsonArray) throws APIException {
+    public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
         try {
             final List<BitfinexExecutedTrade> trades = new ArrayList<>();
+
+            if( action == "tu") {
+                return; // Ignore tu messages (see issue #13)
+            }
 
             // Snapshots contain multiple executes entries, updates only one
             if (jsonArray.get(0) instanceof JSONArray) {

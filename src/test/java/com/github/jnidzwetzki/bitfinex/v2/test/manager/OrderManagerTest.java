@@ -66,7 +66,7 @@ public class OrderManagerTest {
             bitfinexApiBroker.getOrderManager().updateOrder(a, eo);
         });
 
-        notificationHandler.handleChannelData(jsonArray);
+        notificationHandler.handleChannelData(null, jsonArray);
     }
 
 
@@ -92,7 +92,7 @@ public class OrderManagerTest {
         bitfinexApiBroker.getOrderManager().registerCallback(orderCallback);
         final NotificationHandler notificationHandler = new NotificationHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 
-        notificationHandler.handleChannelData(jsonArray);
+        notificationHandler.handleChannelData(null, jsonArray);
         notificationHandler.onOrderNotification((a, eo) -> {
             bitfinexApiBroker.getOrderManager().updateOrder(a, eo);
         });
@@ -117,7 +117,7 @@ public class OrderManagerTest {
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
         Assert.assertTrue(orderManager.getOrders().isEmpty());
-        orderHandler.handleChannelData(jsonArray);
+        orderHandler.handleChannelData(null, jsonArray);
         Assert.assertEquals(1, orderManager.getOrders().size());
 
         Assert.assertEquals(BitfinexSubmittedOrderStatus.ACTIVE, orderManager.getOrders().get(0).getStatus());
@@ -142,7 +142,7 @@ public class OrderManagerTest {
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
         Assert.assertTrue(orderManager.getOrders().isEmpty());
-        orderHandler.handleChannelData(jsonArray);
+        orderHandler.handleChannelData(null, jsonArray);
         Assert.assertEquals(2, orderManager.getOrders().size());
 
         Assert.assertEquals(BitfinexSubmittedOrderStatus.ACTIVE, orderManager.getOrders().get(0).getStatus());
@@ -172,7 +172,7 @@ public class OrderManagerTest {
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
         Assert.assertTrue(orderManager.getOrders().isEmpty());
-        orderHandler.handleChannelData(jsonArray);
+        orderHandler.handleChannelData(null, jsonArray);
         Assert.assertEquals(1, orderManager.getOrders().size());
         Assert.assertEquals(BitfinexSubmittedOrderStatus.ACTIVE, orderManager.getOrders().get(0).getStatus());
     }
@@ -197,7 +197,7 @@ public class OrderManagerTest {
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
         Assert.assertTrue(orderManager.getOrders().isEmpty());
-        orderHandler.handleChannelData(jsonArray);
+        orderHandler.handleChannelData(null, jsonArray);
         Assert.assertEquals(1, orderManager.getOrders().size());
         Assert.assertEquals(BitfinexSubmittedOrderStatus.PARTIALLY_FILLED, orderManager.getOrders().get(0).getStatus());
     }

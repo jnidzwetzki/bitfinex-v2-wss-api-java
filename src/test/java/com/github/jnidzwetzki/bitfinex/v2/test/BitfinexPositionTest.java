@@ -56,7 +56,7 @@ public class BitfinexPositionTest {
 		});
 
 		Assert.assertTrue(bitfinexApiBroker.getPositionManager().getPositions().isEmpty());
-		positionHandler.handleChannelData(jsonArray);
+		positionHandler.handleChannelData(null, jsonArray);
 		Assert.assertEquals(1, bitfinexApiBroker.getPositionManager().getPositions().size());
 	}
 	
@@ -79,7 +79,7 @@ public class BitfinexPositionTest {
 		});
 
 		Assert.assertTrue(bitfinexApiBroker.getPositionManager().getPositions().isEmpty());
-		positionHandler.handleChannelData(jsonArray);
+		positionHandler.handleChannelData(null, jsonArray);
 		Assert.assertEquals(1, bitfinexApiBroker.getPositionManager().getPositions().size());
 	}
 	
@@ -102,7 +102,7 @@ public class BitfinexPositionTest {
 		});
 
 		Assert.assertTrue(bitfinexApiBroker.getPositionManager().getPositions().isEmpty());
-		positionHandler.handleChannelData(jsonArray);
+		positionHandler.handleChannelData(null, jsonArray);
 		Assert.assertEquals(2, bitfinexApiBroker.getPositionManager().getPositions().size());
 	}
 	

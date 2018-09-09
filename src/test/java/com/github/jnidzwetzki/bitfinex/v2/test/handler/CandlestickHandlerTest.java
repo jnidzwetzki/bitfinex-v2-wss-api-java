@@ -77,7 +77,7 @@ public class CandlestickHandlerTest {
 						
 		final CandlestickHandler candlestickHandler = new CandlestickHandler(10, symbol);
 		candlestickHandler.onCandlesticksEvent(bitfinexApiBroker.getQuoteManager()::handleCandlestickCollection);
-		candlestickHandler.handleChannelData(jsonArray);
+		candlestickHandler.handleChannelData(null, jsonArray);
 		
 		Assert.assertEquals(1, counter.get());
 	}
@@ -127,7 +127,7 @@ public class CandlestickHandlerTest {
 						
 		final CandlestickHandler candlestickHandler = new CandlestickHandler(10, symbol);
 		candlestickHandler.onCandlesticksEvent(bitfinexApiBroker.getQuoteManager()::handleCandlestickCollection);
-		candlestickHandler.handleChannelData(jsonArray);
+		candlestickHandler.handleChannelData(null, jsonArray);
 		
 		Assert.assertEquals(2, counter.get());
 	}

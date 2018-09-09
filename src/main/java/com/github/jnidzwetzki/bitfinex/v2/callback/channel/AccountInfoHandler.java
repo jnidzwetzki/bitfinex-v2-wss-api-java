@@ -94,7 +94,7 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
     }
 
     @Override
-    public void handleChannelData(final JSONArray message) throws APIException {
+    public void handleChannelData(final String action, final JSONArray message) throws APIException {
         if (message.toString().contains("ERROR")) {
             logger.error("Got Error message: {}", message.toString());
         }
@@ -105,7 +105,7 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
             return;
         }
         try {
-            handler.handleChannelData(message);
+            handler.handleChannelData(action, message);
         } catch (APIException e) {
             logger.error("Got exception while handling callback", e);
         }

@@ -27,10 +27,11 @@ public interface ChannelCallbackHandler {
     /**
      * Handle data for the channel
      *
+     * @param action        - channel action (hb, te/tu etc.)
      * @param message       - json message
      * @throws APIException raised in case of exception
      */
-    void handleChannelData(final JSONArray message) throws APIException;
+    void handleChannelData(final String action, final JSONArray message) throws APIException;
 
     /**
      * returns channel symbol

@@ -72,7 +72,7 @@ public class BitfinexWalletHandlerTest {
 				}
 			}
 		});
-		walletHandler.handleChannelData(jsonArray);
+		walletHandler.handleChannelData(null, jsonArray);
 
 		Assert.assertEquals(1, walletTable.size());
 		Assert.assertEquals(9, walletTable.get(BitfinexWallet.Type.EXCHANGE, "ETH").getBalance().doubleValue(), DELTA);
@@ -112,7 +112,7 @@ public class BitfinexWalletHandlerTest {
 				}
 			}
 		});
-		walletHandler.handleChannelData(jsonArray);
+		walletHandler.handleChannelData(null, jsonArray);
 
 		Assert.assertEquals(9, walletTable.size());
 		

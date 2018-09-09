@@ -43,7 +43,7 @@ public class TickHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final JSONArray jsonArray) throws APIException {
+    public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
         BitfinexTick tick = jsonToBitfinexTick(jsonArray);
         tickConsumer.accept(symbol, tick);
     }

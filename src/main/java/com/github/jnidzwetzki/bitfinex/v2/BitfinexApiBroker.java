@@ -522,38 +522,24 @@ public class BitfinexApiBroker implements Closeable {
 			reconnect();
 			return;
 		}
+		String action = null;
+		final JSONArray payload;
+		if (jsonArray.get(1) instanceof String) {
+			action = jsonArray.getString(1);
+			payload = jsonArray.optJSONArray(2);
+		} else {
+			payload = jsonArray.optJSONArray(1);
+		}
+		if(Objects.equals(action, "hb")) {
+			quoteManager.updateChannelHeartbeat(channelCallbackHandler.getSymbol());
+		}
 		try {
-			if (jsonArray.get(1) instanceof String) {
-				handleChannelDataString(jsonArray, channelCallbackHandler.getSymbol());
-			} else {
-				channelCallbackHandler.handleChannelData(jsonArray.getJSONArray(1));
+			if (payload == null) {
+				return;
 			}
+			channelCallbackHandler.handleChannelData(action, payload);
 		} catch (APIException e) {
 			logger.error("Got exception while handling callback", e);
-		}
-	}
-
-	/**
-	 * Handle the channel data with has a string at first position
-	 * @param jsonArray
-	 * @param channelSymbol
-	 * @throws APIException
-	 */
-	private void handleChannelDataString(final JSONArray jsonArray,
-			final BitfinexStreamSymbol channelSymbol) throws APIException {
-
-		final String value = jsonArray.getString(1);
-
-		if("hb".equals(value)) {
-			quoteManager.updateChannelHeartbeat(channelSymbol);
-		} else if("te".equals(value)) {
-			final JSONArray subarray = jsonArray.getJSONArray(2);
-			final ChannelCallbackHandler handler = new ExecutedTradeHandler(-1, (BitfinexExecutedTradeSymbol) channelSymbol);
-			handler.handleChannelData(subarray);
-		} else if("tu".equals(value)) {
-			// Ignore tu messages (see issue #13)
-		} else {
-			logger.error("Unable to process: {}", jsonArray);
 		}
 	}
 

@@ -70,7 +70,7 @@ public class BitfinexExecutedTradesHandlerTest {
         });
 
         final ExecutedTradeHandler handler = new ExecutedTradeHandler(10, symbol);
-        handler.handleChannelData(jsonArray);
+        handler.handleChannelData("te", jsonArray);
     }
 
     /**
@@ -113,7 +113,7 @@ public class BitfinexExecutedTradesHandlerTest {
         handler.onExecutedTradeEvent((sym, trades) -> {
             trades.forEach(t -> quoteManager.handleExecutedTradeEntry(sym, t));
         });
-        handler.handleChannelData(jsonArray);
+        handler.handleChannelData("te", jsonArray);
     }
 
 }

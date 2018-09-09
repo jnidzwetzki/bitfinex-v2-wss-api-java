@@ -75,7 +75,7 @@ public class TradeManagerTest {
             Assert.assertTrue(t.toString().length() > 0);
         });
 
-        tradeHandler.handleChannelData(jsonArray);
+        tradeHandler.handleChannelData("te", jsonArray);
     }
 
     /**
@@ -86,7 +86,7 @@ public class TradeManagerTest {
      */
     @Test
     public void testTradeChannelHandler2() throws APIException, InterruptedException {
-        final String jsonString = "[0,\"tu\",[106655593,\"tBTCUSD\",1512247319827,5691690918,-0.002,10894,\"EXCHANGE MARKET\",10894,-1,-0.0392184,\"USD\"]]";
+        final String jsonString = "[0,\"te\",[106655593,\"tBTCUSD\",1512247319827,5691690918,-0.002,10894,\"EXCHANGE MARKET\",10894,-1,-0.0392184,\"USD\"]]";
 
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
@@ -109,7 +109,7 @@ public class TradeManagerTest {
             Assert.assertTrue(t.toString().length() > 0);
         });
 
-        tradeHandler.handleChannelData(jsonArray);
+        tradeHandler.handleChannelData("te", jsonArray);
     }
 
     /**

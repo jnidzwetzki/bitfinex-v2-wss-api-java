@@ -49,7 +49,7 @@ public class MyExecutedTradeHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final JSONArray jsonArray) throws APIException {
+    public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
         logger.info("Got trade callback {}", jsonArray.toString());
 
         final String type = jsonArray.getString(1);

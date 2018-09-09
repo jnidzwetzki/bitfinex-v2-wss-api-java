@@ -53,7 +53,7 @@ public class OrderHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final JSONArray message) throws APIException {
+    public void handleChannelData(final String action, final JSONArray message) throws APIException {
         logger.info("Got order callback {}", message.toString());
 
         final JSONArray json = message.getJSONArray(2);
