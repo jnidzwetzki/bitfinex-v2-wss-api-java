@@ -24,7 +24,7 @@ import com.google.common.collect.Sets;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SetConnectionFeaturesCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SetConnectionFeaturesCommand;
 
 public class ConnectionFeatureManager extends AbstractManager {
 	

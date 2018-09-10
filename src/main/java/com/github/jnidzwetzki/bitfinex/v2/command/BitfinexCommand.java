@@ -15,13 +15,13 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.commands;
+package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 
-public abstract class AbstractAPICommand {
+public interface BitfinexCommand {
 
-	public abstract String getCommand(final BitfinexApiBroker bitfinexApiBroker) throws CommandException;
+	String getCommand(final BitfinexApiBroker bitfinexApiBroker) throws CommandException;
 
 }

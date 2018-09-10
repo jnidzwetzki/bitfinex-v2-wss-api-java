@@ -15,39 +15,28 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.commands;
-
-import java.util.Collection;
+package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 
-public class SetConnectionFeaturesCommand extends AbstractAPICommand {
+public class SubscribeTradesCommand implements BitfinexCommand {
 
-	/**
-	 * The active features
-	 */
-	private Collection<BitfinexConnectionFeature> features;
+	private String currencyPair;
 
-	public SetConnectionFeaturesCommand(final Collection<BitfinexConnectionFeature> features) {
-		this.features = features;
+	public SubscribeTradesCommand(final BitfinexExecutedTradeSymbol tradeSymbol) {
+		this.currencyPair = tradeSymbol.getBitfinexCurrencyPair().toBitfinexString();
 	}
-	
+
 	@Override
 	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) {
-		
-		// XOR all features
-		int featureFlags = 0;
-		for(final BitfinexConnectionFeature feature : features) {
-			featureFlags = featureFlags ^ feature.getFeatureFlag();
-		}
-		
 		final JSONObject subscribeJson = new JSONObject();
-		subscribeJson.put("event", "conf");
-		subscribeJson.put("flags", featureFlags);
+		subscribeJson.put("event", "subscribe");
+		subscribeJson.put("channel", "trades");
+		subscribeJson.put("symbol", currencyPair);
+		
 		return subscribeJson.toString();
 	}
-
 }

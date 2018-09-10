@@ -51,13 +51,13 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.command.DoNothingCommandCallb
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.ErrorCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.SubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.UnsubscribedCallback;
-import com.github.jnidzwetzki.bitfinex.v2.commands.AbstractAPICommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.AuthCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeOrderbookCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.AuthCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCandlesCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeOrderbookCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTickerCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTradesCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
@@ -330,7 +330,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * Send a new API command
 	 * @param apiCommand
 	 */
-	public void sendCommand(final AbstractAPICommand apiCommand) {
+	public void sendCommand(final BitfinexCommand apiCommand) {
 		try {
 			if (apiCommand instanceof BitfinexStreamSymbolToChannelIdResolverAware) {
 				BitfinexStreamSymbolToChannelIdResolverAware aware = (BitfinexStreamSymbolToChannelIdResolverAware) apiCommand;

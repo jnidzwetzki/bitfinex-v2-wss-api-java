@@ -25,10 +25,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCandlesCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTickerCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTradesCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;

@@ -25,7 +25,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.commands.CalculateCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.CalculateCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 

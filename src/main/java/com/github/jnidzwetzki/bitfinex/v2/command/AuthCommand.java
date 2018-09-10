@@ -15,7 +15,7 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.commands;
+package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -28,7 +28,7 @@ import org.json.JSONObject;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 
-public class AuthCommand extends AbstractAPICommand {
+public class AuthCommand implements BitfinexCommand {
 
 	/**
 	 * The used auth algorithm
