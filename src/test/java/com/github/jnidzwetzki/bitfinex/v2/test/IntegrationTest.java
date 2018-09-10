@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
 import com.github.jnidzwetzki.bitfinex.v2.SequenceNumberAuditor;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
@@ -381,10 +382,10 @@ public class IntegrationTest {
 	 */
 	@Test
 	public void testSequencing() throws APIException, InterruptedException {
-		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
+		SequenceNumberAuditor sequenceNumberAuditor = new SequenceNumberAuditor();
+		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig(), new BitfinexApiCallbackRegistry(), sequenceNumberAuditor);
 		bitfinexClient.connect();
 
-		final SequenceNumberAuditor sequenceNumberAuditor = bitfinexClient.getSequenceNumberAuditor();
 		Assert.assertEquals(-1, sequenceNumberAuditor.getPrivateSequence());
 		Assert.assertEquals(-1, sequenceNumberAuditor.getPublicSequence());
 		Assert.assertEquals(SequenceNumberAuditor.ErrorPolicy.LOG_ONLY, sequenceNumberAuditor.getErrorPolicy());

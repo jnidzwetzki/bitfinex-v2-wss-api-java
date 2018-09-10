@@ -178,16 +178,16 @@ public class BitfinexApiBroker implements Closeable {
 	private final static Logger logger = LoggerFactory.getLogger(BitfinexApiBroker.class);
 
 	public BitfinexApiBroker(BitfinexApiBrokerConfig config) {
-		this(config, new BitfinexApiCallbackRegistry());
+		this(config, new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 	}
 
-	public BitfinexApiBroker(BitfinexApiBrokerConfig config, BitfinexApiCallbackRegistry callbackRegistry) {
+	public BitfinexApiBroker(BitfinexApiBrokerConfig config, BitfinexApiCallbackRegistry callbackRegistry, SequenceNumberAuditor sequenceNumberAuditor) {
 		this.configuration = new BitfinexApiBrokerConfig(config);
 		this.callbackRegistry = callbackRegistry;
 
 		this.channelIdToHandlerMap = new ConcurrentHashMap<>();
 		this.permissions = BitfinexApiKeyPermissions.NO_PERMISSIONS;
-		this.sequenceNumberAuditor = new SequenceNumberAuditor();
+		this.sequenceNumberAuditor = sequenceNumberAuditor;
 		this.lastHeartbeat = new AtomicLong(0);
 		this.quoteManager = new QuoteManager(this, configuration.getExecutorService());
 		this.orderbookManager = new OrderbookManager(this, configuration.getExecutorService());
@@ -727,9 +727,5 @@ public class BitfinexApiBroker implements Closeable {
 
 	public ConnectionFeatureManager getConnectionFeatureManager() {
 		return connectionFeatureManager;
-	}
-
-	public SequenceNumberAuditor getSequenceNumberAuditor() {
-		return sequenceNumberAuditor;
 	}
 }
