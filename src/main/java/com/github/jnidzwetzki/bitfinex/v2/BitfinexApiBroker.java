@@ -51,8 +51,8 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.command.DoNothingCommandCallb
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.ErrorCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.SubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.UnsubscribedCallback;
-import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.AuthCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTickerCommand;
@@ -74,6 +74,7 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexStreamSymbolToChannelIdResolverAware;
 
@@ -237,7 +238,7 @@ public class BitfinexApiBroker implements Closeable {
 
 		final AuthCallback auth = new AuthCallback();
 		auth.onAuthenticationSuccessEvent(permissions -> {
-			BitfinexAccountSymbol symbol = new BitfinexAccountSymbol(configuration.getApiKey(), permissions);
+			BitfinexAccountSymbol symbol = BitfinexSymbols.account(configuration.getApiKey(), permissions);
 			AccountInfoHandler handler = new AccountInfoHandler(0, symbol);
 			handler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
 			handler.onPositionsEvent(callbackRegistry::acceptPositionsEvent);
@@ -250,7 +251,7 @@ public class BitfinexApiBroker implements Closeable {
 			callbackRegistry.acceptAuthenticationSuccessEvent(symbol);
 		});
 		auth.onAuthenticationFailedEvent(permissions -> {
-			BitfinexAccountSymbol symbol = new BitfinexAccountSymbol(configuration.getApiKey(), permissions);
+			BitfinexAccountSymbol symbol = BitfinexSymbols.account(configuration.getApiKey(), permissions);
 			callbackRegistry.acceptAuthenticationFailedEvent(symbol);
 		});
 		commandCallbacks.put("auth", auth);

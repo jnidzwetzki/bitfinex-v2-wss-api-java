@@ -26,7 +26,7 @@ public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 	 */
 	private final BitfinexCurrencyPair bitfinexCurrencyPair;
 
-	public BitfinexTickerSymbol(final BitfinexCurrencyPair bitfinexCurrencyPair) {
+	BitfinexTickerSymbol(final BitfinexCurrencyPair bitfinexCurrencyPair) {
 		this.bitfinexCurrencyPair = bitfinexCurrencyPair;
 	}
 
@@ -64,7 +64,7 @@ public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 	 */
 	public static BitfinexTickerSymbol fromBitfinexString(final String symbol) {
 		final BitfinexCurrencyPair bitfinexCurrencyPair = BitfinexCurrencyPair.fromSymbolString(symbol);
-		return new BitfinexTickerSymbol(bitfinexCurrencyPair);
+		return BitfinexSymbols.ticker(bitfinexCurrencyPair);
 	}
 
 	/**

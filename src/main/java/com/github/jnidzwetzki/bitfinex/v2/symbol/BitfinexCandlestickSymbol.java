@@ -32,7 +32,7 @@ public class BitfinexCandlestickSymbol implements BitfinexStreamSymbol {
 	 */
 	private final BitfinexCandleTimeFrame timeframe;
 
-	public BitfinexCandlestickSymbol(final BitfinexCurrencyPair symbol, final BitfinexCandleTimeFrame timeframe) {
+	BitfinexCandlestickSymbol(final BitfinexCurrencyPair symbol, final BitfinexCandleTimeFrame timeframe) {
 		this.symbol = symbol;
 		this.timeframe = timeframe;
 	}
@@ -72,8 +72,8 @@ public class BitfinexCandlestickSymbol implements BitfinexStreamSymbol {
 		
 		final String timeframeString = splitString[1];
 		final String symbolString = splitString[2];
-		
-		return new BitfinexCandlestickSymbol(
+
+		return BitfinexSymbols.candlesticks(
 				BitfinexCurrencyPair.fromSymbolString(symbolString), 
 				BitfinexCandleTimeFrame.fromSymbolString(timeframeString));
 	}

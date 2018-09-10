@@ -11,12 +11,10 @@ import org.mockito.Mockito;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexOrderBuilder;
-import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.AuthCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.CancelOrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.CancelOrderGroupCommand;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
-import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 import com.github.jnidzwetzki.bitfinex.v2.command.OrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.PingCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SetConnectionFeaturesCommand;
@@ -25,14 +23,14 @@ import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTradesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
+import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexStreamSymbolToChannelIdResolverAware;
 
 public class CommandsTest {
@@ -62,8 +60,8 @@ public class CommandsTest {
 				new OrderCommand(order),
 				new PingCommand(),
 				new SubscribeCandlesCommand(candleSymbol),
-				new SubscribeTickerCommand(new BitfinexTickerSymbol(BitfinexCurrencyPair.of("BCH","USD"))),
-				new SubscribeTradesCommand(new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.of("BAT","BTC"))),
+				new SubscribeTickerCommand(BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BCH","USD"))),
+				new SubscribeTradesCommand(BitfinexSymbols.executedTrades(BitfinexCurrencyPair.of("BAT","BTC"))),
 				new SubscribeOrderbookCommand(orderbookConfiguration),
 				new SubscribeOrderbookCommand(rawOrderbookConfiguration),
 				new UnsubscribeChannelCommand(orderbookConfiguration),

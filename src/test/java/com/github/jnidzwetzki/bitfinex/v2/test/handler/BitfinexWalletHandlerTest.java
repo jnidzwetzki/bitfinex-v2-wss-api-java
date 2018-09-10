@@ -27,10 +27,10 @@ import org.mockito.Mockito;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.WalletHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
 
 public class BitfinexWalletHandlerTest {
@@ -61,7 +61,7 @@ public class BitfinexWalletHandlerTest {
 
 		Assert.assertTrue(walletTable.isEmpty());
 		
-		final WalletHandler walletHandler = new WalletHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		final WalletHandler walletHandler = new WalletHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 		walletHandler.onWalletsEvent((a, wallets) -> {
 			for (BitfinexWallet wallet : wallets) {
 				try {
@@ -101,7 +101,7 @@ public class BitfinexWalletHandlerTest {
 
 		Assert.assertTrue(walletTable.isEmpty());
 		
-		final WalletHandler walletHandler = new WalletHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		final WalletHandler walletHandler = new WalletHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 		walletHandler.onWalletsEvent((a, wallets) -> {
 			for (BitfinexWallet wallet : wallets) {
 				try {

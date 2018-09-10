@@ -29,10 +29,10 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.PositionHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
 
 public class BitfinexPositionTest {
@@ -48,7 +48,7 @@ public class BitfinexPositionTest {
 		final JSONArray jsonArray = new JSONArray(jsonString);
 
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
-		final PositionHandler positionHandler = new PositionHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		final PositionHandler positionHandler = new PositionHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 		positionHandler.onPositionsEvent((a, positions) -> {
 			for (BitfinexPosition position : positions) {
 				bitfinexApiBroker.getPositionManager().updatePosition(position);
@@ -71,7 +71,7 @@ public class BitfinexPositionTest {
 		final JSONArray jsonArray = new JSONArray(jsonString);
 
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
-		final PositionHandler positionHandler = new PositionHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		final PositionHandler positionHandler = new PositionHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 		positionHandler.onPositionsEvent((a, positions) -> {
 			for (BitfinexPosition position : positions) {
 				bitfinexApiBroker.getPositionManager().updatePosition(position);
@@ -94,7 +94,7 @@ public class BitfinexPositionTest {
 		final JSONArray jsonArray = new JSONArray(jsonString);
 
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
-		final PositionHandler positionHandler = new PositionHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		final PositionHandler positionHandler = new PositionHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 		positionHandler.onPositionsEvent((a, positions) -> {
 			for (BitfinexPosition position : positions) {
 				bitfinexApiBroker.getPositionManager().updatePosition(position);

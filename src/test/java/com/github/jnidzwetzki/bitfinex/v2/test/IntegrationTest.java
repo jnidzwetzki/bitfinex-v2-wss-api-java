@@ -30,11 +30,11 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
 import com.github.jnidzwetzki.bitfinex.v2.SequenceNumberAuditor;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
@@ -172,9 +172,9 @@ public class IntegrationTest {
 		try {
 			bitfinexClient.connect();
 			final List<BitfinexCandlestickSymbol> symbols = Arrays.asList(
-						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MINUTES_1),
-						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.DAY_1),
-						new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MONTH_1)
+						BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MINUTES_1),
+						BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.DAY_1),
+						BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MONTH_1)
 						);
 
 			final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
@@ -216,7 +216,7 @@ public class IntegrationTest {
 		final CountDownLatch latch = new CountDownLatch(2);
 		try {
 			bitfinexClient.connect();
-			final BitfinexExecutedTradeSymbol symbol = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.of("BTC","USD"));
+			final BitfinexExecutedTradeSymbol symbol = BitfinexSymbols.executedTrades(BitfinexCurrencyPair.of("BTC","USD"));
 
 			final QuoteManager executedTradeManager = bitfinexClient.getQuoteManager();
 
@@ -251,8 +251,8 @@ public class IntegrationTest {
 
 		try {
 			bitfinexClient.connect();
-			final BitfinexExecutedTradeSymbol symbol1 = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.of("BTC","USD"));
-			final BitfinexExecutedTradeSymbol symbol2 = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.of("ETH","USD"));
+			final BitfinexExecutedTradeSymbol symbol1 = BitfinexSymbols.executedTrades(BitfinexCurrencyPair.of("BTC","USD"));
+			final BitfinexExecutedTradeSymbol symbol2 = BitfinexSymbols.executedTrades(BitfinexCurrencyPair.of("ETH","USD"));
 
 			final QuoteManager quoteManager = bitfinexClient.getQuoteManager();
 
@@ -284,7 +284,7 @@ public class IntegrationTest {
 		final CountDownLatch latch = new CountDownLatch(2);
 		try {
 			bitfinexClient.connect();
-			final BitfinexTickerSymbol symbol = new BitfinexTickerSymbol(BitfinexCurrencyPair.of("BTC","USD"));
+			final BitfinexTickerSymbol symbol = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BTC","USD"));
 
 			final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
 
@@ -347,7 +347,7 @@ public class IntegrationTest {
 		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
 		bitfinexClient.connect();
 
-		final BitfinexTickerSymbol symbol = new BitfinexTickerSymbol(BitfinexCurrencyPair.of("BTC","USD"));
+		final BitfinexTickerSymbol symbol = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BTC","USD"));
 
 		final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
 
@@ -398,11 +398,11 @@ public class IntegrationTest {
 		Assert.assertEquals(BitfinexConnectionFeature.SEQ_ALL.getFeatureFlag(), cfManager.getActiveConnectionFeatures());
 
 		// Register some ticket to get some sequence numbers
-		final BitfinexTickerSymbol symbol1 = new BitfinexTickerSymbol(BitfinexCurrencyPair.of("BTC","USD"));
-		final BitfinexTickerSymbol symbol2 = new BitfinexTickerSymbol(BitfinexCurrencyPair.of("ETH","USD"));
-		final BitfinexTickerSymbol symbol3 = new BitfinexTickerSymbol(BitfinexCurrencyPair.of("EOS","USD"));
-		final BitfinexTickerSymbol symbol4 = new BitfinexTickerSymbol(BitfinexCurrencyPair.of("IOS","USD"));
-		final BitfinexTickerSymbol symbol5 = new BitfinexTickerSymbol(BitfinexCurrencyPair.of("NEO","USD"));
+		final BitfinexTickerSymbol symbol1 = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BTC","USD"));
+		final BitfinexTickerSymbol symbol2 = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("ETH","USD"));
+		final BitfinexTickerSymbol symbol3 = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("EOS","USD"));
+		final BitfinexTickerSymbol symbol4 = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("IOS","USD"));
+		final BitfinexTickerSymbol symbol5 = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("NEO","USD"));
 
 		final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
 
@@ -438,7 +438,7 @@ public class IntegrationTest {
 		final CountDownLatch latch = new CountDownLatch(5);
 		try {
 			bitfinexClient.connect();
-			final BitfinexCandlestickSymbol symbol = new BitfinexCandlestickSymbol(
+			final BitfinexCandlestickSymbol symbol = BitfinexSymbols.candlesticks(
 					BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MINUTES_1);
 
 			final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
