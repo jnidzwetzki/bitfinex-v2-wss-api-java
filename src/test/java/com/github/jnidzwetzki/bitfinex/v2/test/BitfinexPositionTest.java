@@ -27,10 +27,12 @@ import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
-import com.github.jnidzwetzki.bitfinex.v2.callback.api.PositionHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.PositionHandler;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
 import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 
 
 public class BitfinexPositionTest {
@@ -46,15 +48,15 @@ public class BitfinexPositionTest {
 		final JSONArray jsonArray = new JSONArray(jsonString);
 
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
-		final PositionHandler positionHandler = new PositionHandler();
-		positionHandler.onPositionsEvent(positions -> {
+		final PositionHandler positionHandler = new PositionHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		positionHandler.onPositionsEvent((a, positions) -> {
 			for (BitfinexPosition position : positions) {
 				bitfinexApiBroker.getPositionManager().updatePosition(position);
 			}
 		});
 
 		Assert.assertTrue(bitfinexApiBroker.getPositionManager().getPositions().isEmpty());
-		positionHandler.handleChannelData(jsonArray);
+		positionHandler.handleChannelData(null, jsonArray);
 		Assert.assertEquals(1, bitfinexApiBroker.getPositionManager().getPositions().size());
 	}
 	
@@ -69,15 +71,15 @@ public class BitfinexPositionTest {
 		final JSONArray jsonArray = new JSONArray(jsonString);
 
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
-		final PositionHandler positionHandler = new PositionHandler();
-		positionHandler.onPositionsEvent(positions -> {
+		final PositionHandler positionHandler = new PositionHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		positionHandler.onPositionsEvent((a, positions) -> {
 			for (BitfinexPosition position : positions) {
 				bitfinexApiBroker.getPositionManager().updatePosition(position);
 			}
 		});
 
 		Assert.assertTrue(bitfinexApiBroker.getPositionManager().getPositions().isEmpty());
-		positionHandler.handleChannelData(jsonArray);
+		positionHandler.handleChannelData(null, jsonArray);
 		Assert.assertEquals(1, bitfinexApiBroker.getPositionManager().getPositions().size());
 	}
 	
@@ -92,15 +94,15 @@ public class BitfinexPositionTest {
 		final JSONArray jsonArray = new JSONArray(jsonString);
 
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
-		final PositionHandler positionHandler = new PositionHandler();
-		positionHandler.onPositionsEvent(positions -> {
+		final PositionHandler positionHandler = new PositionHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		positionHandler.onPositionsEvent((a, positions) -> {
 			for (BitfinexPosition position : positions) {
 				bitfinexApiBroker.getPositionManager().updatePosition(position);
 			}
 		});
 
 		Assert.assertTrue(bitfinexApiBroker.getPositionManager().getPositions().isEmpty());
-		positionHandler.handleChannelData(jsonArray);
+		positionHandler.handleChannelData(null, jsonArray);
 		Assert.assertEquals(2, bitfinexApiBroker.getPositionManager().getPositions().size());
 	}
 	

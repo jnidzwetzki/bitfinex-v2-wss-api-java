@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 
 public class TradeManager extends SimpleCallbackManager<BitfinexMyExecutedTrade> {
 
@@ -33,7 +34,7 @@ public class TradeManager extends SimpleCallbackManager<BitfinexMyExecutedTrade>
 	 * Update a exchange order
 	 * @param trade
 	 */
-	public void updateTrade(final BitfinexMyExecutedTrade trade) {
+	public void updateTrade(final BitfinexAccountSymbol account, final BitfinexMyExecutedTrade trade) {
 		trade.setApiKey(bitfinexApiBroker.getConfiguration().getApiKey());
 		notifyCallbacks(trade);
 	}

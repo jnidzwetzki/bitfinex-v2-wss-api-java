@@ -42,8 +42,8 @@ public class AuthCallback implements CommandCallbackHandler {
         final String status = jsonObject.getString("status");
         if (status.equals("OK")) {
             logger.info("authentication successful");
-            BitfinexApiKeyPermissions obj = jsonToBitfinexApiKeyPermissions(jsonObject);
-            authSuccessConsumer.accept(obj);
+            BitfinexApiKeyPermissions permissions = jsonToBitfinexApiKeyPermissions(jsonObject);
+            authSuccessConsumer.accept(permissions);
         } else {
             logger.error("Unable to authenticate: {}", jsonObject.toString());
             authFailedConsumer.accept(BitfinexApiKeyPermissions.NO_PERMISSIONS);

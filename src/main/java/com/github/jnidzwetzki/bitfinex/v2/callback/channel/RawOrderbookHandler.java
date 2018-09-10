@@ -33,16 +33,23 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
 public class RawOrderbookHandler implements ChannelCallbackHandler {
 
+    private final int channelId;
+    private final BitfinexOrderBookSymbol symbol;
+
     private BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>> orderbookEntryConsumer = (c, e) -> {};
+
+    public RawOrderbookHandler(int channelId, final BitfinexOrderBookSymbol symbol) {
+        this.channelId = channelId;
+        this.symbol = symbol;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
+    public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
         // Example: [13182,1,-0.1]
         try {
-            final BitfinexOrderBookSymbol config = (BitfinexOrderBookSymbol) channelSymbol;
             final List<BitfinexOrderBookEntry> entries = new ArrayList<>();
 
             // Snapshots contain multiple Orderbook entries, updates only one
@@ -56,10 +63,20 @@ public class RawOrderbookHandler implements ChannelCallbackHandler {
                 BitfinexOrderBookEntry entry = jsonToRawOrderbookEntry(jsonArray);
                 entries.add(entry);
             }
-            orderbookEntryConsumer.accept(config, entries);
+            orderbookEntryConsumer.accept(symbol, entries);
         } catch (JSONException e) {
             throw new APIException(e);
         }
+    }
+
+    @Override
+    public BitfinexStreamSymbol getSymbol() {
+        return symbol;
+    }
+
+    @Override
+    public int getChannelId() {
+        return channelId;
     }
 
     private BitfinexOrderBookEntry jsonToRawOrderbookEntry(final JSONArray jsonArray) {

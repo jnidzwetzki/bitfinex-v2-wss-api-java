@@ -33,16 +33,27 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
 public class ExecutedTradeHandler implements ChannelCallbackHandler {
 
+    private final int channelId;
+    private final BitfinexExecutedTradeSymbol symbol;
+
     private BiConsumer<BitfinexExecutedTradeSymbol, Collection<BitfinexExecutedTrade>> executedTradesConsumer = (s, t) -> {};
+
+    public ExecutedTradeHandler(int channelId, final BitfinexExecutedTradeSymbol symbol) {
+        this.channelId = channelId;
+        this.symbol = symbol;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
+    public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
         try {
-            final BitfinexExecutedTradeSymbol config = (BitfinexExecutedTradeSymbol) channelSymbol;
             final List<BitfinexExecutedTrade> trades = new ArrayList<>();
+
+            if( action == "tu") {
+                return; // Ignore tu messages (see issue #13)
+            }
 
             // Snapshots contain multiple executes entries, updates only one
             if (jsonArray.get(0) instanceof JSONArray) {
@@ -55,10 +66,20 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
                 BitfinexExecutedTrade trade = jsonToExecutedTrade(jsonArray);
                 trades.add(trade);
             }
-            executedTradesConsumer.accept(config, trades);
+            executedTradesConsumer.accept(symbol, trades);
         } catch (JSONException e) {
             throw new APIException(e);
         }
+    }
+
+    @Override
+    public BitfinexStreamSymbol getSymbol() {
+        return symbol;
+    }
+
+    @Override
+    public int getChannelId() {
+        return channelId;
     }
 
     private BitfinexExecutedTrade jsonToExecutedTrade(final JSONArray jsonArray) {

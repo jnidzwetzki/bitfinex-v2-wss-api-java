@@ -28,12 +28,13 @@ import org.mockito.Mockito;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
-import com.github.jnidzwetzki.bitfinex.v2.callback.api.MyExecutedTradeHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.MyExecutedTradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 
 public class TradeManagerTest {
 
@@ -59,10 +60,8 @@ public class TradeManagerTest {
         final String jsonString = "[0,\"te\",[106655593,\"tBTCUSD\",1512247319827,5691690918,-0.002,10894,null,null,-1]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
-        final MyExecutedTradeHandler tradeHandler = new MyExecutedTradeHandler();
-        tradeHandler.onTradeEvent(trade -> {
-            bitfinexApiBroker.getTradeManager().updateTrade(trade);
-        });
+        final MyExecutedTradeHandler tradeHandler = new MyExecutedTradeHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        tradeHandler.onTradeEvent((a, trade) -> bitfinexApiBroker.getTradeManager().updateTrade(a, trade));
 
         bitfinexApiBroker.getTradeManager().registerCallback((t) -> {
             Assert.assertFalse(t.isUpdate());
@@ -76,7 +75,7 @@ public class TradeManagerTest {
             Assert.assertTrue(t.toString().length() > 0);
         });
 
-        tradeHandler.handleChannelData(jsonArray);
+        tradeHandler.handleChannelData("te", jsonArray);
     }
 
     /**
@@ -87,14 +86,12 @@ public class TradeManagerTest {
      */
     @Test
     public void testTradeChannelHandler2() throws APIException, InterruptedException {
-        final String jsonString = "[0,\"tu\",[106655593,\"tBTCUSD\",1512247319827,5691690918,-0.002,10894,\"EXCHANGE MARKET\",10894,-1,-0.0392184,\"USD\"]]";
+        final String jsonString = "[0,\"te\",[106655593,\"tBTCUSD\",1512247319827,5691690918,-0.002,10894,\"EXCHANGE MARKET\",10894,-1,-0.0392184,\"USD\"]]";
 
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
-        final MyExecutedTradeHandler tradeHandler = new MyExecutedTradeHandler();
-        tradeHandler.onTradeEvent(trade -> {
-            bitfinexApiBroker.getTradeManager().updateTrade(trade);
-        });
+        final MyExecutedTradeHandler tradeHandler = new MyExecutedTradeHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        tradeHandler.onTradeEvent((a, trade) -> bitfinexApiBroker.getTradeManager().updateTrade(a, trade));
 
         bitfinexApiBroker.getTradeManager().registerCallback((t) -> {
             Assert.assertFalse(t.isUpdate());
@@ -112,7 +109,7 @@ public class TradeManagerTest {
             Assert.assertTrue(t.toString().length() > 0);
         });
 
-        tradeHandler.handleChannelData(jsonArray);
+        tradeHandler.handleChannelData("te", jsonArray);
     }
 
     /**

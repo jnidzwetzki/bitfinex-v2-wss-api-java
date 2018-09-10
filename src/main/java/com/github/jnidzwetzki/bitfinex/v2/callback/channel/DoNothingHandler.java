@@ -15,20 +15,31 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.callback.api;
+package com.github.jnidzwetzki.bitfinex.v2.callback.channel;
 
 import org.json.JSONArray;
 
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
-public class DoNothingHandler implements APICallbackHandler {
+public class DoNothingHandler implements ChannelCallbackHandler {
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleChannelData(final JSONArray jsonArray) throws APIException {
+	public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
 		
+	}
+
+	@Override
+	public BitfinexStreamSymbol getSymbol() {
+		return null;
+	}
+
+	@Override
+	public int getChannelId() {
+		return -1;
 	}
 
 }

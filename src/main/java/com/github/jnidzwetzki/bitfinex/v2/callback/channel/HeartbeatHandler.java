@@ -15,7 +15,7 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.callback.api;
+package com.github.jnidzwetzki.bitfinex.v2.callback.channel;
 
 import java.util.function.Consumer;
 
@@ -24,19 +24,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
-public class HeartbeatHandler implements APICallbackHandler {
+public class HeartbeatHandler implements ChannelCallbackHandler {
 
 	private final static Logger logger = LoggerFactory.getLogger(HeartbeatHandler.class);
+
+	private final int channelId;
+	private final BitfinexAccountSymbol symbol;
+
 	private Consumer<Long> heartbeatConsumer = l -> {};
+
+	public HeartbeatHandler(int channelId, final BitfinexAccountSymbol symbol) {
+		this.channelId = channelId;
+		this.symbol = symbol;
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleChannelData(final JSONArray jsonArray) throws APIException {
+	public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
 		logger.debug("Got connection heartbeat");
 		heartbeatConsumer.accept(System.currentTimeMillis());
+	}
+
+	@Override
+	public BitfinexStreamSymbol getSymbol() {
+		return symbol;
+	}
+
+	@Override
+	public int getChannelId() {
+		return channelId;
 	}
 
 	public void onHeartbeatEvent(Consumer<Long> heartbeatConsumer) {

@@ -34,13 +34,21 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
 public class CandlestickHandler implements ChannelCallbackHandler {
 
+    private final int channelId;
+    private final BitfinexCandlestickSymbol symbol;
+
     private BiConsumer<BitfinexCandlestickSymbol, Collection<BitfinexCandle>> candlesConsumer = (c, l) -> {};
+
+    public CandlestickHandler(int channelId, final BitfinexCandlestickSymbol symbol) {
+        this.channelId = channelId;
+        this.symbol = symbol;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final BitfinexStreamSymbol channelSymbol, final JSONArray jsonArray) throws APIException {
+    public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
 
         // channel symbol trade:1m:tLTCUSD
         final Set<BitfinexCandle> candlestickList = new TreeSet<>(Comparator.comparing(BitfinexCandle::getTimestamp));
@@ -56,7 +64,17 @@ public class CandlestickHandler implements ChannelCallbackHandler {
             BitfinexCandle candlestick = jsonToCandlestick(jsonArray);
             candlestickList.add(candlestick);
         }
-        candlesConsumer.accept((BitfinexCandlestickSymbol) channelSymbol, candlestickList);
+        candlesConsumer.accept(symbol, candlestickList);
+    }
+
+    @Override
+    public BitfinexStreamSymbol getSymbol() {
+        return symbol;
+    }
+
+    @Override
+    public int getChannelId() {
+        return channelId;
     }
 
     private BitfinexCandle jsonToCandlestick(final JSONArray parts) {

@@ -15,33 +15,44 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.callback.api;
+package com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info;
 
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import com.google.common.collect.Lists;
 import org.json.JSONArray;
 
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
-public class WalletHandler implements APICallbackHandler {
+public class WalletHandler implements ChannelCallbackHandler {
 
-	private Consumer<Collection<BitfinexWallet>> walletConsumer = w -> {};
+	private final int channelId;
+	private final BitfinexAccountSymbol symbol;
+
+	private BiConsumer<BitfinexAccountSymbol, Collection<BitfinexWallet>> walletConsumer = (s, e) -> {};
+
+	public WalletHandler(int channelId, final BitfinexAccountSymbol symbol) {
+		this.channelId = channelId;
+		this.symbol = symbol;
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleChannelData(final JSONArray jsonArray) throws APIException {
+	public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
 		final JSONArray json = jsonArray.getJSONArray(2);
 		List<BitfinexWallet> wallets = Lists.newArrayList();
 
 		if (json.length() == 0) {
-			walletConsumer.accept(wallets);
+			walletConsumer.accept(symbol, wallets);
 			return;
 		}
 
@@ -57,7 +68,17 @@ public class WalletHandler implements APICallbackHandler {
 			BitfinexWallet wallet = jsonArrayToWallet(json);
 			wallets.add(wallet);
 		}
-		walletConsumer.accept(wallets);
+		walletConsumer.accept(symbol, wallets);
+	}
+
+	@Override
+	public BitfinexStreamSymbol getSymbol() {
+		return symbol;
+	}
+
+	@Override
+	public int getChannelId() {
+		return channelId;
 	}
 
 	private BitfinexWallet jsonArrayToWallet(final JSONArray json) {
@@ -74,7 +95,7 @@ public class WalletHandler implements APICallbackHandler {
 	 * wallet event consumer
 	 * @param consumer of event
 	 */
-	public void onWalletsEvent(Consumer<Collection<BitfinexWallet>> consumer) {
+	public void onWalletsEvent(BiConsumer<BitfinexAccountSymbol, Collection<BitfinexWallet>> consumer) {
 		this.walletConsumer = consumer;
 	}
 }

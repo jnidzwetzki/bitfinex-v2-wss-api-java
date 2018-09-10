@@ -28,9 +28,11 @@ import org.mockito.stubbing.Answer;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.HeartbeatThread;
 import com.github.jnidzwetzki.bitfinex.v2.WebsocketClientEndpoint;
-import com.github.jnidzwetzki.bitfinex.v2.callback.api.HeartbeatHandler;
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.HeartbeatHandler;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
@@ -80,11 +82,11 @@ public class HeartbeatManagerTest {
 	 */
 	@Test
 	public void testHeartbeatHandler() throws APIException, InterruptedException {
-		final HeartbeatHandler handler = new HeartbeatHandler();
+		final HeartbeatHandler handler = new HeartbeatHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 		long heartbeat = System.currentTimeMillis();
 		handler.onHeartbeatEvent(timestamp -> Assert.assertTrue(timestamp > heartbeat));
 		Thread.sleep(50);
-		handler.handleChannelData(null);
+		handler.handleChannelData(null, null);
 	}
 
 	/**

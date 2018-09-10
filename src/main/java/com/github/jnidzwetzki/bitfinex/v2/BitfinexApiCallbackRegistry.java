@@ -19,7 +19,6 @@ package com.github.jnidzwetzki.bitfinex.v2;
 
 import java.util.Collection;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
@@ -28,6 +27,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
@@ -44,24 +44,24 @@ public final class BitfinexApiCallbackRegistry extends BitfinexApiCallbackListen
         unsubscribeChannelConsumers.forEach(consumer -> consumer.accept(event));
     }
 
-    public void acceptOrderNotification(final BitfinexSubmittedOrder event) {
-        newOrderConsumers.forEach(consumer -> consumer.accept(event));
+    public void acceptOrderNotification(final BitfinexAccountSymbol symbol, final BitfinexSubmittedOrder event) {
+        newOrderConsumers.forEach(consumer -> consumer.accept(symbol, event));
     }
 
-    public void acceptSubmittedOrderEvent(final Collection<BitfinexSubmittedOrder> event) {
-        submittedOrderConsumers.forEach(consumer -> consumer.accept(event));
+    public void acceptSubmittedOrderEvent(final BitfinexAccountSymbol symbol, final Collection<BitfinexSubmittedOrder> event) {
+        submittedOrderConsumers.forEach(consumer -> consumer.accept(symbol, event));
     }
 
-    public void acceptPositionsEvent(final Collection<BitfinexPosition> event) {
-        positionConsumers.forEach(consumer -> consumer.accept(event));
+    public void acceptPositionsEvent(final BitfinexAccountSymbol symbol, final Collection<BitfinexPosition> event) {
+        positionConsumers.forEach(consumer -> consumer.accept(symbol, event));
     }
 
-    public void acceptTradeEvent(final BitfinexMyExecutedTrade event) {
-        tradeConsumers.forEach(consumer -> consumer.accept(event));
+    public void acceptTradeEvent(final BitfinexAccountSymbol symbol, final BitfinexMyExecutedTrade event) {
+        tradeConsumers.forEach(consumer -> consumer.accept(symbol, event));
     }
 
-    public void acceptWalletsEvent(final Collection<BitfinexWallet> event) {
-        walletConsumers.forEach(consumer -> consumer.accept(event));
+    public void acceptWalletsEvent(final BitfinexAccountSymbol symbol, final Collection<BitfinexWallet> event) {
+        walletConsumers.forEach(consumer -> consumer.accept(symbol, event));
     }
 
     public void acceptCandlesticksEvent(final BitfinexCandlestickSymbol symbol, final Collection<BitfinexCandle> entries) {
@@ -84,11 +84,11 @@ public final class BitfinexApiCallbackRegistry extends BitfinexApiCallbackListen
         tickConsumers.forEach(consumer -> consumer.accept(symbol, tick));
     }
 
-    public void acceptAuthenticationSuccessEvent(final BitfinexApiKeyPermissions event) {
+    public void acceptAuthenticationSuccessEvent(final BitfinexAccountSymbol event) {
         authSuccessConsumers.forEach(consumer -> consumer.accept(event));
     }
 
-    public void acceptAuthenticationFailedEvent(final BitfinexApiKeyPermissions event) {
+    public void acceptAuthenticationFailedEvent(final BitfinexAccountSymbol event) {
         authFailedConsumers.forEach(consumer -> consumer.accept(event));
     }
 
