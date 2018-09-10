@@ -49,16 +49,13 @@ public class MyExecutedTradeHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
-        logger.info("Got trade callback {}", jsonArray.toString());
+    public void handleChannelData(final String action, final JSONArray payload) throws APIException {
+        logger.info("Got trade callback {}", payload.toString());
 
-        final String type = jsonArray.getString(1);
-        final JSONArray message = jsonArray.getJSONArray(2);
-
-        BitfinexMyExecutedTrade trade = jsonToTrade(message);
+        BitfinexMyExecutedTrade trade = jsonToTrade(payload);
 
         // Executed or update
-        if ("tu".equals(type)) {
+        if ("tu".equals(action)) {
             trade.setUpdate(true);
         }
         tradeConsumer.accept(symbol, trade);

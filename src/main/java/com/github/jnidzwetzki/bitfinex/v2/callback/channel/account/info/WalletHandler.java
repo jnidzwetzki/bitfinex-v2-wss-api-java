@@ -47,25 +47,24 @@ public class WalletHandler implements ChannelCallbackHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
-		final JSONArray json = jsonArray.getJSONArray(2);
+	public void handleChannelData(final String action, final JSONArray payload) throws APIException {
 		List<BitfinexWallet> wallets = Lists.newArrayList();
 
-		if (json.length() == 0) {
+		if (payload.isEmpty()) {
 			walletConsumer.accept(symbol, wallets);
 			return;
 		}
 
-		if (json.get(0) instanceof JSONArray) {
+		if (payload.get(0) instanceof JSONArray) {
 			// snapshot
-			for (int walletPos = 0; walletPos < json.length(); walletPos++) {
-				final JSONArray walletArray = json.getJSONArray(walletPos);
+			for (int walletPos = 0; walletPos < payload.length(); walletPos++) {
+				final JSONArray walletArray = payload.getJSONArray(walletPos);
 				BitfinexWallet wallet = jsonArrayToWallet(walletArray);
 				wallets.add(wallet);
 			}
 		} else {
 			// update
-			BitfinexWallet wallet = jsonArrayToWallet(json);
+			BitfinexWallet wallet = jsonArrayToWallet(payload);
 			wallets.add(wallet);
 		}
 		walletConsumer.accept(symbol, wallets);

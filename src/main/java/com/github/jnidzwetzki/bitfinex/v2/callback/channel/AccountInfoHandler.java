@@ -98,8 +98,7 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
         if (message.toString().contains("ERROR")) {
             logger.error("Got Error message: {}", message.toString());
         }
-        final String subChannel = message.getString(1);
-        ChannelCallbackHandler handler = channelHandler.get(subChannel);
+        ChannelCallbackHandler handler = channelHandler.get(action);
         if (handler == null) {
             logger.error("No match found for message {}", message);
             return;

@@ -53,27 +53,25 @@ public class OrderHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final String action, final JSONArray message) throws APIException {
-        logger.info("Got order callback {}", message.toString());
-
-        final JSONArray json = message.getJSONArray(2);
+    public void handleChannelData(final String action, final JSONArray payload) throws APIException {
+        logger.info("Got order callback {}", payload.toString());
 
         // No orders active
-        if (json.length() == 0) {
+        if (payload.isEmpty()) {
             eventConsumer.accept(symbol, Lists.newArrayList());
             return;
         }
 
         // Snapshot or update
         List<BitfinexSubmittedOrder> orders = Lists.newArrayList();
-        if (json.get(0) instanceof JSONArray) {
-            for (int orderPos = 0; orderPos < json.length(); orderPos++) {
-                final JSONArray orderArray = json.getJSONArray(orderPos);
+        if (payload.get(0) instanceof JSONArray) {
+            for (int orderPos = 0; orderPos < payload.length(); orderPos++) {
+                final JSONArray orderArray = payload.getJSONArray(orderPos);
                 BitfinexSubmittedOrder exchangeOrder = jsonToBitfinexSubmittedOrder(orderArray);
                 orders.add(exchangeOrder);
             }
         } else {
-            BitfinexSubmittedOrder exchangeOrder = jsonToBitfinexSubmittedOrder(json);
+            BitfinexSubmittedOrder exchangeOrder = jsonToBitfinexSubmittedOrder(payload);
             orders.add(exchangeOrder);
         }
         eventConsumer.accept(symbol, orders);

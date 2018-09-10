@@ -51,27 +51,26 @@ public class PositionHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final String action, final JSONArray message) throws APIException {
-        logger.info("Got position callback {}", message.toString());
-        final JSONArray json = message.getJSONArray(2);
+    public void handleChannelData(final String action, final JSONArray payload) throws APIException {
+        logger.info("Got position callback {}", payload.toString());
 
         ArrayList<BitfinexPosition> positions = Lists.newArrayList();
         // No positions active
-        if (json.length() == 0) {
+        if (payload.isEmpty()) {
             positionConsumer.accept(symbol, positions);
             return;
         }
 
-        if (json.get(0) instanceof JSONArray) {
+        if (payload.get(0) instanceof JSONArray) {
             // snapshot
-            for (int orderPos = 0; orderPos < json.length(); orderPos++) {
-                final JSONArray orderArray = json.getJSONArray(orderPos);
+            for (int orderPos = 0; orderPos < payload.length(); orderPos++) {
+                final JSONArray orderArray = payload.getJSONArray(orderPos);
                 BitfinexPosition position = jsonArrayToPosition(orderArray);
                 positions.add(position);
             }
         } else {
             // update
-            BitfinexPosition position = jsonArrayToPosition(json);
+            BitfinexPosition position = jsonArrayToPosition(payload);
             positions.add(position);
         }
         positionConsumer.accept(symbol, positions);
