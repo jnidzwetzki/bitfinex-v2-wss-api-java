@@ -49,21 +49,19 @@ public class NotificationHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
+    public void handleChannelData(final String action, final JSONArray payload) throws APIException {
+        logger.debug("Got notification callback {}", payload.toString());
 
-        logger.debug("Got notification callback {}", jsonArray.toString());
-
-        final JSONArray array = jsonArray.optJSONArray(2);
-        if (array == null) {
+        if (payload.isEmpty()) {
             return;
         }
 
         // Test for order error callback
         // [0,"n",[null,"on-req",null,null,[null,null,1513970684865000,"tBTCUSD",null,null,0.001,0.001,"EXCHANGE MARKET",null,null,null,null,null,null,null,12940,null,null,null,null,null,null,0,null,null],null,"ERROR","Invalid order: minimum size for BTC/USD is 0.002"]]
-        if ("on-req".equals(array.getString(1))) {
-            final String state = array.optString(6);
+        if ("on-req".equals(payload.getString(1))) {
+            final String state = payload.optString(6);
             if ("ERROR".equals(state)) {
-                BitfinexSubmittedOrder exchangeOrder = jsonToBitfinexSubmittedOrder(array);
+                BitfinexSubmittedOrder exchangeOrder = jsonToBitfinexSubmittedOrder(payload);
                 submittedOrderConsumer.accept(symbol, exchangeOrder);
             }
         }
