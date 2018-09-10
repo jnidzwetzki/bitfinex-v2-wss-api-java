@@ -188,7 +188,7 @@ public class BitfinexApiBroker implements Closeable {
 		this.channelIdToHandlerMap = new ConcurrentHashMap<>();
 		this.permissions = BitfinexApiKeyPermissions.NO_PERMISSIONS;
 		this.sequenceNumberAuditor = new SequenceNumberAuditor();
-		this.lastHeartbeat = new AtomicLong();
+		this.lastHeartbeat = new AtomicLong(0);
 		this.quoteManager = new QuoteManager(this, configuration.getExecutorService());
 		this.orderbookManager = new OrderbookManager(this, configuration.getExecutorService());
 		this.rawOrderbookManager = new RawOrderbookManager(this, configuration.getExecutorService());
@@ -303,7 +303,7 @@ public class BitfinexApiBroker implements Closeable {
 			orderInitCallback.close();
 
 			if (configuration.isHeartbeatThreadActive()) {
-				heartbeatThread = new Thread(new HeartbeatThread(this, websocketEndpoint));
+				heartbeatThread = new Thread(new HeartbeatThread(this, websocketEndpoint, lastHeartbeat::get));
 				heartbeatThread.start();
 			}
 		} catch (Exception e) {
@@ -679,10 +679,6 @@ public class BitfinexApiBroker implements Closeable {
 
 	public BitfinexApiKeyPermissions getApiKeyPermissions() {
 		return permissions;
-	}
-
-	public AtomicLong getLastHeartbeat() {
-		return lastHeartbeat;
 	}
 
 	public Collection<BitfinexStreamSymbol> getSubscribedChannels() {

@@ -19,6 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2.test;
 
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -57,7 +58,8 @@ public class HeartbeatManagerTest {
 
 		final WebsocketClientEndpoint websocketClientEndpoint = Mockito.mock(WebsocketClientEndpoint.class);
 		Mockito.when(websocketClientEndpoint.isConnected()).thenReturn(connectLatch.getCount() == 0);
-		final HeartbeatThread heartbeatThreadRunnable = new HeartbeatThread(bitfinexApiBroker, websocketClientEndpoint);
+		AtomicLong heartbeat = new AtomicLong(0);
+		final HeartbeatThread heartbeatThreadRunnable = new HeartbeatThread(bitfinexApiBroker, websocketClientEndpoint, heartbeat::get);
 
 		Mockito.doAnswer(answer).when(bitfinexApiBroker).reconnect();
 		Mockito.doAnswer(answer).when(websocketClientEndpoint).close();
