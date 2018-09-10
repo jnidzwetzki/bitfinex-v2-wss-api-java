@@ -25,11 +25,12 @@ import java.util.function.BiConsumer;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.SequenceNumberAuditor;
+import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
@@ -55,7 +56,7 @@ public class IntegrationTest {
 	@Test
 	public void testWalletsOnUnauthClient() throws APIException {
 
-		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
+		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 
 		try {
 			bitfinexClient.connect();
@@ -85,7 +86,7 @@ public class IntegrationTest {
 	 */
 	@Test(timeout=30000)
 	public void testOrderbookStream() {
-		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
+		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 
 		// Await at least 10 callbacks
 		final CountDownLatch latch = new CountDownLatch(10);
@@ -127,7 +128,7 @@ public class IntegrationTest {
 	 */
 	@Test(timeout=30000)
 	public void testRawOrderbookStream() {
-		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
+		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 
 		// Await at least 20 callbacks
 		final CountDownLatch latch = new CountDownLatch(20);
@@ -168,7 +169,7 @@ public class IntegrationTest {
 	 */
 	@Test(timeout=30000)
 	public void testCandleStream() {
-		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
+		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 
 		try {
 			bitfinexClient.connect();
@@ -211,7 +212,7 @@ public class IntegrationTest {
 	 */
 	@Test(timeout=60000)
 	public void testExecutedTradesStream() {
-		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
+		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 
 		// Await at least 2 callbacks
 		final CountDownLatch latch = new CountDownLatch(2);
@@ -248,7 +249,7 @@ public class IntegrationTest {
 	 */
 	@Test(timeout=60000)
 	public void testUnsubscrribeAllChannels() {
-		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
+		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 
 		try {
 			bitfinexClient.connect();
@@ -279,7 +280,7 @@ public class IntegrationTest {
 	 */
 	@Test(timeout=60000)
 	public void testTickerStream() {
-		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
+		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 
 		// Await at least 2 callbacks
 		final CountDownLatch latch = new CountDownLatch(2);
@@ -323,9 +324,9 @@ public class IntegrationTest {
 		final String KEY = "key";
 		final String SECRET = "secret";
 
-		BitfinexApiBrokerConfig config = new BitfinexApiBrokerConfig();
+		BitfinexWebsocketConfiguration config = new BitfinexWebsocketConfiguration();
 		config.setApiCredentials(KEY, SECRET);
-		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(config);
+		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(config, new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 		Assert.assertEquals(KEY, bitfinexClient.getConfiguration().getApiKey());
 		Assert.assertEquals(SECRET, bitfinexClient.getConfiguration().getApiSecret());
 
@@ -345,7 +346,7 @@ public class IntegrationTest {
 	 */
 	@Test
 	public void testReconnect() throws APIException, InterruptedException {
-		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
+		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 		bitfinexClient.connect();
 
 		final BitfinexTickerSymbol symbol = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BTC","USD"));
@@ -383,7 +384,7 @@ public class IntegrationTest {
 	@Test
 	public void testSequencing() throws APIException, InterruptedException {
 		SequenceNumberAuditor sequenceNumberAuditor = new SequenceNumberAuditor();
-		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig(), new BitfinexApiCallbackRegistry(), sequenceNumberAuditor);
+		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), sequenceNumberAuditor);
 		bitfinexClient.connect();
 
 		Assert.assertEquals(-1, sequenceNumberAuditor.getPrivateSequence());
@@ -433,7 +434,7 @@ public class IntegrationTest {
 	 */
 	@Test(timeout=30000)
 	public void testErrorCallback() {
-		final BitfinexApiBroker bitfinexClient = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
+		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 
 		// Await at least 5 callbacks
 		final CountDownLatch latch = new CountDownLatch(5);

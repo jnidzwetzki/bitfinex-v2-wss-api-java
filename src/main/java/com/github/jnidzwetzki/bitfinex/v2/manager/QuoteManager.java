@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTradesCommand;
@@ -63,19 +63,19 @@ public class QuoteManager extends AbstractManager {
 	/**
 	 * The bitfinex API
 	 */
-	private final BitfinexApiBroker bitfinexApiBroker;
+	private final BitfinexWebsocketClient client;
 	
-	public QuoteManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
-		super(bitfinexApiBroker, executorService);
-		this.bitfinexApiBroker = bitfinexApiBroker;
+	public QuoteManager(final BitfinexWebsocketClient client, final ExecutorService executorService) {
+		super(client, executorService);
+		this.client = client;
 		this.lastTickerActivity = new ConcurrentHashMap<>();
-		this.tickerCallbacks = new BiConsumerCallbackManager<>(executorService, bitfinexApiBroker);
-		this.candleCallbacks = new BiConsumerCallbackManager<>(executorService, bitfinexApiBroker);
-		this.tradesCallbacks = new BiConsumerCallbackManager<>(executorService, bitfinexApiBroker);
+		this.tickerCallbacks = new BiConsumerCallbackManager<>(executorService, client);
+		this.candleCallbacks = new BiConsumerCallbackManager<>(executorService, client);
+		this.tradesCallbacks = new BiConsumerCallbackManager<>(executorService, client);
 
-		bitfinexApiBroker.getCallbacks().onCandlesticksEvent(this::handleCandlestickCollection);
-		bitfinexApiBroker.getCallbacks().onTickEvent(this::handleNewTick);
-		bitfinexApiBroker.getCallbacks().onExecutedTradeEvent((sym, trades) -> trades.forEach(t -> this.handleExecutedTradeEntry(sym, t)));
+		client.getCallbacks().onCandlesticksEvent(this::handleCandlestickCollection);
+		client.getCallbacks().onTickEvent(this::handleNewTick);
+		client.getCallbacks().onExecutedTradeEvent((sym, trades) -> trades.forEach(t -> this.handleExecutedTradeEntry(sym, t)));
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class QuoteManager extends AbstractManager {
 	 */
 	public void subscribeTicker(final BitfinexTickerSymbol tickerSymbol) throws APIException {
 		final SubscribeTickerCommand command = new SubscribeTickerCommand(tickerSymbol);
-		bitfinexApiBroker.sendCommand(command);
+		client.sendCommand(command);
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class QuoteManager extends AbstractManager {
 	public void unsubscribeTicker(final BitfinexTickerSymbol tickerSymbol) {
 		lastTickerActivity.remove(tickerSymbol);
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(tickerSymbol);
-		bitfinexApiBroker.sendCommand(command);
+		client.sendCommand(command);
 	}
 
 	/**
@@ -228,7 +228,7 @@ public class QuoteManager extends AbstractManager {
 	 */
 	public void subscribeCandles(final BitfinexCandlestickSymbol symbol) throws APIException {
 		final SubscribeCandlesCommand command = new SubscribeCandlesCommand(symbol);
-		bitfinexApiBroker.sendCommand(command);
+		client.sendCommand(command);
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class QuoteManager extends AbstractManager {
 	public void unsubscribeCandles(final BitfinexCandlestickSymbol symbol) {
 		lastTickerActivity.remove(symbol);
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(symbol);
-		bitfinexApiBroker.sendCommand(command);
+		client.sendCommand(command);
 	}
 
 
@@ -280,7 +280,7 @@ public class QuoteManager extends AbstractManager {
 		final SubscribeTradesCommand subscribeOrderbookCommand
 			= new SubscribeTradesCommand(tradeSymbol);
 
-		bitfinexApiBroker.sendCommand(subscribeOrderbookCommand);
+		client.sendCommand(subscribeOrderbookCommand);
 	}
 
 	/**
@@ -292,7 +292,7 @@ public class QuoteManager extends AbstractManager {
 	 */
 	public void unsubscribeExecutedTrades(final BitfinexExecutedTradeSymbol tradeSymbol) {
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(tradeSymbol);
-		bitfinexApiBroker.sendCommand(command);
+		client.sendCommand(command);
 	}
 
 	/**

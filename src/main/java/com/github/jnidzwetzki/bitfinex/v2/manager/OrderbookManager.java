@@ -20,7 +20,7 @@ package com.github.jnidzwetzki.bitfinex.v2.manager;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
@@ -34,10 +34,10 @@ public class OrderbookManager extends AbstractManager {
 	 */
 	private final BiConsumerCallbackManager<BitfinexOrderBookSymbol, BitfinexOrderBookEntry> channelCallbacks;
 
-	public OrderbookManager(final BitfinexApiBroker bitfinexApiBroker, ExecutorService executorService) {
-		super(bitfinexApiBroker, executorService);
-		this.channelCallbacks = new BiConsumerCallbackManager<>(executorService, bitfinexApiBroker);
-        bitfinexApiBroker.getCallbacks().onOrderbookEvent((sym,entries) -> {
+	public OrderbookManager(final BitfinexWebsocketClient client, ExecutorService executorService) {
+		super(client, executorService);
+		this.channelCallbacks = new BiConsumerCallbackManager<>(executorService, client);
+        client.getCallbacks().onOrderbookEvent((sym,entries) -> {
 			entries.forEach(e -> handleNewOrderbookEntry(sym, e));
 		});
 	}
@@ -69,7 +69,7 @@ public class OrderbookManager extends AbstractManager {
 		final SubscribeOrderbookCommand subscribeOrderbookCommand
 			= new SubscribeOrderbookCommand(orderbookConfiguration);
 
-		bitfinexApiBroker.sendCommand(subscribeOrderbookCommand);
+		client.sendCommand(subscribeOrderbookCommand);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class OrderbookManager extends AbstractManager {
 	 */
 	public void unsubscribeOrderbook(final BitfinexOrderBookSymbol orderbookConfiguration) {
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(orderbookConfiguration);
-		bitfinexApiBroker.sendCommand(command);
+		client.sendCommand(command);
 	}
 
 	/**

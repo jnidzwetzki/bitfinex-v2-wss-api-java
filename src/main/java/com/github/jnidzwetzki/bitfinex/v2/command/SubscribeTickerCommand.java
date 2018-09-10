@@ -19,24 +19,32 @@ package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
-public class SubscribeTickerCommand implements BitfinexCommand {
+public class SubscribeTickerCommand implements SubscribeCommand {
 
-	private String currencyPair;
+	private final BitfinexTickerSymbol symbol;
+	private final String currencyPair;
 
 	public SubscribeTickerCommand(final BitfinexTickerSymbol currencyPair) {
+		this.symbol = currencyPair;
 		this.currencyPair = currencyPair.getBitfinexCurrencyPair().toBitfinexString();
 	}
 
 	@Override
-	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) {
+	public String getCommand(final BitfinexWebsocketClient client) {
 		final JSONObject subscribeJson = new JSONObject();
 		subscribeJson.put("event", "subscribe");
 		subscribeJson.put("channel", "ticker");
 		subscribeJson.put("symbol", currencyPair);
 		
 		return subscribeJson.toString();
+	}
+
+	@Override
+	public BitfinexStreamSymbol getSymbol() {
+		return symbol;
 	}
 }

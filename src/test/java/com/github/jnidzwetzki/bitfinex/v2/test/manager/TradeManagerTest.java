@@ -25,9 +25,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.MyExecutedTradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
@@ -59,7 +60,7 @@ public class TradeManagerTest {
     public void testTradeChannelHandler1() throws APIException, InterruptedException {
         final String jsonString = "[0,\"te\",[106655593,\"tBTCUSD\",1512247319827,5691690918,-0.002,10894,null,null,-1]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
-        final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+        final BitfinexWebsocketClient bitfinexApiBroker = buildMockedBitfinexConnection();
         final MyExecutedTradeHandler tradeHandler = new MyExecutedTradeHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
         tradeHandler.onTradeEvent((a, trade) -> bitfinexApiBroker.getTradeManager().updateTrade(a, trade));
 
@@ -75,7 +76,7 @@ public class TradeManagerTest {
             Assert.assertTrue(t.toString().length() > 0);
         });
 
-        tradeHandler.handleChannelData("te", jsonArray);
+        tradeHandler.handleChannelData("te", jsonArray.getJSONArray(2));
     }
 
     /**
@@ -89,7 +90,7 @@ public class TradeManagerTest {
         final String jsonString = "[0,\"te\",[106655593,\"tBTCUSD\",1512247319827,5691690918,-0.002,10894,\"EXCHANGE MARKET\",10894,-1,-0.0392184,\"USD\"]]";
 
         final JSONArray jsonArray = new JSONArray(jsonString);
-        final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
+        final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         final MyExecutedTradeHandler tradeHandler = new MyExecutedTradeHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
         tradeHandler.onTradeEvent((a, trade) -> bitfinexApiBroker.getTradeManager().updateTrade(a, trade));
 
@@ -109,7 +110,7 @@ public class TradeManagerTest {
             Assert.assertTrue(t.toString().length() > 0);
         });
 
-        tradeHandler.handleChannelData("te", jsonArray);
+        tradeHandler.handleChannelData("te", jsonArray.getJSONArray(2));
     }
 
     /**
@@ -117,11 +118,11 @@ public class TradeManagerTest {
      *
      * @return
      */
-    private BitfinexApiBroker buildMockedBitfinexConnection() {
+    private BitfinexWebsocketClient buildMockedBitfinexConnection() {
 
         final ExecutorService executorService = Executors.newFixedThreadPool(10);
-        final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-        final BitfinexApiBrokerConfig config = Mockito.mock(BitfinexApiBrokerConfig.class);
+        final BitfinexWebsocketClient bitfinexApiBroker = Mockito.mock(SimpleBitfinexApiBroker.class);
+        final BitfinexWebsocketConfiguration config = Mockito.mock(BitfinexWebsocketConfiguration.class);
 
         Mockito.when(bitfinexApiBroker.getConfiguration()).thenReturn(config);
         Mockito.when(config.getApiKey()).thenReturn(API_KEY);

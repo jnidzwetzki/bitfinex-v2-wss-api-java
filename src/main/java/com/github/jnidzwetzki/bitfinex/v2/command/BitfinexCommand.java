@@ -17,11 +17,11 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.command;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 
 public interface BitfinexCommand {
 
-	String getCommand(final BitfinexApiBroker bitfinexApiBroker) throws CommandException;
+	String getCommand(final BitfinexWebsocketClient client) throws CommandException;
 
 }

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 
 public class SimpleCallbackManager<T> extends AbstractManager {
 	
@@ -32,8 +32,8 @@ public class SimpleCallbackManager<T> extends AbstractManager {
 	private final List<Consumer<T>> callbacks;
 	
 	public SimpleCallbackManager(final ExecutorService executorService, 
-			final BitfinexApiBroker bitfinexApiBroker) {
-		super(bitfinexApiBroker, executorService);
+			final BitfinexWebsocketClient client) {
+		super(client, executorService);
 		this.callbacks = new ArrayList<>();
 	}
 	

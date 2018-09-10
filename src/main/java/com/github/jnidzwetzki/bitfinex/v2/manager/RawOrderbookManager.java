@@ -20,7 +20,7 @@ package com.github.jnidzwetzki.bitfinex.v2.manager;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
@@ -34,10 +34,10 @@ public class RawOrderbookManager extends AbstractManager {
 	 */
 	private final BiConsumerCallbackManager<BitfinexOrderBookSymbol, BitfinexOrderBookEntry> channelCallbacks;
 
-	public RawOrderbookManager(final BitfinexApiBroker bitfinexApiBroker, ExecutorService executorService) {
-		super(bitfinexApiBroker, executorService);
-		this.channelCallbacks = new BiConsumerCallbackManager<>(executorService, bitfinexApiBroker);
-		bitfinexApiBroker.getCallbacks().onRawOrderbookEvent((sym, entries) -> {
+	public RawOrderbookManager(final BitfinexWebsocketClient client, ExecutorService executorService) {
+		super(client, executorService);
+		this.channelCallbacks = new BiConsumerCallbackManager<>(executorService, client);
+		client.getCallbacks().onRawOrderbookEvent((sym, entries) -> {
 			entries.forEach(e -> handleNewOrderbookEntry(sym, e));
 		});
 	}
@@ -73,7 +73,7 @@ public class RawOrderbookManager extends AbstractManager {
 	public void subscribeOrderbook(final BitfinexOrderBookSymbol symbol) {
 		
 		final SubscribeOrderbookCommand subscribeOrderbookCommand = new SubscribeOrderbookCommand(symbol);
-		bitfinexApiBroker.sendCommand(subscribeOrderbookCommand);
+		client.sendCommand(subscribeOrderbookCommand);
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public class RawOrderbookManager extends AbstractManager {
 	 */
 	public void unsubscribeOrderbook(final BitfinexOrderBookSymbol symbol) {
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(symbol);
-		bitfinexApiBroker.sendCommand(command);
+		client.sendCommand(command);
 	}
 	
 	/**

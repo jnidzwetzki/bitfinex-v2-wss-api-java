@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
 
 public class PositionManager extends SimpleCallbackManager<BitfinexPosition> {
@@ -31,10 +31,10 @@ public class PositionManager extends SimpleCallbackManager<BitfinexPosition> {
 	 */
 	private final List<BitfinexPosition> positions;
 
-	public PositionManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
-		super(executorService, bitfinexApiBroker);
+	public PositionManager(final BitfinexWebsocketClient client, final ExecutorService executorService) {
+		super(executorService, client);
 		this.positions = new ArrayList<>();
-		bitfinexApiBroker.getCallbacks().onPositionsEvent((account, positions) -> positions.forEach(this::updatePosition));
+		client.getCallbacks().onPositionsEvent((account, positions) -> positions.forEach(this::updatePosition));
 	}
 
 	/**

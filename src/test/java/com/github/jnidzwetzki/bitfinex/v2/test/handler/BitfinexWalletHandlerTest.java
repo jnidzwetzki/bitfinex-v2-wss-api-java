@@ -24,7 +24,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
+import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.WalletHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
@@ -53,7 +54,7 @@ public class BitfinexWalletHandlerTest {
 		
 		final Table<BitfinexWallet.Type, String, BitfinexWallet> walletTable = HashBasedTable.create();
 
-		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
+		final BitfinexWebsocketClient bitfinexApiBroker = Mockito.mock(SimpleBitfinexApiBroker.class);
 		final WalletManager walletManager = Mockito.mock(WalletManager.class);
 		Mockito.when(bitfinexApiBroker.getWalletManager()).thenReturn(walletManager);
 
@@ -72,7 +73,7 @@ public class BitfinexWalletHandlerTest {
 				}
 			}
 		});
-		walletHandler.handleChannelData(null, jsonArray);
+		walletHandler.handleChannelData("ws", jsonArray.getJSONArray(2));
 
 		Assert.assertEquals(1, walletTable.size());
 		Assert.assertEquals(9, walletTable.get(BitfinexWallet.Type.EXCHANGE, "ETH").getBalance().doubleValue(), DELTA);
@@ -93,7 +94,7 @@ public class BitfinexWalletHandlerTest {
 		
 		final Table<BitfinexWallet.Type, String, BitfinexWallet> walletTable = HashBasedTable.create();
 
-		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
+		final BitfinexWebsocketClient bitfinexApiBroker = Mockito.mock(SimpleBitfinexApiBroker.class);
 		final WalletManager walletManager = Mockito.mock(WalletManager.class);
 		Mockito.when(bitfinexApiBroker.getWalletManager()).thenReturn(walletManager);
 
@@ -112,7 +113,7 @@ public class BitfinexWalletHandlerTest {
 				}
 			}
 		});
-		walletHandler.handleChannelData(null, jsonArray);
+		walletHandler.handleChannelData("ws", jsonArray.getJSONArray(2));
 
 		Assert.assertEquals(9, walletTable.size());
 		

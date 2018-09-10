@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 import com.google.common.io.BaseEncoding;
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 
 public class AuthCommand implements BitfinexCommand {
@@ -50,11 +50,11 @@ public class AuthCommand implements BitfinexCommand {
 	}
 
 	@Override
-	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) throws CommandException {
+	public String getCommand(final BitfinexWebsocketClient client) throws CommandException {
 		try {
-			final String APIKey = bitfinexApiBroker.getConfiguration().getApiKey();
-			final String APISecret = bitfinexApiBroker.getConfiguration().getApiSecret();
-			final boolean deadManSwitch = bitfinexApiBroker.getConfiguration().isDeadmanSwitchActive();
+			final String APIKey = client.getConfiguration().getApiKey();
+			final String APISecret = client.getConfiguration().getApiSecret();
+			final boolean deadManSwitch = client.getConfiguration().isDeadmanSwitchActive();
 			
 			final String authNonce = authNonceSupplier.get();
 			final String authPayload = "AUTH" + authNonce;

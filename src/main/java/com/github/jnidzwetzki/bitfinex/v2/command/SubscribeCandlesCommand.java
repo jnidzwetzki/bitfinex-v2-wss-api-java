@@ -19,10 +19,11 @@ package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
-public class SubscribeCandlesCommand implements BitfinexCommand {
+public class SubscribeCandlesCommand implements SubscribeCommand {
 
 	private final BitfinexCandlestickSymbol symbol;
 
@@ -31,7 +32,7 @@ public class SubscribeCandlesCommand implements BitfinexCommand {
 	}
 
 	@Override
-	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) {
+	public String getCommand(final BitfinexWebsocketClient client) {
 		final JSONObject subscribeJson = new JSONObject();
 		subscribeJson.put("event", "subscribe");
 		subscribeJson.put("channel", "candles");
@@ -40,4 +41,8 @@ public class SubscribeCandlesCommand implements BitfinexCommand {
 		return subscribeJson.toString();
 	}
 
+	@Override
+	public BitfinexStreamSymbol getSymbol() {
+		return symbol;
+	}
 }

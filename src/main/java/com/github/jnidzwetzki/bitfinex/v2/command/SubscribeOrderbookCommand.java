@@ -19,11 +19,12 @@ package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
-public class SubscribeOrderbookCommand implements BitfinexCommand {
+public class SubscribeOrderbookCommand implements SubscribeCommand {
 
 	/**
 	 * The orderbook configuration
@@ -35,7 +36,7 @@ public class SubscribeOrderbookCommand implements BitfinexCommand {
 	}
 
 	@Override
-	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) throws CommandException {
+	public String getCommand(final BitfinexWebsocketClient client) throws CommandException {
 		final JSONObject subscribeJson = new JSONObject();
 		subscribeJson.put("event", "subscribe");
 		subscribeJson.put("channel", "book");
@@ -50,4 +51,8 @@ public class SubscribeOrderbookCommand implements BitfinexCommand {
 		return subscribeJson.toString();
 	}
 
+	@Override
+	public BitfinexStreamSymbol getSymbol() {
+		return symbol;
+	}
 }

@@ -32,6 +32,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import com.google.common.base.Throwables;
@@ -59,7 +60,7 @@ public class WebsocketClientEndpoint implements Closeable {
 	/**
 	 * The Logger
 	 */
-	private final static Logger logger = LoggerFactory.getLogger(BitfinexApiBroker.class);
+	private final static Logger logger = LoggerFactory.getLogger(SimpleBitfinexApiBroker.class);
 
 	/**
 	 * The wait for connection latch
@@ -82,7 +83,7 @@ public class WebsocketClientEndpoint implements Closeable {
 		final WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 		connectLatch = new CountDownLatch(1);
 		this.userSession = container.connectToServer(this, endpointURI);
-		connectLatch.await();
+		connectLatch.await(15, TimeUnit.SECONDS);
 	}
 
 	@OnOpen

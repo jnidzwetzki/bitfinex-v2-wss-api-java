@@ -37,7 +37,6 @@ public class UnsubscribedCallback implements CommandCallbackHandler {
 	public void handleChannelData(final JSONObject jsonObject) throws APIException {
 		final int channelId = jsonObject.getInt("chanId");
 		unsubscribedConsumer.accept(channelId);
-		logger.info("Channel {} ({}) is unsubscribed", channelId);
 	}
 
 	/**

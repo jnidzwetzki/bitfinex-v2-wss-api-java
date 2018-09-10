@@ -19,7 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2.manager;
 
 import java.util.concurrent.ExecutorService;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 
 public abstract class AbstractManager {
 	
@@ -31,13 +31,11 @@ public abstract class AbstractManager {
 	/**
 	 * The bitfinex API broker
 	 */
-	protected final BitfinexApiBroker bitfinexApiBroker;
+	protected final BitfinexWebsocketClient client;
 
-	public AbstractManager(final BitfinexApiBroker bitfinexApiBroker, 
-			final ExecutorService executorService) {
-		
+	public AbstractManager(final BitfinexWebsocketClient client, final ExecutorService executorService) {
 		this.executorService = executorService;
-		this.bitfinexApiBroker = bitfinexApiBroker;
+		this.client = client;
 	}
 
 }
