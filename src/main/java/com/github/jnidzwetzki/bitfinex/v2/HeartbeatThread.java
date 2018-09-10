@@ -20,6 +20,7 @@ package com.github.jnidzwetzki.bitfinex.v2;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -27,7 +28,7 @@ import org.bboxdb.commons.concurrent.ExceptionSafeRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnidzwetzki.bitfinex.v2.commands.PingCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.PingCommand;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.util.EventsInTimeslotManager;
@@ -71,17 +72,23 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	private final EventsInTimeslotManager eventsInTimeslotManager;
 
 	/**
+	 * last heartbeat supplier
+	 */
+	private final Supplier<Long> lastHeartbeatSupplier;
+
+	/**
 	 * The Logger
 	 */
 	final static Logger logger = LoggerFactory.getLogger(HeartbeatThread.class);
 
-
 	/**
 	 * @param bitfinexApiBroker
 	 */
-	public HeartbeatThread(final BitfinexApiBroker bitfinexApiBroker, final WebsocketClientEndpoint websocketClientEndpoint) {
+	public HeartbeatThread(final BitfinexApiBroker bitfinexApiBroker, final WebsocketClientEndpoint websocketClientEndpoint,
+						   final Supplier<Long> lastHeartbeatSupplier) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
 		this.websocketEndpoint = websocketClientEndpoint;
+		this.lastHeartbeatSupplier = lastHeartbeatSupplier;
 
 		this.eventsInTimeslotManager = new EventsInTimeslotManager(
 				MAX_RECONNECTS_IN_TIME,
@@ -153,7 +160,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 
 		final List<BitfinexStreamSymbol> outdatedSybols = heartbeatValues.entrySet().stream()
 			.filter(e -> e.getValue() + TICKER_TIMEOUT < currentTime)
-			.map(e -> e.getKey())
+			.map(Map.Entry::getKey)
 			.collect(Collectors.toList());
 
 		if(! outdatedSybols.isEmpty()) {
@@ -170,7 +177,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	 * Send a heartbeat package on the connection
 	 */
 	private void sendHeartbeatIfNeeded() {
-		final long nextHeartbeat = bitfinexApiBroker.getLastHeartbeat().get() + HEARTBEAT;
+		final long nextHeartbeat = lastHeartbeatSupplier.get() + HEARTBEAT;
 
 		if(nextHeartbeat < System.currentTimeMillis()) {
 			logger.debug("Send heartbeat");
@@ -183,7 +190,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	 * @return
 	 */
 	private boolean checkConnectionTimeout() {
-		final long heartbeatTimeout = bitfinexApiBroker.getLastHeartbeat().get() + CONNECTION_TIMEOUT;
+		final long heartbeatTimeout = lastHeartbeatSupplier.get() + CONNECTION_TIMEOUT;
 
 		if(heartbeatTimeout < System.currentTimeMillis()) {
 			logger.error("Heartbeat timeout reconnecting");

@@ -15,28 +15,19 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.commands;
+package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 
-public class SubscribeTradesCommand extends AbstractAPICommand {
-
-	private String currencyPair;
-
-	public SubscribeTradesCommand(final BitfinexExecutedTradeSymbol tradeSymbol) {
-		this.currencyPair = tradeSymbol.getBitfinexCurrencyPair().toBitfinexString();
-	}
+public class PingCommand implements BitfinexCommand {
 
 	@Override
 	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) {
 		final JSONObject subscribeJson = new JSONObject();
-		subscribeJson.put("event", "subscribe");
-		subscribeJson.put("channel", "trades");
-		subscribeJson.put("symbol", currencyPair);
-		
+		subscribeJson.put("event", "ping");
 		return subscribeJson.toString();
 	}
+
 }

@@ -51,13 +51,13 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.command.DoNothingCommandCallb
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.ErrorCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.SubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.UnsubscribedCallback;
-import com.github.jnidzwetzki.bitfinex.v2.commands.AbstractAPICommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.AuthCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeOrderbookCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.AuthCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCandlesCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeOrderbookCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTickerCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTradesCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
@@ -74,6 +74,7 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexStreamSymbolToChannelIdResolverAware;
 
@@ -177,17 +178,17 @@ public class BitfinexApiBroker implements Closeable {
 	private final static Logger logger = LoggerFactory.getLogger(BitfinexApiBroker.class);
 
 	public BitfinexApiBroker(BitfinexApiBrokerConfig config) {
-		this(config, new BitfinexApiCallbackRegistry());
+		this(config, new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 	}
 
-	public BitfinexApiBroker(BitfinexApiBrokerConfig config, BitfinexApiCallbackRegistry callbackRegistry) {
+	public BitfinexApiBroker(BitfinexApiBrokerConfig config, BitfinexApiCallbackRegistry callbackRegistry, SequenceNumberAuditor sequenceNumberAuditor) {
 		this.configuration = new BitfinexApiBrokerConfig(config);
 		this.callbackRegistry = callbackRegistry;
 
 		this.channelIdToHandlerMap = new ConcurrentHashMap<>();
 		this.permissions = BitfinexApiKeyPermissions.NO_PERMISSIONS;
-		this.sequenceNumberAuditor = new SequenceNumberAuditor();
-		this.lastHeartbeat = new AtomicLong();
+		this.sequenceNumberAuditor = sequenceNumberAuditor;
+		this.lastHeartbeat = new AtomicLong(0);
 		this.quoteManager = new QuoteManager(this, configuration.getExecutorService());
 		this.orderbookManager = new OrderbookManager(this, configuration.getExecutorService());
 		this.rawOrderbookManager = new RawOrderbookManager(this, configuration.getExecutorService());
@@ -237,7 +238,7 @@ public class BitfinexApiBroker implements Closeable {
 
 		final AuthCallback auth = new AuthCallback();
 		auth.onAuthenticationSuccessEvent(permissions -> {
-			BitfinexAccountSymbol symbol = new BitfinexAccountSymbol(configuration.getApiKey(), permissions);
+			BitfinexAccountSymbol symbol = BitfinexSymbols.account(configuration.getApiKey(), permissions);
 			AccountInfoHandler handler = new AccountInfoHandler(0, symbol);
 			handler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
 			handler.onPositionsEvent(callbackRegistry::acceptPositionsEvent);
@@ -250,7 +251,7 @@ public class BitfinexApiBroker implements Closeable {
 			callbackRegistry.acceptAuthenticationSuccessEvent(symbol);
 		});
 		auth.onAuthenticationFailedEvent(permissions -> {
-			BitfinexAccountSymbol symbol = new BitfinexAccountSymbol(configuration.getApiKey(), permissions);
+			BitfinexAccountSymbol symbol = BitfinexSymbols.account(configuration.getApiKey(), permissions);
 			callbackRegistry.acceptAuthenticationFailedEvent(symbol);
 		});
 		commandCallbacks.put("auth", auth);
@@ -302,7 +303,7 @@ public class BitfinexApiBroker implements Closeable {
 			orderInitCallback.close();
 
 			if (configuration.isHeartbeatThreadActive()) {
-				heartbeatThread = new Thread(new HeartbeatThread(this, websocketEndpoint));
+				heartbeatThread = new Thread(new HeartbeatThread(this, websocketEndpoint, lastHeartbeat::get));
 				heartbeatThread.start();
 			}
 		} catch (Exception e) {
@@ -330,7 +331,7 @@ public class BitfinexApiBroker implements Closeable {
 	 * Send a new API command
 	 * @param apiCommand
 	 */
-	public void sendCommand(final AbstractAPICommand apiCommand) {
+	public void sendCommand(final BitfinexCommand apiCommand) {
 		try {
 			if (apiCommand instanceof BitfinexStreamSymbolToChannelIdResolverAware) {
 				BitfinexStreamSymbolToChannelIdResolverAware aware = (BitfinexStreamSymbolToChannelIdResolverAware) apiCommand;
@@ -680,10 +681,6 @@ public class BitfinexApiBroker implements Closeable {
 		return permissions;
 	}
 
-	public AtomicLong getLastHeartbeat() {
-		return lastHeartbeat;
-	}
-
 	public Collection<BitfinexStreamSymbol> getSubscribedChannels() {
 		return channelIdToHandlerMap.values().stream()
 				.map(ChannelCallbackHandler::getSymbol)
@@ -730,9 +727,5 @@ public class BitfinexApiBroker implements Closeable {
 
 	public ConnectionFeatureManager getConnectionFeatureManager() {
 		return connectionFeatureManager;
-	}
-
-	public SequenceNumberAuditor getSequenceNumberAuditor() {
-		return sequenceNumberAuditor;
 	}
 }

@@ -19,6 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2.test;
 
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,11 +31,10 @@ import com.github.jnidzwetzki.bitfinex.v2.HeartbeatThread;
 import com.github.jnidzwetzki.bitfinex.v2.WebsocketClientEndpoint;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.HeartbeatHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
 
 public class HeartbeatManagerTest {
@@ -58,7 +58,8 @@ public class HeartbeatManagerTest {
 
 		final WebsocketClientEndpoint websocketClientEndpoint = Mockito.mock(WebsocketClientEndpoint.class);
 		Mockito.when(websocketClientEndpoint.isConnected()).thenReturn(connectLatch.getCount() == 0);
-		final HeartbeatThread heartbeatThreadRunnable = new HeartbeatThread(bitfinexApiBroker, websocketClientEndpoint);
+		AtomicLong heartbeat = new AtomicLong(0);
+		final HeartbeatThread heartbeatThreadRunnable = new HeartbeatThread(bitfinexApiBroker, websocketClientEndpoint, heartbeat::get);
 
 		Mockito.doAnswer(answer).when(bitfinexApiBroker).reconnect();
 		Mockito.doAnswer(answer).when(websocketClientEndpoint).close();
@@ -82,7 +83,7 @@ public class HeartbeatManagerTest {
 	 */
 	@Test
 	public void testHeartbeatHandler() throws APIException, InterruptedException {
-		final HeartbeatHandler handler = new HeartbeatHandler(0, new BitfinexAccountSymbol("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		final HeartbeatHandler handler = new HeartbeatHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 		long heartbeat = System.currentTimeMillis();
 		handler.onHeartbeatEvent(timestamp -> Assert.assertTrue(timestamp > heartbeat));
 		Thread.sleep(50);
@@ -104,7 +105,7 @@ public class HeartbeatManagerTest {
 	@Test
 	public void testTickerFreshness2() {
 		final HashMap<BitfinexStreamSymbol, Long> heartbeatValues = new HashMap<>();
-		heartbeatValues.put(new BitfinexTickerSymbol(BitfinexCurrencyPair.of("AGI","ETH")), System.currentTimeMillis());
+		heartbeatValues.put(BitfinexSymbols.ticker(BitfinexCurrencyPair.of("AGI","ETH")), System.currentTimeMillis());
 		Assert.assertTrue(HeartbeatThread.checkTickerFreshness(heartbeatValues));
 	}
 
@@ -115,7 +116,7 @@ public class HeartbeatManagerTest {
 	public void testTickerFreshness3() {
 		final HashMap<BitfinexStreamSymbol, Long> heartbeatValues = new HashMap<>();
 		long outdatedTime = System.currentTimeMillis() - HeartbeatThread.TICKER_TIMEOUT - 10;
-		heartbeatValues.put(new BitfinexTickerSymbol(BitfinexCurrencyPair.of("AGI","ETH")), outdatedTime);
+		heartbeatValues.put(BitfinexSymbols.ticker(BitfinexCurrencyPair.of("AGI","ETH")), outdatedTime);
 		Assert.assertFalse(HeartbeatThread.checkTickerFreshness(heartbeatValues));
 	}
 }

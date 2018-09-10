@@ -9,7 +9,7 @@ public class BitfinexAccountSymbol implements BitfinexStreamSymbol {
     private final String apiKey;
     private final BitfinexApiKeyPermissions permissions;
 
-    public BitfinexAccountSymbol(String apiKey, BitfinexApiKeyPermissions permissions) {
+    BitfinexAccountSymbol(String apiKey, BitfinexApiKeyPermissions permissions) {
         this.apiKey = apiKey;
         this.permissions = permissions;
     }

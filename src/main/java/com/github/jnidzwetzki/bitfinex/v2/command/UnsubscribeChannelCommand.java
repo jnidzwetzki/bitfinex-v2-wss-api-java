@@ -15,7 +15,7 @@
  *    limitations under the License. 
  *
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.commands;
+package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -26,7 +26,7 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexStreamSymbolToChannelIdResolverAware;
 
-public class UnsubscribeChannelCommand extends AbstractAPICommand implements BitfinexStreamSymbolToChannelIdResolverAware {
+public class UnsubscribeChannelCommand implements BitfinexCommand, BitfinexStreamSymbolToChannelIdResolverAware {
 
 	/**
 	 * The channel to unsubscribe

@@ -46,7 +46,7 @@ cfManager.enableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
 ```java
 
 final BitfinexCandlestickSymbol symbol
-	= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), Timeframe.MINUTE_1);
+	= BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BTC","USD"), Timeframe.MINUTE_1);
 
 // The consumer will be called on all received candles for the symbol
 final BiConsumer<BitfinexCandlestickSymbol, BitfinexCandle> callback = (sym, tick) -> {
@@ -71,7 +71,7 @@ final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback = (symbol, tick) -
 	System.out.format("Got BitfinexTick (%s) for symbol (%s)\n", tick, symbol);
 };
 
-final BitfinexTickerSymbol symbol = new BitfinexTickerSymbol(BitfinexCurrencyPair.of("BTC","USD"));
+final BitfinexTickerSymbol symbol = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BTC","USD"));
 
 final QuoteManager quoteManager = bitfinexApiBroker.getQuoteManager();
 quoteManager.registerTickCallback(symbol, callback);
@@ -128,7 +128,7 @@ rawOrderbookManager.unsubscribeOrderbook(orderbookConfiguration);
 
 ## Executed trade callbacks (all trades on the exchange)
 ```java
-final BitfinexExecutedTradeSymbol symbol = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.of("BTC","USD"));
+final BitfinexExecutedTradeSymbol symbol = BitfinexSymbols.executedTrades(BitfinexCurrencyPair.of("BTC","USD"));
 
 final QuoteManager quoteManager = bitfinexClient.getQuoteManager();
 

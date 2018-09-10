@@ -29,11 +29,12 @@ import org.mockito.Mockito;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.CandlestickHandler;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
 
 public class CandlestickHandlerTest {
@@ -54,7 +55,7 @@ public class CandlestickHandlerTest {
 		final JSONArray jsonArray = new JSONArray(callbackValue);
 		
 		final BitfinexCandlestickSymbol symbol 
-			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MINUTES_1);
+			= BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MINUTES_1);
 
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
@@ -94,7 +95,7 @@ public class CandlestickHandlerTest {
 		final JSONArray jsonArray = new JSONArray(callbackValue);
 		
 		final BitfinexCandlestickSymbol symbol 
-			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MINUTES_1);
+			= BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MINUTES_1);
 
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
 		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
@@ -138,10 +139,10 @@ public class CandlestickHandlerTest {
 	@Test
 	public void testCandlestickSymbolEncoding1() {
 		final BitfinexCandlestickSymbol symbol1 
-			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BCH","USD"), BitfinexCandleTimeFrame.MINUTES_15);
+			= BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BCH","USD"), BitfinexCandleTimeFrame.MINUTES_15);
 		
 		final BitfinexCandlestickSymbol symbol2
-			= new BitfinexCandlestickSymbol(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MINUTES_15);
+			= BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MINUTES_15);
 	
 		Assert.assertFalse(symbol1.equals(symbol2));
 		

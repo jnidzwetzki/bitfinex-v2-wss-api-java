@@ -11,28 +11,26 @@ import org.mockito.Mockito;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexOrderBuilder;
-import com.github.jnidzwetzki.bitfinex.v2.commands.AbstractAPICommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.AuthCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderGroupCommand;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
-import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
-import com.github.jnidzwetzki.bitfinex.v2.commands.OrderCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.PingCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SetConnectionFeaturesCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeCandlesCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeOrderbookCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTickerCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.SubscribeTradesCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.UnsubscribeChannelCommand;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
+import com.github.jnidzwetzki.bitfinex.v2.command.AuthCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.CancelOrderCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.CancelOrderGroupCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.PingCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SetConnectionFeaturesCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCandlesCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeOrderbookCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTickerCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTradesCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
+import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexStreamSymbolToChannelIdResolverAware;
 
 public class CommandsTest {
@@ -55,15 +53,15 @@ public class CommandsTest {
 
 		BitfinexOrderBookSymbol rawOrderbookConfiguration = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("BAT", "BTC"));
 
-		final List<AbstractAPICommand> commands = Arrays.asList(
+		final List<BitfinexCommand> commands = Arrays.asList(
 				new AuthCommand(AuthCommand.AUTH_NONCE_PRODUCER_TIMESTAMP),
 				new CancelOrderCommand(123),
 				new CancelOrderGroupCommand(1),
 				new OrderCommand(order),
 				new PingCommand(),
 				new SubscribeCandlesCommand(candleSymbol),
-				new SubscribeTickerCommand(new BitfinexTickerSymbol(BitfinexCurrencyPair.of("BCH","USD"))),
-				new SubscribeTradesCommand(new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.of("BAT","BTC"))),
+				new SubscribeTickerCommand(BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BCH","USD"))),
+				new SubscribeTradesCommand(BitfinexSymbols.executedTrades(BitfinexCurrencyPair.of("BAT","BTC"))),
 				new SubscribeOrderbookCommand(orderbookConfiguration),
 				new SubscribeOrderbookCommand(rawOrderbookConfiguration),
 				new UnsubscribeChannelCommand(orderbookConfiguration),
@@ -71,7 +69,7 @@ public class CommandsTest {
 
 		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
 
-		for(final AbstractAPICommand command : commands) {
+		for(final BitfinexCommand command : commands) {
 			if (command instanceof BitfinexStreamSymbolToChannelIdResolverAware) {
 				((BitfinexStreamSymbolToChannelIdResolverAware) command).setResolver(s -> 12);
 			}

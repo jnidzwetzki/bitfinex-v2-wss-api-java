@@ -17,16 +17,17 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.test;
 
+import org.json.JSONObject;
+import org.junit.Assert;
+import org.junit.Test;
+
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.AuthCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.ConnectionHeartbeatCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.SubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.UnsubscribedCallback;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
-import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Test;
 
 public class CommandsCallbackTest {
 	

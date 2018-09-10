@@ -31,9 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.CancelOrderGroupCommand;
-import com.github.jnidzwetzki.bitfinex.v2.commands.OrderCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.CancelOrderCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.CancelOrderGroupCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;

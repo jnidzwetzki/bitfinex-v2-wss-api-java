@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 
 import com.google.common.util.concurrent.MoreExecutors;
 
-import com.github.jnidzwetzki.bitfinex.v2.commands.AuthCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.AuthCommand;
 
 public class BitfinexApiBrokerConfig {
 

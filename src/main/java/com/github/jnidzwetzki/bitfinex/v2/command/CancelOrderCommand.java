@@ -15,28 +15,36 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.commands;
+package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 
-public class SubscribeTickerCommand extends AbstractAPICommand {
+public class CancelOrderCommand implements BitfinexCommand {
 
-	private String currencyPair;
+	/**
+	 * The cid
+	 */
+	private long id;
 
-	public SubscribeTickerCommand(final BitfinexTickerSymbol currencyPair) {
-		this.currencyPair = currencyPair.getBitfinexCurrencyPair().toBitfinexString();
+	public CancelOrderCommand(final long id) {
+		this.id = id;
 	}
 
 	@Override
-	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) {
-		final JSONObject subscribeJson = new JSONObject();
-		subscribeJson.put("event", "subscribe");
-		subscribeJson.put("channel", "ticker");
-		subscribeJson.put("symbol", currencyPair);
+	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) throws CommandException {
 		
-		return subscribeJson.toString();
+		final JSONObject cancelJson = new JSONObject();
+		cancelJson.put("id", id);
+		
+		final StringBuilder sb = new StringBuilder();
+		sb.append("[0,\"oc\", null, ");
+		sb.append(cancelJson.toString());
+		sb.append("]\n");
+				
+		return sb.toString();
 	}
+
 }

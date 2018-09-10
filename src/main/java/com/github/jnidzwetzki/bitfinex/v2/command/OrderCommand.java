@@ -15,7 +15,7 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.commands;
+package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
 import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 
-public class OrderCommand extends AbstractAPICommand {
+public class OrderCommand implements BitfinexCommand {
 
 	private final BitfinexNewOrder bitfinexOrder;
 	

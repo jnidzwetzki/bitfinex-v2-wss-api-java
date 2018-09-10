@@ -15,28 +15,35 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.commands;
+package com.github.jnidzwetzki.bitfinex.v2.command;
+
+import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
 
-public class CalculateCommand extends AbstractAPICommand {
-	
+public class CancelOrderGroupCommand implements BitfinexCommand {
+
 	/**
-	 * The symbol
+	 * The order group
 	 */
-	private String symbol;
+	private int orderGroup;
 
-	public CalculateCommand(final String symbol) {
-		this.symbol = symbol;
+	public CancelOrderGroupCommand(final int orderGroup) {
+		this.orderGroup = orderGroup;
 	}
 
 	@Override
-	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) {
-		final StringBuilder sb = new StringBuilder();
-		sb.append("[0,\"calc\",null,[[\"");
-		sb.append(symbol);
-		sb.append("\"]]]");
+	public String getCommand(BitfinexApiBroker bitfinexApiBroker) throws CommandException {
+		final JSONObject cancelJson = new JSONObject();
+		cancelJson.put("gid", orderGroup);
 		
+		final StringBuilder sb = new StringBuilder();
+		sb.append("[0,\"oc_multi\", null, ");
+		sb.append(cancelJson.toString());
+		sb.append("]\n");
+				
 		return sb.toString();
 	}
+
 }

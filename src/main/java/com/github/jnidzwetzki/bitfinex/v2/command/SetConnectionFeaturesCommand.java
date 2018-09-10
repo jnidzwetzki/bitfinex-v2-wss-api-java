@@ -15,35 +15,39 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.commands;
+package com.github.jnidzwetzki.bitfinex.v2.command;
+
+import java.util.Collection;
 
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
 
-public class CancelOrderGroupCommand extends AbstractAPICommand {
+public class SetConnectionFeaturesCommand implements BitfinexCommand {
 
 	/**
-	 * The order group
+	 * The active features
 	 */
-	private int orderGroup;
+	private Collection<BitfinexConnectionFeature> features;
 
-	public CancelOrderGroupCommand(final int orderGroup) {
-		this.orderGroup = orderGroup;
+	public SetConnectionFeaturesCommand(final Collection<BitfinexConnectionFeature> features) {
+		this.features = features;
 	}
-
+	
 	@Override
-	public String getCommand(BitfinexApiBroker bitfinexApiBroker) throws CommandException {
-		final JSONObject cancelJson = new JSONObject();
-		cancelJson.put("gid", orderGroup);
+	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) {
 		
-		final StringBuilder sb = new StringBuilder();
-		sb.append("[0,\"oc_multi\", null, ");
-		sb.append(cancelJson.toString());
-		sb.append("]\n");
-				
-		return sb.toString();
+		// XOR all features
+		int featureFlags = 0;
+		for(final BitfinexConnectionFeature feature : features) {
+			featureFlags = featureFlags ^ feature.getFeatureFlag();
+		}
+		
+		final JSONObject subscribeJson = new JSONObject();
+		subscribeJson.put("event", "conf");
+		subscribeJson.put("flags", featureFlags);
+		return subscribeJson.toString();
 	}
 
 }

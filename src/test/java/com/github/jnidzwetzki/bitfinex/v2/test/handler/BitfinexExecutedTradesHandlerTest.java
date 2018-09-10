@@ -28,10 +28,11 @@ import org.mockito.Mockito;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ExecutedTradeHandler;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
 public class BitfinexExecutedTradesHandlerTest {
 
@@ -53,7 +54,7 @@ public class BitfinexExecutedTradesHandlerTest {
         final JSONArray jsonArray = new JSONArray(callbackValue);
 
         final BitfinexExecutedTradeSymbol symbol
-                = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.of("BTC", "USD"));
+                = BitfinexSymbols.executedTrades(BitfinexCurrencyPair.of("BTC", "USD"));
 
         final ExecutorService executorService = MoreExecutors.newDirectExecutorService();
         final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
@@ -86,7 +87,7 @@ public class BitfinexExecutedTradesHandlerTest {
         final JSONArray jsonArray = new JSONArray(callbackValue);
 
         final BitfinexExecutedTradeSymbol symbol
-                = new BitfinexExecutedTradeSymbol(BitfinexCurrencyPair.of("BTC", "USD"));
+                = BitfinexSymbols.executedTrades(BitfinexCurrencyPair.of("BTC", "USD"));
 
         final ExecutorService executorService = MoreExecutors.newDirectExecutorService();
         final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);

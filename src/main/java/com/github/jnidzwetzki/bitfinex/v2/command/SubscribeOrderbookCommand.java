@@ -15,18 +15,38 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.commands;
+package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 
-public class PingCommand extends AbstractAPICommand {
+public class SubscribeOrderbookCommand implements BitfinexCommand {
+
+	/**
+	 * The orderbook configuration
+	 */
+	private BitfinexOrderBookSymbol symbol;
+	
+	public SubscribeOrderbookCommand(final BitfinexOrderBookSymbol symbol) {
+		this.symbol = symbol;
+	}
 
 	@Override
-	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) {
+	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) throws CommandException {
 		final JSONObject subscribeJson = new JSONObject();
-		subscribeJson.put("event", "ping");
+		subscribeJson.put("event", "subscribe");
+		subscribeJson.put("channel", "book");
+		subscribeJson.put("symbol", symbol.getCurrencyPair().toBitfinexString());
+		subscribeJson.put("prec", symbol.getPrecision().toString());
+		if (symbol.getFrequency() != null) {
+			subscribeJson.put("freq", symbol.getFrequency().toString());
+		}
+		if (symbol.getPricePoints() != null) {
+			subscribeJson.put("len", Integer.toString(symbol.getPricePoints()));
+		}
 		return subscribeJson.toString();
 	}
 
