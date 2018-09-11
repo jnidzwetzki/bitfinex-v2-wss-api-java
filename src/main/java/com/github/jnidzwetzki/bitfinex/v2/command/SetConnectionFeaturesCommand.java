@@ -21,8 +21,8 @@ import java.util.Collection;
 
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 
 public class SetConnectionFeaturesCommand implements BitfinexCommand {
 
@@ -36,7 +36,7 @@ public class SetConnectionFeaturesCommand implements BitfinexCommand {
 	}
 	
 	@Override
-	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) {
+	public String getCommand(final BitfinexWebsocketClient client) {
 		
 		// XOR all features
 		int featureFlags = 0;

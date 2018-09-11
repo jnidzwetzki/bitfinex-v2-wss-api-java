@@ -17,7 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.command;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 
 public class CalculateCommand implements BitfinexCommand {
 	
@@ -31,7 +31,7 @@ public class CalculateCommand implements BitfinexCommand {
 	}
 
 	@Override
-	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) {
+	public String getCommand(final BitfinexWebsocketClient client) {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("[0,\"calc\",null,[[\"");
 		sb.append(symbol);

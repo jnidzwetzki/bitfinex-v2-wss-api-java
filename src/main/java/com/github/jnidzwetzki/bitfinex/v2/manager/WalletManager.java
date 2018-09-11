@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutorService;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.command.CalculateCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
 import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
@@ -36,10 +36,10 @@ public class WalletManager extends AbstractManager {
 	 */
 	private final Table<BitfinexWallet.Type, String, BitfinexWallet> walletTable;
 
-	public WalletManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
-		super(bitfinexApiBroker, executorService);
+	public WalletManager(final BitfinexWebsocketClient client, final ExecutorService executorService) {
+		super(client, executorService);
 		this.walletTable = HashBasedTable.create();
-		bitfinexApiBroker.getCallbacks().onWalletsEvent((account, wallets) -> wallets.forEach(wallet -> {
+		client.getCallbacks().onWalletsEvent((account, wallets) -> wallets.forEach(wallet -> {
             try {
                 Table<BitfinexWallet.Type, String, BitfinexWallet> walletTable = getWalletTable();
                 synchronized (walletTable) {
@@ -80,7 +80,7 @@ public class WalletManager extends AbstractManager {
 	 * @throws APIException
 	 */
 	private void throwExceptionIfUnauthenticated() throws APIException {
-		if(! bitfinexApiBroker.isAuthenticated()) {
+		if(! client.isAuthenticated()) {
 			throw new APIException("Unable to perform operation on an unauthenticated connection");
 		}
 	}
@@ -94,7 +94,7 @@ public class WalletManager extends AbstractManager {
 	public void calculateWalletMarginBalance(final String symbol) throws APIException {
 		throwExceptionIfUnauthenticated();
 
-		bitfinexApiBroker.sendCommand(new CalculateCommand("wallet_margin_" + symbol));
+		client.sendCommand(new CalculateCommand("wallet_margin_" + symbol));
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class WalletManager extends AbstractManager {
 	public void calculateWalletFundingBalance(final String symbol) throws APIException {
 		throwExceptionIfUnauthenticated();
 
-		bitfinexApiBroker.sendCommand(new CalculateCommand("wallet_funding_" + symbol));
+		client.sendCommand(new CalculateCommand("wallet_funding_" + symbol));
 	}
 
 }

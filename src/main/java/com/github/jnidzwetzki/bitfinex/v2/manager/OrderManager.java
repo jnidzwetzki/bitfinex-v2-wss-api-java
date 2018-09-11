@@ -30,7 +30,7 @@ import org.bboxdb.commons.Retryer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.command.CancelOrderCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.CancelOrderGroupCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.OrderCommand;
@@ -69,11 +69,11 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	private final static Logger logger = LoggerFactory.getLogger(OrderManager.class);
 
 
-	public OrderManager(final BitfinexApiBroker bitfinexApiBroker, final ExecutorService executorService) {
-		super(executorService, bitfinexApiBroker);
+	public OrderManager(final BitfinexWebsocketClient client, final ExecutorService executorService) {
+		super(executorService, client);
 		this.orders = new ArrayList<>();
-		bitfinexApiBroker.getCallbacks().onSubmittedOrderEvent((a, e) -> e.forEach(i -> updateOrder(a, i)));
-		bitfinexApiBroker.getCallbacks().onOrderNotification(this::updateOrder);
+		client.getCallbacks().onSubmittedOrderEvent((a, e) -> e.forEach(i -> updateOrder(a, i)));
+		client.getCallbacks().onOrderNotification(this::updateOrder);
 	}
 
 	/**
@@ -126,13 +126,13 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	 */
 	public void placeOrderAndWaitUntilActive(final BitfinexNewOrder order) throws APIException, InterruptedException {
 
-		final BitfinexApiKeyPermissions capabilities = bitfinexApiBroker.getApiKeyPermissions();
+		final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
 
 		if(! capabilities.isOrderWritePermission()) {
 			throw new APIException("Unable to wait for order " + order + " connection has not enough capabilities: " + capabilities);
 		}
 
-		order.setApiKey(bitfinexApiBroker.getConfiguration().getApiKey());
+		order.setApiKey(client.getConfiguration().getApiKey());
 
 		final Callable<Boolean> orderCallable = () -> placeOrderOrderOnAPI(order);
 
@@ -187,7 +187,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 			}
 
 			// Check for order error
-			final boolean orderInErrorState = bitfinexApiBroker
+			final boolean orderInErrorState = client
 					.getOrderManager()
 					.getOrders()
 					.stream()
@@ -213,7 +213,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	 */
 	public void cancelOrderAndWaitForCompletion(final long id) throws APIException, InterruptedException {
 
-		final BitfinexApiKeyPermissions capabilities = bitfinexApiBroker.getApiKeyPermissions();
+		final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
 
 		if(! capabilities.isOrderWritePermission()) {
 			throw new APIException("Unable to cancel order " + id + " connection has not enough capabilities: " + capabilities);
@@ -283,7 +283,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	 */
 	public void placeOrder(final BitfinexNewOrder order) throws APIException {
 
-		final BitfinexApiKeyPermissions capabilities = bitfinexApiBroker.getApiKeyPermissions();
+		final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
 
 		if(! capabilities.isOrderWritePermission()) {
 			throw new APIException("Unable to place order " + order + " connection has not enough capabilities: " + capabilities);
@@ -291,7 +291,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 
 		logger.info("Executing new order {}", order);
 		final OrderCommand orderCommand = new OrderCommand(order);
-		bitfinexApiBroker.sendCommand(orderCommand);
+		client.sendCommand(orderCommand);
 	}
 
 	/**
@@ -301,7 +301,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	 */
 	public void cancelOrder(final long id) throws APIException {
 
-		final BitfinexApiKeyPermissions capabilities = bitfinexApiBroker.getApiKeyPermissions();
+		final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
 
 		if(! capabilities.isOrderWritePermission()) {
 			throw new APIException("Unable to cancel order " + id + " connection has not enough capabilities: " + capabilities);
@@ -309,7 +309,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 
 		logger.info("Cancel order with id {}", id);
 		final CancelOrderCommand cancelOrder = new CancelOrderCommand(id);
-		bitfinexApiBroker.sendCommand(cancelOrder);
+		client.sendCommand(cancelOrder);
 	}
 
 	/**
@@ -319,7 +319,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	 */
 	public void cancelOrderGroup(final int id) throws APIException {
 
-		final BitfinexApiKeyPermissions capabilities = bitfinexApiBroker.getApiKeyPermissions();
+		final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
 
 		if(! capabilities.isOrderWritePermission()) {
 			throw new APIException("Unable to cancel order group " + id + " connection has not enough capabilities: " + capabilities);
@@ -327,6 +327,6 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 
 		logger.info("Cancel order group {}", id);
 		final CancelOrderGroupCommand cancelOrder = new CancelOrderGroupCommand(id);
-		bitfinexApiBroker.sendCommand(cancelOrder);
+		client.sendCommand(cancelOrder);
 	}
 }

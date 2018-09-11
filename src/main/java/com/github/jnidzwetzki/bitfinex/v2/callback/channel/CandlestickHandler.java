@@ -48,20 +48,22 @@ public class CandlestickHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
-
+    public void handleChannelData(final String action, final JSONArray payload) throws APIException {
+        if (payload.isEmpty()) {
+            return;
+        }
         // channel symbol trade:1m:tLTCUSD
         final Set<BitfinexCandle> candlestickList = new TreeSet<>(Comparator.comparing(BitfinexCandle::getTimestamp));
 
         // Snapshots contain multiple Bars, Updates only one
-        if (jsonArray.get(0) instanceof JSONArray) {
-            for (int pos = 0; pos < jsonArray.length(); pos++) {
-                final JSONArray parts = jsonArray.getJSONArray(pos);
+        if (payload.get(0) instanceof JSONArray) {
+            for (int pos = 0; pos < payload.length(); pos++) {
+                final JSONArray parts = payload.getJSONArray(pos);
                 BitfinexCandle candlestick = jsonToCandlestick(parts);
                 candlestickList.add(candlestick);
             }
         } else {
-            BitfinexCandle candlestick = jsonToCandlestick(jsonArray);
+            BitfinexCandle candlestick = jsonToCandlestick(payload);
             candlestickList.add(candlestick);
         }
         candlesConsumer.accept(symbol, candlestickList);

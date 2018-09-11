@@ -62,7 +62,6 @@ public class SubscribedCallback implements CommandCallbackHandler {
 				logger.error("Unknown subscribed callback {}", jsonObject.toString());
 		}
 		if (symbol != null) {
-			logger.info("Registering symbol {} on channel {}", symbol, channelId);
 			subscribeResultConsumer.accept(channelId, symbol);
 		}
 	}
@@ -79,10 +78,8 @@ public class SubscribedCallback implements CommandCallbackHandler {
 		BitfinexStreamSymbol symbol;
 		if("R0".equals(jsonObject.getString("prec"))) {
 			symbol = BitfinexOrderBookSymbol.fromJSON(jsonObject);
-			logger.info("Registering raw book {}", jsonObject);
 		} else {
 			symbol = BitfinexOrderBookSymbol.fromJSON(jsonObject);
-			logger.info("Registering book {}", jsonObject);
 		}
 		return symbol;
 	}

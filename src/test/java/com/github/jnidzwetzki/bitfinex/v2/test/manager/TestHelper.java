@@ -22,9 +22,10 @@ import java.util.concurrent.ExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import org.mockito.Mockito;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
@@ -40,11 +41,11 @@ public class TestHelper {
 	 * Build a mocked bitfinex connection
 	 * @return
 	 */
-	public static BitfinexApiBroker buildMockedBitfinexConnection() {
+	public static BitfinexWebsocketClient buildMockedBitfinexConnection() {
 
 		final ExecutorService executorService = MoreExecutors.newDirectExecutorService();
-		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		final BitfinexApiBrokerConfig config = Mockito.mock(BitfinexApiBrokerConfig.class);
+		final BitfinexWebsocketClient bitfinexApiBroker = Mockito.mock(SimpleBitfinexApiBroker.class);
+		final BitfinexWebsocketConfiguration config = Mockito.mock(BitfinexWebsocketConfiguration.class);
 
 		Mockito.when(bitfinexApiBroker.getConfiguration()).thenReturn(config);
 		Mockito.when(config.getApiKey()).thenReturn(API_KEY);

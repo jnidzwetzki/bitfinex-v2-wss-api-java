@@ -22,8 +22,8 @@ import java.util.concurrent.ExecutorService;
 
 import com.google.common.collect.Sets;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexConnectionFeature;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.command.SetConnectionFeaturesCommand;
 
 public class ConnectionFeatureManager extends AbstractManager {
@@ -40,9 +40,9 @@ public class ConnectionFeatureManager extends AbstractManager {
 	private int activeConnectionFeatures;
 	
 	
-	public ConnectionFeatureManager(final BitfinexApiBroker bitfinexApiBroker, 
+	public ConnectionFeatureManager(final BitfinexWebsocketClient client,
 			final ExecutorService executorService) {
-		super(bitfinexApiBroker, executorService);
+		super(client, executorService);
 		
 		this.connectionFeatures = Sets.newConcurrentHashSet();
 		this.activeConnectionFeatures = 0;
@@ -105,6 +105,6 @@ public class ConnectionFeatureManager extends AbstractManager {
 	 */
 	public void applyConnectionFeatures() {
 		final SetConnectionFeaturesCommand apiCommand = new SetConnectionFeaturesCommand(connectionFeatures);
-		bitfinexApiBroker.sendCommand(apiCommand);
+		client.sendCommand(apiCommand);
 	}
 }

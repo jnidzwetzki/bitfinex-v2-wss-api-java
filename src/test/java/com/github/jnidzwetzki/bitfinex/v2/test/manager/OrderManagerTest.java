@@ -24,8 +24,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexOrderBuilder;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.NotificationHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.OrderHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
@@ -60,14 +60,14 @@ public class OrderManagerTest {
             Assert.assertEquals(BitfinexCurrencyPair.of("BTC", "USD").toBitfinexString(), e.getSymbol().toBitfinexString());
         };
 
-        final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
+        final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         bitfinexApiBroker.getOrderManager().registerCallback(orderCallback);
         final NotificationHandler notificationHandler = new NotificationHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
         notificationHandler.onOrderNotification((a, eo) -> {
             bitfinexApiBroker.getOrderManager().updateOrder(a, eo);
         });
 
-        notificationHandler.handleChannelData(null, jsonArray);
+        notificationHandler.handleChannelData("n", jsonArray.getJSONArray(2));
     }
 
 
@@ -89,11 +89,12 @@ public class OrderManagerTest {
             Assert.assertNull(e.getSymbol());
         };
 
-        final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
+        final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         bitfinexApiBroker.getOrderManager().registerCallback(orderCallback);
         final NotificationHandler notificationHandler = new NotificationHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 
-        notificationHandler.handleChannelData(null, jsonArray);
+        notificationHandler.handleChannelData("n", jsonArray.getJSONArray(2));
+
         notificationHandler.onOrderNotification((a, eo) -> {
             bitfinexApiBroker.getOrderManager().updateOrder(a, eo);
         });
@@ -106,7 +107,7 @@ public class OrderManagerTest {
      */
     @Test
     public void testOrderChannelHandler1() throws APIException {
-        final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
+        final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         final String jsonString = "[0,\"on\",[6784335053,null,1514956504945000,\"tIOTUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
         final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
@@ -118,7 +119,8 @@ public class OrderManagerTest {
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
         Assert.assertTrue(orderManager.getOrders().isEmpty());
-        orderHandler.handleChannelData(null, jsonArray);
+        orderHandler.handleChannelData("on", jsonArray.getJSONArray(2));
+
         Assert.assertEquals(1, orderManager.getOrders().size());
 
         Assert.assertEquals(BitfinexSubmittedOrderStatus.ACTIVE, orderManager.getOrders().get(0).getStatus());
@@ -133,7 +135,7 @@ public class OrderManagerTest {
     public void testOrderChannelHandler2() throws APIException {
         final String jsonString = "[0,\"on\",[[6784335053,null,1514956504945000,\"tIOTUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0], [67843353243,null,1514956234945000,\"tBTCUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0]]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
-        final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
+        final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
         orderHandler.onSubmittedOrderEvent((a, eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
@@ -143,7 +145,7 @@ public class OrderManagerTest {
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
         Assert.assertTrue(orderManager.getOrders().isEmpty());
-        orderHandler.handleChannelData(null, jsonArray);
+        orderHandler.handleChannelData("on", jsonArray.getJSONArray(2));
         Assert.assertEquals(2, orderManager.getOrders().size());
 
         Assert.assertEquals(BitfinexSubmittedOrderStatus.ACTIVE, orderManager.getOrders().get(0).getStatus());
@@ -163,7 +165,7 @@ public class OrderManagerTest {
         final String jsonString = "[0,\"on\",[6827301913,null,null,\"tXRPUSD\",1515069803530,1515069803530,-60,-60,\"MARKET\",null,null,null,0,\"ACTIVE (note:POSCLOSE)\",null,null,0,3.2041,null,null,null,null,null,0,0,0]]";
 
         final JSONArray jsonArray = new JSONArray(jsonString);
-        final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
+        final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
         orderHandler.onSubmittedOrderEvent((a,eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
@@ -173,7 +175,8 @@ public class OrderManagerTest {
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
         Assert.assertTrue(orderManager.getOrders().isEmpty());
-        orderHandler.handleChannelData(null, jsonArray);
+        orderHandler.handleChannelData("on", jsonArray.getJSONArray(2));
+
         Assert.assertEquals(1, orderManager.getOrders().size());
         Assert.assertEquals(BitfinexSubmittedOrderStatus.ACTIVE, orderManager.getOrders().get(0).getStatus());
     }
@@ -188,7 +191,7 @@ public class OrderManagerTest {
         final String jsonString = "[0,\"oc\",[11291120775,null,null,\"tNEOBTC\",1524661302976,1524661303001,0,-0.41291886,\"MARKET\",null,null,null,0,\"INSUFFICIENT BALANCE (G1) was: ACTIVE (note:POSCLOSE), PARTIALLY FILLED @ 0.008049(-0.41291886)\",null,null,0,0.008049,null,null,null,null,null,0,0,0,null,null,\"\",null,null,null]]";
 
         final JSONArray jsonArray = new JSONArray(jsonString);
-        final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
+        final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
         orderHandler.onSubmittedOrderEvent((a, eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
@@ -198,7 +201,8 @@ public class OrderManagerTest {
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
         Assert.assertTrue(orderManager.getOrders().isEmpty());
-        orderHandler.handleChannelData(null, jsonArray);
+        orderHandler.handleChannelData("oc", jsonArray.getJSONArray(2));
+
         Assert.assertEquals(1, orderManager.getOrders().size());
         Assert.assertEquals(BitfinexSubmittedOrderStatus.PARTIALLY_FILLED, orderManager.getOrders().get(0).getStatus());
     }
@@ -212,7 +216,7 @@ public class OrderManagerTest {
     @Test(expected = APIException.class)
     public void testCancelOrderUnauth() throws APIException, InterruptedException {
 
-        final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
+        final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         Mockito.when(bitfinexApiBroker.getApiKeyPermissions()).thenReturn(BitfinexApiKeyPermissions.NO_PERMISSIONS);
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
@@ -227,7 +231,7 @@ public class OrderManagerTest {
      */
     @Test(timeout = 60000)
     public void testCancelOrder() throws APIException, InterruptedException {
-        final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
+        final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
         BitfinexAccountSymbol symbol = BitfinexSymbols.account("apiKey", BitfinexApiKeyPermissions.ALL_PERMISSIONS);
@@ -259,7 +263,7 @@ public class OrderManagerTest {
     @Test(expected = APIException.class)
     public void testPlaceOrderUnauth() throws APIException, InterruptedException {
 
-        final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
+        final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         Mockito.when(bitfinexApiBroker.getApiKeyPermissions()).thenReturn(BitfinexApiKeyPermissions.NO_PERMISSIONS);
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
@@ -280,7 +284,7 @@ public class OrderManagerTest {
     @Test(timeout = 60000)
     public void testPlaceOrder() throws APIException, InterruptedException {
 
-        final BitfinexApiBroker bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
+        final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         Mockito.when(bitfinexApiBroker.isAuthenticated()).thenReturn(true);
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();

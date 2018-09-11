@@ -24,22 +24,59 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import com.github.jnidzwetzki.bitfinex.v2.command.AuthCommand;
 
-public class BitfinexApiBrokerConfig {
+public class BitfinexWebsocketConfiguration {
 
+    /**
+     * api key
+     */
     private String apiKey;
+
+    /**
+     * api secret
+     */
     private String apiSecret;
+
+    /**
+     * false if euthentication should be skipped
+     */
     private boolean authenticationEnabled = false;
+
+    /**
+     * false if heartbeat thread should not be running
+     */
     private boolean heartbeatThreadActive = true;
+
+    /**
+     * false if deadman switch should not be active
+     */
     private boolean deadmanSwitchActive = false;
+
+    /**
+     * false if managers should not be active
+     */
     private boolean managersActive = true;
+
+    /**
+     * authentication nonce producer
+     */
     private Supplier<String> authNonceProducer = AuthCommand.AUTH_NONCE_PRODUCER_TIMESTAMP;
+
+    /**
+     * executor service used by managers
+     */
     private ExecutorService executorService = MoreExecutors.newDirectExecutorService();
 
-    public BitfinexApiBrokerConfig() {
+    /**
+     * delay in millis used by {@link PooledBitfinexApiBroker}.
+     * Server will throw 429 on #connect() if too low.
+     */
+    private int connectionEstablishingDelay = 7_500;
+
+    public BitfinexWebsocketConfiguration() {
 
     }
 
-    public BitfinexApiBrokerConfig(final BitfinexApiBrokerConfig copy) {
+    public BitfinexWebsocketConfiguration(final BitfinexWebsocketConfiguration copy) {
         this.apiKey = copy.apiKey;
         this.apiSecret = copy.apiSecret;
         this.authenticationEnabled = copy.authenticationEnabled;
@@ -48,6 +85,7 @@ public class BitfinexApiBrokerConfig {
         this.managersActive = copy.managersActive;
         this.authNonceProducer = copy.authNonceProducer;
         this.executorService = copy.executorService;
+        this.connectionEstablishingDelay = copy.connectionEstablishingDelay;
     }
 
     public void setApiCredentials(final String apiKey, final String apiSecret) {
@@ -110,5 +148,13 @@ public class BitfinexApiBrokerConfig {
 
     public void setExecutorService(final ExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    public int getConnectionEstablishingDelay() {
+        return connectionEstablishingDelay;
+    }
+
+    public void setConnectionEstablishingDelay(int connectionEstablishingDelay) {
+        this.connectionEstablishingDelay = connectionEstablishingDelay;
     }
 }

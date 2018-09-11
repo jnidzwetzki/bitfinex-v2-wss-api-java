@@ -8,9 +8,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBrokerConfig;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexOrderBuilder;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.command.AuthCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.CancelOrderCommand;
@@ -67,7 +68,7 @@ public class CommandsTest {
 				new UnsubscribeChannelCommand(orderbookConfiguration),
 				new SetConnectionFeaturesCommand(new HashSet<>()));
 
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexWebsocketClient bitfinexApiBroker = buildMockedBitfinexConnection();
 
 		for(final BitfinexCommand command : commands) {
 			if (command instanceof BitfinexStreamSymbolToChannelIdResolverAware) {
@@ -97,7 +98,7 @@ public class CommandsTest {
 
 		final OrderCommand command = new OrderCommand(order);
 
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexWebsocketClient bitfinexApiBroker = buildMockedBitfinexConnection();
 
 		final String commandValue = command.getCommand(bitfinexApiBroker);
 		Assert.assertNotNull(commandValue);
@@ -109,9 +110,9 @@ public class CommandsTest {
 	 *  Build the bitfinex connection
 	 * @return
 	 */
-	private BitfinexApiBroker buildMockedBitfinexConnection() {
-		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
-		final BitfinexApiBrokerConfig config = Mockito.mock(BitfinexApiBrokerConfig.class);
+	private BitfinexWebsocketClient buildMockedBitfinexConnection() {
+		final BitfinexWebsocketClient bitfinexApiBroker = Mockito.mock(SimpleBitfinexApiBroker.class);
+		final BitfinexWebsocketConfiguration config = Mockito.mock(BitfinexWebsocketConfiguration.class);
 
 		Mockito.when(bitfinexApiBroker.getConfiguration()).thenReturn(config);
 		Mockito.when(bitfinexApiBroker.getConfiguration().getApiKey()).thenReturn("abc");

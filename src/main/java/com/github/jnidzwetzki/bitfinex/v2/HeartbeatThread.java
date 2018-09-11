@@ -58,7 +58,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	/**
 	 * The API broker
 	 */
-	private final BitfinexApiBroker bitfinexApiBroker;
+	private final BitfinexWebsocketClient bitfinexApiBroker;
 
 	/**
 	 * websocketEndpoint
@@ -84,7 +84,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	/**
 	 * @param bitfinexApiBroker
 	 */
-	public HeartbeatThread(final BitfinexApiBroker bitfinexApiBroker, final WebsocketClientEndpoint websocketClientEndpoint,
+	public HeartbeatThread(final BitfinexWebsocketClient bitfinexApiBroker, final WebsocketClientEndpoint websocketClientEndpoint,
 						   final Supplier<Long> lastHeartbeatSupplier) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
 		this.websocketEndpoint = websocketClientEndpoint;
@@ -158,19 +158,16 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	public static boolean checkTickerFreshness(final Map<BitfinexStreamSymbol, Long> heartbeatValues) {
 		final long currentTime = System.currentTimeMillis();
 
-		final List<BitfinexStreamSymbol> outdatedSybols = heartbeatValues.entrySet().stream()
+		final List<BitfinexStreamSymbol> outdatedSymbols = heartbeatValues.entrySet().stream()
 			.filter(e -> e.getValue() + TICKER_TIMEOUT < currentTime)
 			.map(Map.Entry::getKey)
 			.collect(Collectors.toList());
 
-		if(! outdatedSybols.isEmpty()) {
-			logger.error("Last update for symbols {} outdated current time is {} / updates {}",
-					outdatedSybols, currentTime, heartbeatValues);
-
-			return false;
-		}
-
-		return true;
+		outdatedSymbols.forEach(symbol -> {
+			logger.error("Symbol {} is outdated by {}ms",
+					symbol, currentTime - heartbeatValues.get(symbol));
+		});
+		return outdatedSymbols.isEmpty();
 	}
 
 	/**

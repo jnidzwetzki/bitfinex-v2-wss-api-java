@@ -206,7 +206,6 @@ public class BitfinexCurrencyPair {
 		register("XVG", "JPY", 26.0);
 		register("BCI", "USD", 26.0);
 		register("BCI", "BTC", 26.0);
-		register("BCI", "ETH", 26.0);
 	}
 
 	/**
@@ -347,5 +346,10 @@ public class BitfinexCurrencyPair {
 	 */
 	public String getCurrency2() {
 		return currency2;
+	}
+
+	@Override
+	public String toString() {
+		return currency1 + ":" + currency2;
 	}
 }

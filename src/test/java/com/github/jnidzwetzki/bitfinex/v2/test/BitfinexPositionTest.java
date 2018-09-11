@@ -25,8 +25,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
+import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.PositionHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
@@ -47,7 +48,7 @@ public class BitfinexPositionTest {
 		final String jsonString = "[0,\"pu\",[\"tETHUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,0,null,null,null,null]]";
 		final JSONArray jsonArray = new JSONArray(jsonString);
 
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexWebsocketClient bitfinexApiBroker = buildMockedBitfinexConnection();
 		final PositionHandler positionHandler = new PositionHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 		positionHandler.onPositionsEvent((a, positions) -> {
 			for (BitfinexPosition position : positions) {
@@ -56,7 +57,7 @@ public class BitfinexPositionTest {
 		});
 
 		Assert.assertTrue(bitfinexApiBroker.getPositionManager().getPositions().isEmpty());
-		positionHandler.handleChannelData(null, jsonArray);
+		positionHandler.handleChannelData("pu", jsonArray.getJSONArray(2));
 		Assert.assertEquals(1, bitfinexApiBroker.getPositionManager().getPositions().size());
 	}
 	
@@ -70,7 +71,7 @@ public class BitfinexPositionTest {
 		final String jsonString = "[0,\"pu\",[\"tETHUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,null,null,null,null,null]]";
 		final JSONArray jsonArray = new JSONArray(jsonString);
 
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexWebsocketClient bitfinexApiBroker = buildMockedBitfinexConnection();
 		final PositionHandler positionHandler = new PositionHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 		positionHandler.onPositionsEvent((a, positions) -> {
 			for (BitfinexPosition position : positions) {
@@ -79,7 +80,7 @@ public class BitfinexPositionTest {
 		});
 
 		Assert.assertTrue(bitfinexApiBroker.getPositionManager().getPositions().isEmpty());
-		positionHandler.handleChannelData(null, jsonArray);
+		positionHandler.handleChannelData("pu", jsonArray.getJSONArray(2));
 		Assert.assertEquals(1, bitfinexApiBroker.getPositionManager().getPositions().size());
 	}
 	
@@ -93,7 +94,7 @@ public class BitfinexPositionTest {
 		final String jsonString = "[0,\"ps\",[[\"tETHUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,0,null,null,null,null], [\"tBTCUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,0,null,null,null,null]]]";
 		final JSONArray jsonArray = new JSONArray(jsonString);
 
-		final BitfinexApiBroker bitfinexApiBroker = buildMockedBitfinexConnection();
+		final BitfinexWebsocketClient bitfinexApiBroker = buildMockedBitfinexConnection();
 		final PositionHandler positionHandler = new PositionHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 		positionHandler.onPositionsEvent((a, positions) -> {
 			for (BitfinexPosition position : positions) {
@@ -102,7 +103,7 @@ public class BitfinexPositionTest {
 		});
 
 		Assert.assertTrue(bitfinexApiBroker.getPositionManager().getPositions().isEmpty());
-		positionHandler.handleChannelData(null, jsonArray);
+		positionHandler.handleChannelData("ps", jsonArray.getJSONArray(2));
 		Assert.assertEquals(2, bitfinexApiBroker.getPositionManager().getPositions().size());
 	}
 	
@@ -110,10 +111,10 @@ public class BitfinexPositionTest {
 	 * Build a mocked bitfinex connection
 	 * @return
 	 */
-	private BitfinexApiBroker buildMockedBitfinexConnection() {
+	private BitfinexWebsocketClient buildMockedBitfinexConnection() {
 		
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
-		final BitfinexApiBroker bitfinexApiBroker = Mockito.mock(BitfinexApiBroker.class);
+		final BitfinexWebsocketClient bitfinexApiBroker = Mockito.mock(SimpleBitfinexApiBroker.class);
 		Mockito.when(bitfinexApiBroker.getCallbacks()).thenReturn(new BitfinexApiCallbackRegistry());
 
 		final PositionManager positionManager = new PositionManager(bitfinexApiBroker, executorService);

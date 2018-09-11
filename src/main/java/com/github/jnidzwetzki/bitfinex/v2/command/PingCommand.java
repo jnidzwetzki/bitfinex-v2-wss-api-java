@@ -19,12 +19,12 @@ package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiBroker;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 
 public class PingCommand implements BitfinexCommand {
 
 	@Override
-	public String getCommand(final BitfinexApiBroker bitfinexApiBroker) {
+	public String getCommand(final BitfinexWebsocketClient client) {
 		final JSONObject subscribeJson = new JSONObject();
 		subscribeJson.put("event", "ping");
 		return subscribeJson.toString();
