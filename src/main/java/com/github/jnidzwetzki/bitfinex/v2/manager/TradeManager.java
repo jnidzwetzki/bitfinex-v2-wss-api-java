@@ -27,7 +27,7 @@ public class TradeManager extends SimpleCallbackManager<BitfinexMyExecutedTrade>
 
 	public TradeManager(final BitfinexWebsocketClient client, final ExecutorService executorService) {
 		super(executorService, client);
-		client.getCallbacks().onTradeEvent(this::updateTrade);
+		client.getCallbacks().onMyTradeEvent(this::updateTrade);
 	}
 	
 	/**

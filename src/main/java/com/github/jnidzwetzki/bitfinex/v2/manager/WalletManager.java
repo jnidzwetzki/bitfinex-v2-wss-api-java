@@ -39,7 +39,7 @@ public class WalletManager extends AbstractManager {
 	public WalletManager(final BitfinexWebsocketClient client, final ExecutorService executorService) {
 		super(client, executorService);
 		this.walletTable = HashBasedTable.create();
-		client.getCallbacks().onWalletsEvent((account, wallets) -> wallets.forEach(wallet -> {
+		client.getCallbacks().onMyWalletEvent((account, wallets) -> wallets.forEach(wallet -> {
             try {
                 Table<BitfinexWallet.Type, String, BitfinexWallet> walletTable = getWalletTable();
                 synchronized (walletTable) {

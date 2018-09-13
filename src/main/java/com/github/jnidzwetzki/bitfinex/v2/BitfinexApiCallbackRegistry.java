@@ -44,23 +44,23 @@ public final class BitfinexApiCallbackRegistry extends BitfinexApiCallbackListen
         unsubscribeChannelConsumers.forEach(consumer -> consumer.accept(event));
     }
 
-    public void acceptOrderNotification(final BitfinexAccountSymbol symbol, final BitfinexSubmittedOrder event) {
+    public void acceptMyOrderNotification(final BitfinexAccountSymbol symbol, final BitfinexSubmittedOrder event) {
         newOrderConsumers.forEach(consumer -> consumer.accept(symbol, event));
     }
 
-    public void acceptSubmittedOrderEvent(final BitfinexAccountSymbol symbol, final Collection<BitfinexSubmittedOrder> event) {
+    public void acceptMySubmittedOrderEvent(final BitfinexAccountSymbol symbol, final Collection<BitfinexSubmittedOrder> event) {
         submittedOrderConsumers.forEach(consumer -> consumer.accept(symbol, event));
     }
 
-    public void acceptPositionsEvent(final BitfinexAccountSymbol symbol, final Collection<BitfinexPosition> event) {
+    public void acceptMyPositionEvent(final BitfinexAccountSymbol symbol, final Collection<BitfinexPosition> event) {
         positionConsumers.forEach(consumer -> consumer.accept(symbol, event));
     }
 
-    public void acceptTradeEvent(final BitfinexAccountSymbol symbol, final BitfinexMyExecutedTrade event) {
+    public void acceptMyTradeEvent(final BitfinexAccountSymbol symbol, final BitfinexMyExecutedTrade event) {
         tradeConsumers.forEach(consumer -> consumer.accept(symbol, event));
     }
 
-    public void acceptWalletsEvent(final BitfinexAccountSymbol symbol, final Collection<BitfinexWallet> event) {
+    public void acceptMyWalletEvent(final BitfinexAccountSymbol symbol, final Collection<BitfinexWallet> event) {
         walletConsumers.forEach(consumer -> consumer.accept(symbol, event));
     }
 

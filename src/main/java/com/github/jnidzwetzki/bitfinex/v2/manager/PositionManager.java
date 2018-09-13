@@ -34,7 +34,7 @@ public class PositionManager extends SimpleCallbackManager<BitfinexPosition> {
 	public PositionManager(final BitfinexWebsocketClient client, final ExecutorService executorService) {
 		super(executorService, client);
 		this.positions = new ArrayList<>();
-		client.getCallbacks().onPositionsEvent((account, positions) -> positions.forEach(this::updatePosition));
+		client.getCallbacks().onMyPositionEvent((account, positions) -> positions.forEach(this::updatePosition));
 	}
 
 	/**
