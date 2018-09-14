@@ -241,11 +241,11 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			BitfinexAccountSymbol symbol = BitfinexSymbols.account(configuration.getApiKey(), permissions);
 			AccountInfoHandler handler = new AccountInfoHandler(0, symbol);
 			handler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
-			handler.onPositionsEvent(callbackRegistry::acceptPositionsEvent);
-			handler.onWalletsEvent(callbackRegistry::acceptWalletsEvent);
-			handler.onSubmittedOrderEvent(callbackRegistry::acceptSubmittedOrderEvent);
-			handler.onTradeEvent(callbackRegistry::acceptTradeEvent);
-			handler.onOrderNotification(callbackRegistry::acceptOrderNotification);
+			handler.onPositionsEvent(callbackRegistry::acceptMyPositionEvent);
+			handler.onWalletsEvent(callbackRegistry::acceptMyWalletEvent);
+			handler.onSubmittedOrderEvent(callbackRegistry::acceptMySubmittedOrderEvent);
+			handler.onTradeEvent(callbackRegistry::acceptMyTradeEvent);
+			handler.onOrderNotification(callbackRegistry::acceptMyOrderNotification);
 
 			channelIdToHandlerMap.put(0, handler);
 			callbackRegistry.acceptAuthenticationSuccessEvent(symbol);
@@ -286,9 +286,9 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
                     connectionReadyLatch.countDown();
                 }
             });
-            Closeable positionInitCallback = callbackRegistry.onPositionsEvent((a, p) -> connectionReadyLatch.countDown());
-            Closeable walletsInitCallback = callbackRegistry.onWalletsEvent((a, w) -> connectionReadyLatch.countDown());
-            Closeable orderInitCallback = callbackRegistry.onSubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
+            Closeable positionInitCallback = callbackRegistry.onMyPositionEvent((a, p) -> connectionReadyLatch.countDown());
+            Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
+            Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
 
             websocketEndpoint = new WebsocketClientEndpoint(new URI(BITFINEX_URI), this::websocketCallback);
             websocketEndpoint.connect();
@@ -390,9 +390,9 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 					connectionReadyLatch.countDown();
 				}
 			});
-			Closeable positionInitCallback = callbackRegistry.onPositionsEvent((a, p) -> connectionReadyLatch.countDown());
-			Closeable walletsInitCallback = callbackRegistry.onWalletsEvent((a, w) -> connectionReadyLatch.countDown());
-			Closeable orderInitCallback = callbackRegistry.onSubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
+			Closeable positionInitCallback = callbackRegistry.onMyPositionEvent((a, p) -> connectionReadyLatch.countDown());
+			Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
+			Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
 
 			websocketEndpoint.connect();
 

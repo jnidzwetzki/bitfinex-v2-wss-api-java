@@ -72,8 +72,8 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	public OrderManager(final BitfinexWebsocketClient client, final ExecutorService executorService) {
 		super(executorService, client);
 		this.orders = new ArrayList<>();
-		client.getCallbacks().onSubmittedOrderEvent((a, e) -> e.forEach(i -> updateOrder(a, i)));
-		client.getCallbacks().onOrderNotification(this::updateOrder);
+		client.getCallbacks().onMySubmittedOrderEvent((a, e) -> e.forEach(i -> updateOrder(a, i)));
+		client.getCallbacks().onMyOrderNotification(this::updateOrder);
 	}
 
 	/**

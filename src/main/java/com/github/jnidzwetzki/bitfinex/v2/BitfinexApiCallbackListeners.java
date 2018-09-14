@@ -66,27 +66,27 @@ public class BitfinexApiCallbackListeners {
         return () -> unsubscribeChannelConsumers.remove(consumer);
     }
 
-    public Closeable onOrderNotification(final BiConsumer<BitfinexAccountSymbol, BitfinexSubmittedOrder> consumer) {
+    public Closeable onMyOrderNotification(final BiConsumer<BitfinexAccountSymbol, BitfinexSubmittedOrder> consumer) {
         newOrderConsumers.offer(consumer);
         return () -> newOrderConsumers.remove(consumer);
     }
 
-    public Closeable onSubmittedOrderEvent(final BiConsumer<BitfinexAccountSymbol, Collection<BitfinexSubmittedOrder>> consumer) {
+    public Closeable onMySubmittedOrderEvent(final BiConsumer<BitfinexAccountSymbol, Collection<BitfinexSubmittedOrder>> consumer) {
         submittedOrderConsumers.offer(consumer);
         return () -> submittedOrderConsumers.remove(consumer);
     }
 
-    public Closeable onPositionsEvent(final BiConsumer<BitfinexAccountSymbol,Collection<BitfinexPosition>> consumer) {
+    public Closeable onMyPositionEvent(final BiConsumer<BitfinexAccountSymbol, Collection<BitfinexPosition>> consumer) {
         positionConsumers.offer(consumer);
         return () -> positionConsumers.remove(consumer);
     }
 
-    public Closeable onTradeEvent(final BiConsumer<BitfinexAccountSymbol,BitfinexMyExecutedTrade> consumer) {
+    public Closeable onMyTradeEvent(final BiConsumer<BitfinexAccountSymbol, BitfinexMyExecutedTrade> consumer) {
         tradeConsumers.offer(consumer);
         return () -> tradeConsumers.remove(consumer);
     }
 
-    public Closeable onWalletsEvent(final BiConsumer<BitfinexAccountSymbol,Collection<BitfinexWallet>> consumer) {
+    public Closeable onMyWalletEvent(final BiConsumer<BitfinexAccountSymbol,Collection<BitfinexWallet>> consumer) {
         walletConsumers.offer(consumer);
         return () -> walletConsumers.remove(consumer);
     }
