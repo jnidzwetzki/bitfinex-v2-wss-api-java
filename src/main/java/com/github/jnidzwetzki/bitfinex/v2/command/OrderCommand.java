@@ -43,7 +43,7 @@ public class OrderCommand implements BitfinexCommand {
 		
 		final JSONObject orderJson = new JSONObject();
 		orderJson.put("type", bitfinexOrder.getOrderType().getBifinexString());
-		orderJson.put("symbol", bitfinexOrder.getSymbol().toBitfinexString());
+		orderJson.put("symbol", bitfinexOrder.getCurrencyPair().toBitfinexString());
 		orderJson.put("amount",  bitfinexOrder.getAmount().toString());
 		
 		if(bitfinexOrder.getPrice() != null) {

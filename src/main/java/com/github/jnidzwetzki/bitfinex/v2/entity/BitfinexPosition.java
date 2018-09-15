@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 
 public class BitfinexPosition {
 
-	private final BitfinexCurrencyPair currency;
+	private final BitfinexCurrencyPair currencyPair;
 	private String status;
 	private BigDecimal amount;
 	private BigDecimal basePrice;
@@ -32,12 +32,12 @@ public class BitfinexPosition {
 	private BigDecimal priceLiquidation;
 	private BigDecimal leverage;
 	
-	public BitfinexPosition(final BitfinexCurrencyPair currency) {
-		this.currency = currency;
+	public BitfinexPosition(final BitfinexCurrencyPair currencyPair) {
+		this.currencyPair = currencyPair;
 	}
 
-	public BitfinexCurrencyPair getCurrency() {
-		return currency;
+	public BitfinexCurrencyPair getCurrencyPair() {
+		return currencyPair;
 	}
 	
 	public String getStatus() {
@@ -114,7 +114,7 @@ public class BitfinexPosition {
 
 	@Override
 	public String toString() {
-		return "BitfinexPosition [currency=" + currency + ", status=" + status + ", amount=" + amount + ", basePrice=" + basePrice
+		return "BitfinexPosition [currencyPair=" + currencyPair + ", status=" + status + ", amount=" + amount + ", basePrice=" + basePrice
 				+ ", marginFunding=" + marginFunding + ", marginFundingType=" + marginFundingType + ", profitLoss=" + profitLoss
 				+ ", profitLossPercent=" + profitLossPercent + ", priceLiquidation=" + priceLiquidation + ", leverage=" + leverage
 				+ "]";

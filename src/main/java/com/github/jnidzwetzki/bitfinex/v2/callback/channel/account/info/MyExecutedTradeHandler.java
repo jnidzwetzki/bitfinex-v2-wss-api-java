@@ -74,7 +74,7 @@ public class MyExecutedTradeHandler implements ChannelCallbackHandler {
     private BitfinexMyExecutedTrade jsonToTrade(final JSONArray json) {
         final BitfinexMyExecutedTrade trade = new BitfinexMyExecutedTrade();
         trade.setTradeId(json.getLong(0));
-        trade.setCurrency(BitfinexCurrencyPair.fromSymbolString(json.getString(1)));
+        trade.setCurrencyPair(BitfinexCurrencyPair.fromSymbolString(json.getString(1)));
         trade.setTimestamp(json.getLong(2));
         trade.setOrderId(json.getLong(3));
         trade.setAmount(json.getBigDecimal(4));

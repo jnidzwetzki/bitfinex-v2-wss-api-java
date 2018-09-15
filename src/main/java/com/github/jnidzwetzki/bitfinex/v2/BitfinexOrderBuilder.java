@@ -103,7 +103,7 @@ public class BitfinexOrderBuilder {
 
 	public BitfinexNewOrder build() {
 		BitfinexNewOrder order = new BitfinexNewOrder();
-		order.setSymbol(symbol);
+		order.setCurrencyPair(symbol);
 		order.setOrderType(type);
 		order.setPrice(price);
 		order.setAmount(amount);

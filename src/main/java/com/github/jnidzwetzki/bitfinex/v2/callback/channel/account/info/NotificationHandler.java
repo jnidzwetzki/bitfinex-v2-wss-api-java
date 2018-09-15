@@ -98,7 +98,7 @@ public class NotificationHandler implements ChannelCallbackHandler {
         }
 
         if (!Strings.isNullOrEmpty(symbol)) {
-            submittedOrder.setSymbol(BitfinexCurrencyPair.fromSymbolString(symbol));
+            submittedOrder.setCurrencyPair(BitfinexCurrencyPair.fromSymbolString(symbol));
         }
         submittedOrder.setStatus(BitfinexSubmittedOrderStatus.ERROR);
         logger.error("State for order {} is {}, reason is {}", submittedOrder.getOrderId(), state, stateValue);

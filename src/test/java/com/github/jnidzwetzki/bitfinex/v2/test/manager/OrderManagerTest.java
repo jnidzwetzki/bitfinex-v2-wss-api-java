@@ -69,7 +69,7 @@ public class OrderManagerTest {
             Assert.assertEquals(BitfinexSubmittedOrderStatus.ERROR, e.getStatus());
             Assert.assertEquals(TestHelper.API_KEY, e.getApiKey());
             Assert.assertEquals(1513970684865000L, (long)e.getClientId());
-            Assert.assertEquals(BitfinexCurrencyPair.of("BTC", "USD").toBitfinexString(), e.getSymbol().toBitfinexString());
+            Assert.assertEquals(BitfinexCurrencyPair.of("BTC", "USD").toBitfinexString(), e.getCurrencyPair().toBitfinexString());
         };
 
         final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
@@ -98,7 +98,7 @@ public class OrderManagerTest {
             Assert.assertEquals(BitfinexSubmittedOrderStatus.ERROR, e.getStatus());
             Assert.assertEquals(TestHelper.API_KEY, e.getApiKey());
             Assert.assertEquals(1523930407442000L, (long) e.getClientId());
-            Assert.assertNull(e.getSymbol());
+            Assert.assertNull(e.getCurrencyPair());
         };
 
         final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();

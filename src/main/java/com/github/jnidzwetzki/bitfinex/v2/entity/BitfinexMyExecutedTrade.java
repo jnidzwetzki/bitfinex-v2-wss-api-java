@@ -28,9 +28,9 @@ public class BitfinexMyExecutedTrade extends BitfinexExecutedTrade {
 	private Long orderId;
 
 	/**
-	 * currency symbol of trade
+	 * currency pair symbol of trade
 	 */
-	private BitfinexCurrencyPair currency;
+	private BitfinexCurrencyPair currencyPair;
 
 	/**
 	 * order type that triggered this trade
@@ -93,12 +93,12 @@ public class BitfinexMyExecutedTrade extends BitfinexExecutedTrade {
 		this.orderId = orderId;
 	}
 
-	public BitfinexCurrencyPair getCurrency() {
-		return currency;
+	public BitfinexCurrencyPair getCurrencyPair() {
+		return currencyPair;
 	}
 
-	public void setCurrency(BitfinexCurrencyPair currency) {
-		this.currency = currency;
+	public void setCurrencyPair(BitfinexCurrencyPair currencyPair) {
+		this.currencyPair = currencyPair;
 	}
 
 	public BitfinexOrderType getOrderType() {
@@ -150,7 +150,7 @@ public class BitfinexMyExecutedTrade extends BitfinexExecutedTrade {
 		return Objects.equals(update, that.update) &&
 				Objects.equals(apiKey, that.apiKey) &&
 				Objects.equals(orderId, that.orderId) &&
-				Objects.equals(currency, that.currency) &&
+				Objects.equals(currencyPair, that.currencyPair) &&
 				orderType == that.orderType &&
 				Objects.equals(orderPrice, that.orderPrice) &&
 				Objects.equals(maker, that.maker) &&
@@ -160,7 +160,7 @@ public class BitfinexMyExecutedTrade extends BitfinexExecutedTrade {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), update, apiKey, orderId, currency, orderType, orderPrice, maker, fee, feeCurrency);
+		return Objects.hash(super.hashCode(), update, apiKey, orderId, currencyPair, orderType, orderPrice, maker, fee, feeCurrency);
 	}
 
 	@Override
@@ -170,7 +170,7 @@ public class BitfinexMyExecutedTrade extends BitfinexExecutedTrade {
 				", executed=" + update +
 				", apiKey='" + apiKey + '\'' +
 				", orderId=" + orderId +
-				", currency=" + currency +
+				", currencyPair=" + currencyPair +
 				", orderType=" + orderType +
 				", orderPrice=" + orderPrice +
 				", maker=" + maker +

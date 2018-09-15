@@ -79,7 +79,7 @@ public class TradeManagerTest {
         bitfinexApiBroker.getTradeManager().registerCallback((t) -> {
             Assert.assertFalse(t.isUpdate());
             Assert.assertEquals(106655593L, (long) t.getTradeId());
-            Assert.assertEquals(BitfinexCurrencyPair.of("BTC", "USD"), t.getCurrency());
+            Assert.assertEquals(BitfinexCurrencyPair.of("BTC", "USD"), t.getCurrencyPair());
             Assert.assertEquals(1512247319827L, (long) t.getTimestamp());
             Assert.assertEquals(5691690918L, (long) t.getOrderId());
             Assert.assertEquals(-0.002, t.getAmount().doubleValue(), DELTA);
@@ -109,7 +109,7 @@ public class TradeManagerTest {
         bitfinexApiBroker.getTradeManager().registerCallback((t) -> {
             Assert.assertFalse(t.isUpdate());
             Assert.assertEquals(106655593, (long) t.getTradeId());
-            Assert.assertEquals(BitfinexCurrencyPair.of("BTC", "USD"), t.getCurrency());
+            Assert.assertEquals(BitfinexCurrencyPair.of("BTC", "USD"), t.getCurrencyPair());
             Assert.assertEquals(1512247319827L, (long) t.getTimestamp());
             Assert.assertEquals(5691690918L, (long) t.getOrderId());
             Assert.assertEquals(-0.002, t.getAmount().doubleValue(), DELTA);

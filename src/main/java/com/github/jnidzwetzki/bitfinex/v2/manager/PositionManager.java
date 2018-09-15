@@ -54,7 +54,7 @@ public class PositionManager extends SimpleCallbackManager<BitfinexPosition> {
 		
 		synchronized (positions) {
 			// Replace position
-			positions.removeIf(p -> p.getCurrency() == position.getCurrency());
+			positions.removeIf(p -> p.getCurrencyPair() == position.getCurrencyPair());
 			positions.add(position);
 			positions.notifyAll();
 		}

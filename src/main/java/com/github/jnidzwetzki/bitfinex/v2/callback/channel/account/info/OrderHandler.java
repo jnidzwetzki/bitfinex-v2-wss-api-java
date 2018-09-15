@@ -98,7 +98,7 @@ public class OrderHandler implements ChannelCallbackHandler {
         if (cid != null) {
             order.setClientId(Long.parseLong(cid));
         }
-        order.setSymbol(BitfinexCurrencyPair.fromSymbolString(json.getString(3)));
+        order.setCurrencyPair(BitfinexCurrencyPair.fromSymbolString(json.getString(3)));
         order.setCreatedTimestamp(json.getLong(4));
         final String updatedTimestamp = json.optString(5, null);
         if (updatedTimestamp != null) {
