@@ -39,6 +39,9 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
+/**
+ * Main registry of events listeners happening within integration with bitfinex exchange
+ */
 public class BitfinexApiCallbackListeners {
 
     protected final Queue<Consumer<BitfinexStreamSymbol>> subscribeChannelConsumers = new ConcurrentLinkedQueue<>();
@@ -56,74 +59,144 @@ public class BitfinexApiCallbackListeners {
     protected final Queue<Consumer<BitfinexAccountSymbol>> authSuccessConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<BitfinexAccountSymbol>> authFailedConsumers = new ConcurrentLinkedQueue<>();
 
-    public Closeable onSubscribeChannelEvent(final Consumer<BitfinexStreamSymbol> consumer) {
-        subscribeChannelConsumers.offer(consumer);
-        return () -> subscribeChannelConsumers.remove(consumer);
+    /**
+     * registers listener for subscribe events
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onSubscribeChannelEvent(final Consumer<BitfinexStreamSymbol> listener) {
+        subscribeChannelConsumers.offer(listener);
+        return () -> subscribeChannelConsumers.remove(listener);
     }
 
-    public Closeable onUnsubscribeChannelEvent(final Consumer<BitfinexStreamSymbol> consumer) {
-        unsubscribeChannelConsumers.offer(consumer);
-        return () -> unsubscribeChannelConsumers.remove(consumer);
+    /**
+     * registers listener for unsubscribe events
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onUnsubscribeChannelEvent(final Consumer<BitfinexStreamSymbol> listener) {
+        unsubscribeChannelConsumers.offer(listener);
+        return () -> unsubscribeChannelConsumers.remove(listener);
     }
 
-    public Closeable onMyOrderNotification(final BiConsumer<BitfinexAccountSymbol, BitfinexSubmittedOrder> consumer) {
-        newOrderConsumers.offer(consumer);
-        return () -> newOrderConsumers.remove(consumer);
+    /**
+     * registers listener for my order notifications
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onMyOrderNotification(final BiConsumer<BitfinexAccountSymbol, BitfinexSubmittedOrder> listener) {
+        newOrderConsumers.offer(listener);
+        return () -> newOrderConsumers.remove(listener);
     }
 
-    public Closeable onMySubmittedOrderEvent(final BiConsumer<BitfinexAccountSymbol, Collection<BitfinexSubmittedOrder>> consumer) {
-        submittedOrderConsumers.offer(consumer);
-        return () -> submittedOrderConsumers.remove(consumer);
+    /**
+     * registers listener for user account related events - submitted order events
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onMySubmittedOrderEvent(final BiConsumer<BitfinexAccountSymbol, Collection<BitfinexSubmittedOrder>> listener) {
+        submittedOrderConsumers.offer(listener);
+        return () -> submittedOrderConsumers.remove(listener);
     }
 
-    public Closeable onMyPositionEvent(final BiConsumer<BitfinexAccountSymbol, Collection<BitfinexPosition>> consumer) {
-        positionConsumers.offer(consumer);
-        return () -> positionConsumers.remove(consumer);
+    /**
+     * registers listener for user account related events - position events
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onMyPositionEvent(final BiConsumer<BitfinexAccountSymbol, Collection<BitfinexPosition>> listener) {
+        positionConsumers.offer(listener);
+        return () -> positionConsumers.remove(listener);
     }
 
-    public Closeable onMyTradeEvent(final BiConsumer<BitfinexAccountSymbol, BitfinexMyExecutedTrade> consumer) {
-        tradeConsumers.offer(consumer);
-        return () -> tradeConsumers.remove(consumer);
+    /**
+     * registers listener for user account related events - executed trades (against submitted order) events
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onMyTradeEvent(final BiConsumer<BitfinexAccountSymbol, BitfinexMyExecutedTrade> listener) {
+        tradeConsumers.offer(listener);
+        return () -> tradeConsumers.remove(listener);
     }
 
-    public Closeable onMyWalletEvent(final BiConsumer<BitfinexAccountSymbol,Collection<BitfinexWallet>> consumer) {
-        walletConsumers.offer(consumer);
-        return () -> walletConsumers.remove(consumer);
+    /**
+     * registers listener for user account related events - wallet change events
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onMyWalletEvent(final BiConsumer<BitfinexAccountSymbol,Collection<BitfinexWallet>> listener) {
+        walletConsumers.offer(listener);
+        return () -> walletConsumers.remove(listener);
     }
 
-    public Closeable onCandlesticksEvent(final BiConsumer<BitfinexCandlestickSymbol, Collection<BitfinexCandle>> consumer) {
-        candlesConsumers.offer(consumer);
-        return () -> candlesConsumers.remove(consumer);
+    /**
+     * registers listener for candlesticks info updates
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onCandlesticksEvent(final BiConsumer<BitfinexCandlestickSymbol, Collection<BitfinexCandle>> listener) {
+        candlesConsumers.offer(listener);
+        return () -> candlesConsumers.remove(listener);
     }
 
-    public Closeable onExecutedTradeEvent(final BiConsumer<BitfinexExecutedTradeSymbol, Collection<BitfinexExecutedTrade>> consumer) {
-        executedTradesConsumers.offer(consumer);
-        return () -> executedTradesConsumers.remove(consumer);
+    /**
+     * registers listener for general trades executed within scope of exchange instrument (ie. tBTCUSD)
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onExecutedTradeEvent(final BiConsumer<BitfinexExecutedTradeSymbol, Collection<BitfinexExecutedTrade>> listener) {
+        executedTradesConsumers.offer(listener);
+        return () -> executedTradesConsumers.remove(listener);
     }
 
-    public Closeable onOrderbookEvent(final BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>> consumer) {
-        orderbookEntryConsumers.offer(consumer);
-        return () -> orderbookEntryConsumers.remove(consumer);
+    /**
+     * registers listener for orderbook events
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onOrderbookEvent(final BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>> listener) {
+        orderbookEntryConsumers.offer(listener);
+        return () -> orderbookEntryConsumers.remove(listener);
     }
 
-    public Closeable onRawOrderbookEvent(final BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>> consumer) {
-        rawOrderbookEntryConsumers.offer(consumer);
-        return () -> rawOrderbookEntryConsumers.remove(consumer);
+    /**
+     * registers listener for raw orderbook events
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onRawOrderbookEvent(final BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>> listener) {
+        rawOrderbookEntryConsumers.offer(listener);
+        return () -> rawOrderbookEntryConsumers.remove(listener);
     }
 
-    public Closeable onTickEvent(final BiConsumer<BitfinexTickerSymbol, BitfinexTick> consumer) {
-        tickConsumers.offer(consumer);
-        return () -> tickConsumers.remove(consumer);
+    /**
+     * registers listener for tick events
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onTickEvent(final BiConsumer<BitfinexTickerSymbol, BitfinexTick> listener) {
+        tickConsumers.offer(listener);
+        return () -> tickConsumers.remove(listener);
     }
 
-    public Closeable onAuthenticationSuccessEvent(final Consumer<BitfinexAccountSymbol> consumer) {
-        authSuccessConsumers.offer(consumer);
-        return () -> authSuccessConsumers.remove(consumer);
+    /**
+     * registers listener for event of successful authentication with api-key
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onAuthenticationSuccessEvent(final Consumer<BitfinexAccountSymbol> listener) {
+        authSuccessConsumers.offer(listener);
+        return () -> authSuccessConsumers.remove(listener);
     }
 
-    public Closeable onAuthenticationFailedEvent(final Consumer<BitfinexAccountSymbol> consumer) {
-        authFailedConsumers.offer(consumer);
-        return () -> authFailedConsumers.remove(consumer);
+    /**
+     * registers listener for event of failed authentication with api-key
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onAuthenticationFailedEvent(final Consumer<BitfinexAccountSymbol> listener) {
+        authFailedConsumers.offer(listener);
+        return () -> authFailedConsumers.remove(listener);
     }
 
 }

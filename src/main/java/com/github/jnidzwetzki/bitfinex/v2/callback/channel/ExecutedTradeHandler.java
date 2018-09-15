@@ -27,7 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
@@ -47,7 +47,7 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
+    public void handleChannelData(final String action, final JSONArray jsonArray) throws BitfinexClientException {
         try {
             final List<BitfinexExecutedTrade> trades = new ArrayList<>();
 
@@ -68,7 +68,7 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
             }
             executedTradesConsumer.accept(symbol, trades);
         } catch (JSONException e) {
-            throw new APIException(e);
+            throw new BitfinexClientException(e);
         }
     }
 

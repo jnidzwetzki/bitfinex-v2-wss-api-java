@@ -21,7 +21,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.json.JSONArray;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -33,7 +35,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.MyExecut
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
@@ -50,14 +52,24 @@ public class TradeManagerTest {
      */
     private final static String API_KEY = "abc123";
 
+    @BeforeClass
+    public static void registerDefaultCurrencyPairs() {
+        BitfinexCurrencyPair.registerDefaults();
+    }
+
+    @AfterClass
+    public static void unregisterDefaultCurrencyPairs() {
+        BitfinexCurrencyPair.unregisterAll();
+    }
+
     /**
      * Test the trade channel handler
      *
-     * @throws APIException
+     * @throws BitfinexClientException
      * @throws InterruptedException
      */
     @Test
-    public void testTradeChannelHandler1() throws APIException, InterruptedException {
+    public void testTradeChannelHandler1() throws BitfinexClientException, InterruptedException {
         final String jsonString = "[0,\"te\",[106655593,\"tBTCUSD\",1512247319827,5691690918,-0.002,10894,null,null,-1]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexWebsocketClient bitfinexApiBroker = buildMockedBitfinexConnection();
@@ -82,11 +94,11 @@ public class TradeManagerTest {
     /**
      * Test the trade channel handler
      *
-     * @throws APIException
+     * @throws BitfinexClientException
      * @throws InterruptedException
      */
     @Test
-    public void testTradeChannelHandler2() throws APIException, InterruptedException {
+    public void testTradeChannelHandler2() throws BitfinexClientException, InterruptedException {
         final String jsonString = "[0,\"te\",[106655593,\"tBTCUSD\",1512247319827,5691690918,-0.002,10894,\"EXCHANGE MARKET\",10894,-1,-0.0392184,\"USD\"]]";
 
         final JSONArray jsonArray = new JSONArray(jsonString);

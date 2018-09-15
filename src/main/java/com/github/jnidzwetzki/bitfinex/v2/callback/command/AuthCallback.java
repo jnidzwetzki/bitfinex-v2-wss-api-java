@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 
 public class AuthCallback implements CommandCallbackHandler {
 
@@ -38,7 +38,7 @@ public class AuthCallback implements CommandCallbackHandler {
      */
     @Override
     public void handleChannelData(final JSONObject jsonObject)
-            throws APIException {
+            throws BitfinexClientException {
         final String status = jsonObject.getString("status");
         if (status.equals("OK")) {
             logger.info("authentication successful");

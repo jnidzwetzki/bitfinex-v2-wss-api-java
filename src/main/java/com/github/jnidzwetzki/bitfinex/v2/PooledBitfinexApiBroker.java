@@ -29,7 +29,6 @@ import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
@@ -96,7 +95,7 @@ public class PooledBitfinexApiBroker implements BitfinexWebsocketClient {
     }
 
     @Override
-    public void connect() throws APIException {
+    public void connect() {
         clients.values().forEach(BitfinexWebsocketClient::connect);
     }
 

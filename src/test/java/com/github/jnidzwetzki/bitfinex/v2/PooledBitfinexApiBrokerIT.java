@@ -2,7 +2,9 @@ package com.github.jnidzwetzki.bitfinex.v2;
 
 import java.util.concurrent.CountDownLatch;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCandlesCommand;
@@ -16,11 +18,21 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
 public class PooledBitfinexApiBrokerIT {
 
+    @BeforeClass
+    public static void registerDefaultCurrencyPairs() {
+        BitfinexCurrencyPair.registerDefaults();
+    }
+
+    @AfterClass
+    public static void unregisterDefaultCurrencyPairs() {
+        BitfinexCurrencyPair.unregisterAll();
+    }
+
     @Test(timeout = 60_000)
     public void testSubscriptions() throws InterruptedException {
         // given
         BitfinexWebsocketConfiguration config = new BitfinexWebsocketConfiguration();
-        PooledBitfinexApiBroker client = (PooledBitfinexApiBroker) BitfinexClientFactory.pooledClient(config, 50);
+        PooledBitfinexApiBroker client = (PooledBitfinexApiBroker) BitfinexClientFactory.newPooledClient(config, 50);
 
         int channelLimit = 150;
         // when

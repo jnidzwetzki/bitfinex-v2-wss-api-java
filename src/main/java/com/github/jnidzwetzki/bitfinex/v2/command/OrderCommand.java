@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
-import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexCommandException;
 
 public class OrderCommand implements BitfinexCommand {
 
@@ -39,7 +39,7 @@ public class OrderCommand implements BitfinexCommand {
 	}
 
 	@Override
-	public String getCommand(final BitfinexWebsocketClient client) throws CommandException {
+	public String getCommand(final BitfinexWebsocketClient client) throws BitfinexCommandException {
 		
 		final JSONObject orderJson = new JSONObject();
 		orderJson.put("type", bitfinexOrder.getOrderType().getBifinexString());

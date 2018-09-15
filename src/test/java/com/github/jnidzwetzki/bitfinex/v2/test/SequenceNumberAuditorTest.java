@@ -18,17 +18,30 @@
 package com.github.jnidzwetzki.bitfinex.v2.test;
 
 import org.json.JSONArray;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.SequenceNumberAuditor;
 import com.github.jnidzwetzki.bitfinex.v2.SequenceNumberAuditor.ErrorPolicy;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 
 public class SequenceNumberAuditorTest {
-	
+
 	private SequenceNumberAuditor sequenceNumberAuditor;
-	
+
+	@BeforeClass
+	public static void registerDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.registerDefaults();
+	}
+
+	@AfterClass
+	public static void unregisterDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.unregisterAll();
+	}
+
 	@Before
 	public void before() {
 		this.sequenceNumberAuditor = new SequenceNumberAuditor();

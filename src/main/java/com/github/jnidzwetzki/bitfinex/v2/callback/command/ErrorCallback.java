@@ -21,7 +21,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 
 public class ErrorCallback implements CommandCallbackHandler {
 
@@ -31,7 +31,7 @@ public class ErrorCallback implements CommandCallbackHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleChannelData(final JSONObject jsonObject) throws APIException {
+	public void handleChannelData(final JSONObject jsonObject) throws BitfinexClientException {
 		// {"channel":"ticker","symbol":"tLTCUSD","event":"error","msg":"subscribe: dup","code":10301,"pair":"LTCUSD"}
 		logger.error("Got error callback: {}", jsonObject);
 	}

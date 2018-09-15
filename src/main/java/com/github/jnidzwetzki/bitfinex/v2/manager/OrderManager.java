@@ -38,7 +38,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 
 public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> {
@@ -88,9 +88,9 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	/**
 	 * Get the list with exchange orders
 	 * @return
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	public List<BitfinexSubmittedOrder> getOrders() throws APIException {
+	public List<BitfinexSubmittedOrder> getOrders() throws BitfinexClientException {
 		synchronized (orders) {
 			return orders;
 		}
@@ -121,15 +121,15 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	/**
 	 * Place an order and retry if Exception occur
 	 * @param order - new BitfinexOrder to place
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 * @throws InterruptedException
 	 */
-	public void placeOrderAndWaitUntilActive(final BitfinexNewOrder order) throws APIException, InterruptedException {
+	public void placeOrderAndWaitUntilActive(final BitfinexNewOrder order) throws BitfinexClientException, InterruptedException {
 
 		final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
 
 		if(! capabilities.isOrderWritePermission()) {
-			throw new APIException("Unable to wait for order " + order + " connection has not enough capabilities: " + capabilities);
+			throw new BitfinexClientException("Unable to wait for order " + order + " connection has not enough capabilities: " + capabilities);
 		}
 
 		order.setApiKey(client.getConfiguration().getApiKey());
@@ -153,9 +153,9 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 			final Exception lastException = retryer.getLastException();
 
 			if(lastException == null) {
-				throw new APIException("Unable to execute order");
+				throw new BitfinexClientException("Unable to execute order");
 			} else {
-				throw new APIException(lastException);
+				throw new BitfinexClientException(lastException);
 			}
 		}
 	}
@@ -183,7 +183,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 			waitLatch.await(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 
 			if(waitLatch.getCount() != 0) {
-				throw new APIException("Timeout while waiting for order");
+				throw new BitfinexClientException("Timeout while waiting for order");
 			}
 
 			// Check for order error
@@ -195,7 +195,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 					.anyMatch(o -> o.getStatus() == BitfinexSubmittedOrderStatus.ERROR);
 
 			if(orderInErrorState) {
-				throw new APIException("Unable to place order " + order);
+				throw new BitfinexClientException("Unable to place order " + order);
 			}
 
 			return true;
@@ -209,14 +209,14 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	/**
 	 * Cancel a order
 	 * @param id
-	 * @throws APIException, InterruptedException
+	 * @throws BitfinexClientException, InterruptedException
 	 */
-	public void cancelOrderAndWaitForCompletion(final long id) throws APIException, InterruptedException {
+	public void cancelOrderAndWaitForCompletion(final long id) throws BitfinexClientException, InterruptedException {
 
 		final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
 
 		if(! capabilities.isOrderWritePermission()) {
-			throw new APIException("Unable to cancel order " + id + " connection has not enough capabilities: " + capabilities);
+			throw new BitfinexClientException("Unable to cancel order " + id + " connection has not enough capabilities: " + capabilities);
 		}
 
 		final Callable<Boolean> orderCallable = () -> cancelOrderOnAPI(id);
@@ -234,9 +234,9 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 			final Exception lastException = retryer.getLastException();
 
 			if(lastException == null) {
-				throw new APIException("Unable to cancel order");
+				throw new BitfinexClientException("Unable to cancel order");
 			} else {
-				throw new APIException(lastException);
+				throw new BitfinexClientException(lastException);
 			}
 		}
 	}
@@ -245,10 +245,10 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	 * Cancel the order on the API
 	 * @param id
 	 * @return
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 * @throws InterruptedException
 	 */
-	private boolean cancelOrderOnAPI(final long id) throws APIException, InterruptedException {
+	private boolean cancelOrderOnAPI(final long id) throws BitfinexClientException, InterruptedException {
 		final CountDownLatch waitLatch = new CountDownLatch(1);
 
 		final Consumer<BitfinexSubmittedOrder> ordercallback = (o) -> {
@@ -265,7 +265,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 			waitLatch.await(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 
 			if(waitLatch.getCount() != 0) {
-				throw new APIException("Timeout while waiting for order");
+				throw new BitfinexClientException("Timeout while waiting for order");
 			}
 
 			return true;
@@ -279,14 +279,14 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 
 	/**
 	 * Place a new order
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	public void placeOrder(final BitfinexNewOrder order) throws APIException {
+	public void placeOrder(final BitfinexNewOrder order) throws BitfinexClientException {
 
 		final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
 
 		if(! capabilities.isOrderWritePermission()) {
-			throw new APIException("Unable to place order " + order + " connection has not enough capabilities: " + capabilities);
+			throw new BitfinexClientException("Unable to place order " + order + " connection has not enough capabilities: " + capabilities);
 		}
 
 		logger.info("Executing new order {}", order);
@@ -297,14 +297,14 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	/**
 	 * Cancel the given order
 	 * @param id
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	public void cancelOrder(final long id) throws APIException {
+	public void cancelOrder(final long id) throws BitfinexClientException {
 
 		final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
 
 		if(! capabilities.isOrderWritePermission()) {
-			throw new APIException("Unable to cancel order " + id + " connection has not enough capabilities: " + capabilities);
+			throw new BitfinexClientException("Unable to cancel order " + id + " connection has not enough capabilities: " + capabilities);
 		}
 
 		logger.info("Cancel order with id {}", id);
@@ -315,14 +315,14 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	/**
 	 * Cancel the given order group
 	 * @param id
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	public void cancelOrderGroup(final int id) throws APIException {
+	public void cancelOrderGroup(final int id) throws BitfinexClientException {
 
 		final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
 
 		if(! capabilities.isOrderWritePermission()) {
-			throw new APIException("Unable to cancel order group " + id + " connection has not enough capabilities: " + capabilities);
+			throw new BitfinexClientException("Unable to cancel order group " + id + " connection has not enough capabilities: " + capabilities);
 		}
 
 		logger.info("Cancel order group {}", id);

@@ -18,7 +18,9 @@
 package com.github.jnidzwetzki.bitfinex.v2.test;
 
 import org.json.JSONObject;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.AuthCallback;
@@ -26,17 +28,28 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.command.ConnectionHeartbeatCa
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.SubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.callback.command.UnsubscribedCallback;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
 public class CommandsCallbackTest {
+
+	@BeforeClass
+	public static void registerDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.registerDefaults();
+	}
+
+	@AfterClass
+	public static void unregisterDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.unregisterAll();
+	}
 	
 	/**
 	 * Test the auth callback
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	@Test
-	public void testAuthCommandCallback_success() throws APIException {
+	public void testAuthCommandCallback_success() throws BitfinexClientException {
 		final String authSuccessJson = "{\"event\":\"auth\",\"status\":\"OK\",\"chanId\":0,\"userId\":1015301,\"auth_id\":\"d5c6a71c-6164-40dd-b57a-92fb59d42975\",\"caps\":{\"orders\":{\"read\":1,\"write\":1},\"account\":{\"read\":1,\"write\":1},\"funding\":{\"read\":1,\"write\":1},\"history\":{\"read\":1,\"write\":1},\"wallets\":{\"read\":1,\"write\":1},\"withdraw\":{\"read\":1,\"write\":1},\"positions\":{\"read\":1,\"write\":1}}}";
 
 		final AuthCallback authCallbackHandler = new AuthCallback();
@@ -49,10 +62,10 @@ public class CommandsCallbackTest {
 	
 	/**
 	 * Test the auth callback
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	@Test
-	public void testAuthCommandCallback_failed() throws APIException {
+	public void testAuthCommandCallback_failed() throws BitfinexClientException {
 		final String authFailJson = "{\"event\":\"auth\",\"status\":\"FAILED\",\"chanId\":0}";
 
 		final AuthCallback authCallbackHandler = new AuthCallback();
@@ -66,10 +79,10 @@ public class CommandsCallbackTest {
 	
 	/**
 	 * Test the pong callback
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	@Test
-	public void testPingPongCallback() throws APIException {
+	public void testPingPongCallback() throws BitfinexClientException {
 		final String jsonString = "{\"event\":\"pong\",\"ts\":1515023251265}";
 		final JSONObject json = new JSONObject(jsonString);
 
@@ -80,10 +93,10 @@ public class CommandsCallbackTest {
 	
 	/**
 	 * Test the subscribed callback
-	 * @throws APIException 
+	 * @throws BitfinexClientException
 	 */
 	@Test
-	public void testSubscribeAndUnsubscribeCallback() throws APIException {
+	public void testSubscribeAndUnsubscribeCallback() throws BitfinexClientException {
 		final String subscribeJson = "{\"event\":\"subscribed\",\"channel\":\"ticker\",\"chanId\":30,\"symbol\":\"tNEOUSD\",\"pair\":\"NEOUSD\"}";
 		final SubscribedCallback subscribedCallback = new SubscribedCallback();
 		subscribedCallback.onSubscribedEvent((chanId, sym) -> {

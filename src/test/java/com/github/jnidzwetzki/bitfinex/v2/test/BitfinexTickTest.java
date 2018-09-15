@@ -19,12 +19,25 @@ package com.github.jnidzwetzki.bitfinex.v2.test;
 
 import java.math.BigDecimal;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 
 public class BitfinexTickTest {
+
+	@BeforeClass
+	public static void registerDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.registerDefaults();
+	}
+
+	@AfterClass
+	public static void unregisterDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.unregisterAll();
+	}
 	
 	/**
 	 * The double test delta

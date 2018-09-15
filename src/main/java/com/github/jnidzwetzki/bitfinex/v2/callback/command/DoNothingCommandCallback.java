@@ -19,7 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2.callback.command;
 
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 
 public class DoNothingCommandCallback implements CommandCallbackHandler {
 
@@ -27,7 +27,7 @@ public class DoNothingCommandCallback implements CommandCallbackHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleChannelData(final JSONObject jsonObject) throws APIException {
+	public void handleChannelData(final JSONObject jsonObject) throws BitfinexClientException {
 		// Do nothing
 	}
 

@@ -59,8 +59,8 @@ import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTradesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
-import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexCommandException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
@@ -265,10 +265,10 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 
 	/**
 	 * Open the connection
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	@Override
-	public void connect() throws APIException {
+	public void connect() throws BitfinexClientException {
 		logger.debug("connect() called");
 		try {
             sequenceNumberAuditor.reset();
@@ -310,7 +310,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
                 heartbeatThread.start();
             }
 		} catch (Exception e) {
-			throw new APIException(e);
+			throw new BitfinexClientException(e);
 		}
 	}
 
@@ -351,7 +351,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			final String json = command.getCommand(this);
             logger.debug("Sent: {}", command);
 			websocketEndpoint.sendMessage(json);
-		} catch (CommandException e) {
+		} catch (BitfinexCommandException e) {
 			logger.error("Got Exception while sending command", e);
 		}
 	}
@@ -450,9 +450,9 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	/**
 	 * Execute the authentication and wait until the socket is ready
 	 * @throws InterruptedException
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	private void authenticateAndWait(CountDownLatch latch) throws InterruptedException, APIException {
+	private void authenticateAndWait(CountDownLatch latch) throws InterruptedException, BitfinexClientException {
 		if (authenticated) {
 			return;
 		}
@@ -461,7 +461,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		latch.await(10, TimeUnit.SECONDS);
 
 		if (!authenticated) {
-			throw new APIException("Unable to perform authentication, permissions are: " + permissions);
+			throw new BitfinexClientException("Unable to perform authentication, permissions are: " + permissions);
 		}
 	}
 
@@ -495,7 +495,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		}
 		try {
 			commandCallbackHandler.handleChannelData(jsonObject);
-		} catch (APIException e) {
+		} catch (BitfinexClientException e) {
 			logger.error("Got an exception while handling callback");
 		}
 	}
@@ -542,7 +542,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 				return;
 			}
 			channelCallbackHandler.handleChannelData(action, payload);
-		} catch (APIException e) {
+		} catch (BitfinexClientException e) {
 			logger.error("Got exception while handling callback", e);
 		}
 	}
@@ -565,9 +565,9 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	/**
 	 * Re-subscribe the old ticker
 	 * @throws InterruptedException
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	private void resubscribeChannels() throws InterruptedException, APIException {
+	private void resubscribeChannels() throws InterruptedException, BitfinexClientException {
 		final Map<Integer, ChannelCallbackHandler> oldChannelIdSymbolMap = new HashMap<>();
 
 		synchronized (channelIdToHandlerMap) {
@@ -598,11 +598,11 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	/**
 	 * Wait for the successful channel re-subscription
 	 * @param oldChannelIdSymbolMap
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 * @throws InterruptedException
 	 */
 	private void waitForChannelResubscription(final Map<Integer, ChannelCallbackHandler> oldChannelIdSymbolMap)
-			throws APIException, InterruptedException {
+			throws BitfinexClientException, InterruptedException {
 		
 		final Stopwatch stopwatch = Stopwatch.createStarted();
 		final long MAX_WAIT_TIME_IN_MS = TimeUnit.MINUTES.toMillis(3);
@@ -625,11 +625,11 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	 * Handle channel re-subscribe failed
 	 * 
 	 * @param oldChannelIdSymbolMap
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 * @throws InterruptedException 
 	 */
 	private void handleResubscribeFailed(final Map<Integer, ChannelCallbackHandler> oldChannelIdSymbolMap)
-			throws APIException, InterruptedException {
+			throws BitfinexClientException, InterruptedException {
 		
 		final int requiredSymbols = oldChannelIdSymbolMap.size();
 		final int subscribedSymbols = channelIdToHandlerMap.size();
@@ -644,7 +644,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			channelIdToHandlerMap.putAll(oldChannelIdSymbolMap);
 		}
 		
-		throw new APIException("Subscription of ticker failed: got only " 
+		throw new BitfinexClientException("Subscription of ticker failed: got only "
 				+ subscribedSymbols + " of " + requiredSymbols + " symbols subscribed");
 	}
 

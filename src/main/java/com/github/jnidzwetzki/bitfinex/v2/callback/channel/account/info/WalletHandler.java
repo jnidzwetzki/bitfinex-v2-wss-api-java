@@ -27,7 +27,7 @@ import org.json.JSONArray;
 
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
@@ -47,7 +47,7 @@ public class WalletHandler implements ChannelCallbackHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleChannelData(final String action, final JSONArray payload) throws APIException {
+	public void handleChannelData(final String action, final JSONArray payload) throws BitfinexClientException {
 		List<BitfinexWallet> wallets = Lists.newArrayList();
 
 		if (payload.isEmpty()) {

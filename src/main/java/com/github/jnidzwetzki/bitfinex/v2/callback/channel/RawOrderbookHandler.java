@@ -27,7 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
@@ -47,7 +47,7 @@ public class RawOrderbookHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
+    public void handleChannelData(final String action, final JSONArray jsonArray) throws BitfinexClientException {
         // Example: [13182,1,-0.1]
         try {
             final List<BitfinexOrderBookEntry> entries = new ArrayList<>();
@@ -65,7 +65,7 @@ public class RawOrderbookHandler implements ChannelCallbackHandler {
             }
             orderbookEntryConsumer.accept(symbol, entries);
         } catch (JSONException e) {
-            throw new APIException(e);
+            throw new BitfinexClientException(e);
         }
     }
 

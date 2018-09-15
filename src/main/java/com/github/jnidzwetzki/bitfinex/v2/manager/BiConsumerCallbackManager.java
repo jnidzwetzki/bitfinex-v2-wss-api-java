@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 
 public class BiConsumerCallbackManager<S, T> extends AbstractManager {
 
@@ -46,9 +46,9 @@ public class BiConsumerCallbackManager<S, T> extends AbstractManager {
 	 * Register a new callback
 	 * @param symbol
 	 * @param callback
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	public void registerCallback(final S symbol, final BiConsumer<S, T> callback) throws APIException {
+	public void registerCallback(final S symbol, final BiConsumer<S, T> callback) throws BitfinexClientException {
 		final List<BiConsumer<S, T>> callbackList 
 			= callbacks.computeIfAbsent(symbol, (k) -> new CopyOnWriteArrayList<>());	
 		callbackList.add(callback);
@@ -59,14 +59,14 @@ public class BiConsumerCallbackManager<S, T> extends AbstractManager {
 	 * @param symbol
 	 * @param callback
 	 * @return
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	public boolean removeCallback(final S symbol, final BiConsumer<S, T> callback) throws APIException {
+	public boolean removeCallback(final S symbol, final BiConsumer<S, T> callback) throws BitfinexClientException {
 		
 		final List<BiConsumer<S, T>> callbackList = callbacks.get(symbol);
 
 		if(callbackList == null) {
-			throw new APIException("Unknown ticker string: " + symbol);
+			throw new BitfinexClientException("Unknown ticker string: " + symbol);
 		}			
 		
 		return callbackList.remove(callback);	
