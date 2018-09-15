@@ -24,22 +24,22 @@ public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 	/**
 	 * The currency pair
 	 */
-	private final BitfinexCurrencyPair bitfinexCurrencyPair;
+	private final BitfinexCurrencyPair currencyPair;
 
-	BitfinexTickerSymbol(final BitfinexCurrencyPair bitfinexCurrencyPair) {
-		this.bitfinexCurrencyPair = bitfinexCurrencyPair;
+	BitfinexTickerSymbol(final BitfinexCurrencyPair currencyPair) {
+		this.currencyPair = currencyPair;
 	}
 
 	@Override
 	public String toString() {
-		return "BitfinexTickerSymbol [bitfinexCurrencyPair=" + bitfinexCurrencyPair + "]";
+		return "BitfinexTickerSymbol [currencyPair=" + currencyPair + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((bitfinexCurrencyPair == null) ? 0 : bitfinexCurrencyPair.hashCode());
+		result = prime * result + ((currencyPair == null) ? 0 : currencyPair.hashCode());
 		return result;
 	}
 
@@ -52,7 +52,7 @@ public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 		if (getClass() != obj.getClass())
 			return false;
 		BitfinexTickerSymbol other = (BitfinexTickerSymbol) obj;
-		if (bitfinexCurrencyPair != other.bitfinexCurrencyPair)
+		if (currencyPair != other.currencyPair)
 			return false;
 		return true;
 	}
@@ -71,8 +71,8 @@ public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 	 * Get the currency pair
 	 * @return
 	 */
-	public BitfinexCurrencyPair getBitfinexCurrencyPair() {
-		return bitfinexCurrencyPair;
+	public BitfinexCurrencyPair getCurrencyPair() {
+		return currencyPair;
 	}
 	
 }
