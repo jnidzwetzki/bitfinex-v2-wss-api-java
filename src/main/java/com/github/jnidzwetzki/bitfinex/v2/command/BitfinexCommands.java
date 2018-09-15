@@ -16,39 +16,39 @@ public final class BitfinexCommands {
 
     }
 
-    private static OrderCommand newOrder(BitfinexNewOrder order) {
+    public static OrderCommand newOrder(BitfinexNewOrder order) {
         return new OrderCommand(order);
     }
 
-    private static CancelOrderCommand cancelOrder(long orderId) {
+    public static CancelOrderCommand cancelOrder(long orderId) {
         return new CancelOrderCommand(orderId);
     }
 
-    private static CancelOrderGroupCommand cancelOrderGroup(int orderGroupId) {
+    public static CancelOrderGroupCommand cancelOrderGroup(int orderGroupId) {
         return new CancelOrderGroupCommand(orderGroupId);
     }
 
-    private static PingCommand ping() {
+    public static PingCommand ping() {
         return new PingCommand();
     }
 
-    private static SubscribeCandlesCommand subscribeCandlesChannel(BitfinexCandlestickSymbol symbol) {
+    public static SubscribeCandlesCommand subscribeCandlesChannel(BitfinexCandlestickSymbol symbol) {
         return new SubscribeCandlesCommand(symbol);
     }
 
-    private static SubscribeOrderbookCommand subscribeOrderbookChannel(BitfinexOrderBookSymbol symbol) {
+    public static SubscribeOrderbookCommand subscribeOrderbookChannel(BitfinexOrderBookSymbol symbol) {
         return new SubscribeOrderbookCommand(symbol);
     }
 
-    private static SubscribeTickerCommand subscribeTickerChannel(BitfinexTickerSymbol symbol) {
+    public static SubscribeTickerCommand subscribeTickerChannel(BitfinexTickerSymbol symbol) {
         return new SubscribeTickerCommand(symbol);
     }
 
-    private static SubscribeTradesCommand subscribeTradesChannel(BitfinexExecutedTradeSymbol symbol) {
+    public static SubscribeTradesCommand subscribeTradesChannel(BitfinexExecutedTradeSymbol symbol) {
         return new SubscribeTradesCommand(symbol);
     }
 
-    private static UnsubscribeChannelCommand unsubscribeChannel(BitfinexStreamSymbol symbol) {
+    public static UnsubscribeChannelCommand unsubscribeChannel(BitfinexStreamSymbol symbol) {
         return new UnsubscribeChannelCommand(symbol);
     }
 
