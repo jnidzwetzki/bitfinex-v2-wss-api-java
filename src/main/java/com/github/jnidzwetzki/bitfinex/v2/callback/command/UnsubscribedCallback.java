@@ -20,14 +20,11 @@ package com.github.jnidzwetzki.bitfinex.v2.callback.command;
 import java.util.function.Consumer;
 
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 
 public class UnsubscribedCallback implements CommandCallbackHandler {
 
-	private final static Logger logger = LoggerFactory.getLogger(UnsubscribedCallback.class);
 	private Consumer<Integer> unsubscribedConsumer;
 
 	/**
@@ -43,7 +40,7 @@ public class UnsubscribedCallback implements CommandCallbackHandler {
 	 * unsubscribe event handler
 	 * @param consumer of event
 	 */
-	public void onUnsubscribedChannelEvent(Consumer<Integer> consumer) {
+	public void onUnsubscribedChannelEvent(final Consumer<Integer> consumer) {
 		this.unsubscribedConsumer = consumer;
 	}
 }
