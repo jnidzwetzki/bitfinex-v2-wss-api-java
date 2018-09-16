@@ -93,7 +93,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	/**
 	 * callback registry
 	 */
-	private BitfinexApiCallbackRegistry callbackRegistry;
+	private final BitfinexApiCallbackRegistry callbackRegistry;
 
 	/**
 	 * The websocket endpoint
@@ -177,7 +177,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 
 	private final static Logger logger = LoggerFactory.getLogger(SimpleBitfinexApiBroker.class);
 
-	public SimpleBitfinexApiBroker(BitfinexWebsocketConfiguration config, BitfinexApiCallbackRegistry callbackRegistry, SequenceNumberAuditor sequenceNumberAuditor) {
+	public SimpleBitfinexApiBroker(final BitfinexWebsocketConfiguration config, final BitfinexApiCallbackRegistry callbackRegistry, final SequenceNumberAuditor sequenceNumberAuditor) {
 		this.configuration = new BitfinexWebsocketConfiguration(config);
 		this.callbackRegistry = callbackRegistry;
 
@@ -211,7 +211,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		final SubscribedCallback subscribed = new SubscribedCallback();
 		subscribed.onSubscribedEvent((channelId, symbol) -> {
 			synchronized (channelIdToHandlerMap) {
-				ChannelCallbackHandler channelCallbackHandler = createChannelCallbackHandler(channelId, symbol);
+				final ChannelCallbackHandler channelCallbackHandler = createChannelCallbackHandler(channelId, symbol);
 				channelIdToHandlerMap.put(channelId, channelCallbackHandler);
 				channelIdToHandlerMap.notifyAll();
 			}
@@ -220,7 +220,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		});
 		commandCallbacks.put("subscribed", subscribed);
 
-		UnsubscribedCallback unsubscribed = new UnsubscribedCallback();
+		final UnsubscribedCallback unsubscribed = new UnsubscribedCallback();
 		unsubscribed.onUnsubscribedChannelEvent(channelId -> {
 			ChannelCallbackHandler removed;
 			synchronized (channelIdToHandlerMap) {
@@ -238,8 +238,8 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		final AuthCallback auth = new AuthCallback();
 		auth.onAuthenticationSuccessEvent(permissions -> {
 		    logger.info("authentication succeeded for key {}", configuration.getApiKey());
-			BitfinexAccountSymbol symbol = BitfinexSymbols.account(configuration.getApiKey(), permissions);
-			AccountInfoHandler handler = new AccountInfoHandler(0, symbol);
+			final BitfinexAccountSymbol symbol = BitfinexSymbols.account(configuration.getApiKey(), permissions);
+			final AccountInfoHandler handler = new AccountInfoHandler(0, symbol);
 			handler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
 			handler.onPositionsEvent(callbackRegistry::acceptMyPositionEvent);
 			handler.onWalletsEvent(callbackRegistry::acceptMyWalletEvent);
@@ -252,7 +252,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		});
 		auth.onAuthenticationFailedEvent(permissions -> {
             logger.info("authentication failed for key {}", configuration.getApiKey());
-            BitfinexAccountSymbol symbol = BitfinexSymbols.account(configuration.getApiKey(), permissions);
+            final BitfinexAccountSymbol symbol = BitfinexSymbols.account(configuration.getApiKey(), permissions);
 			callbackRegistry.acceptAuthenticationFailedEvent(symbol);
 		});
 		commandCallbacks.put("auth", auth);
@@ -272,23 +272,23 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		logger.debug("connect() called");
 		try {
             sequenceNumberAuditor.reset();
-            CountDownLatch connectionReadyLatch = new CountDownLatch(4);
+            final CountDownLatch connectionReadyLatch = new CountDownLatch(4);
 
-            Closeable authSuccessEventCallback = callbackRegistry.onAuthenticationSuccessEvent(c -> {
+            final Closeable authSuccessEventCallback = callbackRegistry.onAuthenticationSuccessEvent(c -> {
                 permissions = c.getPermissions();
                 authenticated = true;
                 connectionReadyLatch.countDown();
             });
-            Closeable authFailedCallback = callbackRegistry.onAuthenticationFailedEvent(c -> {
+            final Closeable authFailedCallback = callbackRegistry.onAuthenticationFailedEvent(c -> {
                 permissions = c.getPermissions();
                 authenticated = false;
                 while (connectionReadyLatch.getCount() != 0) {
                     connectionReadyLatch.countDown();
                 }
             });
-            Closeable positionInitCallback = callbackRegistry.onMyPositionEvent((a, p) -> connectionReadyLatch.countDown());
-            Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
-            Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
+            final Closeable positionInitCallback = callbackRegistry.onMyPositionEvent((a, p) -> connectionReadyLatch.countDown());
+            final Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
+            final Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
 
             websocketEndpoint = new WebsocketClientEndpoint(new URI(BITFINEX_URI), this::websocketCallback);
             websocketEndpoint.connect();
@@ -309,7 +309,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
                 heartbeatThread = new Thread(new HeartbeatThread(this, websocketEndpoint, lastHeartbeat::get));
                 heartbeatThread.start();
             }
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new BitfinexClientException(e);
 		}
 	}
@@ -339,7 +339,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	public void sendCommand(final BitfinexCommand command) {
 		try {
 			if (command instanceof BitfinexStreamSymbolToChannelIdResolverAware) {
-				BitfinexStreamSymbolToChannelIdResolverAware aware = (BitfinexStreamSymbolToChannelIdResolverAware) command;
+				final BitfinexStreamSymbolToChannelIdResolverAware aware = (BitfinexStreamSymbolToChannelIdResolverAware) command;
 				aware.setResolver(symbol -> {
 					final Integer channelId = getChannelForSymbol(symbol);
 					if (channelId == null) {
@@ -351,7 +351,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			final String json = command.getCommand(this);
             logger.debug("Sent: {}", command);
 			websocketEndpoint.sendMessage(json);
-		} catch (BitfinexCommandException e) {
+		} catch (final BitfinexCommandException e) {
 			logger.error("Got Exception while sending command", e);
 		}
 	}
@@ -376,23 +376,23 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			orderManager.clear();
 			positionManager.clear();
 
-			CountDownLatch connectionReadyLatch = new CountDownLatch(4);
+			final CountDownLatch connectionReadyLatch = new CountDownLatch(4);
 
-			Closeable authSuccessEventCallback = callbackRegistry.onAuthenticationSuccessEvent(c -> {
+			final Closeable authSuccessEventCallback = callbackRegistry.onAuthenticationSuccessEvent(c -> {
 				permissions = c.getPermissions();
 				authenticated = true;
 				connectionReadyLatch.countDown();
 			});
-			Closeable authFailedCallback = callbackRegistry.onAuthenticationFailedEvent(c -> {
+			final Closeable authFailedCallback = callbackRegistry.onAuthenticationFailedEvent(c -> {
 				permissions = c.getPermissions();
 				authenticated = false;
 				while (connectionReadyLatch.getCount() != 0) {
 					connectionReadyLatch.countDown();
 				}
 			});
-			Closeable positionInitCallback = callbackRegistry.onMyPositionEvent((a, p) -> connectionReadyLatch.countDown());
-			Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
-			Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
+			final Closeable positionInitCallback = callbackRegistry.onMyPositionEvent((a, p) -> connectionReadyLatch.countDown());
+			final Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
+			final Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
 
 			websocketEndpoint.connect();
 
@@ -411,20 +411,20 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			updateConnectionHeartbeat();
 
 			return true;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error("Got exception while reconnect", e);
 			websocketEndpoint.close();
 			return false;
 		}
 	}
 
-	private ChannelCallbackHandler createChannelCallbackHandler(int channelId, BitfinexStreamSymbol symbol) {
+	private ChannelCallbackHandler createChannelCallbackHandler(final int channelId, final BitfinexStreamSymbol symbol) {
 		if (symbol instanceof BitfinexCandlestickSymbol) {
 			final CandlestickHandler handler = new CandlestickHandler(channelId, (BitfinexCandlestickSymbol) symbol);
 			handler.onCandlesticksEvent(callbackRegistry::acceptCandlesticksEvent);
 			return handler;
 		} else if (symbol instanceof BitfinexOrderBookSymbol) {
-			BitfinexOrderBookSymbol orderBookSymbol = (BitfinexOrderBookSymbol) symbol;
+			final BitfinexOrderBookSymbol orderBookSymbol = (BitfinexOrderBookSymbol) symbol;
 			if (orderBookSymbol.isRawOrderBook()) {
 				final RawOrderbookHandler rawOrderBookHandler = new RawOrderbookHandler(channelId, orderBookSymbol);
 				rawOrderBookHandler.onOrderbookEvent(callbackRegistry::acceptRawOrderBookEvent);
@@ -452,7 +452,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	 * @throws InterruptedException
 	 * @throws BitfinexClientException
 	 */
-	private void authenticateAndWait(CountDownLatch latch) throws InterruptedException, BitfinexClientException {
+	private void authenticateAndWait(final CountDownLatch latch) throws InterruptedException, BitfinexClientException {
 		if (authenticated) {
 			return;
 		}
@@ -488,14 +488,14 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
         final JSONObject jsonObject = new JSONObject(message);
 		final String eventType = jsonObject.getString("event");
 
-		CommandCallbackHandler commandCallbackHandler = commandCallbacks.get(eventType);
+		final CommandCallbackHandler commandCallbackHandler = commandCallbacks.get(eventType);
 		if( commandCallbackHandler == null ) {
 			logger.error("Unknown event: {}", message);
 			return;
 		}
 		try {
 			commandCallbackHandler.handleChannelData(jsonObject);
-		} catch (BitfinexClientException e) {
+		} catch (final BitfinexClientException e) {
 			logger.error("Got an exception while handling callback");
 		}
 	}
@@ -520,7 +520,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		}
 
 		final int channel = jsonArray.getInt(0);
-		ChannelCallbackHandler channelCallbackHandler = channelIdToHandlerMap.get(channel);
+		final ChannelCallbackHandler channelCallbackHandler = channelIdToHandlerMap.get(channel);
 		if (channelCallbackHandler == null) {
 			logger.error("Unable to determine symbol for channel {} / data is {} ", channel, jsonArray);
 			reconnect();
@@ -542,7 +542,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 				return;
 			}
 			channelCallbackHandler.handleChannelData(action, payload);
-		} catch (BitfinexClientException e) {
+		} catch (final BitfinexClientException e) {
 			logger.error("Got exception while handling callback", e);
 		}
 	}
@@ -577,8 +577,8 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		}
 		
 		// Resubscribe channels
-		for(ChannelCallbackHandler handler : oldChannelIdSymbolMap.values()) {
-			BitfinexStreamSymbol symbol = handler.getSymbol();
+		for(final ChannelCallbackHandler handler : oldChannelIdSymbolMap.values()) {
+			final BitfinexStreamSymbol symbol = handler.getSymbol();
 			if(symbol instanceof BitfinexTickerSymbol) {
 				sendCommand(new SubscribeTickerCommand((BitfinexTickerSymbol) symbol));
 			} else if(symbol instanceof BitfinexExecutedTradeSymbol) {
@@ -654,7 +654,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	@Override
 	public boolean unsubscribeAllChannels() {
 		for(final ChannelCallbackHandler channel : channelIdToHandlerMap.values()) {
-			BitfinexStreamSymbol symbol = channel.getSymbol();
+			final BitfinexStreamSymbol symbol = channel.getSymbol();
 			sendCommand(new UnsubscribeChannelCommand(symbol));
 		}
 
@@ -664,7 +664,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			while(! channelIdToHandlerMap.isEmpty()) {
 				try {
 					channelIdToHandlerMap.wait(500);
-				} catch (InterruptedException ex) {
+				} catch (final InterruptedException ex) {
 					Thread.currentThread().interrupt();
 				}
 
