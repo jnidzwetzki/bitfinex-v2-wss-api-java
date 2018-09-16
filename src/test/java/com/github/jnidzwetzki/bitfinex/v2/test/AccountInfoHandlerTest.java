@@ -52,4 +52,18 @@ public class AccountInfoHandlerTest {
 		hbLatch.await();
 	}
 	
+
+	@Test
+	public void testAccountInfoHandler2() throws InterruptedException {
+		final BitfinexAccountSymbol symbol = BitfinexSymbols.account("abc", BitfinexApiKeyPermissions.NO_PERMISSIONS);
+		final AccountInfoHandler accountInfoHandler = new AccountInfoHandler(0, symbol);
+		
+		accountInfoHandler.onHeartbeatEvent((h) -> {});
+		accountInfoHandler.onOrderNotification((v1, v2) -> {});
+		accountInfoHandler.onPositionsEvent((v1, v2) -> {});
+		accountInfoHandler.onSubmittedOrderEvent((v1, v2) -> {});
+		accountInfoHandler.onTradeEvent((v1, v2) -> {});
+		accountInfoHandler.onWalletsEvent((v1, v2) -> {});
+	}
+	
 }
