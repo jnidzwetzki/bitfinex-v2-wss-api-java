@@ -1,4 +1,4 @@
-# Version 0.6.10 (TBA)
+# Version 0.7.0 (TBA)
 * Improvement: Updated dependencies
 * Improvement: The architecture of the lib was refactored (thanks to mironbalcerzak / PRs: #57 - #74)
 * Improvement: Factory classes (clients/symbols/commands) introduced
