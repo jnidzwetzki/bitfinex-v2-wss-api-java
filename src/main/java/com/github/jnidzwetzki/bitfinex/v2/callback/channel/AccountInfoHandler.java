@@ -55,7 +55,7 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
     private final MyExecutedTradeHandler tradeHandler;
     private final NotificationHandler notificationHandler;
 
-    public AccountInfoHandler(int channelId, final BitfinexAccountSymbol symbol) {
+    public AccountInfoHandler(final int channelId, final BitfinexAccountSymbol symbol) {
         this.channelId = channelId;
         this.symbol = symbol;
 
@@ -68,7 +68,7 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
         channelHandler.put("pu", positionHandler); // Position updated
         channelHandler.put("pc", positionHandler); // Position canceled
 
-        ChannelCallbackHandler fundingHandler = new DoNothingHandler();
+        final ChannelCallbackHandler fundingHandler = new DoNothingHandler();
         channelHandler.put("fos", fundingHandler); // Founding offers
         channelHandler.put("fcs", fundingHandler); // Founding credits
         channelHandler.put("fls", fundingHandler); // Founding loans
@@ -98,14 +98,14 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
         if (message.toString().contains("ERROR")) {
             logger.error("Got Error message: {}", message.toString());
         }
-        ChannelCallbackHandler handler = channelHandler.get(action);
+        final ChannelCallbackHandler handler = channelHandler.get(action);
         if (handler == null) {
             logger.error("No match found for message {}", message);
             return;
         }
         try {
             handler.handleChannelData(action, message);
-        } catch (BitfinexClientException e) {
+        } catch (final BitfinexClientException e) {
             logger.error("Got exception while handling callback", e);
         }
     }
@@ -120,27 +120,27 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
         return channelId;
     }
 
-    public void onHeartbeatEvent(Consumer<Long> heartbeatConsumer) {
+    public void onHeartbeatEvent(final Consumer<Long> heartbeatConsumer) {
         heartbeatHandler.onHeartbeatEvent(heartbeatConsumer);
     }
 
-    public void onPositionsEvent(BiConsumer<BitfinexAccountSymbol, Collection<BitfinexPosition>> consumer) {
+    public void onPositionsEvent(final BiConsumer<BitfinexAccountSymbol, Collection<BitfinexPosition>> consumer) {
         positionHandler.onPositionsEvent(consumer);
     }
 
-    public void onWalletsEvent(BiConsumer<BitfinexAccountSymbol, Collection<BitfinexWallet>> consumer) {
+    public void onWalletsEvent(final BiConsumer<BitfinexAccountSymbol, Collection<BitfinexWallet>> consumer) {
         walletHandler.onWalletsEvent(consumer);
     }
 
-    public void onTradeEvent(BiConsumer<BitfinexAccountSymbol, BitfinexMyExecutedTrade> tradeConsumer) {
+    public void onTradeEvent(final BiConsumer<BitfinexAccountSymbol, BitfinexMyExecutedTrade> tradeConsumer) {
         tradeHandler.onTradeEvent(tradeConsumer);
     }
 
-    public void onSubmittedOrderEvent(BiConsumer<BitfinexAccountSymbol, Collection<BitfinexSubmittedOrder>> consumer) {
+    public void onSubmittedOrderEvent(final BiConsumer<BitfinexAccountSymbol, Collection<BitfinexSubmittedOrder>> consumer) {
         orderHandler.onSubmittedOrderEvent(consumer);
     }
 
-    public void onOrderNotification(BiConsumer<BitfinexAccountSymbol, BitfinexSubmittedOrder> consumer) {
+    public void onOrderNotification(final BiConsumer<BitfinexAccountSymbol, BitfinexSubmittedOrder> consumer) {
         notificationHandler.onOrderNotification(consumer);
     }
 }
