@@ -39,6 +39,9 @@ public class PooledBitfinexApiBrokerTest {
         final PooledBitfinexApiBroker client = 
         		(PooledBitfinexApiBroker) BitfinexClientFactory.newPooledClient(config, channelsPerConnection);
 
+        
+        Assert.assertFalse(client.isAuthenticated());
+        
         // when
         final CountDownLatch subsLatch = new CountDownLatch(channelLimit * 3);
         client.getCallbacks().onSubscribeChannelEvent(chan -> {
@@ -63,6 +66,8 @@ public class PooledBitfinexApiBrokerTest {
         subsLatch.await();
         Assert.assertEquals(channelLimit * 3, client.getSubscribedChannels().size());
         Assert.assertEquals(channelLimit * 3 / channelsPerConnection, client.websocketConnCount());
+        
+        client.close();
     }
 
 }
