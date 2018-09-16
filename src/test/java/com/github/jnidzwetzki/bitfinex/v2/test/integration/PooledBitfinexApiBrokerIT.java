@@ -1,4 +1,4 @@
-package com.github.jnidzwetzki.bitfinex.v2;
+package com.github.jnidzwetzki.bitfinex.v2.test.integration;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -7,6 +7,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexClientFactory;
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketConfiguration;
+import com.github.jnidzwetzki.bitfinex.v2.PooledBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTickerCommand;
