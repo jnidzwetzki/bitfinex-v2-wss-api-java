@@ -158,21 +158,33 @@ public class QuoteManager extends AbstractManager {
 	/**
 	 * Subscribe a ticker
 	 * @param tickerSymbol
+	 * @return 
 	 * @throws BitfinexClientException
 	 */
-	public void subscribeTicker(final BitfinexTickerSymbol tickerSymbol) throws BitfinexClientException {
+	public FutureOperation subscribeTicker(final BitfinexTickerSymbol tickerSymbol) 
+			throws BitfinexClientException {
+		
+		final FutureOperation future = new FutureOperation(client.getCallbacks(), tickerSymbol, true);
+
 		final SubscribeTickerCommand command = new SubscribeTickerCommand(tickerSymbol);
 		client.sendCommand(command);
+		
+		return future;
 	}
 
 	/**
 	 * Unsubscribe a ticker
 	 * @param tickerSymbol
+	 * @return 
 	 */
-	public void unsubscribeTicker(final BitfinexTickerSymbol tickerSymbol) {
+	public FutureOperation unsubscribeTicker(final BitfinexTickerSymbol tickerSymbol) {
+		final FutureOperation future = new FutureOperation(client.getCallbacks(), tickerSymbol, false);
+
 		lastTickerActivity.remove(tickerSymbol);
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(tickerSymbol);
 		client.sendCommand(command);
+		
+		return future;
 	}
 
 	/**
@@ -224,22 +236,28 @@ public class QuoteManager extends AbstractManager {
 	 * Subscribe candles for a symbol
 	 * @param currencyPair
 	 * @param timeframe
+	 * @return 
 	 * @throws BitfinexClientException
 	 */
-	public void subscribeCandles(final BitfinexCandlestickSymbol symbol) throws BitfinexClientException {
+	public FutureOperation subscribeCandles(final BitfinexCandlestickSymbol symbol) throws BitfinexClientException {
 		final SubscribeCandlesCommand command = new SubscribeCandlesCommand(symbol);
+		final FutureOperation future = new FutureOperation(client.getCallbacks(), symbol, true);
 		client.sendCommand(command);
+		return future;
 	}
 
 	/**
 	 * Unsubscribe the candles
 	 * @param currencyPair
 	 * @param timeframe
+	 * @return 
 	 */
-	public void unsubscribeCandles(final BitfinexCandlestickSymbol symbol) {
+	public FutureOperation unsubscribeCandles(final BitfinexCandlestickSymbol symbol) {
 		lastTickerActivity.remove(symbol);
+		final FutureOperation future = new FutureOperation(client.getCallbacks(), symbol, false);
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(symbol);
 		client.sendCommand(command);
+		return future;
 	}
 
 
@@ -274,13 +292,18 @@ public class QuoteManager extends AbstractManager {
 	 * @param orderBookPrecision
 	 * @param orderBookFrequency
 	 * @param pricePoints
+	 * @return 
 	 */
-	public void subscribeExecutedTrades(final BitfinexExecutedTradeSymbol tradeSymbol) {
+	public FutureOperation subscribeExecutedTrades(final BitfinexExecutedTradeSymbol tradeSymbol) {
 
+		final FutureOperation future = new FutureOperation(client.getCallbacks(), tradeSymbol, true);
+		
 		final SubscribeTradesCommand subscribeOrderbookCommand
 			= new SubscribeTradesCommand(tradeSymbol);
-
+		
 		client.sendCommand(subscribeOrderbookCommand);
+		
+		return future;
 	}
 
 	/**
@@ -289,10 +312,15 @@ public class QuoteManager extends AbstractManager {
 	 * @param orderBookPrecision
 	 * @param orderBookFrequency
 	 * @param pricePoints
+	 * @return 
 	 */
-	public void unsubscribeExecutedTrades(final BitfinexExecutedTradeSymbol tradeSymbol) {
+	public FutureOperation unsubscribeExecutedTrades(final BitfinexExecutedTradeSymbol tradeSymbol) {
+		final FutureOperation future = new FutureOperation(client.getCallbacks(), tradeSymbol, false);
+
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(tradeSymbol);
 		client.sendCommand(command);
+		
+		return future;
 	}
 
 	/**

@@ -1,4 +1,6 @@
 # Version 0.7.0 (TBA)
+* New Feature: PooledBitfinexApiBroker - as per requirement described in https://www.bitfinex.com/posts/267
+* New Feature: Added future operation objects
 * Improvement: Updated dependencies
 * Improvement: The architecture of the lib was refactored (thanks to mironbalcerzak / PRs: #57 - #74)
 * Improvement: Factory classes (clients/symbols/commands) introduced
@@ -8,7 +10,6 @@
 * Improvement: The APIException has changed from type Exception to RuntimeException
 * Improvement: Removed unused JPA annotations
 * Bugfix: Fixed race condition in BiConsumerCallback
-* New Feature: PooledBitfinexApiBroker - as per requirement described in https://www.bitfinex.com/posts/267
 
 # Version 0.6.9 (19.08.2018)
 * New Feature: Made auth nonce producer configurable (thanks to mironbalcerzak / closes #43) 

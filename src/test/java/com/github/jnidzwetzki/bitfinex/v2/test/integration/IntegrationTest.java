@@ -20,6 +20,9 @@ package com.github.jnidzwetzki.bitfinex.v2.test.integration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 
 import org.junit.AfterClass;
@@ -44,6 +47,7 @@ import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
+import com.github.jnidzwetzki.bitfinex.v2.manager.FutureOperation;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
@@ -270,9 +274,10 @@ public class IntegrationTest {
 
 			final QuoteManager quoteManager = bitfinexClient.getQuoteManager();
 
-			quoteManager.subscribeExecutedTrades(symbol1);
-			quoteManager.subscribeExecutedTrades(symbol2);
-			Thread.sleep(3000);
+			final FutureOperation subscribe1 = quoteManager.subscribeExecutedTrades(symbol1);
+			final FutureOperation subscribe2 = quoteManager.subscribeExecutedTrades(symbol2);
+			subscribe1.waitForCompletion();
+			subscribe2.waitForCompletion();
 
 			Assert.assertEquals(2, bitfinexClient.getSubscribedChannels().size());
 			bitfinexClient.unsubscribeAllChannels();
@@ -311,8 +316,8 @@ public class IntegrationTest {
 			latch.await();
 			Assert.assertTrue(bitfinexClient.getSubscribedChannels().contains(symbol));
 
-			orderbookManager.unsubscribeTicker(symbol);
-			Thread.sleep(3000);
+			final FutureOperation unsubscribeFuture = orderbookManager.unsubscribeTicker(symbol);
+			unsubscribeFuture.waitForCompletion();
 			Assert.assertFalse(bitfinexClient.getSubscribedChannels().contains(symbol));
 
 			Assert.assertTrue(orderbookManager.removeTickCallback(symbol, callback));
@@ -355,9 +360,10 @@ public class IntegrationTest {
 	 * Test the session reconnect
 	 * @throws BitfinexClientException
 	 * @throws InterruptedException
+	 * @throws ExecutionException 
 	 */
-	@Test
-	public void testReconnect() throws BitfinexClientException, InterruptedException {
+	@Test(timeout=600000)
+	public void testReconnect() throws BitfinexClientException, InterruptedException, ExecutionException {
 		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 		bitfinexClient.connect();
 
@@ -365,8 +371,9 @@ public class IntegrationTest {
 
 		final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
 
-		orderbookManager.subscribeTicker(symbol);
-		Thread.sleep(1000);
+		final FutureOperation subscribeFuture = orderbookManager.subscribeTicker(symbol);
+		subscribeFuture.waitForCompletion();
+		
 		bitfinexClient.reconnect();
 
 		// Await at least 2 callbacks
@@ -380,9 +387,9 @@ public class IntegrationTest {
 		latch.await();
 		Assert.assertTrue(bitfinexClient.getSubscribedChannels().contains(symbol));
 
-		orderbookManager.unsubscribeTicker(symbol);
-
-		Thread.sleep(5000);
+		final FutureOperation unsubscribeFuture = orderbookManager.unsubscribeTicker(symbol);
+		unsubscribeFuture.waitForCompletion();
+		
 		Assert.assertFalse(bitfinexClient.getSubscribedChannels().contains(symbol));
 
 		bitfinexClient.close();
@@ -392,10 +399,14 @@ public class IntegrationTest {
 	 * Test the sequencing feature
 	 * @throws BitfinexClientException
 	 * @throws InterruptedException
+	 * @throws TimeoutException 
+	 * @throws ExecutionException 
 	 */
 	@Test
-	public void testSequencing() throws BitfinexClientException, InterruptedException {
-		SequenceNumberAuditor sequenceNumberAuditor = new SequenceNumberAuditor();
+	public void testSequencing() 
+			throws BitfinexClientException, InterruptedException, ExecutionException, TimeoutException {
+		
+		final SequenceNumberAuditor sequenceNumberAuditor = new SequenceNumberAuditor();
 		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), sequenceNumberAuditor);
 		bitfinexClient.connect();
 
@@ -420,13 +431,17 @@ public class IntegrationTest {
 
 		final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();
 
-		orderbookManager.subscribeTicker(symbol1);
-		orderbookManager.subscribeTicker(symbol2);
-		orderbookManager.subscribeTicker(symbol3);
-		orderbookManager.subscribeTicker(symbol4);
-		orderbookManager.subscribeTicker(symbol5);
+		final FutureOperation operation1 = orderbookManager.subscribeTicker(symbol1);
+		final FutureOperation operation2 = orderbookManager.subscribeTicker(symbol2);
+		final FutureOperation operation3 = orderbookManager.subscribeTicker(symbol3);
+		final FutureOperation operation4 = orderbookManager.subscribeTicker(symbol4);
+		final FutureOperation operation5 = orderbookManager.subscribeTicker(symbol5);
 
-		Thread.sleep(5000);
+		final List<FutureOperation> operations = Arrays.asList(operation1, operation2, operation3, operation4, operation5);
+		
+		for(final FutureOperation operation : operations) {
+			operation.waitForCompletion(100, TimeUnit.SECONDS);
+		}
 
 		cfManager.disableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
 		Assert.assertFalse(cfManager.isConnectionFeatureEnabled(BitfinexConnectionFeature.SEQ_ALL));
