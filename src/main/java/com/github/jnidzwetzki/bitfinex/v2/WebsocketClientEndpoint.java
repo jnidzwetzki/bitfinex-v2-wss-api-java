@@ -88,13 +88,13 @@ public class WebsocketClientEndpoint implements Closeable {
 
 	@OnOpen
 	public void onOpen(final Session userSession) {
-		logger.info("Websocket is now open");
+		logger.debug("Websocket is now open");
 		connectLatch.countDown();
 	}
 
 	@OnClose
 	public void onClose(final Session userSession, final CloseReason reason) {
-		logger.info("Closing websocket: {}", reason);
+		logger.debug("Closing websocket: {}", reason);
 		this.userSession = null;
 	}
 
