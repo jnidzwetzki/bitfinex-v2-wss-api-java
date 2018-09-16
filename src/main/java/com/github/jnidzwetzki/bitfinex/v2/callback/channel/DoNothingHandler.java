@@ -19,7 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2.callback.channel;
 
 import org.json.JSONArray;
 
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
 public class DoNothingHandler implements ChannelCallbackHandler {
@@ -28,7 +28,7 @@ public class DoNothingHandler implements ChannelCallbackHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
+	public void handleChannelData(final String action, final JSONArray jsonArray) throws BitfinexClientException {
 		
 	}
 

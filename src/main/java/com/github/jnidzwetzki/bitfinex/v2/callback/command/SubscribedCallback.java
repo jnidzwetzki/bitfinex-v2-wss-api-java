@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
@@ -40,7 +40,7 @@ public class SubscribedCallback implements CommandCallbackHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleChannelData(final JSONObject jsonObject) throws APIException {
+	public void handleChannelData(final JSONObject jsonObject) throws BitfinexClientException {
 		final String channelType = jsonObject.getString("channel");
 		final int channelId = jsonObject.getInt("chanId");
 

@@ -4,7 +4,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -28,7 +30,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
-import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexCommandException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
@@ -36,12 +38,22 @@ import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexStreamSymbolToChannelIdRe
 
 public class CommandsTest {
 
+	@BeforeClass
+	public static void registerDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.registerDefaults();
+	}
+
+	@AfterClass
+	public static void unregisterDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.unregisterAll();
+	}
+
 	/**
 	 * Call all commands and check for excepion
-	 * @throws CommandException
+	 * @throws BitfinexCommandException
 	 */
 	@Test
-	public void testCommandsJSON() throws CommandException {
+	public void testCommandsJSON() throws BitfinexCommandException {
 
 		final BitfinexNewOrder order
 			= BitfinexOrderBuilder.create(
@@ -82,10 +94,10 @@ public class CommandsTest {
 
 	/**
 	 * Test the order command
-	 * @throws CommandException
+	 * @throws BitfinexCommandException
 	 */
 	@Test
-	public void testOrderCommand() throws CommandException {
+	public void testOrderCommand() throws BitfinexCommandException {
 		final BitfinexNewOrder order
 			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderType.EXCHANGE_STOP, 2)
 			.setHidden()

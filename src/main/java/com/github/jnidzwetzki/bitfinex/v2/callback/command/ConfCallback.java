@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 
 public class ConfCallback implements CommandCallbackHandler {
 
@@ -35,7 +35,7 @@ public class ConfCallback implements CommandCallbackHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleChannelData(final JSONObject jsonObject) throws APIException {
+	public void handleChannelData(final JSONObject jsonObject) throws BitfinexClientException {
 		final String status = jsonObject.getString("status");
 		if (!status.equals("OK")) {
 			logger.info("Got wrong state back {}", status);

@@ -30,7 +30,7 @@ public class SubscribeTickerCommand implements SubscribeCommand {
 
 	public SubscribeTickerCommand(final BitfinexTickerSymbol currencyPair) {
 		this.symbol = currencyPair;
-		this.currencyPair = currencyPair.getBitfinexCurrencyPair().toBitfinexString();
+		this.currencyPair = currencyPair.getCurrencyPair().toBitfinexString();
 	}
 
 	@Override

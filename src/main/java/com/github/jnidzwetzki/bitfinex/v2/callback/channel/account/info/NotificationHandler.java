@@ -28,7 +28,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandle
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
@@ -49,7 +49,7 @@ public class NotificationHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final String action, final JSONArray payload) throws APIException {
+    public void handleChannelData(final String action, final JSONArray payload) throws BitfinexClientException {
         logger.debug("Got notification callback {}", payload.toString());
 
         if (payload.isEmpty()) {
@@ -98,7 +98,7 @@ public class NotificationHandler implements ChannelCallbackHandler {
         }
 
         if (!Strings.isNullOrEmpty(symbol)) {
-            submittedOrder.setSymbol(BitfinexCurrencyPair.fromSymbolString(symbol));
+            submittedOrder.setCurrencyPair(BitfinexCurrencyPair.fromSymbolString(symbol));
         }
         submittedOrder.setStatus(BitfinexSubmittedOrderStatus.ERROR);
         logger.error("State for order {} is {}, reason is {}", submittedOrder.getOrderId(), state, stateValue);

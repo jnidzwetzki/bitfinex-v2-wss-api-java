@@ -23,7 +23,7 @@ import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
@@ -45,7 +45,7 @@ public class HeartbeatHandler implements ChannelCallbackHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
+	public void handleChannelData(final String action, final JSONArray jsonArray) throws BitfinexClientException {
 		logger.debug("Got connection heartbeat");
 		heartbeatConsumer.accept(System.currentTimeMillis());
 	}

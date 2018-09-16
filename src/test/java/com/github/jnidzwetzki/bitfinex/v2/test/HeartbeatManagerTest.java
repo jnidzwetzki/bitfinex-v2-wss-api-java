@@ -21,7 +21,9 @@ import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -33,12 +35,21 @@ import com.github.jnidzwetzki.bitfinex.v2.WebsocketClientEndpoint;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.HeartbeatHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
-
 public class HeartbeatManagerTest {
+
+	@BeforeClass
+	public static void registerDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.registerDefaults();
+	}
+
+	@AfterClass
+	public static void unregisterDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.unregisterAll();
+	}
 
 	@Test(timeout=30000)
 	public void testConnectWhenDisconnected() throws Exception {
@@ -80,10 +91,10 @@ public class HeartbeatManagerTest {
 
 	/**
 	 * Test the heartbeart handler
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	@Test
-	public void testHeartbeatHandler() throws APIException, InterruptedException {
+	public void testHeartbeatHandler() throws BitfinexClientException, InterruptedException {
 		final HeartbeatHandler handler = new HeartbeatHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
 		long heartbeat = System.currentTimeMillis();
 		handler.onHeartbeatEvent(timestamp -> Assert.assertTrue(timestamp > heartbeat));

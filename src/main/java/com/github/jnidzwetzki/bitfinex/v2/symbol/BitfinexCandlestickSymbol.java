@@ -23,22 +23,22 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 public class BitfinexCandlestickSymbol implements BitfinexStreamSymbol {
 	
 	/**
-	 * The symbol
+	 * The currency pair
 	 */
-	private final BitfinexCurrencyPair symbol;
+	private final BitfinexCurrencyPair currencyPair;
 	
 	/**
 	 * The timeframe
 	 */
 	private final BitfinexCandleTimeFrame timeframe;
 
-	BitfinexCandlestickSymbol(final BitfinexCurrencyPair symbol, final BitfinexCandleTimeFrame timeframe) {
-		this.symbol = symbol;
+	BitfinexCandlestickSymbol(final BitfinexCurrencyPair currencyPair, final BitfinexCandleTimeFrame timeframe) {
+		this.currencyPair = currencyPair;
 		this.timeframe = timeframe;
 	}
 
-	public BitfinexCurrencyPair getSymbol() {
-		return symbol;
+	public BitfinexCurrencyPair getCurrencyPair() {
+		return currencyPair;
 	}
 
 	public BitfinexCandleTimeFrame getTimeframe() {
@@ -50,7 +50,7 @@ public class BitfinexCandlestickSymbol implements BitfinexStreamSymbol {
 	 * @return
 	 */
 	public String toBifinexCandlestickString() {
-		return "trade:" + timeframe.getBitfinexString() + ":" + symbol.toBitfinexString();
+		return "trade:" + timeframe.getBitfinexString() + ":" + currencyPair.toBitfinexString();
 	}
 	
 	/**
@@ -80,14 +80,14 @@ public class BitfinexCandlestickSymbol implements BitfinexStreamSymbol {
 
 	@Override
 	public String toString() {
-		return "BitfinexCandlestickSymbol [symbol=" + symbol + ", timeframe=" + timeframe + "]";
+		return "BitfinexCandlestickSymbol [currencyPair=" + currencyPair + ", timeframe=" + timeframe + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((symbol == null) ? 0 : symbol.hashCode());
+		result = prime * result + ((currencyPair == null) ? 0 : currencyPair.hashCode());
 		result = prime * result + ((timeframe == null) ? 0 : timeframe.hashCode());
 		return result;
 	}
@@ -101,10 +101,10 @@ public class BitfinexCandlestickSymbol implements BitfinexStreamSymbol {
 		if (getClass() != obj.getClass())
 			return false;
 		final BitfinexCandlestickSymbol other = (BitfinexCandlestickSymbol) obj;
-		if (symbol == null) {
-			if (other.symbol != null)
+		if (currencyPair == null) {
+			if (other.currencyPair != null)
 				return false;
-		} else if (!symbol.equals(other.symbol))
+		} else if (!currencyPair.equals(other.currencyPair))
 			return false;
 		if (timeframe != other.timeframe)
 			return false;

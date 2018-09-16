@@ -24,7 +24,7 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 
 public class RawOrderbookManager extends AbstractManager {
@@ -46,10 +46,10 @@ public class RawOrderbookManager extends AbstractManager {
 	 * Register a new trading orderbook callback
 	 * @param symbol
 	 * @param callback
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	public void registerOrderbookCallback(final BitfinexOrderBookSymbol symbol,
-										  final BiConsumer<BitfinexOrderBookSymbol, BitfinexOrderBookEntry> callback) throws APIException {
+										  final BiConsumer<BitfinexOrderBookSymbol, BitfinexOrderBookEntry> callback) throws BitfinexClientException {
 		
 		channelCallbacks.registerCallback(symbol, callback);
 	}
@@ -59,10 +59,10 @@ public class RawOrderbookManager extends AbstractManager {
 	 * @param symbol
 	 * @param callback
 	 * @return true/false
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	public boolean removeOrderbookCallback(final BitfinexOrderBookSymbol symbol,
-			final BiConsumer<BitfinexOrderBookSymbol, BitfinexOrderBookEntry> callback) throws APIException {
+			final BiConsumer<BitfinexOrderBookSymbol, BitfinexOrderBookEntry> callback) throws BitfinexClientException {
 		return channelCallbacks.removeCallback(symbol, callback);
 	}
 

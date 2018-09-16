@@ -23,7 +23,7 @@ import java.util.function.BiConsumer;
 import org.json.JSONArray;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
@@ -43,7 +43,7 @@ public class TickHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final String action, final JSONArray jsonArray) throws APIException {
+    public void handleChannelData(final String action, final JSONArray jsonArray) throws BitfinexClientException {
         BitfinexTick tick = jsonToBitfinexTick(jsonArray);
         tickConsumer.accept(symbol, tick);
     }

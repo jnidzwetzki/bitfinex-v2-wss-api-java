@@ -22,7 +22,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.JSONArray;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -32,13 +34,23 @@ import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.CandlestickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
 
 public class CandlestickHandlerTest {
+
+	@BeforeClass
+	public static void registerDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.registerDefaults();
+	}
+
+	@AfterClass
+	public static void unregisterDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.unregisterAll();
+	}
 
 	/**
 	 * The delta for double compares
@@ -47,10 +59,10 @@ public class CandlestickHandlerTest {
 
 	/**
 	 * Test the parsing of one candlestick
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	@Test
-	public void testCandlestickUpdateAndNotify() throws APIException {
+	public void testCandlestickUpdateAndNotify() throws BitfinexClientException {
 		
 		final String callbackValue = "[15134900000,15996,15997,16000,15980,318.5139342]";
 		final JSONArray jsonArray = new JSONArray(callbackValue);
@@ -87,10 +99,10 @@ public class CandlestickHandlerTest {
 	
 	/**
 	 * Test the parsing of a candlestick snapshot
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	@Test
-	public void testCandlestickSnapshotUpdateAndNotify() throws APIException {
+	public void testCandlestickSnapshotUpdateAndNotify() throws BitfinexClientException {
 		
 		final String callbackValue = "[[15134900000,15996,15997,16000,15980,318.5139342],[15135100000,15899,15996,16097,15890,1137.180342268]]";
 		final JSONArray jsonArray = new JSONArray(callbackValue);

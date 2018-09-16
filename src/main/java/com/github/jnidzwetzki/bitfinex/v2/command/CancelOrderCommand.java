@@ -20,7 +20,7 @@ package com.github.jnidzwetzki.bitfinex.v2.command;
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
-import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexCommandException;
 
 public class CancelOrderCommand implements BitfinexCommand {
 
@@ -34,7 +34,7 @@ public class CancelOrderCommand implements BitfinexCommand {
 	}
 
 	@Override
-	public String getCommand(final BitfinexWebsocketClient client) throws CommandException {
+	public String getCommand(final BitfinexWebsocketClient client) throws BitfinexCommandException {
 		
 		final JSONObject cancelJson = new JSONObject();
 		cancelJson.put("id", id);

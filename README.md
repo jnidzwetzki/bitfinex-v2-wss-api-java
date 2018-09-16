@@ -58,6 +58,13 @@ You will find the changelog of the project [here](https://github.com/jnidzwetzki
 
 # Recent API changes
 
+## Version 0.6.10 (TBA)
+Major refactoring has been made around the library. Library is operating in non-blocking manner fully from this version.
+User may register handlers to listen on upcoming server events through exposed callbacks API.
+Review [Low-level channel subscriptions](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/EXAMPLES.md#Low-level-channel-subscription) section of Examples for more details. 
+
+``BitfinexCurrencyPair`` is no longer auto-registering currency pairs in JVM. User should call BitfinexCurrencyPair#registerDefaults() explicitily if one wishes to use them. 
+
 ## Version 0.6.9
 The class ``BitfinexCurrencyPair`` now supports dynamic currency creation. Therefore, the old enum consts are removed.
 

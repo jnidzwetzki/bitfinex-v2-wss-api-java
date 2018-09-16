@@ -18,10 +18,10 @@
 package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
-import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexCommandException;
 
 public interface BitfinexCommand {
 
-	String getCommand(final BitfinexWebsocketClient client) throws CommandException;
+	String getCommand(final BitfinexWebsocketClient client) throws BitfinexCommandException;
 
 }

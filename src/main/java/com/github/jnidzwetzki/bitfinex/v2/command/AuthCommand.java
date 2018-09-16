@@ -26,7 +26,7 @@ import com.google.common.io.BaseEncoding;
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
-import com.github.jnidzwetzki.bitfinex.v2.exception.CommandException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexCommandException;
 
 public class AuthCommand implements BitfinexCommand {
 
@@ -50,7 +50,7 @@ public class AuthCommand implements BitfinexCommand {
 	}
 
 	@Override
-	public String getCommand(final BitfinexWebsocketClient client) throws CommandException {
+	public String getCommand(final BitfinexWebsocketClient client) throws BitfinexCommandException {
 		try {
 			final String APIKey = client.getConfiguration().getApiKey();
 			final String APISecret = client.getConfiguration().getApiSecret();
@@ -79,7 +79,7 @@ public class AuthCommand implements BitfinexCommand {
 			
 			return subscribeJson.toString();
 		} catch (Exception e) {
-			throw new CommandException(e);
+			throw new BitfinexCommandException(e);
 		} 
 	}
 

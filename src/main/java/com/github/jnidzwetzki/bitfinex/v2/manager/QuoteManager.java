@@ -32,7 +32,7 @@ import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
@@ -114,10 +114,10 @@ public class QuoteManager extends AbstractManager {
 	 * Register a new tick callback
 	 * @param symbol
 	 * @param callback
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	public void registerTickCallback(final BitfinexTickerSymbol symbol,
-			final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback) throws APIException {
+			final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback) throws BitfinexClientException {
 
 		tickerCallbacks.registerCallback(symbol, callback);
 	}
@@ -127,10 +127,10 @@ public class QuoteManager extends AbstractManager {
 	 * @param symbol
 	 * @param callback
 	 * @return
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	public boolean removeTickCallback(final BitfinexTickerSymbol symbol,
-			final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback) throws APIException {
+			final BiConsumer<BitfinexTickerSymbol, BitfinexTick> callback) throws BitfinexClientException {
 
 		return tickerCallbacks.removeCallback(symbol, callback);
 	}
@@ -158,9 +158,9 @@ public class QuoteManager extends AbstractManager {
 	/**
 	 * Subscribe a ticker
 	 * @param tickerSymbol
-	 * @throws APIException 
+	 * @throws BitfinexClientException
 	 */
-	public void subscribeTicker(final BitfinexTickerSymbol tickerSymbol) throws APIException {
+	public void subscribeTicker(final BitfinexTickerSymbol tickerSymbol) throws BitfinexClientException {
 		final SubscribeTickerCommand command = new SubscribeTickerCommand(tickerSymbol);
 		client.sendCommand(command);
 	}
@@ -179,10 +179,10 @@ public class QuoteManager extends AbstractManager {
 	 * Register a new candlestick callback
 	 * @param symbol
 	 * @param callback
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	public void registerCandlestickCallback(final BitfinexCandlestickSymbol symbol,
-			final BiConsumer<BitfinexCandlestickSymbol, BitfinexCandle> callback) throws APIException {
+			final BiConsumer<BitfinexCandlestickSymbol, BitfinexCandle> callback) throws BitfinexClientException {
 
 		candleCallbacks.registerCallback(symbol, callback);
 	}
@@ -192,10 +192,10 @@ public class QuoteManager extends AbstractManager {
 	 * @param symbol
 	 * @param callback
 	 * @return
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	public boolean removeCandlestickCallback(final BitfinexCandlestickSymbol symbol,
-			final BiConsumer<BitfinexCandlestickSymbol, BitfinexCandle> callback) throws APIException {
+			final BiConsumer<BitfinexCandlestickSymbol, BitfinexCandle> callback) throws BitfinexClientException {
 
 		return candleCallbacks.removeCallback(symbol, callback);
 	}
@@ -224,9 +224,9 @@ public class QuoteManager extends AbstractManager {
 	 * Subscribe candles for a symbol
 	 * @param currencyPair
 	 * @param timeframe
-	 * @throws APIException 
+	 * @throws BitfinexClientException
 	 */
-	public void subscribeCandles(final BitfinexCandlestickSymbol symbol) throws APIException {
+	public void subscribeCandles(final BitfinexCandlestickSymbol symbol) throws BitfinexClientException {
 		final SubscribeCandlesCommand command = new SubscribeCandlesCommand(symbol);
 		client.sendCommand(command);
 	}
@@ -247,10 +247,10 @@ public class QuoteManager extends AbstractManager {
 	 * Register a new executed trade callback
 	 * @param symbol
 	 * @param callback
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	public void registerExecutedTradeCallback(final BitfinexExecutedTradeSymbol orderbookConfiguration,
-			final BiConsumer<BitfinexExecutedTradeSymbol, BitfinexExecutedTrade> callback) throws APIException {
+			final BiConsumer<BitfinexExecutedTradeSymbol, BitfinexExecutedTrade> callback) throws BitfinexClientException {
 
 		tradesCallbacks.registerCallback(orderbookConfiguration, callback);
 	}
@@ -260,10 +260,10 @@ public class QuoteManager extends AbstractManager {
 	 * @param symbol
 	 * @param callback
 	 * @return
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
 	public boolean removeExecutedTradeCallback(final BitfinexExecutedTradeSymbol tradeSymbol,
-			final BiConsumer<BitfinexExecutedTradeSymbol, BitfinexExecutedTrade> callback) throws APIException {
+			final BiConsumer<BitfinexExecutedTradeSymbol, BitfinexExecutedTrade> callback) throws BitfinexClientException {
 
 		return tradesCallbacks.removeCallback(tradeSymbol, callback);
 	}

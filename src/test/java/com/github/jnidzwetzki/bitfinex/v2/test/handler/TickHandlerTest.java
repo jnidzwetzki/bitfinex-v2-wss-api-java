@@ -21,7 +21,9 @@ import java.util.concurrent.ExecutorService;
 
 import com.google.common.util.concurrent.MoreExecutors;
 import org.json.JSONArray;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -30,13 +32,23 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.TickHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
 
 public class TickHandlerTest {
+
+    @BeforeClass
+    public static void registerDefaultCurrencyPairs() {
+        BitfinexCurrencyPair.registerDefaults();
+    }
+
+    @AfterClass
+    public static void unregisterDefaultCurrencyPairs() {
+        BitfinexCurrencyPair.unregisterAll();
+    }
 
     /**
      * The delta for double compares
@@ -46,10 +58,10 @@ public class TickHandlerTest {
     /**
      * Test the parsing of one tick
      *
-     * @throws APIException
+     * @throws BitfinexClientException
      */
     @Test
-    public void testTickUpdateAndNotify() throws APIException {
+    public void testTickUpdateAndNotify() throws BitfinexClientException {
 
         final String callbackValue = "[26123,41.4645776,26129,33.68138507,2931,0.2231,26129,144327.10936387,26149,13139]";
         final JSONArray jsonArray = new JSONArray(callbackValue);

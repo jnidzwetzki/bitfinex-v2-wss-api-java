@@ -21,7 +21,9 @@ import java.util.concurrent.ExecutorService;
 
 import com.google.common.util.concurrent.MoreExecutors;
 import org.json.JSONArray;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -30,12 +32,22 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ExecutedTradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
 public class BitfinexExecutedTradesHandlerTest {
+
+    @BeforeClass
+    public static void registerDefaultCurrencyPairs() {
+        BitfinexCurrencyPair.registerDefaults();
+    }
+
+    @AfterClass
+    public static void unregisterDefaultCurrencyPairs() {
+        BitfinexCurrencyPair.unregisterAll();
+    }
 
     /**
      * The delta for double compares
@@ -45,11 +57,11 @@ public class BitfinexExecutedTradesHandlerTest {
     /**
      * Test the parsing of one executed trade
      *
-     * @throws APIException
+     * @throws BitfinexClientException
      * @throws InterruptedException
      */
     @Test
-    public void testExecutedTradesUpdateAndNotify() throws APIException, InterruptedException {
+    public void testExecutedTradesUpdateAndNotify() throws BitfinexClientException, InterruptedException {
 
         final String callbackValue = "[190631057,1518037080162,0.007,8175.9]";
         final JSONArray jsonArray = new JSONArray(callbackValue);
@@ -78,11 +90,11 @@ public class BitfinexExecutedTradesHandlerTest {
     /**
      * Test the parsing of a executed trades snapshot
      *
-     * @throws APIException
+     * @throws BitfinexClientException
      * @throws InterruptedException
      */
     @Test
-    public void testExecutedTradesSnapshotUpdateAndNotify() throws APIException, InterruptedException {
+    public void testExecutedTradesSnapshotUpdateAndNotify() throws BitfinexClientException, InterruptedException {
 
         final String callbackValue = "[[190631057,1518037080162,0.007,8175.9],[190631052,1518037080110,-0.25,8175.8]]";
         final JSONArray jsonArray = new JSONArray(callbackValue);

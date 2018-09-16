@@ -27,7 +27,7 @@ import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandle
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
@@ -49,7 +49,7 @@ public class MyExecutedTradeHandler implements ChannelCallbackHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handleChannelData(final String action, final JSONArray payload) throws APIException {
+    public void handleChannelData(final String action, final JSONArray payload) throws BitfinexClientException {
         logger.info("Got trade callback {}", payload.toString());
 
         BitfinexMyExecutedTrade trade = jsonToTrade(payload);
@@ -74,7 +74,7 @@ public class MyExecutedTradeHandler implements ChannelCallbackHandler {
     private BitfinexMyExecutedTrade jsonToTrade(final JSONArray json) {
         final BitfinexMyExecutedTrade trade = new BitfinexMyExecutedTrade();
         trade.setTradeId(json.getLong(0));
-        trade.setCurrency(BitfinexCurrencyPair.fromSymbolString(json.getString(1)));
+        trade.setCurrencyPair(BitfinexCurrencyPair.fromSymbolString(json.getString(1)));
         trade.setTimestamp(json.getLong(2));
         trade.setOrderId(json.getLong(3));
         trade.setAmount(json.getBigDecimal(4));

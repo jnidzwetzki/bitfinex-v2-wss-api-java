@@ -36,9 +36,9 @@ public class BitfinexNewOrder {
     private Integer clientGroupId;
 
     /**
-     * symbol
+     * currency pair
      */
-    private BitfinexCurrencyPair symbol;
+    private BitfinexCurrencyPair currencyPair;
 
     /**
      * order amount - pPositive for buy, Negative for sell
@@ -98,12 +98,12 @@ public class BitfinexNewOrder {
         this.clientGroupId = clientGroupId;
     }
 
-    public BitfinexCurrencyPair getSymbol() {
-        return symbol;
+    public BitfinexCurrencyPair getCurrencyPair() {
+        return currencyPair;
     }
 
-    public void setSymbol(BitfinexCurrencyPair symbol) {
-        this.symbol = symbol;
+    public void setCurrencyPair(BitfinexCurrencyPair currencyPair) {
+        this.currencyPair = currencyPair;
     }
 
     public BigDecimal getAmount() {
@@ -214,7 +214,7 @@ public class BitfinexNewOrder {
                 close == that.close &&
                 reduce == that.reduce &&
                 oneCancelTheOther == that.oneCancelTheOther &&
-                Objects.equals(symbol, that.symbol) &&
+                Objects.equals(currencyPair, that.currencyPair) &&
                 Objects.equals(amount, that.amount) &&
                 orderType == that.orderType &&
                 Objects.equals(price, that.price) &&
@@ -226,7 +226,7 @@ public class BitfinexNewOrder {
 
     @Override
     public int hashCode() {
-        return Objects.hash(clientId, clientGroupId, symbol, amount, orderType, price, priceTrailing, priceAuxLimit, priceOcoStop, postOnly, hidden, close, reduce, oneCancelTheOther, apiKey);
+        return Objects.hash(clientId, clientGroupId, currencyPair, amount, orderType, price, priceTrailing, priceAuxLimit, priceOcoStop, postOnly, hidden, close, reduce, oneCancelTheOther, apiKey);
     }
 
     @Override
@@ -234,7 +234,7 @@ public class BitfinexNewOrder {
         return "BitfinexNewOrder [" +
                 "clientId=" + clientId +
                 ", clientGroupId=" + clientGroupId +
-                ", symbol=" + symbol +
+                ", currencyPair=" + currencyPair +
                 ", amount=" + amount +
                 ", orderType=" + orderType +
                 ", price=" + price +

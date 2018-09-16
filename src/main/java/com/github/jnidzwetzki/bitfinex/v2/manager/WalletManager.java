@@ -27,7 +27,7 @@ import com.google.common.collect.Table;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.command.CalculateCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 
 public class WalletManager extends AbstractManager {
 
@@ -46,7 +46,7 @@ public class WalletManager extends AbstractManager {
                     walletTable.put(wallet.getWalletType(), wallet.getCurrency(), wallet);
                     walletTable.notifyAll();
                 }
-            } catch (APIException e) {
+            } catch (BitfinexClientException e) {
                 e.printStackTrace();
             }
         }));
@@ -55,9 +55,9 @@ public class WalletManager extends AbstractManager {
 	/**
 	 * Get all wallets
 	 * @return
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	public Collection<BitfinexWallet> getWallets() throws APIException {
+	public Collection<BitfinexWallet> getWallets() throws BitfinexClientException {
 
 		throwExceptionIfUnauthenticated();
 
@@ -69,19 +69,19 @@ public class WalletManager extends AbstractManager {
 	/**
 	 * Get all wallets
 	 * @return
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	public Table<BitfinexWallet.Type, String, BitfinexWallet> getWalletTable() throws APIException {
+	public Table<BitfinexWallet.Type, String, BitfinexWallet> getWalletTable() throws BitfinexClientException {
 		return walletTable;
 	}
 
 	/**
 	 * Throw a new exception if called on a unauthenticated connection
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	private void throwExceptionIfUnauthenticated() throws APIException {
+	private void throwExceptionIfUnauthenticated() throws BitfinexClientException {
 		if(! client.isAuthenticated()) {
-			throw new APIException("Unable to perform operation on an unauthenticated connection");
+			throw new BitfinexClientException("Unable to perform operation on an unauthenticated connection");
 		}
 	}
 
@@ -89,9 +89,9 @@ public class WalletManager extends AbstractManager {
 	 * Calculate the wallet margin balance for the given currency (e.g., BTC)
 	 *
 	 * @param symbol
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	public void calculateWalletMarginBalance(final String symbol) throws APIException {
+	public void calculateWalletMarginBalance(final String symbol) throws BitfinexClientException {
 		throwExceptionIfUnauthenticated();
 
 		client.sendCommand(new CalculateCommand("wallet_margin_" + symbol));
@@ -101,9 +101,9 @@ public class WalletManager extends AbstractManager {
 	 * Calculate the wallet funding balance for the given currency (e.g., BTC)
 	 *
 	 * @param symbol
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	public void calculateWalletFundingBalance(final String symbol) throws APIException {
+	public void calculateWalletFundingBalance(final String symbol) throws BitfinexClientException {
 		throwExceptionIfUnauthenticated();
 
 		client.sendCommand(new CalculateCommand("wallet_funding_" + symbol));

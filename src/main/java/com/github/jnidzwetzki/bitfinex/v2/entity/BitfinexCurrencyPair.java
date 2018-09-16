@@ -25,7 +25,7 @@ public class BitfinexCurrencyPair {
 
 	private final static Map<String, BitfinexCurrencyPair> instances = new ConcurrentHashMap<>();
 
-	static {
+	public static void registerDefaults() {
 		register("BTC", "USD", 0.002);
 		register("BTC", "JPY", 0.002);
 		register("BTC", "EUR", 0.002);
@@ -208,13 +208,17 @@ public class BitfinexCurrencyPair {
 		register("BCI", "BTC", 26.0);
 	}
 
+	public static void unregisterAll() {
+		instances.clear();
+	}
+
 	/**
 	 * Registers currency pair for use within library
 	 *
 	 * @param currency         currency (from)
 	 * @param profitCurrency   currency (to)
 	 * @param minimalOrderSize minimal order size
-	 * @return 
+	 * @return registered instance of {@link BitfinexCurrencyPair}
 	 */
 	public static BitfinexCurrencyPair register(final String currency, 
 			final String profitCurrency, final double minimalOrderSize) {

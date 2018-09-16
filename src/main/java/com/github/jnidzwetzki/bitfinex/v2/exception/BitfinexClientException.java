@@ -17,22 +17,22 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.exception;
 
-public class APIException extends RuntimeException {
+public class BitfinexClientException extends RuntimeException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6230854947150239935L;
 
-	public APIException(final String message) {
+	public BitfinexClientException(final String message) {
 		super(message);
 	}
 
-	public APIException(final Throwable cause) {
+	public BitfinexClientException(final Throwable cause) {
 		super(cause);
 	}
 
-	public APIException(final String message, final Throwable cause) {
+	public BitfinexClientException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 

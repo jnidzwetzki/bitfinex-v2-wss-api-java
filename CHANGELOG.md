@@ -1,10 +1,14 @@
 # Version 0.6.10 (TBA)
 * Improvement: Updated dependencies
-* Improvement: The architecture of the lib was refactored (thanks to mironbalcerzak / closes #57 and #58)
+* Improvement: The architecture of the lib was refactored (thanks to mironbalcerzak / PRs: #57 - #74)
+* Improvement: Factory classes (clients/symbols/commands) introduced
+* Improvement: Common suffix for entities
+* Improvement: Event listener API introduced
+* Improvement: The APIException renamed
 * Improvement: The APIException has changed from type Exception to RuntimeException
 * Improvement: Removed unused JPA annotations
-* Bugfix: Limit the number of ticket subscriptions to 50 (https://www.bitfinex.com/posts/267)
 * Bugfix: Fixed race condition in BiConsumerCallback
+* New Feature: PooledBitfinexApiBroker - as per requirement described in https://www.bitfinex.com/posts/267
 
 # Version 0.6.9 (19.08.2018)
 * New Feature: Made auth nonce producer configurable (thanks to mironbalcerzak / closes #43) 

@@ -2,6 +2,8 @@
 
 If you have any questions about the meaning of the fields, see the Bitfinex [API documentation](https://docs.bitfinex.com/v2/docs/ws-general) for further information.
 
+Do not hesitate to report any issues/changes that we missed, as Bitfinex is contantly improving their API, and we don't keep track of them on every day basis.  
+
 ## Connecting and authorizing
 
 ```java
@@ -9,27 +11,56 @@ final String apiKey = "....";
 final String apiSecret = "....";
 
 // For public operations (subscribe ticker, candles)
-BitfinexApiBroker bitfinexApiBroker = new BitfinexApiBroker(new BitfinexApiBrokerConfig());
-bitfinexApiBroker.connect();
+BitfinexWebsocketClient client = BitfinexClientFactory.newSingleClient();
+client.connect();
 
 // For public and private operations (executing orders, read wallets)
 BitfinexApiBrokerConfig config = new BitfinexApiBrokerConfig();
 config.setApiCredentials(apiKey, apiSecret);
 
-BitfinexApiBroker bitfinexApiBroker = new BitfinexApiBroker(config);
-bitfinexApiBroker.connect();
+BitfinexWebsocketClient client = BitfinexClientFactory.newSingleClient(config);
+client.connect();
 ```
 
-## Connection capabilities
+## Provided API key permissions
 ```java
-final ConnectionCapabilities capabilities = bitfinexApiBroker.getCapabilities();
-
-if(! capabilities.isHavingOrdersWriteCapability()) {
+final BitfinexApiKeyPermissions permissions = client.getApiKeyPermissions();
+if( !permissions.isOrderWritePermission() ) {
 	System.err.println("This API key does not allow the placement of orders");
 } else {
-	// Trade
+	// place order
 )
 ```
+
+## Available Currency Pairs
+Client implementation depends internally on BitfinexCurrencyPair class which is abstraction of available currency pairs within exchange.
+Since Bitfinex is introducing new currency pairs without any notice (and does it quite often), it's up to user to keep it, as library will raise an exception on unrecognized currency pair. 
+
+To retrieve all available currency pairs user may fetch data from following URLs as described [here](https://docs.bitfinex.com/v1/reference#rest-public-symbols).
+```
+https://api.bitfinex.com/v1/symbols
+https://api.bitfinex.com/v1/symbols_details
+```
+
+Our library comes with ready preset of currencies, we do our best to keep it up to date.
+User may register said preset into JVM by calling:
+```java
+BitfinexCurrencyPair.registerDefaults();
+```
+
+However, as explained - there's no guarantee we cover all currency pairs - so user *SHOULD* register all currency pairs on their own by fetching one of mentioned REST services.
+
+Here's a snippet of registering process 
+```java
+BitfinexCurrencyPair.register("BTC","USD", 0.001); // currency, profitCurrency, minimalOrderSize
+```
+Library will raise exception during registration if currency pair is already existing. To prevent that user should call:
+```java
+BitfinexCurrencyPair.unregisterAll()
+```  
+
+PS. _minimalOrderSize_ is not used any way by library - so user may pass 0.0d if not interested in that value. 
+ 
 
 ## Connection Features
 ```java
@@ -41,6 +72,39 @@ sequenceNumberAuditor.setErrorPolicy(SequenceNumberAuditor.ErrorPolicy.LOG_ONLY)
 
 cfManager.enableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
 ```
+# Channel subscriptions
+In following chapter, we shall provide some examples on how to subscribe to different channels and listen on their events.
+API user needs to ensure client is firstly connected, as listeners do not perform channel subscriptions.
+
+## Low-level channel subscription
+Library exposes all events that are received. Here's an end-to-end snippet 
+
+```
+(1)     BitfinexCurrencyPair.registerDefaults();
+(2a)    var config = new BitfinexApiBrokerConfig();
+        config.setApiCredentials("user-api-key", "user-api-secret");
+(2b)    var client = BitfinexClientFactory.newSingleClient(config);
+(2c)    client.connect();
+(3)     var symbol = BitfinexSymbols.*("curr1","curr2", [...]);
+(4)     client.sendCommand(BitfinexCommands.subscribe*Channel(symbol));
+(5)     Closeable callbackHandler = client.getCallbacks().on*Event((symbol, payload) -> {
+            // handle event
+        })
+(6a)    callbackHandler.close();
+(6b)    client.sendCommand(BitfinexCommands.unsubscribeChannel(symbol));
+
+1 - registering bitfienx currency pairs preset in JVM 
+2 - client setup 
+3 - symbol creation
+4 - subscribing to channel for websocket events
+5 - registering listener for all events on given type (not per-symbol - for that functionality revert to managers)
+6a - unregistering listener (events are still received and client still internally handles them)
+6b - unsubscribing from channel (events no longer come)
+
+6a and 6b are not depending on one another - user may wish to keep listeners registered to channels which are not operable (at given time)
+```  
+
+Library API exposes easy way of setting up subscriptions and handling events through Managers. Following examples will depend on them.
 
 ## Subscribe candles stream
 ```java
@@ -230,4 +294,3 @@ Thread.sleep(TimeUnit.SECONDS.toMillis(5));
 
 System.out.println(bitfinexApiBroker.getWalletManager().getWalletTable().get("margin", "USD"));
 ```
-

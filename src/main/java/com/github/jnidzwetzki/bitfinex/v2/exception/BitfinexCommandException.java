@@ -17,29 +17,29 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.exception;
 
-public class CommandException extends Exception {
+public class BitfinexCommandException extends Exception {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2320930066822999221L;
 
-	public CommandException() {
+	public BitfinexCommandException() {
 	}
 
-	public CommandException(final String message) {
+	public BitfinexCommandException(final String message) {
 		super(message);
 	}
 
-	public CommandException(final Throwable cause) {
+	public BitfinexCommandException(final Throwable cause) {
 		super(cause);
 	}
 
-	public CommandException(final String message, final Throwable cause) {
+	public BitfinexCommandException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 
-	public CommandException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
+	public BitfinexCommandException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 

@@ -22,7 +22,9 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.BiConsumer;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
@@ -37,7 +39,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
@@ -50,11 +52,21 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
 public class IntegrationTest {
 
+	@BeforeClass
+	public static void registerDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.registerDefaults();
+	}
+
+	@AfterClass
+	public static void unregisterDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.unregisterAll();
+	}
+
 	/**
 	 * Try to fetch wallets on an unauthenticated connection
 	 */
 	@Test
-	public void testWalletsOnUnauthClient() throws APIException {
+	public void testWalletsOnUnauthClient() throws BitfinexClientException {
 
 		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 
@@ -67,7 +79,7 @@ public class IntegrationTest {
 
 				// Should not happen
 				Assert.fail();
-			} catch (APIException e) {
+			} catch (BitfinexClientException e) {
 				return;
 			}
 
@@ -317,10 +329,10 @@ public class IntegrationTest {
 
 	/**
 	 * Test auth failed
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 */
-	@Test(expected=APIException.class, timeout=900000)
-	public void testAuthFailed() throws APIException {
+	@Test(expected= BitfinexClientException.class, timeout=900000)
+	public void testAuthFailed() throws BitfinexClientException {
 		final String KEY = "key";
 		final String SECRET = "secret";
 
@@ -341,11 +353,11 @@ public class IntegrationTest {
 
 	/**
 	 * Test the session reconnect
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 * @throws InterruptedException
 	 */
 	@Test
-	public void testReconnect() throws APIException, InterruptedException {
+	public void testReconnect() throws BitfinexClientException, InterruptedException {
 		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 		bitfinexClient.connect();
 
@@ -378,11 +390,11 @@ public class IntegrationTest {
 
 	/**
 	 * Test the sequencing feature
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 * @throws InterruptedException
 	 */
 	@Test
-	public void testSequencing() throws APIException, InterruptedException {
+	public void testSequencing() throws BitfinexClientException, InterruptedException {
 		SequenceNumberAuditor sequenceNumberAuditor = new SequenceNumberAuditor();
 		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), sequenceNumberAuditor);
 		bitfinexClient.connect();

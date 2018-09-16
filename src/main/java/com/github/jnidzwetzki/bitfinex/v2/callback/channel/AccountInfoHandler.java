@@ -36,7 +36,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
@@ -94,7 +94,7 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
     }
 
     @Override
-    public void handleChannelData(final String action, final JSONArray message) throws APIException {
+    public void handleChannelData(final String action, final JSONArray message) throws BitfinexClientException {
         if (message.toString().contains("ERROR")) {
             logger.error("Got Error message: {}", message.toString());
         }
@@ -105,7 +105,7 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
         }
         try {
             handler.handleChannelData(action, message);
-        } catch (APIException e) {
+        } catch (BitfinexClientException e) {
             logger.error("Got exception while handling callback", e);
         }
     }

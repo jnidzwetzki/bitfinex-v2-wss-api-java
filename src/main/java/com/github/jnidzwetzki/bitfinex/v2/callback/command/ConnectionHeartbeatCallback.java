@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 
 public class ConnectionHeartbeatCallback implements CommandCallbackHandler {
 
@@ -31,7 +31,7 @@ public class ConnectionHeartbeatCallback implements CommandCallbackHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleChannelData(final JSONObject jsonObject) throws APIException {
+	public void handleChannelData(final JSONObject jsonObject) throws BitfinexClientException {
 		heartbeatConsumer.accept(System.currentTimeMillis());
 	}
 

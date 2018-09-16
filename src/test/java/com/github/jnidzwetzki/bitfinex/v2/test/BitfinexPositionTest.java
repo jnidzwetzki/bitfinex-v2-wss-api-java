@@ -21,7 +21,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.json.JSONArray;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -30,20 +32,31 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.PositionHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.PositionManager;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
 
 public class BitfinexPositionTest {
-	
+
+	@BeforeClass
+	public static void registerDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.registerDefaults();
+	}
+
+	@AfterClass
+	public static void unregisterDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.unregisterAll();
+	}
+
 	/**
 	 * Test the position handler
-	 * @throws APIException 
+	 * @throws BitfinexClientException
 	 */
 	@Test
-	public void testPositionHandlerUpdate1() throws APIException {
+	public void testPositionHandlerUpdate1() throws BitfinexClientException {
 		
 		final String jsonString = "[0,\"pu\",[\"tETHUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,0,null,null,null,null]]";
 		final JSONArray jsonArray = new JSONArray(jsonString);
@@ -63,10 +76,10 @@ public class BitfinexPositionTest {
 	
 	/**
 	 * Test the position handler - with null funding type
-	 * @throws APIException 
+	 * @throws BitfinexClientException
 	 */
 	@Test
-	public void testPositionHandlerUpdate2() throws APIException {
+	public void testPositionHandlerUpdate2() throws BitfinexClientException {
 		
 		final String jsonString = "[0,\"pu\",[\"tETHUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,null,null,null,null,null]]";
 		final JSONArray jsonArray = new JSONArray(jsonString);
@@ -86,10 +99,10 @@ public class BitfinexPositionTest {
 	
 	/**
 	 * Test the position handler
-	 * @throws APIException 
+	 * @throws BitfinexClientException
 	 */
 	@Test
-	public void testPositionHandlerSnapshot() throws APIException {
+	public void testPositionHandlerSnapshot() throws BitfinexClientException {
 		
 		final String jsonString = "[0,\"ps\",[[\"tETHUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,0,null,null,null,null], [\"tBTCUSD\",\"ACTIVE\",0.14,713.78,-0.00330012,0,null,null,null,null]]]";
 		final JSONArray jsonArray = new JSONArray(jsonString);

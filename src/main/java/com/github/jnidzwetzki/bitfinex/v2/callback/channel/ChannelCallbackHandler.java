@@ -19,7 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2.callback.channel;
 
 import org.json.JSONArray;
 
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
 public interface ChannelCallbackHandler {
@@ -29,9 +29,9 @@ public interface ChannelCallbackHandler {
      *
      * @param action        - channel action (hb, te/tu etc.)
      * @param message       - json message
-     * @throws APIException raised in case of exception
+     * @throws BitfinexClientException raised in case of exception
      */
-    void handleChannelData(final String action, final JSONArray message) throws APIException;
+    void handleChannelData(final String action, final JSONArray message) throws BitfinexClientException;
 
     /**
      * returns channel symbol

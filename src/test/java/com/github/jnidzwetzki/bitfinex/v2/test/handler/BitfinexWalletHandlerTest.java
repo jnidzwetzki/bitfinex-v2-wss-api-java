@@ -20,7 +20,9 @@ package com.github.jnidzwetzki.bitfinex.v2.test.handler;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import org.json.JSONArray;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -28,13 +30,24 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.WalletHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
-import com.github.jnidzwetzki.bitfinex.v2.exception.APIException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
 
 public class BitfinexWalletHandlerTest {
+
+	@BeforeClass
+	public static void registerDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.registerDefaults();
+	}
+
+	@AfterClass
+	public static void unregisterDefaultCurrencyPairs() {
+		BitfinexCurrencyPair.unregisterAll();
+	}
 
 	/**
 	 * The delta for double compares
@@ -43,11 +56,11 @@ public class BitfinexWalletHandlerTest {
 
 	/**
 	 * Test the wallet parsing
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 * @throws InterruptedException 
 	 */
 	@Test
-	public void testWalletUpdate() throws APIException, InterruptedException {
+	public void testWalletUpdate() throws BitfinexClientException, InterruptedException {
 		
 		final String callbackValue = "[0,\"ws\",[\"exchange\",\"ETH\",9,0,null]]";
 		final JSONArray jsonArray = new JSONArray(callbackValue);
@@ -68,7 +81,7 @@ public class BitfinexWalletHandlerTest {
 				try {
 					Table<BitfinexWallet.Type, String, BitfinexWallet> wt = walletManager.getWalletTable();
 					wt.put(wallet.getWalletType(), wallet.getCurrency(), wallet);
-				} catch (APIException e) {
+				} catch (BitfinexClientException e) {
 					e.printStackTrace();
 				}
 			}
@@ -83,11 +96,11 @@ public class BitfinexWalletHandlerTest {
 	
 	/**
 	 * Test the wallet parsing
-	 * @throws APIException
+	 * @throws BitfinexClientException
 	 * @throws InterruptedException 
 	 */
 	@Test
-	public void testWalletSnapshot() throws APIException, InterruptedException {
+	public void testWalletSnapshot() throws BitfinexClientException, InterruptedException {
 		
 		final String callbackValue = "[0,\"ws\",[[\"exchange\",\"ETH\",9,0,null],[\"exchange\",\"USD\",1826.56468323,0,null],[\"margin\",\"USD\",0,0,null],[\"exchange\",\"XRP\",0,0,null],[\"exchange\",\"EOS\",0,0,null],[\"exchange\",\"NEO\",0,0,null],[\"exchange\",\"LTC\",0,0,null],[\"exchange\",\"IOT\",0,0,null],[\"exchange\",\"BTC\",0,0,null]]]";
 		final JSONArray jsonArray = new JSONArray(callbackValue);
@@ -108,7 +121,7 @@ public class BitfinexWalletHandlerTest {
 				try {
 					Table<BitfinexWallet.Type, String, BitfinexWallet> wt = walletManager.getWalletTable();
 					wt.put(wallet.getWalletType(), wallet.getCurrency(), wallet);
-				} catch (APIException e) {
+				} catch (BitfinexClientException e) {
 					e.printStackTrace();
 				}
 			}
