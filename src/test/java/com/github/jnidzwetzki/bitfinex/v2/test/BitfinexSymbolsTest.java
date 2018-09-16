@@ -31,7 +31,7 @@ public class BitfinexSymbolsTest {
 	 * @throws BitfinexCommandException
 	 */
 	@Test
-	public void testCommandsJSON() throws BitfinexCommandException {
+	public void testSymbolCreation() throws BitfinexCommandException {
 		  BitfinexCurrencyPair.values().stream()
 		  	.limit(20)
 		  	.forEach(bfxPair -> {
@@ -59,7 +59,15 @@ public class BitfinexSymbolsTest {
               final BitfinexTickerSymbol ticker2 = BitfinexSymbols.ticker(bfxPair.getCurrency1(), bfxPair.getCurrency2());
               Assert.assertEquals(ticker1, ticker2);
               Assert.assertNotEquals(null, ticker1);
-          });
-		
+          });	
+	}
+	
+	/**
+	 * Test the creation of symbols
+	 * @throws BitfinexCommandException
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testSymbolCreationInvalid() throws BitfinexCommandException {
+        BitfinexSymbols.orderBook(BitfinexCurrencyPair.of("BTC", "USD"), BitfinexOrderBookSymbol.Precision.R0, BitfinexOrderBookSymbol.Frequency.F0, 100);
 	}
 }
