@@ -11,15 +11,13 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexClientFactory;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.PooledBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCandlesCommand;
-import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeOrderbookCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTradesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
-public class PooledBitfinexApiBrokerIT {
+public class PooledBitfinexApiBrokerTest {
 
     @BeforeClass
     public static void registerDefaultCurrencyPairs() {
@@ -34,27 +32,37 @@ public class PooledBitfinexApiBrokerIT {
     @Test(timeout = 60_000)
     public void testSubscriptions() throws InterruptedException {
         // given
-        BitfinexWebsocketConfiguration config = new BitfinexWebsocketConfiguration();
-        PooledBitfinexApiBroker client = (PooledBitfinexApiBroker) BitfinexClientFactory.newPooledClient(config, 50);
+        final int channelLimit = 10;
+        final int channelsPerConnection = 5;
+    	
+        final BitfinexWebsocketConfiguration config = new BitfinexWebsocketConfiguration();
+        final PooledBitfinexApiBroker client = 
+        		(PooledBitfinexApiBroker) BitfinexClientFactory.newPooledClient(config, channelsPerConnection);
 
-        int channelLimit = 150;
         // when
-        CountDownLatch subsLatch = new CountDownLatch(channelLimit * 4);
-        client.getCallbacks().onSubscribeChannelEvent(chan -> subsLatch.countDown());
+        final CountDownLatch subsLatch = new CountDownLatch(channelLimit * 3);
+        client.getCallbacks().onSubscribeChannelEvent(chan -> {
+        		subsLatch.countDown();
+        		System.out.println("Got subscribed event: " + chan + " " + subsLatch.getCount());
+        });
 
         client.connect();
+        
         BitfinexCurrencyPair.values().stream()
                 .limit(channelLimit)
                 .forEach(bfxPair -> {
                     client.sendCommand(new SubscribeCandlesCommand(BitfinexSymbols.candlesticks(bfxPair, BitfinexCandleTimeFrame.MINUTES_1)));
-                    client.sendCommand(new SubscribeOrderbookCommand(BitfinexSymbols.orderBook(bfxPair, BitfinexOrderBookSymbol.Precision.P0, BitfinexOrderBookSymbol.Frequency.F0, 100)));
+                    // Not all currency's have a orderbook (e.g., CFI:USD)
+                    // client.sendCommand(new SubscribeOrderbookCommand(BitfinexSymbols.orderBook(bfxPair, BitfinexOrderBookSymbol.Precision.P0, BitfinexOrderBookSymbol.Frequency.F0, 100)));
                     client.sendCommand(new SubscribeTickerCommand(BitfinexSymbols.ticker(bfxPair)));
                     client.sendCommand(new SubscribeTradesCommand(BitfinexSymbols.executedTrades(bfxPair)));
                 });
+        
+       
         // then
         subsLatch.await();
-        Assert.assertEquals(channelLimit * 4, client.getSubscribedChannels().size());
-        Assert.assertEquals(3, client.websocketConnCount());
+        Assert.assertEquals(channelLimit * 3, client.getSubscribedChannels().size());
+        Assert.assertEquals(channelLimit * 3 / channelsPerConnection, client.websocketConnCount());
     }
 
 }
