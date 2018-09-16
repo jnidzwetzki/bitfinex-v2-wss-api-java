@@ -26,7 +26,7 @@ import org.junit.Test;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 
 
-public class TestBitfinexKeyPermissions {
+public class BitfinexKeyPermissions {
 	
 	@Test
 	public void testAllKey() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
