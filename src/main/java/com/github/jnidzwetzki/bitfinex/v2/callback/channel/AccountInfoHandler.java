@@ -18,11 +18,11 @@
 package com.github.jnidzwetzki.bitfinex.v2.callback.channel;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.google.common.collect.Maps;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,8 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 public class AccountInfoHandler implements ChannelCallbackHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(AccountInfoHandler.class);
-    private final Map<String, ChannelCallbackHandler> channelHandler = Maps.newHashMap();
+    
+    private final Map<String, ChannelCallbackHandler> channelHandler = new HashMap<>();
 
     private final int channelId;
     private final BitfinexAccountSymbol symbol;
