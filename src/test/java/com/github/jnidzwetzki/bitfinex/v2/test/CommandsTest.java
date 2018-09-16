@@ -49,7 +49,7 @@ public class CommandsTest {
 	}
 
 	/**
-	 * Call all commands and check for excepion
+	 * Call all commands and check for exception
 	 * @throws BitfinexCommandException
 	 */
 	@Test
