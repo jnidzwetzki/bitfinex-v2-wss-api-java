@@ -29,11 +29,11 @@ public class PooledBitfinexApiBrokerTest {
         BitfinexCurrencyPair.unregisterAll();
     }
 
-    @Test(timeout = 60_000)
+    @Test(timeout = 120_000)
     public void testSubscriptions() throws InterruptedException {
         // given
-        final int channelLimit = 10;
-        final int channelsPerConnection = 5;
+        final int channelLimit = 20;
+        final int channelsPerConnection = 10;
     	
         final BitfinexWebsocketConfiguration config = new BitfinexWebsocketConfiguration();
         final PooledBitfinexApiBroker client = 
