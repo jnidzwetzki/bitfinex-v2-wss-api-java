@@ -67,9 +67,11 @@ public class PooledBitfinexApiBroker implements BitfinexWebsocketClient {
 
     public PooledBitfinexApiBroker(final BitfinexWebsocketConfiguration config, final BitfinexApiCallbackRegistry callbacks,
                                    final SequenceNumberAuditor seqNoAuditor, final int channelsPerConnection) {
-        if (channelsPerConnection < 50 || channelsPerConnection > 250) {
-            throw new IllegalArgumentException("channelsPerConnection must be in range (50,250)");
+       
+    		if (channelsPerConnection < 1 || channelsPerConnection > 250) {
+            throw new IllegalArgumentException("channelsPerConnection must be in range (1,250)");
         }
+    		
         configuration = new BitfinexWebsocketConfiguration(config);
         callbackRegistry = callbacks;
         sequenceNumberAuditor = seqNoAuditor;

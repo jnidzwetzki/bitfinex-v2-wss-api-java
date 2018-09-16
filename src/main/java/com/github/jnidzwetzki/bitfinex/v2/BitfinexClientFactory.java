@@ -45,7 +45,7 @@ public final class BitfinexClientFactory {
      * spreads amount of subscribed channels across multiple websocket physical connections.
      *
      * @param config                - config
-     * @param channelsPerConnection - channels per client - 25 - 250 (limit by bitfinex exchange)
+     * @param channelsPerConnection - channels per client - 1 - 250 (limit by bitfinex exchange)
      * @return {@link PooledBitfinexApiBroker} client
      */
     public static BitfinexWebsocketClient newPooledClient(BitfinexWebsocketConfiguration config, int channelsPerConnection) {
