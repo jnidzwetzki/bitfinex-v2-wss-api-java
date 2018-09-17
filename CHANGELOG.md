@@ -1,4 +1,4 @@
-# Version 0.7.0 (TBA)
+# Version 0.7.0 (17.09.2018)
 * New Feature: PooledBitfinexApiBroker - as per requirement described in https://www.bitfinex.com/posts/267
 * New Feature: Added future operation objects
 * Improvement: Updated dependencies
