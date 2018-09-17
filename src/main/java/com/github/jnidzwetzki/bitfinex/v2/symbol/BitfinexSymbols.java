@@ -23,7 +23,9 @@ public final class BitfinexSymbols {
      * @param permissions of specified key
      * @return symbol
      */
-    public static BitfinexAccountSymbol account(String apiKey, BitfinexApiKeyPermissions permissions) {
+    public static BitfinexAccountSymbol account(final String apiKey, 
+    		final BitfinexApiKeyPermissions permissions) {
+    	
         return new BitfinexAccountSymbol(apiKey, permissions);
     }
 
@@ -34,7 +36,9 @@ public final class BitfinexSymbols {
      * @param timeframe    configuration of candles
      * @return symbol
      */
-    public static BitfinexCandlestickSymbol candlesticks(BitfinexCurrencyPair currencyPair, BitfinexCandleTimeFrame timeframe) {
+    public static BitfinexCandlestickSymbol candlesticks(final BitfinexCurrencyPair currencyPair, 
+    		final BitfinexCandleTimeFrame timeframe) {
+    	
         return new BitfinexCandlestickSymbol(currencyPair, Objects.requireNonNull(timeframe));
     }
 
@@ -46,10 +50,13 @@ public final class BitfinexSymbols {
      * @param timeframe      configuration of candles
      * @return symbol
      */
-    public static BitfinexCandlestickSymbol candlesticks(String currency, String profitCurrency, BitfinexCandleTimeFrame timeframe) {
-        currency = Objects.requireNonNull(currency).toUpperCase();
-        profitCurrency = Objects.requireNonNull(profitCurrency).toUpperCase();
-        return candlesticks(BitfinexCurrencyPair.of(currency, profitCurrency), timeframe);
+    public static BitfinexCandlestickSymbol candlesticks(final String currency, final String profitCurrency, 
+    		final BitfinexCandleTimeFrame timeframe) {
+    	
+        final String currencyNonNull = Objects.requireNonNull(currency).toUpperCase();
+        final String profitCurrencyNonNull = Objects.requireNonNull(profitCurrency).toUpperCase();
+        
+        return candlesticks(BitfinexCurrencyPair.of(currencyNonNull, profitCurrencyNonNull), timeframe);
     }
 
     /**
@@ -58,7 +65,7 @@ public final class BitfinexSymbols {
      * @param currencyPair of trades channel
      * @return symbol
      */
-    public static BitfinexExecutedTradeSymbol executedTrades(BitfinexCurrencyPair currencyPair) {
+    public static BitfinexExecutedTradeSymbol executedTrades(final BitfinexCurrencyPair currencyPair) {
         return new BitfinexExecutedTradeSymbol(currencyPair);
     }
 
@@ -69,10 +76,13 @@ public final class BitfinexSymbols {
      * @param profitCurrency of trades channel
      * @return symbol
      */
-    public static BitfinexExecutedTradeSymbol executedTrades(String currency, String profitCurrency) {
-        currency = Objects.requireNonNull(currency).toUpperCase();
-        profitCurrency = Objects.requireNonNull(profitCurrency).toUpperCase();
-        return executedTrades(BitfinexCurrencyPair.of(currency, profitCurrency));
+    public static BitfinexExecutedTradeSymbol executedTrades(final String currency, 
+    		final String profitCurrency) {
+    	
+        final String currencyNonNull = Objects.requireNonNull(currency).toUpperCase();
+        final String profitCurrencyNonNull = Objects.requireNonNull(profitCurrency).toUpperCase();
+        
+        return executedTrades(BitfinexCurrencyPair.of(currencyNonNull, profitCurrencyNonNull));
     }
 
     /**
@@ -81,7 +91,7 @@ public final class BitfinexSymbols {
      * @param currencyPair of raw order book channel
      * @return symbol
      */
-    public static BitfinexOrderBookSymbol rawOrderBook(BitfinexCurrencyPair currencyPair) {
+    public static BitfinexOrderBookSymbol rawOrderBook(final BitfinexCurrencyPair currencyPair) {
         return new BitfinexOrderBookSymbol(currencyPair, BitfinexOrderBookSymbol.Precision.R0, null, null);
     }
 
@@ -92,10 +102,11 @@ public final class BitfinexSymbols {
      * @param profitCurrency of raw order book channel
      * @return symbol
      */
-    public static BitfinexOrderBookSymbol rawOrderBook(String currency, String profitCurrency) {
-        currency = Objects.requireNonNull(currency).toUpperCase();
-        profitCurrency = Objects.requireNonNull(profitCurrency).toUpperCase();
-        return rawOrderBook(BitfinexCurrencyPair.of(currency, profitCurrency));
+    public static BitfinexOrderBookSymbol rawOrderBook(final String currency, final String profitCurrency) {
+        final String currencyNonNull = Objects.requireNonNull(currency).toUpperCase();
+        final String profitCurrencyNonNull = Objects.requireNonNull(profitCurrency).toUpperCase();
+        
+        return rawOrderBook(BitfinexCurrencyPair.of(currencyNonNull, profitCurrencyNonNull));
     }
 
     /**
@@ -107,11 +118,14 @@ public final class BitfinexSymbols {
      * @param pricePoints  in initial snapshot
      * @return symbol
      */
-    public static BitfinexOrderBookSymbol orderBook(BitfinexCurrencyPair currencyPair, BitfinexOrderBookSymbol.Precision precision,
-                                                    BitfinexOrderBookSymbol.Frequency frequency, int pricePoints) {
+    public static BitfinexOrderBookSymbol orderBook(final BitfinexCurrencyPair currencyPair, 
+    		final BitfinexOrderBookSymbol.Precision precision,
+    		final BitfinexOrderBookSymbol.Frequency frequency, final int pricePoints) {
+    	
         if (precision == BitfinexOrderBookSymbol.Precision.R0) {
             throw new IllegalArgumentException("Use BitfinexSymbols#rawOrderBook() factory method instead");
         }
+        
         return new BitfinexOrderBookSymbol(currencyPair, precision, frequency, pricePoints);
     }
 
@@ -125,11 +139,14 @@ public final class BitfinexSymbols {
      * @param pricePoints    in initial snapshot
      * @return symbol
      */
-    public static BitfinexOrderBookSymbol orderBook(String currency, String profitCurrency, BitfinexOrderBookSymbol.Precision precision,
-                                                    BitfinexOrderBookSymbol.Frequency frequency, int pricePoints) {
-        currency = Objects.requireNonNull(currency).toUpperCase();
-        profitCurrency = Objects.requireNonNull(profitCurrency).toUpperCase();
-        return orderBook(BitfinexCurrencyPair.of(currency, profitCurrency), precision, frequency, pricePoints);
+    public static BitfinexOrderBookSymbol orderBook(final String currency, final String profitCurrency, 
+    		final BitfinexOrderBookSymbol.Precision precision,
+    		final BitfinexOrderBookSymbol.Frequency frequency, final int pricePoints) {
+    	
+        final String currencyNonNull = Objects.requireNonNull(currency).toUpperCase();
+        final String profitCurrencyNonNull = Objects.requireNonNull(profitCurrency).toUpperCase();
+        
+        return orderBook(BitfinexCurrencyPair.of(currencyNonNull, profitCurrencyNonNull), precision, frequency, pricePoints);
     }
 
     /**
@@ -138,7 +155,7 @@ public final class BitfinexSymbols {
      * @param currencyPair of ticker channel
      * @return symbol
      */
-    public static BitfinexTickerSymbol ticker(BitfinexCurrencyPair currencyPair) {
+    public static BitfinexTickerSymbol ticker(final BitfinexCurrencyPair currencyPair) {
         return new BitfinexTickerSymbol(currencyPair);
     }
 
@@ -149,9 +166,11 @@ public final class BitfinexSymbols {
      * @param profitCurrency of ticker
      * @return symbol
      */
-    public static BitfinexTickerSymbol ticker(String currency, String profitCurrency) {
-        currency = Objects.requireNonNull(currency).toUpperCase();
-        profitCurrency = Objects.requireNonNull(profitCurrency).toUpperCase();
-        return ticker(BitfinexCurrencyPair.of(currency, profitCurrency));
+    public static BitfinexTickerSymbol ticker(final String currency, final String profitCurrency) {
+    	
+        final String currencyNonNull = Objects.requireNonNull(currency).toUpperCase();
+        final String profitCurrencyNonNull = Objects.requireNonNull(profitCurrency).toUpperCase();
+        
+        return ticker(BitfinexCurrencyPair.of(currencyNonNull, profitCurrencyNonNull));
     }
 }
