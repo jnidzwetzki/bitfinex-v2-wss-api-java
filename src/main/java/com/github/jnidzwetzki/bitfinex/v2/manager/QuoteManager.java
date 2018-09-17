@@ -64,12 +64,12 @@ public class QuoteManager extends AbstractManager {
 	/**
 	 * The pending subscribes
 	 */
-	private final FutureOperationRegistry pendingSubscribes = new FutureOperationRegistry();
+	private final FutureOperationRegistry pendingSubscribes;
 	
 	/**
 	 * The pending unsubscibes
 	 */
-	private final FutureOperationRegistry pendingUnsubscribes = new FutureOperationRegistry();
+	private final FutureOperationRegistry pendingUnsubscribes;
 	
 	/**
 	 * The bitfinex API
@@ -83,7 +83,9 @@ public class QuoteManager extends AbstractManager {
 		this.tickerCallbacks = new BiConsumerCallbackManager<>(executorService, client);
 		this.candleCallbacks = new BiConsumerCallbackManager<>(executorService, client);
 		this.tradesCallbacks = new BiConsumerCallbackManager<>(executorService, client);
-
+		this.pendingSubscribes = new FutureOperationRegistry();
+		this.pendingUnsubscribes = new FutureOperationRegistry();
+		
 		client.getCallbacks().onCandlesticksEvent(this::handleCandlestickCollection);
 		client.getCallbacks().onTickEvent(this::handleNewTick);
 		client.getCallbacks().onExecutedTradeEvent((sym, trades) -> trades.forEach(t -> this.handleExecutedTradeEntry(sym, t)));
