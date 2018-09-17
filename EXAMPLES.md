@@ -42,13 +42,13 @@ https://api.bitfinex.com/v1/symbols
 https://api.bitfinex.com/v1/symbols_details
 ```
 
-Our library comes with ready preset of currencies, we do our best to keep it up to date.
-User may register said preset into JVM by calling:
+Since version 0.7.1, our library does not contain any hardcoded currency symbols anymore. The available currencies change very frequently and we are unable to keep the symbols up-to-date. You can register the needed currencies on your own or you can call the method `registerDefaults` which fetches all known currencies from Bitfinex and registers them.
+
 ```java
 BitfinexCurrencyPair.registerDefaults();
 ```
 
-However, as explained - there's no guarantee we cover all currency pairs - so user *SHOULD* register all currency pairs on their own by fetching one of mentioned REST services.
+However, as explained the user can register all currency pairs on their own by fetching one of mentioned REST services.
 
 Here's a snippet of registering process 
 ```java

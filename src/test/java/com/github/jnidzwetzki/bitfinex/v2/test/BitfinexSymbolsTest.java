@@ -25,6 +25,16 @@ public class BitfinexSymbolsTest {
 	public static void unregisterDefaultCurrencyPairs() {
 		BitfinexCurrencyPair.unregisterAll();
 	}
+	
+	/**
+	 * Are the default currencies loaded?
+	 */
+	@Test
+	public void testDefaultCurrencyLoaded() {
+		final BitfinexCurrencyPair currency = BitfinexCurrencyPair.of("BTC", "USD");
+		Assert.assertNotNull(currency);
+		Assert.assertTrue(BitfinexCurrencyPair.values().size() > 20);
+	}
 
 	/**
 	 * Test the creation of symbols
