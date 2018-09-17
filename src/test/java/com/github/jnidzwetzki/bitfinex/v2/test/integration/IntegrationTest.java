@@ -42,12 +42,12 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderBookEntry;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
+import com.github.jnidzwetzki.bitfinex.v2.entity.FutureOperation;
 import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.ConnectionFeatureManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderbookManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.RawOrderbookManager;
-import com.github.jnidzwetzki.bitfinex.v2.manager.FutureOperation;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
@@ -295,7 +295,7 @@ public class IntegrationTest {
 	/**
 	 * Test the tick stream
 	 */
-	@Test(timeout=60000)
+	@Test(timeout=120_000)
 	public void testTickerStream() {
 		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 
@@ -336,7 +336,7 @@ public class IntegrationTest {
 	 * Test auth failed
 	 * @throws BitfinexClientException
 	 */
-	@Test(expected= BitfinexClientException.class, timeout=900000)
+	@Test(expected=BitfinexClientException.class, timeout=120_000)
 	public void testAuthFailed() throws BitfinexClientException {
 		final String KEY = "key";
 		final String SECRET = "secret";

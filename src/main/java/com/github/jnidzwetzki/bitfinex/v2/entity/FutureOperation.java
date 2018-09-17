@@ -15,16 +15,13 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.manager;
+package com.github.jnidzwetzki.bitfinex.v2.entity;
 
-import java.io.Closeable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackListeners;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
 public class FutureOperation {
@@ -35,40 +32,56 @@ public class FutureOperation {
 	private final CountDownLatch doneLatch = new CountDownLatch(1);
 	
 	/**
-	 * The event listener
+	 * The symbol
 	 */
-	private final Closeable closeable;
+	private final BitfinexStreamSymbol symbol;
 
-	public FutureOperation(final BitfinexApiCallbackListeners callbackListeners, 
-			final BitfinexStreamSymbol symbol, final boolean subscribeEvent) {
-		
-		// FIXME: Find a good way to unsubscribe this event (currently performed in finalizer)
-		final Consumer<BitfinexStreamSymbol> listener = (s) -> {
-			if(s.equals(symbol)) {
-				doneLatch.countDown();
-			}
-		};
-		
-		if(subscribeEvent) {
-			closeable = callbackListeners.onSubscribeChannelEvent(listener);
-		} else {
-			closeable = callbackListeners.onUnsubscribeChannelEvent(listener);
-		}
+	public FutureOperation(final BitfinexStreamSymbol symbol) {
+		this.symbol = symbol;
 	}
 	
-	@Override
-	protected void finalize() throws Throwable {
-		closeable.close();
+	/**
+	 * Get the stream symbol
+	 * @return
+	 */
+	public BitfinexStreamSymbol getSymbol() {
+		return symbol;
 	}
 
+	/**
+	 * Is the operation done?
+	 * @return
+	 */
 	public boolean isDone() {
 		return doneLatch.getCount() == 0;
 	}
+	
+	/**
+	 * The the future to done
+	 */
+	public void setToDone() {
+		if(! isDone()) {
+			doneLatch.countDown();
+		}
+	}
 
+	/**
+	 * Wait for the completion of the operation
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
 	public void waitForCompletion() throws InterruptedException, ExecutionException {
 		doneLatch.await();
 	}
 
+	/**
+	 * Wait for the completion of the operation (timed version)
+	 * @param timeout
+	 * @param unit
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws TimeoutException
+	 */
 	public void waitForCompletion(final long timeout, final TimeUnit unit) 
 			throws InterruptedException, ExecutionException, TimeoutException {
 		doneLatch.await(timeout, unit);

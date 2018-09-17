@@ -32,6 +32,7 @@ import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
+import com.github.jnidzwetzki.bitfinex.v2.entity.FutureOperation;
 import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
@@ -61,6 +62,16 @@ public class QuoteManager extends AbstractManager {
 	private final BiConsumerCallbackManager<BitfinexExecutedTradeSymbol, BitfinexExecutedTrade> tradesCallbacks;
 
 	/**
+	 * The pending subscribes
+	 */
+	private final FutureOperationRegistry pendingSubscribes = new FutureOperationRegistry();
+	
+	/**
+	 * The pending unsubscibes
+	 */
+	private final FutureOperationRegistry pendingUnsubscribes = new FutureOperationRegistry();
+	
+	/**
 	 * The bitfinex API
 	 */
 	private final BitfinexWebsocketClient client;
@@ -76,6 +87,8 @@ public class QuoteManager extends AbstractManager {
 		client.getCallbacks().onCandlesticksEvent(this::handleCandlestickCollection);
 		client.getCallbacks().onTickEvent(this::handleNewTick);
 		client.getCallbacks().onExecutedTradeEvent((sym, trades) -> trades.forEach(t -> this.handleExecutedTradeEntry(sym, t)));
+		client.getCallbacks().onSubscribeChannelEvent((s) -> pendingSubscribes.handleEvent(s));
+		client.getCallbacks().onUnsubscribeChannelEvent((s) -> pendingUnsubscribes.handleEvent(s));
 	}
 
 	/**
@@ -164,8 +177,9 @@ public class QuoteManager extends AbstractManager {
 	public FutureOperation subscribeTicker(final BitfinexTickerSymbol tickerSymbol) 
 			throws BitfinexClientException {
 		
-		final FutureOperation future = new FutureOperation(client.getCallbacks(), tickerSymbol, true);
-
+		final FutureOperation future = new FutureOperation(tickerSymbol);
+		pendingSubscribes.registerFuture(future);
+		
 		final SubscribeTickerCommand command = new SubscribeTickerCommand(tickerSymbol);
 		client.sendCommand(command);
 		
@@ -178,7 +192,9 @@ public class QuoteManager extends AbstractManager {
 	 * @return 
 	 */
 	public FutureOperation unsubscribeTicker(final BitfinexTickerSymbol tickerSymbol) {
-		final FutureOperation future = new FutureOperation(client.getCallbacks(), tickerSymbol, false);
+		
+		final FutureOperation future = new FutureOperation(tickerSymbol);
+		pendingUnsubscribes.registerFuture(future);
 
 		lastTickerActivity.remove(tickerSymbol);
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(tickerSymbol);
@@ -240,9 +256,13 @@ public class QuoteManager extends AbstractManager {
 	 * @throws BitfinexClientException
 	 */
 	public FutureOperation subscribeCandles(final BitfinexCandlestickSymbol symbol) throws BitfinexClientException {
+		
+		final FutureOperation future = new FutureOperation(symbol);
+		pendingSubscribes.registerFuture(future);
+		
 		final SubscribeCandlesCommand command = new SubscribeCandlesCommand(symbol);
-		final FutureOperation future = new FutureOperation(client.getCallbacks(), symbol, true);
 		client.sendCommand(command);
+		
 		return future;
 	}
 
@@ -254,7 +274,10 @@ public class QuoteManager extends AbstractManager {
 	 */
 	public FutureOperation unsubscribeCandles(final BitfinexCandlestickSymbol symbol) {
 		lastTickerActivity.remove(symbol);
-		final FutureOperation future = new FutureOperation(client.getCallbacks(), symbol, false);
+		
+		final FutureOperation future = new FutureOperation(symbol);
+		pendingUnsubscribes.registerFuture(future);
+		
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(symbol);
 		client.sendCommand(command);
 		return future;
@@ -296,7 +319,8 @@ public class QuoteManager extends AbstractManager {
 	 */
 	public FutureOperation subscribeExecutedTrades(final BitfinexExecutedTradeSymbol tradeSymbol) {
 
-		final FutureOperation future = new FutureOperation(client.getCallbacks(), tradeSymbol, true);
+		final FutureOperation future = new FutureOperation(tradeSymbol);
+		pendingSubscribes.registerFuture(future);
 		
 		final SubscribeTradesCommand subscribeOrderbookCommand
 			= new SubscribeTradesCommand(tradeSymbol);
@@ -315,7 +339,8 @@ public class QuoteManager extends AbstractManager {
 	 * @return 
 	 */
 	public FutureOperation unsubscribeExecutedTrades(final BitfinexExecutedTradeSymbol tradeSymbol) {
-		final FutureOperation future = new FutureOperation(client.getCallbacks(), tradeSymbol, false);
+		final FutureOperation future = new FutureOperation(tradeSymbol);
+		pendingUnsubscribes.registerFuture(future);
 
 		final UnsubscribeChannelCommand command = new UnsubscribeChannelCommand(tradeSymbol);
 		client.sendCommand(command);
