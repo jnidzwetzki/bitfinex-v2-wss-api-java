@@ -37,34 +37,37 @@ public class BitfinexCurrencyPair {
 	 */
 	private final static Map<String, BitfinexCurrencyPair> instances = new ConcurrentHashMap<>();
 
+	/**
+	 * The Bitfinex symbol URL
+	 */
 	public static final String SYMBOL_URL = "https://api.bitfinex.com/v1/symbols_details";
-	
+
 	/**
 	 * Load and register all known currencies 
 	 * 
 	 * @throws BitfinexClientException
 	 */
 	public static void registerDefaults() throws BitfinexClientException {
-		
-	    try {
+
+		try {
 			final URL url = new URL(SYMBOL_URL);
 			final String symbolJson = Resources.toString(url, Charsets.UTF_8);
-	        final JSONArray jsonArray = new JSONArray(symbolJson);
+			final JSONArray jsonArray = new JSONArray(symbolJson);
 
-	        for(int i = 0; i < jsonArray.length(); i++) {
-	        		final JSONObject currency = jsonArray.getJSONObject(i);
-	        		final String pair = currency.getString("pair");
-	        		
-	        		if(pair.length() != 6) {
-	        			throw new BitfinexClientException("The currency pair is not 6 chars long: " + pair);
-	        		}
-	        		
-	        		final double minOrderSize = currency.getDouble("minimum_order_size");
-	        		final String currency1 = pair.substring(0, 3).toUpperCase();
-	        		final String currency2 = pair.substring(3, 6).toUpperCase();
-	        		register(currency1, currency2, minOrderSize);
-	        }
-			
+			for(int i = 0; i < jsonArray.length(); i++) {
+				final JSONObject currency = jsonArray.getJSONObject(i);
+				final String pair = currency.getString("pair");
+
+				if(pair.length() != 6) {
+					throw new BitfinexClientException("The currency pair is not 6 chars long: " + pair);
+				}
+
+				final double minOrderSize = currency.getDouble("minimum_order_size");
+				final String currency1 = pair.substring(0, 3).toUpperCase();
+				final String currency2 = pair.substring(3, 6).toUpperCase();
+				register(currency1, currency2, minOrderSize);
+			}
+
 		} catch (IOException e) {
 			throw new BitfinexClientException(e);
 		} 
@@ -91,12 +94,12 @@ public class BitfinexCurrencyPair {
 				minimalOrderSize);
 
 		final BitfinexCurrencyPair oldCurrency = instances.putIfAbsent(key, newCurrency);
-		
+
 		// The currency was already registered
 		if(oldCurrency != null) {
 			throw new IllegalArgumentException("The currency " + key + " is already known");
 		}
-		
+
 		return newCurrency;
 	}
 
