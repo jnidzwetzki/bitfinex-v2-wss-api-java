@@ -1,6 +1,5 @@
 package com.github.jnidzwetzki.bitfinex.v2.test;
 
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,14 +17,12 @@ public class BitfinexSymbolsTest {
 
 	@BeforeClass
 	public static void registerDefaultCurrencyPairs() {
-		BitfinexCurrencyPair.registerDefaults();
+		if(BitfinexCurrencyPair.values().size() < 10) {
+			BitfinexCurrencyPair.unregisterAll();
+		}
+		BitfinexCurrencyPair.registerDefaults();	
 	}
 
-	@AfterClass
-	public static void unregisterDefaultCurrencyPairs() {
-		BitfinexCurrencyPair.unregisterAll();
-	}
-	
 	/**
 	 * Are the default currencies loaded?
 	 */

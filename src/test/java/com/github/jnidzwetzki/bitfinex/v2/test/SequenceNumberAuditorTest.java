@@ -18,7 +18,6 @@
 package com.github.jnidzwetzki.bitfinex.v2.test;
 
 import org.json.JSONArray;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -34,12 +33,10 @@ public class SequenceNumberAuditorTest {
 
 	@BeforeClass
 	public static void registerDefaultCurrencyPairs() {
-		BitfinexCurrencyPair.registerDefaults();
-	}
-
-	@AfterClass
-	public static void unregisterDefaultCurrencyPairs() {
-		BitfinexCurrencyPair.unregisterAll();
+		if(BitfinexCurrencyPair.values().size() < 10) {
+			BitfinexCurrencyPair.unregisterAll();
+		}
+		BitfinexCurrencyPair.registerDefaults();	
 	}
 
 	@Before

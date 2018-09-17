@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.json.JSONArray;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -52,15 +51,13 @@ public class TradeManagerTest {
      */
     private final static String API_KEY = "abc123";
 
-    @BeforeClass
-    public static void registerDefaultCurrencyPairs() {
-        BitfinexCurrencyPair.registerDefaults();
-    }
-
-    @AfterClass
-    public static void unregisterDefaultCurrencyPairs() {
-        BitfinexCurrencyPair.unregisterAll();
-    }
+	@BeforeClass
+	public static void registerDefaultCurrencyPairs() {
+		if(BitfinexCurrencyPair.values().size() < 10) {
+			BitfinexCurrencyPair.unregisterAll();
+		}
+		BitfinexCurrencyPair.registerDefaults();	
+	}
 
     /**
      * Test the trade channel handler

@@ -19,9 +19,6 @@ package com.github.jnidzwetzki.bitfinex.v2.test.manager;
 
 import java.util.concurrent.ExecutorService;
 
-import com.google.common.util.concurrent.MoreExecutors;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.mockito.Mockito;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexApiCallbackRegistry;
@@ -29,21 +26,11 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.manager.OrderManager;
 import com.github.jnidzwetzki.bitfinex.v2.manager.TradeManager;
+import com.google.common.util.concurrent.MoreExecutors;
 
 public class TestHelper {
-
-	@BeforeClass
-	public static void registerDefaultCurrencyPairs() {
-		BitfinexCurrencyPair.registerDefaults();
-	}
-
-	@AfterClass
-	public static void unregisterDefaultCurrencyPairs() {
-		BitfinexCurrencyPair.unregisterAll();
-	}
 
 	/**
 	 * The API key of the connection

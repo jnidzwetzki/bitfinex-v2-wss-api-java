@@ -17,10 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.test.handler;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import org.json.JSONArray;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,18 +32,18 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexWallet;
 import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.WalletManager;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 
 
 public class BitfinexWalletHandlerTest {
 
 	@BeforeClass
 	public static void registerDefaultCurrencyPairs() {
-		BitfinexCurrencyPair.registerDefaults();
-	}
-
-	@AfterClass
-	public static void unregisterDefaultCurrencyPairs() {
-		BitfinexCurrencyPair.unregisterAll();
+		if(BitfinexCurrencyPair.values().size() < 10) {
+			BitfinexCurrencyPair.unregisterAll();
+		}
+		BitfinexCurrencyPair.registerDefaults();	
 	}
 
 	/**

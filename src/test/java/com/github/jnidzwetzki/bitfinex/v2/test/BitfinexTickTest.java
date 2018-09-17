@@ -19,7 +19,6 @@ package com.github.jnidzwetzki.bitfinex.v2.test;
 
 import java.math.BigDecimal;
 
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,12 +30,10 @@ public class BitfinexTickTest {
 
 	@BeforeClass
 	public static void registerDefaultCurrencyPairs() {
+		if(BitfinexCurrencyPair.values().size() < 10) {
+			BitfinexCurrencyPair.unregisterAll();
+		}
 		BitfinexCurrencyPair.registerDefaults();
-	}
-
-	@AfterClass
-	public static void unregisterDefaultCurrencyPairs() {
-		BitfinexCurrencyPair.unregisterAll();
 	}
 	
 	/**

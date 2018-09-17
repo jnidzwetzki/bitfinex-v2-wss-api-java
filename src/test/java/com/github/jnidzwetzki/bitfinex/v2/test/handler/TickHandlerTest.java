@@ -19,9 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2.test.handler;
 
 import java.util.concurrent.ExecutorService;
 
-import com.google.common.util.concurrent.MoreExecutors;
 import org.json.JSONArray;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,19 +34,18 @@ import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.manager.QuoteManager;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
+import com.google.common.util.concurrent.MoreExecutors;
 
 
 public class TickHandlerTest {
 
-    @BeforeClass
-    public static void registerDefaultCurrencyPairs() {
-        BitfinexCurrencyPair.registerDefaults();
-    }
-
-    @AfterClass
-    public static void unregisterDefaultCurrencyPairs() {
-        BitfinexCurrencyPair.unregisterAll();
-    }
+	@BeforeClass
+	public static void registerDefaultCurrencyPairs() {
+		if(BitfinexCurrencyPair.values().size() < 10) {
+			BitfinexCurrencyPair.unregisterAll();
+		}
+		BitfinexCurrencyPair.registerDefaults();	
+	}
 
     /**
      * The delta for double compares
