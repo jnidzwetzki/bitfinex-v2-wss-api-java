@@ -51,12 +51,12 @@ public class TradeManagerTest {
      */
     private final static String API_KEY = "abc123";
 
-	@BeforeClass
+    @BeforeClass
 	public static void registerDefaultCurrencyPairs() {
 		if(BitfinexCurrencyPair.values().size() < 10) {
 			BitfinexCurrencyPair.unregisterAll();
+			BitfinexCurrencyPair.registerDefaults();	
 		}
-		BitfinexCurrencyPair.registerDefaults();	
 	}
 
     /**

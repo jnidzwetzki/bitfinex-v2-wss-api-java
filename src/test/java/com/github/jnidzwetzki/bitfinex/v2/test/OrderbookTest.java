@@ -33,8 +33,8 @@ public class OrderbookTest {
 	public static void registerDefaultCurrencyPairs() {
 		if(BitfinexCurrencyPair.values().size() < 10) {
 			BitfinexCurrencyPair.unregisterAll();
+			BitfinexCurrencyPair.registerDefaults();	
 		}
-		BitfinexCurrencyPair.registerDefaults();	
 	}
 
 	/**
