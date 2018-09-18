@@ -85,6 +85,10 @@ The class ``BitfinexTick`` was renamed to ``BitfinexCandle`` and a new class for
 ## Version 0.6.3
 Starting with version 0.6.3 the value for uninitialized BigDecimal values was unified to null (in version 0.6.2 sometimes -1 and sometimes null was used).
 
+<details>
+ <summary>View Details</summary>
+ 
+
 The BitfinexTick.INVALID_VOLUME is removed and replaced by a Java 8 optional
 
 ```java
@@ -99,11 +103,18 @@ if(tick.getVolume().isPresent()) {
 }
 ```
 
+</details>
+
 ## Version 0.6.2
 Since version 0.6.2, the double data type is replaced by the BigDecimal data type for increased precision.
 
 ## Version 0.6.1
-Since version 0.6.1, the Wallets are new managed by the Wallet manager. The WalletManager provides the same methods as the BitfinexAPIBroker in previous versions. Execute your wallet related calls on the new WalletManager.
+Since version 0.6.1, the Wallets are new managed by the Wallet manager.
+
+<details>
+ <summary>View Details</summary>
+ 
+ The WalletManager provides the same methods as the BitfinexAPIBroker in previous versions. Execute your wallet related calls on the new WalletManager.
 
 ```java
 # Old (version <= 0.6.0)
@@ -113,9 +124,16 @@ bitfinexClient.getWallets();
 bitfinexClient.getWalletManager().getWallets();
 ```
 
+</details>
+
 ## Version 0.6.0
 
-With version 0.6.0 the [ta4j](https://github.com/ta4j/ta4j) dependency was removed. For quotes, the API implementation now returns instances of the class `BitfinexTick`. To convert a `BitfinexTick` into a ta4j `Bar`, you can use the following code:
+With version 0.6.0 the [ta4j](https://github.com/ta4j/ta4j) dependency was removed. 
+
+<details>
+ <summary>View Details</summary>
+ 
+For quotes, the API implementation now returns instances of the class `BitfinexTick`. To convert a `BitfinexTick` into a ta4j `Bar`, you can use the following code:
 
 ```java
 final BitfinexTick tick = ....;
@@ -129,5 +147,7 @@ final Bar bar = new BaseBar(time, tick.getOpen().doubleValue(),
 				tick.getClose().doubleValue(),
 				tick.getVolume().orElse(BigDecimal.ZERO).doubleValue());
 ```
+
+</details>
 
 
