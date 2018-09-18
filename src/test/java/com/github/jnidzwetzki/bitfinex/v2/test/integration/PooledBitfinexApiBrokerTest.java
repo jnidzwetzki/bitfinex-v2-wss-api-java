@@ -61,8 +61,10 @@ public class PooledBitfinexApiBrokerTest {
        
         // then
         subsLatch.await();
-        Assert.assertEquals(channelLimit * 3, client.getSubscribedChannels().size());
-        Assert.assertEquals(channelLimit * 3 / channelsPerConnection, client.websocketConnCount());
+
+        final int channelsSubscribed = channelLimit * 3 + client.websocketConnCount();
+        Assert.assertEquals(channelsSubscribed, client.getSubscribedChannels().size());
+        Assert.assertEquals(channelsSubscribed / channelsPerConnection, client.websocketConnCount() - 1);
         
         client.close();
     }

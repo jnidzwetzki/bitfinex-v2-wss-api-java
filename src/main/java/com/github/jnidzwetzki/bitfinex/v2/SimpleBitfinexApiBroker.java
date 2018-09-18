@@ -236,6 +236,10 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		commandCallbacks.put("unsubscribed", unsubscribed);
 
 		final AuthCallback auth = new AuthCallback();
+		AccountInfoHandler accountInfoHandler = new AccountInfoHandler(0, BitfinexSymbols.account(null, BitfinexApiKeyPermissions.NO_PERMISSIONS));
+		accountInfoHandler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
+		channelIdToHandlerMap.put(0, accountInfoHandler);
+
 		auth.onAuthenticationSuccessEvent(permissions -> {
 		    logger.info("authentication succeeded for key {}", configuration.getApiKey());
 			final BitfinexAccountSymbol symbol = BitfinexSymbols.account(configuration.getApiKey(), permissions);
