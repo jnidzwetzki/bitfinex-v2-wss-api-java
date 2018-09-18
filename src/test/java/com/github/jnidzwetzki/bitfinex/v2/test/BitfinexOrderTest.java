@@ -91,4 +91,17 @@ public class BitfinexOrderTest {
 		}
 	}
 	
+	@Test
+	public void testOrderStatusFlags3() {
+		final BitfinexNewOrder bitfinexNewOrder1 = new BitfinexNewOrder();
+		bitfinexNewOrder1.setApiKey("abc");
+		
+		final BitfinexNewOrder bitfinexNewOrder2 = new BitfinexNewOrder();
+		bitfinexNewOrder2.setApiKey("def");
+		
+		Assert.assertNotEquals(bitfinexNewOrder1, bitfinexNewOrder2);
+		Assert.assertNotEquals(bitfinexNewOrder1.hashCode(), bitfinexNewOrder2.hashCode());
+	}
+
+	
 }
