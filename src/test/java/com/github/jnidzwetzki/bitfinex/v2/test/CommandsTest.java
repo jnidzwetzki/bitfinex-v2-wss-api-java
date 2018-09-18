@@ -28,6 +28,7 @@ import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderFlag;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
 import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexCommandException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
@@ -97,8 +98,7 @@ public class CommandsTest {
 	public void testOrderCommand() throws BitfinexCommandException {
 		final BitfinexNewOrder order
 			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderType.EXCHANGE_STOP, 2)
-			.setHidden()
-			.setPostOnly()
+			.withOrderFlag(BitfinexOrderFlag.HIDDEN)
 			.withPrice(12)
 			.withPriceAuxLimit(23)
 			.withPriceTrailing(23)

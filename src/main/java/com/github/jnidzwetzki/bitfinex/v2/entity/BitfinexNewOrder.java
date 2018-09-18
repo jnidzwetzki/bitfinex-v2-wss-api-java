@@ -18,7 +18,10 @@
 package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import java.math.BigDecimal;
-import java.util.Objects;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * https://docs.bitfinex.com/v2/reference#ws-input-order-new
@@ -71,22 +74,20 @@ public class BitfinexNewOrder {
     private BigDecimal priceOcoStop;
 
     /**
-     * flags
-     * more on them here : https://support.bitfinex.com/hc/en-us/articles/115003506105-Limit-Order
+     * The Order flags
      */
-    private boolean postOnly;
-    private boolean hidden;
-    private boolean close;
-    private boolean reduce;
-    private boolean oneCancelTheOther;
+    private Set<BitfinexOrderFlag> orderFlags = new HashSet<>();
 
+    /**
+     * The api key
+     */
     private String apiKey;
 
     public Long getClientId() {
         return clientId;
     }
 
-    public void setClientId(Long clientId) {
+    public void setClientId(final Long clientId) {
         this.clientId = clientId;
     }
 
@@ -94,7 +95,7 @@ public class BitfinexNewOrder {
         return clientGroupId;
     }
 
-    public void setClientGroupId(Integer clientGroupId) {
+    public void setClientGroupId(final Integer clientGroupId) {
         this.clientGroupId = clientGroupId;
     }
 
@@ -102,7 +103,7 @@ public class BitfinexNewOrder {
         return currencyPair;
     }
 
-    public void setCurrencyPair(BitfinexCurrencyPair currencyPair) {
+    public void setCurrencyPair(final BitfinexCurrencyPair currencyPair) {
         this.currencyPair = currencyPair;
     }
 
@@ -110,7 +111,7 @@ public class BitfinexNewOrder {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(final BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -118,7 +119,7 @@ public class BitfinexNewOrder {
         return orderType;
     }
 
-    public void setOrderType(BitfinexOrderType orderType) {
+    public void setOrderType(final BitfinexOrderType orderType) {
         this.orderType = orderType;
     }
 
@@ -126,7 +127,7 @@ public class BitfinexNewOrder {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(final BigDecimal price) {
         this.price = price;
     }
 
@@ -134,7 +135,7 @@ public class BitfinexNewOrder {
         return priceTrailing;
     }
 
-    public void setPriceTrailing(BigDecimal priceTrailing) {
+    public void setPriceTrailing(final BigDecimal priceTrailing) {
         this.priceTrailing = priceTrailing;
     }
 
@@ -142,7 +143,7 @@ public class BitfinexNewOrder {
         return priceAuxLimit;
     }
 
-    public void setPriceAuxLimit(BigDecimal priceAuxLimit) {
+    public void setPriceAuxLimit(final BigDecimal priceAuxLimit) {
         this.priceAuxLimit = priceAuxLimit;
     }
 
@@ -150,103 +151,137 @@ public class BitfinexNewOrder {
         return priceOcoStop;
     }
 
-    public void setPriceOcoStop(BigDecimal priceOcoStop) {
+    public void setPriceOcoStop(final BigDecimal priceOcoStop) {
         this.priceOcoStop = priceOcoStop;
     }
-
-    public boolean isPostOnly() {
-        return postOnly;
-    }
-
-    public void setPostOnly(boolean postOnly) {
-        this.postOnly = postOnly;
-    }
-
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    public void setHidden(boolean hidden) {
-        this.hidden = hidden;
-    }
-
-    public boolean isClose() {
-        return close;
-    }
-
-    public void setClose(boolean close) {
-        this.close = close;
-    }
-
-    public boolean isReduce() {
-        return reduce;
-    }
-
-    public void setReduce(boolean reduce) {
-        this.reduce = reduce;
-    }
-
-    public boolean isOneCancelTheOther() {
-        return oneCancelTheOther;
-    }
-
-    public void setOneCancelTheOther(boolean oneCancelTheOther) {
-        this.oneCancelTheOther = oneCancelTheOther;
-    }
-
+ 
     public String getApiKey() {
         return apiKey;
     }
 
-    public void setApiKey(String apiKey) {
+    public void setApiKey(final String apiKey) {
         this.apiKey = apiKey;
     }
+    
+	public void setOrderFlags(final Set<BitfinexOrderFlag> orderFlags) {
+		this.orderFlags = orderFlags;
+	}
+	
+	public Set<BitfinexOrderFlag> getOrderFlags() {
+		return orderFlags;
+	}
+	
+	/**
+	 * Convert a flag field into enums
+	 * @param flags
+	 */
+	public void setOrderFlags(final int flags) {
+		orderFlags = Arrays.
+				stream(BitfinexOrderFlag.values())
+				.filter(f -> ((f.getFlag() & flags) == f.getFlag()))
+				.collect(Collectors.toSet());
+	}
+	
+	/**
+	 * Convert flag enums to flag field
+	 * @return
+	 */
+	public int getCombinedFlags() {
+		return orderFlags
+			.stream()
+			.map(o -> o.getFlag())
+			.reduce((f1, f2) -> f1 | f2)
+			.orElse(0);
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BitfinexNewOrder that = (BitfinexNewOrder) o;
-        return Objects.equals(clientId, that.clientId) &&
-                Objects.equals(clientGroupId, that.clientGroupId) &&
-                postOnly == that.postOnly &&
-                hidden == that.hidden &&
-                close == that.close &&
-                reduce == that.reduce &&
-                oneCancelTheOther == that.oneCancelTheOther &&
-                Objects.equals(currencyPair, that.currencyPair) &&
-                Objects.equals(amount, that.amount) &&
-                orderType == that.orderType &&
-                Objects.equals(price, that.price) &&
-                Objects.equals(priceTrailing, that.priceTrailing) &&
-                Objects.equals(priceAuxLimit, that.priceAuxLimit) &&
-                Objects.equals(priceOcoStop, that.priceOcoStop) &&
-                Objects.equals(apiKey, that.apiKey);
-    }
+	@Override
+	public String toString() {
+		return "BitfinexNewOrder [clientId=" + clientId + ", clientGroupId=" + clientGroupId + ", currencyPair="
+				+ currencyPair + ", amount=" + amount + ", orderType=" + orderType + ", price=" + price
+				+ ", priceTrailing=" + priceTrailing + ", priceAuxLimit=" + priceAuxLimit + ", priceOcoStop="
+				+ priceOcoStop + ", orderFlags=" + orderFlags + ", apiKey=" + apiKey + "]";
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(clientId, clientGroupId, currencyPair, amount, orderType, price, priceTrailing, priceAuxLimit, priceOcoStop, postOnly, hidden, close, reduce, oneCancelTheOther, apiKey);
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((amount == null) ? 0 : amount.hashCode());
+		result = prime * result + ((apiKey == null) ? 0 : apiKey.hashCode());
+		result = prime * result + ((clientGroupId == null) ? 0 : clientGroupId.hashCode());
+		result = prime * result + ((clientId == null) ? 0 : clientId.hashCode());
+		result = prime * result + ((currencyPair == null) ? 0 : currencyPair.hashCode());
+		result = prime * result + ((orderFlags == null) ? 0 : orderFlags.hashCode());
+		result = prime * result + ((orderType == null) ? 0 : orderType.hashCode());
+		result = prime * result + ((price == null) ? 0 : price.hashCode());
+		result = prime * result + ((priceAuxLimit == null) ? 0 : priceAuxLimit.hashCode());
+		result = prime * result + ((priceOcoStop == null) ? 0 : priceOcoStop.hashCode());
+		result = prime * result + ((priceTrailing == null) ? 0 : priceTrailing.hashCode());
+		return result;
+	}
 
-    @Override
-    public String toString() {
-        return "BitfinexNewOrder [" +
-                "clientId=" + clientId +
-                ", clientGroupId=" + clientGroupId +
-                ", currencyPair=" + currencyPair +
-                ", amount=" + amount +
-                ", orderType=" + orderType +
-                ", price=" + price +
-                ", priceTrailing=" + priceTrailing +
-                ", priceAuxLimit=" + priceAuxLimit +
-                ", priceOcoStop=" + priceOcoStop +
-                ", postOnly=" + postOnly +
-                ", hidden=" + hidden +
-                ", close=" + close +
-                ", reduce=" + reduce +
-                ", oneCancelTheOther=" + oneCancelTheOther +
-                ", apiKey='" + apiKey + '\'' +
-                ']';
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BitfinexNewOrder other = (BitfinexNewOrder) obj;
+		if (amount == null) {
+			if (other.amount != null)
+				return false;
+		} else if (!amount.equals(other.amount))
+			return false;
+		if (apiKey == null) {
+			if (other.apiKey != null)
+				return false;
+		} else if (!apiKey.equals(other.apiKey))
+			return false;
+		if (clientGroupId == null) {
+			if (other.clientGroupId != null)
+				return false;
+		} else if (!clientGroupId.equals(other.clientGroupId))
+			return false;
+		if (clientId == null) {
+			if (other.clientId != null)
+				return false;
+		} else if (!clientId.equals(other.clientId))
+			return false;
+		if (currencyPair == null) {
+			if (other.currencyPair != null)
+				return false;
+		} else if (!currencyPair.equals(other.currencyPair))
+			return false;
+		if (orderFlags == null) {
+			if (other.orderFlags != null)
+				return false;
+		} else if (!orderFlags.equals(other.orderFlags))
+			return false;
+		if (orderType != other.orderType)
+			return false;
+		if (price == null) {
+			if (other.price != null)
+				return false;
+		} else if (!price.equals(other.price))
+			return false;
+		if (priceAuxLimit == null) {
+			if (other.priceAuxLimit != null)
+				return false;
+		} else if (!priceAuxLimit.equals(other.priceAuxLimit))
+			return false;
+		if (priceOcoStop == null) {
+			if (other.priceOcoStop != null)
+				return false;
+		} else if (!priceOcoStop.equals(other.priceOcoStop))
+			return false;
+		if (priceTrailing == null) {
+			if (other.priceTrailing != null)
+				return false;
+		} else if (!priceTrailing.equals(other.priceTrailing))
+			return false;
+		return true;
+	}
+
 }

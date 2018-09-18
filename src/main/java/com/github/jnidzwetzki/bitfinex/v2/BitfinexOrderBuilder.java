@@ -18,9 +18,12 @@
 package com.github.jnidzwetzki.bitfinex.v2;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderFlag;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
 
 public class BitfinexOrderBuilder {
@@ -32,8 +35,7 @@ public class BitfinexOrderBuilder {
 	private BigDecimal price;
 	private BigDecimal priceTrailing;
 	private BigDecimal priceAuxLimit;
-	private boolean postOnly = false;
-	private boolean hidden = false;
+	private Set<BitfinexOrderFlag> orderFlags;
 	private int groupid = -1;
 
 	private BitfinexOrderBuilder(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, 
@@ -42,6 +44,7 @@ public class BitfinexOrderBuilder {
 		this.symbol = symbol;
 		this.type = type;
 		this.amount = amount;
+		this.orderFlags = new HashSet<>();
 	}
 	
 	public static BitfinexOrderBuilder create(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, 
@@ -56,13 +59,8 @@ public class BitfinexOrderBuilder {
 		return new BitfinexOrderBuilder(symbol, type, amount);
 	}
 	
-	public BitfinexOrderBuilder setHidden() {
-		hidden = true;
-		return this;
-	}
-	
-	public BitfinexOrderBuilder setPostOnly() {
-		postOnly = true;
+	public BitfinexOrderBuilder withOrderFlag(final BitfinexOrderFlag flag) {
+		orderFlags.add(flag);
 		return this;
 	}
 	
@@ -109,8 +107,7 @@ public class BitfinexOrderBuilder {
 		order.setAmount(amount);
 		order.setPriceTrailing(priceTrailing);
 		order.setPriceAuxLimit(priceAuxLimit);
-		order.setPostOnly(postOnly);
-		order.setHidden(hidden);
+		order.setOrderFlags(orderFlags);
 		order.setClientGroupId(groupid);
 		return order;
 	}

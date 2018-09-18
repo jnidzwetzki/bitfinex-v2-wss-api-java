@@ -17,14 +17,22 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.test;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderFlag;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
+import com.google.common.collect.Collections2;
 
-public class BitfinexSubmittedOrderStatusTest {
+public class BitfinexOrderTest {
 
 	@BeforeClass
 	public static void registerDefaultCurrencyPairs() {
@@ -47,4 +55,53 @@ public class BitfinexSubmittedOrderStatusTest {
 	public void testStateFromStringInvalid() {
 		BitfinexSubmittedOrderStatus.fromString("ABC");
 	}
+	
+	@Test
+	public void testOrderStatusFlags0() {
+		final BitfinexNewOrder bitfinexNewOrder = new BitfinexNewOrder();
+		Assert.assertTrue(bitfinexNewOrder.getOrderFlags().isEmpty());
+		Assert.assertEquals(0, bitfinexNewOrder.getCombinedFlags());		
+	}
+	
+	@Test
+	public void testOrderStatusFlags1() {
+		final BitfinexNewOrder bitfinexNewOrder = new BitfinexNewOrder();
+		bitfinexNewOrder.setOrderFlags(BitfinexOrderFlag.OCO.getFlag());
+		Assert.assertEquals(BitfinexOrderFlag.OCO.getFlag(), bitfinexNewOrder.getCombinedFlags());
+		Assert.assertTrue(bitfinexNewOrder.getOrderFlags().contains(BitfinexOrderFlag.OCO));
+	}
+	
+	@Test
+	public void testOrderStatusFlags2() {
+		final Collection<List<BitfinexOrderFlag>> orderflagPermutations 
+			= Collections2.permutations(Arrays.asList(BitfinexOrderFlag.values()));
+		
+		for(final List<BitfinexOrderFlag> flags : orderflagPermutations) {
+			// Convert to set
+			final HashSet<BitfinexOrderFlag> orderFlags = new HashSet<>(flags);
+
+			final BitfinexNewOrder bitfinexNewOrder = new BitfinexNewOrder();
+			bitfinexNewOrder.setOrderFlags(orderFlags);
+			Assert.assertEquals(orderFlags, bitfinexNewOrder.getOrderFlags());
+			
+			// Marge and parse flags from and to long
+			bitfinexNewOrder.setOrderFlags(bitfinexNewOrder.getCombinedFlags());
+			
+			Assert.assertEquals(orderFlags, bitfinexNewOrder.getOrderFlags());
+		}
+	}
+	
+	@Test
+	public void testOrderStatusFlags3() {
+		final BitfinexNewOrder bitfinexNewOrder1 = new BitfinexNewOrder();
+		bitfinexNewOrder1.setApiKey("abc");
+		
+		final BitfinexNewOrder bitfinexNewOrder2 = new BitfinexNewOrder();
+		bitfinexNewOrder2.setApiKey("def");
+		
+		Assert.assertNotEquals(bitfinexNewOrder1, bitfinexNewOrder2);
+		Assert.assertNotEquals(bitfinexNewOrder1.hashCode(), bitfinexNewOrder2.hashCode());
+	}
+
+	
 }
