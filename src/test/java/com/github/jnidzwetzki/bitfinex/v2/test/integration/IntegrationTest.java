@@ -276,7 +276,7 @@ public class IntegrationTest {
 			subscribe1.waitForCompletion();
 			subscribe2.waitForCompletion();
 
-			Assert.assertEquals(2, bitfinexClient.getSubscribedChannels().size());
+			Assert.assertEquals(3, bitfinexClient.getSubscribedChannels().size());
 			bitfinexClient.unsubscribeAllChannels();
 			Assert.assertTrue(bitfinexClient.getSubscribedChannels().isEmpty());
 		} catch (Exception e) {
