@@ -57,21 +57,13 @@ public class OrderCommand implements BitfinexCommand {
 		if(bitfinexOrder.getPriceAuxLimit() != null) {
 			orderJson.put("price_aux_limit", bitfinexOrder.getPriceAuxLimit().toString());
 		}
+		
 		if(bitfinexOrder.getPriceOcoStop() != null) {
 			orderJson.put("price_oco_stop", bitfinexOrder.getPriceOcoStop().toString());
 		}
 
-		// FIXME: it's no longer valid - not bitfinex exepcts "flags" field
-		// FIXME: https://docs.bitfinex.com/v2/reference#ws-input-order-new
-		// FIXME: if it works, it's by luck (backward compatibility) - and we don't know how much longer it will work for
-		if(bitfinexOrder.isHidden()) {
-			orderJson.put("hidden", 1);
-		} else {
-			orderJson.put("hidden", 0);
-		}
-		// FIXME: same
-		if(bitfinexOrder.isPostOnly()) {
-			orderJson.put("postonly", 1);
+		if(! bitfinexOrder.getOrderFlags().isEmpty()) {
+			orderJson.put("flags", bitfinexOrder.getCombinedFlags());
 		}
 
 		if(bitfinexOrder.getClientId() != null) {

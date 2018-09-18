@@ -107,22 +107,22 @@ public class OrderHandler implements ChannelCallbackHandler {
         order.setAmount(json.getBigDecimal(6));
         order.setAmountAtCreation(json.getBigDecimal(7));
         order.setOrderType(BitfinexOrderType.fromBifinexString(json.getString(8)));
-        // FIXME: investigate here - documentation is not specifying any numbers
-        // FIXME: https://docs.bitfinex.com/v2/reference#ws-auth-orders
+        
         final int flags = json.getInt(12);
-        if (flags > 0) {
-            logger.info("Flags set on order: " + flags);
+        if (flags > 0) {      
+        		order.setOrderFlags(flags);
         }
+        
         final String orderStatus = json.getString(13);
         if (orderStatus != null) {
             order.setStatus(BitfinexSubmittedOrderStatus.fromString(orderStatus));
         }
+        
         order.setPrice(json.optBigDecimal(16, null));
         order.setPriceAverage(json.optBigDecimal(17, null));
         order.setPriceTrailing(json.optBigDecimal(18, null));
         order.setPriceAuxLimit(json.optBigDecimal(19, null));
-        order.setNotify(json.getInt(23) == 1);
-        order.setHidden(json.getInt(24) == 1); // TODO: remove it, hidden is passed through flags
+    
         final String parentOrderId = json.optString(25, null);
         if (parentOrderId != null) {
             order.setParentOrderId(Long.parseLong(parentOrderId));

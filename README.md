@@ -58,6 +58,9 @@ You will find the changelog of the project [here](https://github.com/jnidzwetzki
 
 # Recent API changes
 
+## Version 0.7.1
+The old order flags are depricated by Bitfinex and replaced by the new 'WSv2 order flag'. This change is adapted in this version. Methods like `BitfinexOrderBuilder.setHidden()` or `BitfinexOrderBuilder.setReduce()` are replaced by `BitfinexOrderBuilder.withOrderFlag(BitfinexOrderFlag)`.
+
 ## Version 0.7.0
 Major refactoring has been made around the library. Library is operating in non-blocking manner fully from this version.
 User may register handlers to listen on upcoming server events through exposed callbacks API.
