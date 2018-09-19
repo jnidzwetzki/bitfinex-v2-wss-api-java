@@ -18,6 +18,7 @@
 package com.github.jnidzwetzki.bitfinex.v2;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
@@ -236,10 +237,6 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		commandCallbacks.put("unsubscribed", unsubscribed);
 
 		final AuthCallback auth = new AuthCallback();
-		AccountInfoHandler accountInfoHandler = new AccountInfoHandler(0, BitfinexSymbols.account(null, BitfinexApiKeyPermissions.NO_PERMISSIONS));
-		accountInfoHandler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
-		channelIdToHandlerMap.put(0, accountInfoHandler);
-
 		auth.onAuthenticationSuccessEvent(permissions -> {
 		    logger.info("authentication succeeded for key {}", configuration.getApiKey());
 			final BitfinexAccountSymbol symbol = BitfinexSymbols.account(configuration.getApiKey(), permissions);
@@ -293,6 +290,10 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
             final Closeable positionInitCallback = callbackRegistry.onMyPositionEvent((a, p) -> connectionReadyLatch.countDown());
             final Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
             final Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
+
+            AccountInfoHandler accountInfoHandler = new AccountInfoHandler(0, BitfinexSymbols.account(null, BitfinexApiKeyPermissions.NO_PERMISSIONS));
+            accountInfoHandler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
+            channelIdToHandlerMap.put(0, accountInfoHandler);
 
             websocketEndpoint = new WebsocketClientEndpoint(new URI(BITFINEX_URI), this::websocketCallback);
             websocketEndpoint.connect();
@@ -397,6 +398,10 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			final Closeable positionInitCallback = callbackRegistry.onMyPositionEvent((a, p) -> connectionReadyLatch.countDown());
 			final Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
 			final Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
+
+            AccountInfoHandler accountInfoHandler = new AccountInfoHandler(0, BitfinexSymbols.account(null, BitfinexApiKeyPermissions.NO_PERMISSIONS));
+            accountInfoHandler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
+            channelIdToHandlerMap.put(0, accountInfoHandler);
 
 			websocketEndpoint.connect();
 
@@ -657,30 +662,17 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	 */
 	@Override
 	public boolean unsubscribeAllChannels() {
-		for(final ChannelCallbackHandler channel : channelIdToHandlerMap.values()) {
-			final BitfinexStreamSymbol symbol = channel.getSymbol();
-			sendCommand(new UnsubscribeChannelCommand(symbol));
-		}
+        Collection<BitfinexStreamSymbol> channels = getSubscribedChannels();
+        CountDownLatch countDownLatch = new CountDownLatch(channels.size());
+        channels.forEach(symbol -> sendCommand(new UnsubscribeChannelCommand(symbol)));
 
-		final Stopwatch stopwatch = Stopwatch.createStarted();
-
-		synchronized (channelIdToHandlerMap) {
-			while(! channelIdToHandlerMap.isEmpty()) {
-				try {
-					channelIdToHandlerMap.wait(500);
-				} catch (final InterruptedException ex) {
-					Thread.currentThread().interrupt();
-				}
-
-				// Wait max 1 minute for unsubscription complete
-				if(stopwatch.elapsed(TimeUnit.SECONDS) >= 60) {
-					logger.error("Unable to unsubscribe channels in 60 seconds");
-					return false;
-				}
-			}
-		}
-
-		return true;
+        try (Closeable c = callbackRegistry.onUnsubscribeChannelEvent(s -> countDownLatch.countDown())) {
+            countDownLatch.await(30, TimeUnit.SECONDS);
+            return true;
+        } catch (final InterruptedException | IOException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
 	}
 
 	@Override
@@ -697,6 +689,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	public Collection<BitfinexStreamSymbol> getSubscribedChannels() {
 		return channelIdToHandlerMap.values().stream()
 				.map(ChannelCallbackHandler::getSymbol)
+				.filter(s -> !(s instanceof BitfinexAccountSymbol))
 				.collect(Collectors.toList());
 	}
 

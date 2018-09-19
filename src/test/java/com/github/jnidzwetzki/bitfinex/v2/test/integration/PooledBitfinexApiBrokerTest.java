@@ -22,23 +22,23 @@ public class PooledBitfinexApiBrokerTest {
 	public static void registerDefaultCurrencyPairs() {
 		if(BitfinexCurrencyPair.values().size() < 10) {
 			BitfinexCurrencyPair.unregisterAll();
-			BitfinexCurrencyPair.registerDefaults();	
+			BitfinexCurrencyPair.registerDefaults();
 		}
 	}
 
-    @Test(timeout = 120_000)
+    @Test(timeout = 45_000)
     public void testSubscriptions() throws InterruptedException {
         // given
-        final int channelLimit = 20;
-        final int channelsPerConnection = 10;
-    	
+        final int channelLimit = 22;
+        final int channelsPerConnection = 12;
+
         final BitfinexWebsocketConfiguration config = new BitfinexWebsocketConfiguration();
-        final PooledBitfinexApiBroker client = 
+        final PooledBitfinexApiBroker client =
         		(PooledBitfinexApiBroker) BitfinexClientFactory.newPooledClient(config, channelsPerConnection);
 
-        
+
         Assert.assertFalse(client.isAuthenticated());
-        
+
         // when
         final CountDownLatch subsLatch = new CountDownLatch(channelLimit * 3);
         client.getCallbacks().onSubscribeChannelEvent(chan -> {
@@ -47,7 +47,7 @@ public class PooledBitfinexApiBrokerTest {
         });
 
         client.connect();
-        
+
         BitfinexCurrencyPair.values().stream()
                 .limit(channelLimit)
                 .forEach(bfxPair -> {
@@ -57,15 +57,15 @@ public class PooledBitfinexApiBrokerTest {
                     client.sendCommand(new SubscribeTickerCommand(BitfinexSymbols.ticker(bfxPair)));
                     client.sendCommand(new SubscribeTradesCommand(BitfinexSymbols.executedTrades(bfxPair)));
                 });
-        
-       
+
+
         // then
         subsLatch.await();
 
-        final int channelsSubscribed = channelLimit * 3 + client.websocketConnCount();
-        Assert.assertEquals(channelsSubscribed, client.getSubscribedChannels().size());
-        Assert.assertEquals(channelsSubscribed / channelsPerConnection, client.websocketConnCount() - 1);
-        
+        final int channelsSubscribed = channelLimit * 3 + 1;
+        Assert.assertEquals(channelsSubscribed - 1, client.getSubscribedChannels().size());
+        Assert.assertEquals((int) Math.ceil(channelsSubscribed * 1.0 / channelsPerConnection), client.websocketConnCount());
+
         client.close();
     }
 
