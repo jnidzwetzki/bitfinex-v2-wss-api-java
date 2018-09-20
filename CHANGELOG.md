@@ -1,7 +1,8 @@
-# Version 0.7.1 (TBA)
+# Version 0.7.1 (20.09.2018)
 * New Feature: The available currencies are now fetched directly from Bitfinex
 * New Feature: Added WSv2 order flag support (see https://docs.bitfinex.com/v2/docs/changelog)
 * Bugfix: Missing account-info-handler ("0"-channel) for "hb" event only when user not authenticated
+* Bugfix: Fixed a bug in the reconnect code 
 
 # Version 0.7.0 (17.09.2018)
 * New Feature: PooledBitfinexApiBroker - as per requirement described in https://www.bitfinex.com/posts/267
