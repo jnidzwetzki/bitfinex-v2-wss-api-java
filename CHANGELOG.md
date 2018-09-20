@@ -1,3 +1,5 @@
+# Version 0.7.2 (TBA)
+
 # Version 0.7.1 (20.09.2018)
 * New Feature: The available currencies are now fetched directly from Bitfinex
 * New Feature: Added WSv2 order flag support (see https://docs.bitfinex.com/v2/docs/changelog)
