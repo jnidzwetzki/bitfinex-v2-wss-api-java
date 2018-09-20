@@ -252,14 +252,14 @@ final int orderGroup = 4711;
 // Long order when price rises 1%
 final BitfinexOrder bitfinexOrder1 = BitfinexOrderBuilder
 		.create(currencyPair, BitfinexOrderType.EXCHANGE_LIMIT, 0.002, lastValue.getClosePrice() / 100.0 * 101.0)
-		.setPostOnly()
+		.withOrderFlag(BitfinexOrderFlag.POSTONLY)
 		.withGroupId(orderGroup)
 		.build();
 
 // Short order when price drops 1%
 final BitfinexOrder bitfinexOrder2 = BitfinexOrderBuilder
 		.create(currencyPair, BitfinexOrderType.EXCHANGE_LIMIT, -0.002, lastValue.getClosePrice() / 100.0 * 99.0)
-		.setPostOnly()
+		.withOrderFlag(BitfinexOrderFlag.POSTONLY)
 		.withGroupId(orderGroup)
 		.build();
 
