@@ -239,7 +239,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		final AuthCallback auth = new AuthCallback();
 		auth.onAuthenticationSuccessEvent(permissions -> {
 		    logger.info("authentication succeeded for key {}", configuration.getApiKey());
-			final BitfinexAccountSymbol symbol = BitfinexSymbols.account(configuration.getApiKey(), permissions);
+			final BitfinexAccountSymbol symbol = BitfinexSymbols.account(permissions, configuration.getApiKey());
 			final AccountInfoHandler handler = new AccountInfoHandler(0, symbol);
 			handler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
 			handler.onPositionsEvent(callbackRegistry::acceptMyPositionEvent);
@@ -253,7 +253,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		});
 		auth.onAuthenticationFailedEvent(permissions -> {
             logger.info("authentication failed for key {}", configuration.getApiKey());
-            final BitfinexAccountSymbol symbol = BitfinexSymbols.account(configuration.getApiKey(), permissions);
+            final BitfinexAccountSymbol symbol = BitfinexSymbols.account(permissions, configuration.getApiKey());
 			callbackRegistry.acceptAuthenticationFailedEvent(symbol);
 		});
 		commandCallbacks.put("auth", auth);
@@ -291,7 +291,8 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
             final Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
             final Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
 
-            AccountInfoHandler accountInfoHandler = new AccountInfoHandler(0, BitfinexSymbols.account(null, BitfinexApiKeyPermissions.NO_PERMISSIONS));
+            final BitfinexAccountSymbol accountSymbol = BitfinexSymbols.account(BitfinexApiKeyPermissions.NO_PERMISSIONS);
+            final AccountInfoHandler accountInfoHandler = new AccountInfoHandler(0, accountSymbol);
             accountInfoHandler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
             channelIdToHandlerMap.put(0, accountInfoHandler);
 
@@ -399,7 +400,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			final Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
 			final Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
 
-            AccountInfoHandler accountInfoHandler = new AccountInfoHandler(0, BitfinexSymbols.account(null, BitfinexApiKeyPermissions.NO_PERMISSIONS));
+            AccountInfoHandler accountInfoHandler = new AccountInfoHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.NO_PERMISSIONS, null));
             accountInfoHandler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
             channelIdToHandlerMap.put(0, accountInfoHandler);
 

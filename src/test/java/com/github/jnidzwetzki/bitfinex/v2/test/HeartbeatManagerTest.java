@@ -92,7 +92,7 @@ public class HeartbeatManagerTest {
 	 */
 	@Test
 	public void testHeartbeatHandler() throws BitfinexClientException, InterruptedException {
-		final HeartbeatHandler handler = new HeartbeatHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		final HeartbeatHandler handler = new HeartbeatHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
 		long heartbeat = System.currentTimeMillis();
 		handler.onHeartbeatEvent(timestamp -> Assert.assertTrue(timestamp > heartbeat));
 		Thread.sleep(50);

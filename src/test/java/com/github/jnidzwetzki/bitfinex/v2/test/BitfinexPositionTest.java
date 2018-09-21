@@ -59,7 +59,7 @@ public class BitfinexPositionTest {
 		final JSONArray jsonArray = new JSONArray(jsonString);
 
 		final BitfinexWebsocketClient bitfinexApiBroker = buildMockedBitfinexConnection();
-		final PositionHandler positionHandler = new PositionHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		final PositionHandler positionHandler = new PositionHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
 		positionHandler.onPositionsEvent((a, positions) -> {
 			for (BitfinexPosition position : positions) {
 				bitfinexApiBroker.getPositionManager().updatePosition(position);
@@ -82,7 +82,7 @@ public class BitfinexPositionTest {
 		final JSONArray jsonArray = new JSONArray(jsonString);
 
 		final BitfinexWebsocketClient bitfinexApiBroker = buildMockedBitfinexConnection();
-		final PositionHandler positionHandler = new PositionHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		final PositionHandler positionHandler = new PositionHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
 		positionHandler.onPositionsEvent((a, positions) -> {
 			for (BitfinexPosition position : positions) {
 				bitfinexApiBroker.getPositionManager().updatePosition(position);
@@ -105,7 +105,7 @@ public class BitfinexPositionTest {
 		final JSONArray jsonArray = new JSONArray(jsonString);
 
 		final BitfinexWebsocketClient bitfinexApiBroker = buildMockedBitfinexConnection();
-		final PositionHandler positionHandler = new PositionHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		final PositionHandler positionHandler = new PositionHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
 		positionHandler.onPositionsEvent((a, positions) -> {
 			for (BitfinexPosition position : positions) {
 				bitfinexApiBroker.getPositionManager().updatePosition(position);

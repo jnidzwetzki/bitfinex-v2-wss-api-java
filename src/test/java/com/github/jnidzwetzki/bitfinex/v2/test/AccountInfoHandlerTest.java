@@ -33,7 +33,7 @@ public class AccountInfoHandlerTest {
 	
 	@Test
 	public void testAccountInfoHandler1() throws InterruptedException {
-		final BitfinexAccountSymbol symbol = BitfinexSymbols.account("abc", BitfinexApiKeyPermissions.NO_PERMISSIONS);
+		final BitfinexAccountSymbol symbol = BitfinexSymbols.account(BitfinexApiKeyPermissions.NO_PERMISSIONS, "abc");
 		final AccountInfoHandler accountInfoHandler = new AccountInfoHandler(0, symbol);
 		Assert.assertEquals(0, accountInfoHandler.getChannelId());
 		Assert.assertEquals(symbol, accountInfoHandler.getSymbol());
@@ -55,7 +55,7 @@ public class AccountInfoHandlerTest {
 
 	@Test
 	public void testAccountInfoHandler2() throws InterruptedException {
-		final BitfinexAccountSymbol symbol = BitfinexSymbols.account("abc", BitfinexApiKeyPermissions.NO_PERMISSIONS);
+		final BitfinexAccountSymbol symbol = BitfinexSymbols.account(BitfinexApiKeyPermissions.NO_PERMISSIONS, "abc");
 		final AccountInfoHandler accountInfoHandler = new AccountInfoHandler(0, symbol);
 		
 		accountInfoHandler.onHeartbeatEvent((h) -> {});
@@ -66,4 +66,14 @@ public class AccountInfoHandlerTest {
 		accountInfoHandler.onWalletsEvent((v1, v2) -> {});
 	}
 	
+	@Test
+	public void symbolTest() {
+		final BitfinexAccountSymbol symbol1 = BitfinexSymbols.account(BitfinexApiKeyPermissions.NO_PERMISSIONS);
+		final BitfinexAccountSymbol symbol2 = BitfinexSymbols.account(BitfinexApiKeyPermissions.NO_PERMISSIONS, "abc");
+
+		Assert.assertFalse(symbol1.getApiKey().isPresent());
+		Assert.assertTrue(symbol2.getApiKey().isPresent());
+		
+		Assert.assertTrue(symbol1.toString().length() > 10);
+	}
 }

@@ -19,14 +19,25 @@ public final class BitfinexSymbols {
      * Returns symbol for account.
      * used only within lib - no practical use for end-user
      *
+     * @param permissions of specified key
      * @param apiKey      for this account
+     * @return symbol
+     */
+    public static BitfinexAccountSymbol account(final BitfinexApiKeyPermissions permissions, 
+    		final String apiKey) {
+    	
+        return new BitfinexAccountSymbol(permissions, apiKey);
+    }
+    
+    /**
+     * Returns symbol for account.
+     * used only within lib - no practical use for end-user
+     *
      * @param permissions of specified key
      * @return symbol
      */
-    public static BitfinexAccountSymbol account(final String apiKey, 
-    		final BitfinexApiKeyPermissions permissions) {
-    	
-        return new BitfinexAccountSymbol(apiKey, permissions);
+    public static BitfinexAccountSymbol account( final BitfinexApiKeyPermissions permissions) {
+        return new BitfinexAccountSymbol(permissions);
     }
 
     /**

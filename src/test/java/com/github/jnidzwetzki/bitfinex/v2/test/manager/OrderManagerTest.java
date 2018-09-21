@@ -71,7 +71,7 @@ public class OrderManagerTest {
 
         final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         bitfinexApiBroker.getOrderManager().registerCallback(orderCallback);
-        final NotificationHandler notificationHandler = new NotificationHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        final NotificationHandler notificationHandler = new NotificationHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
         notificationHandler.onOrderNotification((a, eo) -> {
             bitfinexApiBroker.getOrderManager().updateOrder(a, eo);
         });
@@ -100,7 +100,7 @@ public class OrderManagerTest {
 
         final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         bitfinexApiBroker.getOrderManager().registerCallback(orderCallback);
-        final NotificationHandler notificationHandler = new NotificationHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        final NotificationHandler notificationHandler = new NotificationHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
 
         notificationHandler.handleChannelData("n", jsonArray.getJSONArray(2));
 
@@ -119,7 +119,7 @@ public class OrderManagerTest {
         final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
         final String jsonString = "[0,\"on\",[6784335053,null,1514956504945000,\"tIOTUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
-        final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
         orderHandler.onSubmittedOrderEvent((a, eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
                 bitfinexApiBroker.getOrderManager().updateOrder(a, exchangeOrder);
@@ -145,7 +145,7 @@ public class OrderManagerTest {
         final String jsonString = "[0,\"on\",[[6784335053,null,1514956504945000,\"tIOTUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0], [67843353243,null,1514956234945000,\"tBTCUSD\",1514956505134,1514956505164,-24.175121,-24.175121,\"EXCHANGE STOP\",null,null,null,0,\"ACTIVE\",null,null,3.84,0,null,null,null,null,null,0,0,0]]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
-        final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
         orderHandler.onSubmittedOrderEvent((a, eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
                 bitfinexApiBroker.getOrderManager().updateOrder(a, exchangeOrder);
@@ -175,7 +175,7 @@ public class OrderManagerTest {
 
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
-        final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
         orderHandler.onSubmittedOrderEvent((a,eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
                 bitfinexApiBroker.getOrderManager().updateOrder(a, exchangeOrder);
@@ -201,7 +201,7 @@ public class OrderManagerTest {
 
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
-        final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
         orderHandler.onSubmittedOrderEvent((a, eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
                 bitfinexApiBroker.getOrderManager().updateOrder(a, exchangeOrder);
@@ -243,7 +243,7 @@ public class OrderManagerTest {
         final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
-        BitfinexAccountSymbol symbol = BitfinexSymbols.account("apiKey", BitfinexApiKeyPermissions.ALL_PERMISSIONS);
+        BitfinexAccountSymbol symbol = BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "apiKey");
 
         final Runnable r = () -> {
             try {
@@ -300,7 +300,7 @@ public class OrderManagerTest {
 
         final BitfinexNewOrder order
                 = BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH", "USD"), BitfinexOrderType.MARKET, 1).build();
-        BitfinexAccountSymbol symbol = BitfinexSymbols.account("apiKey", BitfinexApiKeyPermissions.ALL_PERMISSIONS);
+        BitfinexAccountSymbol symbol = BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "apiKey");
 
         final Runnable r = () -> {
             try {

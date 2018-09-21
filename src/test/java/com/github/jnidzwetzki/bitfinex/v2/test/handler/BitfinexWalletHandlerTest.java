@@ -72,7 +72,7 @@ public class BitfinexWalletHandlerTest {
 
 		Assert.assertTrue(walletTable.isEmpty());
 		
-		final WalletHandler walletHandler = new WalletHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		final WalletHandler walletHandler = new WalletHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
 		walletHandler.onWalletsEvent((a, wallets) -> {
 			for (BitfinexWallet wallet : wallets) {
 				try {
@@ -112,7 +112,7 @@ public class BitfinexWalletHandlerTest {
 
 		Assert.assertTrue(walletTable.isEmpty());
 		
-		final WalletHandler walletHandler = new WalletHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+		final WalletHandler walletHandler = new WalletHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
 		walletHandler.onWalletsEvent((a, wallets) -> {
 			for (BitfinexWallet wallet : wallets) {
 				try {

@@ -1,20 +1,33 @@
 package com.github.jnidzwetzki.bitfinex.v2.symbol;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 
 public class BitfinexAccountSymbol implements BitfinexStreamSymbol {
 
-    private final String apiKey;
+	 /**
+     * The key permissions
+     */
     private final BitfinexApiKeyPermissions permissions;
 
-    BitfinexAccountSymbol(String apiKey, BitfinexApiKeyPermissions permissions) {
-        this.apiKey = apiKey;
+	/**
+	 * The API key
+	 */
+    private final Optional<String> apiKey;
+    
+    BitfinexAccountSymbol(final BitfinexApiKeyPermissions permissions, final String apiKey) {
         this.permissions = permissions;
+        this.apiKey = Optional.of(apiKey);
+    }
+    
+    BitfinexAccountSymbol(final BitfinexApiKeyPermissions permissions) {
+        this.permissions = permissions;
+        this.apiKey = Optional.empty();
     }
 
-    public String getApiKey() {
+    public Optional<String> getApiKey() {
         return apiKey;
     }
 

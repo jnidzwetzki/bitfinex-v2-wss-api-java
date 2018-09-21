@@ -70,7 +70,7 @@ public class TradeManagerTest {
         final String jsonString = "[0,\"te\",[106655593,\"tBTCUSD\",1512247319827,5691690918,-0.002,10894,null,null,-1]]";
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexWebsocketClient bitfinexApiBroker = buildMockedBitfinexConnection();
-        final MyExecutedTradeHandler tradeHandler = new MyExecutedTradeHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        final MyExecutedTradeHandler tradeHandler = new MyExecutedTradeHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
         tradeHandler.onTradeEvent((a, trade) -> bitfinexApiBroker.getTradeManager().updateTrade(a, trade));
 
         bitfinexApiBroker.getTradeManager().registerCallback((t) -> {
@@ -100,7 +100,7 @@ public class TradeManagerTest {
 
         final JSONArray jsonArray = new JSONArray(jsonString);
         final BitfinexWebsocketClient bitfinexApiBroker = TestHelper.buildMockedBitfinexConnection();
-        final MyExecutedTradeHandler tradeHandler = new MyExecutedTradeHandler(0, BitfinexSymbols.account("api-key", BitfinexApiKeyPermissions.ALL_PERMISSIONS));
+        final MyExecutedTradeHandler tradeHandler = new MyExecutedTradeHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
         tradeHandler.onTradeEvent((a, trade) -> bitfinexApiBroker.getTradeManager().updateTrade(a, trade));
 
         bitfinexApiBroker.getTradeManager().registerCallback((t) -> {
