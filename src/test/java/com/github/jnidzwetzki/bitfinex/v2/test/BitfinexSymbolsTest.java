@@ -5,8 +5,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexFundingCurrency;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexFundingCurrency;
 import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexCommandException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;

@@ -4,8 +4,9 @@ import java.util.Objects;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexFundingCurrency;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrency;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexFundingCurrency;
 
 /**
  * Bitfinex symbol factory class
@@ -167,7 +168,7 @@ public final class BitfinexSymbols {
      * @param currencyPair of ticker channel
      * @return symbol
      */
-    public static BitfinexTickerSymbol ticker(final BitfinexCurrencyPair currencyPair) {
+    public static BitfinexTickerSymbol ticker(final BitfinexCurrency currencyPair) {
         return new BitfinexTickerSymbol(currencyPair);
     }
 

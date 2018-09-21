@@ -21,7 +21,7 @@ import java.util.Objects;
 
 import org.json.JSONObject;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
 
 public class BitfinexOrderBookSymbol implements BitfinexStreamSymbol {
 

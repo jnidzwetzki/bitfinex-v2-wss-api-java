@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.SequenceNumberAuditor;
 import com.github.jnidzwetzki.bitfinex.v2.SequenceNumberAuditor.ErrorPolicy;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
 
 public class SequenceNumberAuditorTest {
 

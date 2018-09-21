@@ -17,7 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.symbol;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexFundingCurrency;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexFundingCurrency;
 
 public class BitfinexFundingSymbol implements BitfinexStreamSymbol {
 	

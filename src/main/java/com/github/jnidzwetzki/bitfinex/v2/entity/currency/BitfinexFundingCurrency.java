@@ -15,11 +15,9 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.entity;
+package com.github.jnidzwetzki.bitfinex.v2.entity.currency;
 
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
-
-public class BitfinexFundingCurrency implements BitfinexStreamSymbol {
+public class BitfinexFundingCurrency implements BitfinexCurrency {
 	
 	/**
 	 * The funding currency
@@ -42,6 +40,7 @@ public class BitfinexFundingCurrency implements BitfinexStreamSymbol {
 	 * Convert to bitfinex string
 	 * @return
 	 */
+	@Override
 	public String toBitfinexString() {
 		return "f" + currency;
 	}

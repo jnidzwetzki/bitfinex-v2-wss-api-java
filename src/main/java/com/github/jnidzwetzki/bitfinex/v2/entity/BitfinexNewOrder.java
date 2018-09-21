@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
+
 /**
  * https://docs.bitfinex.com/v2/reference#ws-input-order-new
  */

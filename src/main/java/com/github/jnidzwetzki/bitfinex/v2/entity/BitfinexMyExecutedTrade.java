@@ -20,6 +20,8 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
+
 public class BitfinexMyExecutedTrade extends BitfinexExecutedTrade {
 
 	/**

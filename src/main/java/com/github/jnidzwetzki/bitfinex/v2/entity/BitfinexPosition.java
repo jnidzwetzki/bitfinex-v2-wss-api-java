@@ -19,6 +19,8 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 
 import java.math.BigDecimal;
 
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
+
 public class BitfinexPosition {
 
 	private final BitfinexCurrencyPair currencyPair;

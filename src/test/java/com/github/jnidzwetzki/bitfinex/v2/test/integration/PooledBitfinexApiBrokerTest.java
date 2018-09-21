@@ -13,7 +13,7 @@ import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCandlesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTradesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 
 public class PooledBitfinexApiBrokerTest {

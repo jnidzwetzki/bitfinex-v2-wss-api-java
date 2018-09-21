@@ -15,7 +15,7 @@
  *    limitations under the License. 
  *    
  *******************************************************************************/
-package com.github.jnidzwetzki.bitfinex.v2.entity;
+package com.github.jnidzwetzki.bitfinex.v2.entity.currency;
 
 import java.io.IOException;
 import java.net.URL;
@@ -30,7 +30,7 @@ import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-public class BitfinexCurrencyPair {
+public class BitfinexCurrencyPair implements BitfinexCurrency {
 
 	/**
 	 * The known currencies
@@ -197,6 +197,7 @@ public class BitfinexCurrencyPair {
 	 * Convert to bitfinex string
 	 * @return
 	 */
+	@Override
 	public String toBitfinexString() {
 		return "t" + currency1 + currency2;
 	}

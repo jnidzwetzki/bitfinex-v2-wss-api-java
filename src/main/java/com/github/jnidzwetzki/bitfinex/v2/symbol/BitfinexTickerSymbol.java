@@ -17,29 +17,30 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.symbol;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrency;
+import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexCurrencyFactory;
 
 public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 	
 	/**
 	 * The currency pair
 	 */
-	private final BitfinexCurrencyPair currencyPair;
+	private final BitfinexCurrency currency;
 
-	BitfinexTickerSymbol(final BitfinexCurrencyPair currencyPair) {
-		this.currencyPair = currencyPair;
+	BitfinexTickerSymbol(final BitfinexCurrency currency) {
+		this.currency = currency;
 	}
 
 	@Override
 	public String toString() {
-		return "BitfinexTickerSymbol [currencyPair=" + currencyPair + "]";
+		return "BitfinexTickerSymbol [currencyPair=" + currency + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((currencyPair == null) ? 0 : currencyPair.hashCode());
+		result = prime * result + ((currency == null) ? 0 : currency.hashCode());
 		return result;
 	}
 
@@ -52,7 +53,7 @@ public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 		if (getClass() != obj.getClass())
 			return false;
 		BitfinexTickerSymbol other = (BitfinexTickerSymbol) obj;
-		if (currencyPair != other.currencyPair)
+		if (currency != other.currency)
 			return false;
 		return true;
 	}
@@ -63,7 +64,7 @@ public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 	 * @return
 	 */
 	public static BitfinexTickerSymbol fromBitfinexString(final String symbol) {
-		final BitfinexCurrencyPair bitfinexCurrencyPair = BitfinexCurrencyPair.fromSymbolString(symbol);
+		final BitfinexCurrency bitfinexCurrencyPair = BitfinexCurrencyFactory.build(symbol);
 		return BitfinexSymbols.ticker(bitfinexCurrencyPair);
 	}
 
@@ -71,8 +72,8 @@ public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 	 * Get the currency pair
 	 * @return
 	 */
-	public BitfinexCurrencyPair getCurrencyPair() {
-		return currencyPair;
+	public BitfinexCurrency getCurrency() {
+		return currency;
 	}
 	
 }
