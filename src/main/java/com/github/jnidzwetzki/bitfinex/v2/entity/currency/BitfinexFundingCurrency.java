@@ -17,7 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.entity.currency;
 
-public class BitfinexFundingCurrency implements BitfinexCurrency {
+public class BitfinexFundingCurrency implements BitfinexInstrument {
 	
 	/**
 	 * The funding currency

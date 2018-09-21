@@ -17,7 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.entity.currency;
 
-public interface BitfinexCurrency {
+public interface BitfinexInstrument {
 	
 	/**
 	 * Get the bitfinex symbol string

@@ -32,7 +32,6 @@ import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexTick;
-import com.github.jnidzwetzki.bitfinex.v2.entity.FutureOperation;
 import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;

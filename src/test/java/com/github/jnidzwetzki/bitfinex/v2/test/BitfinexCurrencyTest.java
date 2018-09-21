@@ -21,7 +21,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrency;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexInstrument;
 import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexFundingCurrency;
 import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexCurrencyFactory;
@@ -77,10 +77,10 @@ public class BitfinexCurrencyTest {
 	
 	@Test
 	public void factoryTest1() {
-		final BitfinexCurrency symbol1 = BitfinexCurrencyFactory.build("fUSD");
+		final BitfinexInstrument symbol1 = BitfinexCurrencyFactory.build("fUSD");
 		Assert.assertTrue(symbol1 instanceof BitfinexFundingCurrency);
 		
-		final BitfinexCurrency symbol2 = BitfinexCurrencyFactory.build("tBTCUSD");
+		final BitfinexInstrument symbol2 = BitfinexCurrencyFactory.build("tBTCUSD");
 		Assert.assertTrue(symbol2 instanceof BitfinexCurrencyPair);
 	}
 	

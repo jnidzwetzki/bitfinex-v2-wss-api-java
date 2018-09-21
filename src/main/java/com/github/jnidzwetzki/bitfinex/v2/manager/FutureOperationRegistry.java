@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.FutureOperation;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 
 public class FutureOperationRegistry {

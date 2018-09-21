@@ -17,7 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.util;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrency;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexInstrument;
 import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexFundingCurrency;
 
@@ -28,7 +28,7 @@ public class BitfinexCurrencyFactory {
 	 * @param symbolString
 	 * @return
 	 */
-	public static BitfinexCurrency build(final String symbolString) {
+	public static BitfinexInstrument build(final String symbolString) {
 		
 		if(symbolString.startsWith("t")) {
 			return BitfinexCurrencyPair.fromSymbolString(symbolString);

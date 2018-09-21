@@ -17,7 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.symbol;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrency;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexInstrument;
 import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexCurrencyFactory;
 
 public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
@@ -25,9 +25,9 @@ public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 	/**
 	 * The currency pair
 	 */
-	private final BitfinexCurrency currency;
+	private final BitfinexInstrument currency;
 
-	BitfinexTickerSymbol(final BitfinexCurrency currency) {
+	BitfinexTickerSymbol(final BitfinexInstrument currency) {
 		this.currency = currency;
 	}
 
@@ -64,7 +64,7 @@ public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 	 * @return
 	 */
 	public static BitfinexTickerSymbol fromBitfinexString(final String symbol) {
-		final BitfinexCurrency bitfinexCurrencyPair = BitfinexCurrencyFactory.build(symbol);
+		final BitfinexInstrument bitfinexCurrencyPair = BitfinexCurrencyFactory.build(symbol);
 		return BitfinexSymbols.ticker(bitfinexCurrencyPair);
 	}
 
@@ -72,7 +72,7 @@ public class BitfinexTickerSymbol implements BitfinexStreamSymbol {
 	 * Get the currency pair
 	 * @return
 	 */
-	public BitfinexCurrency getCurrency() {
+	public BitfinexInstrument getCurrency() {
 		return currency;
 	}
 	

@@ -30,7 +30,7 @@ import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-public class BitfinexCurrencyPair implements BitfinexCurrency {
+public class BitfinexCurrencyPair implements BitfinexInstrument {
 
 	/**
 	 * The known currencies
