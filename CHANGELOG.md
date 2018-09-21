@@ -1,4 +1,5 @@
 # Version 0.7.2 (TBA)
+* Improvement: API key is now an optional
 
 # Version 0.7.1 (20.09.2018)
 * New Feature: The available currencies are now fetched directly from Bitfinex

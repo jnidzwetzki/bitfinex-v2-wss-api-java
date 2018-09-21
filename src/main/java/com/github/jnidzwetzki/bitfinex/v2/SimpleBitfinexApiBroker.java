@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Stopwatch;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -78,6 +77,7 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexStreamSymbolToChannelIdResolverAware;
+import com.google.common.base.Stopwatch;
 
 public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClient {
 
@@ -85,6 +85,11 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	 * The bitfinex api
 	 */
 	public final static String BITFINEX_URI = "wss://api.bitfinex.com/ws/2";
+	
+	/**
+	 * The account info channel id
+	 */
+	public final static int ACCCOUNT_INFO_CHANNEL = 0;
 
 	/**
 	 * broker configuration
@@ -240,7 +245,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		auth.onAuthenticationSuccessEvent(permissions -> {
 		    logger.info("authentication succeeded for key {}", configuration.getApiKey());
 			final BitfinexAccountSymbol symbol = BitfinexSymbols.account(permissions, configuration.getApiKey());
-			final AccountInfoHandler handler = new AccountInfoHandler(0, symbol);
+			final AccountInfoHandler handler = new AccountInfoHandler(ACCCOUNT_INFO_CHANNEL, symbol);
 			handler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
 			handler.onPositionsEvent(callbackRegistry::acceptMyPositionEvent);
 			handler.onWalletsEvent(callbackRegistry::acceptMyWalletEvent);
@@ -291,10 +296,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
             final Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
             final Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
 
-            final BitfinexAccountSymbol accountSymbol = BitfinexSymbols.account(BitfinexApiKeyPermissions.NO_PERMISSIONS);
-            final AccountInfoHandler accountInfoHandler = new AccountInfoHandler(0, accountSymbol);
-            accountInfoHandler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
-            channelIdToHandlerMap.put(0, accountInfoHandler);
+            setupDefaultAccountInfoHandler();
 
             websocketEndpoint = new WebsocketClientEndpoint(new URI(BITFINEX_URI), this::websocketCallback);
             websocketEndpoint.connect();
@@ -318,6 +320,16 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		} catch (final Exception e) {
 			throw new BitfinexClientException(e);
 		}
+	}
+
+	/**
+	 * Setup the default info handler - can be replaced in onAuthenticationSuccessEvent
+	 */
+	private void setupDefaultAccountInfoHandler() {
+		final BitfinexAccountSymbol accountSymbol = BitfinexSymbols.account(BitfinexApiKeyPermissions.NO_PERMISSIONS);
+		final AccountInfoHandler accountInfoHandler = new AccountInfoHandler(ACCCOUNT_INFO_CHANNEL, accountSymbol);
+		accountInfoHandler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
+		channelIdToHandlerMap.put(0, accountInfoHandler);
 	}
 
 	/**
@@ -396,13 +408,13 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 					connectionReadyLatch.countDown();
 				}
 			});
+			
 			final Closeable positionInitCallback = callbackRegistry.onMyPositionEvent((a, p) -> connectionReadyLatch.countDown());
 			final Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
 			final Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
 
-            AccountInfoHandler accountInfoHandler = new AccountInfoHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.NO_PERMISSIONS, null));
-            accountInfoHandler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
-            channelIdToHandlerMap.put(0, accountInfoHandler);
+			// Reset account info handler
+			setupDefaultAccountInfoHandler();
 
 			websocketEndpoint.connect();
 
