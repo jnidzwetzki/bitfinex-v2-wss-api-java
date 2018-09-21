@@ -1,4 +1,5 @@
 # Version 0.7.2 (TBA)
+* New Feature: Introduced funding currency symbols
 * Improvement: API key is now an optional
 * Bugfix: Ensure channel unsubscribe handler is registered before unsubscribe is called
 

@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexFundingCurrency;
 
 /**
  * Bitfinex symbol factory class
@@ -184,4 +185,28 @@ public final class BitfinexSymbols {
         
         return ticker(BitfinexCurrencyPair.of(currencyNonNull, profitCurrencyNonNull));
     }
+
+    /**
+     * returns symbol for funding
+     * 
+     * @param bitfinexCurrency
+     * @return
+     */
+	public static BitfinexFundingSymbol funding(final BitfinexFundingCurrency bitfinexCurrency) {
+		return new BitfinexFundingSymbol(bitfinexCurrency);
+	}
+	
+	 /**
+     * returns symbol for funding
+     * 
+     * @param bitfinexCurrency
+     * @return
+     */
+	public static BitfinexFundingSymbol funding(final String bitfinexCurrency) {
+		
+        final String currencyNonNull = Objects.requireNonNull(bitfinexCurrency).toUpperCase();
+        final BitfinexFundingCurrency currency = new BitfinexFundingCurrency(currencyNonNull);
+        
+		return funding(currency);
+	}
 }
