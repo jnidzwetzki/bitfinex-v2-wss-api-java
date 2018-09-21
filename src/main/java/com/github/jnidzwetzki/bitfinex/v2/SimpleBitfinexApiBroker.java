@@ -329,7 +329,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		final BitfinexAccountSymbol accountSymbol = BitfinexSymbols.account(BitfinexApiKeyPermissions.NO_PERMISSIONS);
 		final AccountInfoHandler accountInfoHandler = new AccountInfoHandler(ACCCOUNT_INFO_CHANNEL, accountSymbol);
 		accountInfoHandler.onHeartbeatEvent(timestamp -> this.updateConnectionHeartbeat());
-		channelIdToHandlerMap.put(0, accountInfoHandler);
+		channelIdToHandlerMap.put(ACCCOUNT_INFO_CHANNEL, accountInfoHandler);
 	}
 
 	/**
