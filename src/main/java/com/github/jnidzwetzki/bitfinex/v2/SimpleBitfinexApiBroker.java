@@ -675,12 +675,18 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	 */
 	@Override
 	public boolean unsubscribeAllChannels() {
-        Collection<BitfinexStreamSymbol> channels = getSubscribedChannels();
-        CountDownLatch countDownLatch = new CountDownLatch(channels.size());
-        channels.forEach(symbol -> sendCommand(new UnsubscribeChannelCommand(symbol)));
+        final Collection<BitfinexStreamSymbol> channels = getSubscribedChannels();
+        final int channelsToUnsubscribe = channels.size();
+        
+        logger.debug("Calling unsubscribe for {} channels", channelsToUnsubscribe);
+		final CountDownLatch countDownLatch = new CountDownLatch(channelsToUnsubscribe);
 
         try (Closeable c = callbackRegistry.onUnsubscribeChannelEvent(s -> countDownLatch.countDown())) {
+            channels.forEach(symbol -> sendCommand(new UnsubscribeChannelCommand(symbol)));
+        	
+            // Await the unsubscription
             countDownLatch.await(30, TimeUnit.SECONDS);
+            
             return true;
         } catch (final InterruptedException | IOException e) {
             Thread.currentThread().interrupt();

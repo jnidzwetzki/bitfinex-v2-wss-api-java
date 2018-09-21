@@ -1,5 +1,6 @@
 # Version 0.7.2 (TBA)
 * Improvement: API key is now an optional
+* Bugfix: Ensure channel unsubscribe handler is registered before unsubscribe is called
 
 # Version 0.7.1 (20.09.2018)
 * New Feature: The available currencies are now fetched directly from Bitfinex
