@@ -586,6 +586,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 
 	/**
 	 * Re-subscribe the old ticker
+	 * @return 
 	 * @throws InterruptedException
 	 * @throws BitfinexClientException
 	 */
@@ -596,6 +597,9 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			oldChannelIdSymbolMap.putAll(channelIdToHandlerMap);
 			channelIdToHandlerMap.clear();
 			channelIdToHandlerMap.notifyAll();
+			
+			// Implicit channel account info channel
+			channelIdToHandlerMap.put(ACCCOUNT_INFO_CHANNEL, oldChannelIdSymbolMap.get(ACCCOUNT_INFO_CHANNEL));
 		}
 		
 		// Resubscribe channels
@@ -609,17 +613,20 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 				sendCommand(new SubscribeCandlesCommand((BitfinexCandlestickSymbol) symbol));
 			} else if(symbol instanceof BitfinexOrderBookSymbol) {
 				sendCommand(new SubscribeOrderbookCommand((BitfinexOrderBookSymbol) symbol));
+			} else if(symbol instanceof BitfinexAccountSymbol) {
+				// This symbol does not need to be resubscribed
 			} else {
 				logger.error("Unknown stream symbol: {}", symbol);
 			}
 		}
 		
-		waitForChannelResubscription(oldChannelIdSymbolMap);
+		waitForChannelResubscription(oldChannelIdSymbolMap);		
 	}
 
 	/**
 	 * Wait for the successful channel re-subscription
 	 * @param oldChannelIdSymbolMap
+	 * @return 
 	 * @throws BitfinexClientException
 	 * @throws InterruptedException
 	 */
@@ -635,11 +642,13 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			while(channelIdToHandlerMap.size() != oldChannelIdSymbolMap.size()) {
 				
 				if(stopwatch.elapsed(TimeUnit.MILLISECONDS) > MAX_WAIT_TIME_IN_MS) {
+					// Raise BitfinexClientException
 					handleResubscribeFailed(oldChannelIdSymbolMap);
 				}
 				
 				channelIdToHandlerMap.wait(500);
 			}
+			
 		}
 	}
 

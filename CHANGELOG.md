@@ -2,6 +2,7 @@
 * New Feature: Introduced funding currency symbols
 * Improvement: API key is now an optional
 * Bugfix: Ensure channel unsubscribe handler is registered before unsubscribe is called
+* Bugfix: Fixed some reconnect related issues
 
 # Version 0.7.1 (20.09.2018)
 * New Feature: The available currencies are now fetched directly from Bitfinex

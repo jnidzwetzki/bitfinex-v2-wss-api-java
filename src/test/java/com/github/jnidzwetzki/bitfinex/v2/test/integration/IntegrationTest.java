@@ -359,7 +359,7 @@ public class IntegrationTest {
 	 * @throws InterruptedException
 	 * @throws ExecutionException 
 	 */
-	@Test(timeout=600000)
+	@Test(timeout=600_000)
 	public void testReconnect() throws BitfinexClientException, InterruptedException, ExecutionException {
 		final BitfinexWebsocketClient bitfinexClient = new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
 		bitfinexClient.connect();
@@ -371,8 +371,20 @@ public class IntegrationTest {
 		final FutureOperation subscribeFuture = orderbookManager.subscribeTicker(symbol);
 		subscribeFuture.waitForCompletion();
 		
-		bitfinexClient.reconnect();
+		// Await at least 2 callbacks
+		final CountDownLatch latchBefore = new CountDownLatch(2);
 
+		final BiConsumer<BitfinexTickerSymbol, BitfinexTick> beforeCallback = (c, o) -> {
+			latchBefore.countDown();
+		};
+		
+		orderbookManager.registerTickCallback(symbol, beforeCallback);
+		latchBefore.await();
+		orderbookManager.removeTickCallback(symbol, beforeCallback);		
+		
+		final boolean reconnectResult = bitfinexClient.reconnect();
+		Assert.assertTrue(reconnectResult);
+		
 		// Await at least 2 callbacks
 		final CountDownLatch latch = new CountDownLatch(2);
 
