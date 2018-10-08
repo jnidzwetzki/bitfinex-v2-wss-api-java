@@ -1,3 +1,5 @@
+# Version 0.7.3 (TBA)
+
 # Version 0.7.2 (08.10.2018)
 * New Feature: Introduced funding currency symbols
 * Improvement: API key is now an optional
