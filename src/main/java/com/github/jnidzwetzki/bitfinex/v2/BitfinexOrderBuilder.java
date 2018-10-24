@@ -109,7 +109,11 @@ public class BitfinexOrderBuilder {
 		order.setPriceTrailing(priceTrailing);
 		order.setPriceAuxLimit(priceAuxLimit);
 		order.setOrderFlags(orderFlags);
-		order.setClientGroupId(groupid);
+		
+		if(groupid != -1) {
+			order.setClientGroupId(groupid);
+		}
+		
 		return order;
 	}
 
