@@ -15,7 +15,7 @@ BitfinexWebsocketClient client = BitfinexClientFactory.newSingleClient();
 client.connect();
 
 // For public and private operations (executing orders, read wallets)
-BitfinexApiBrokerConfig config = new BitfinexApiBrokerConfig();
+BitfinexWebsocketConfiguration config = new BitfinexWebsocketConfiguration();
 config.setApiCredentials(apiKey, apiSecret);
 
 BitfinexWebsocketClient client = BitfinexClientFactory.newSingleClient(config);
