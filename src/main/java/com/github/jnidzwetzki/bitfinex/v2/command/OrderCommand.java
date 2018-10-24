@@ -66,12 +66,10 @@ public class OrderCommand implements BitfinexCommand {
 			orderJson.put("flags", bitfinexOrder.getCombinedFlags());
 		}
 
-		if(bitfinexOrder.getClientId() != null) {
-			orderJson.put("cid", bitfinexOrder.getClientId());
-		}
-
-		if(bitfinexOrder.getClientGroupId() != null) {
-			orderJson.put("gid", bitfinexOrder.getClientGroupId());
+		orderJson.put("cid", bitfinexOrder.getClientId());
+		
+		if(bitfinexOrder.getClientGroupId().isPresent()) {
+			orderJson.put("gid", bitfinexOrder.getClientGroupId().get());
 		}
 		
 		final StringBuilder sb = new StringBuilder();

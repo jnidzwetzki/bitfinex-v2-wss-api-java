@@ -20,6 +20,7 @@ package com.github.jnidzwetzki.bitfinex.v2.entity;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,12 +34,12 @@ public class BitfinexNewOrder {
     /**
      * Should be unique in the day (UTC) (not enforced)
      */
-    private Long clientId;
+    private long clientId = -1;
 
     /**
      * (optional) Group id for the order
      */
-    private Integer clientGroupId;
+    private Optional<Integer> clientGroupId = Optional.empty();
 
     /**
      * currency pair
@@ -85,20 +86,20 @@ public class BitfinexNewOrder {
      */
     private String apiKey;
 
-    public Long getClientId() {
+    public long getClientId() {
         return clientId;
     }
 
-    public void setClientId(final Long clientId) {
+    public void setClientId(final long clientId) {
         this.clientId = clientId;
     }
 
-    public Integer getClientGroupId() {
+    public Optional<Integer> getClientGroupId() {
         return clientGroupId;
     }
 
     public void setClientGroupId(final Integer clientGroupId) {
-        this.clientGroupId = clientGroupId;
+        this.clientGroupId = Optional.of(clientGroupId);
     }
 
     public BitfinexCurrencyPair getCurrencyPair() {
@@ -211,7 +212,7 @@ public class BitfinexNewOrder {
 		result = prime * result + ((amount == null) ? 0 : amount.hashCode());
 		result = prime * result + ((apiKey == null) ? 0 : apiKey.hashCode());
 		result = prime * result + ((clientGroupId == null) ? 0 : clientGroupId.hashCode());
-		result = prime * result + ((clientId == null) ? 0 : clientId.hashCode());
+		result = prime * result + (int) (clientId ^ (clientId >>> 32));
 		result = prime * result + ((currencyPair == null) ? 0 : currencyPair.hashCode());
 		result = prime * result + ((orderFlags == null) ? 0 : orderFlags.hashCode());
 		result = prime * result + ((orderType == null) ? 0 : orderType.hashCode());
@@ -246,10 +247,7 @@ public class BitfinexNewOrder {
 				return false;
 		} else if (!clientGroupId.equals(other.clientGroupId))
 			return false;
-		if (clientId == null) {
-			if (other.clientId != null)
-				return false;
-		} else if (!clientId.equals(other.clientId))
+		if (clientId != other.clientId)
 			return false;
 		if (currencyPair == null) {
 			if (other.currencyPair != null)
@@ -285,5 +283,6 @@ public class BitfinexNewOrder {
 			return false;
 		return true;
 	}
+
 
 }
