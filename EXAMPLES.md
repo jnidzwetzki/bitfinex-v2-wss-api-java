@@ -243,6 +243,10 @@ bitfinexApiBroker.getOrderManager().placeOrder(order);
 ```
 
 ## Order group
+Order groups are maintained automatically by Bitfinex; they have a 'one cancels the other' semantic. It means that all remaining orders of an order group are canceled automatically when one of the group orders is executed. 
+
+To set up an order group, choose a random integer value (like 4711 in the following example) and pass this value to the `withGroupId()` method of all orders, that should be part of the order group. In the following example, a long order is placed when the price rises and a short order is placed when the price drops. Due to the order group, it is ensured that only one of the orders is executed. The other order is canceled automatically. 
+
 ```java
 final CurrencyPair currencyPair = BitfinexCurrencyPair.of("BTC","USD");
 final BitfinexTick lastValue = bitfinexApiBroker.getQuoteManager().getLastTick(currencyPair);
