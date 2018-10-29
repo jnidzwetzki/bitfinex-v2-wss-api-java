@@ -15,8 +15,7 @@ public final class BitfinexClientFactory {
      * @return {@link SimpleBitfinexApiBroker} client
      */
     public static BitfinexWebsocketClient newSimpleClient() {
-        return new SimpleBitfinexApiBroker(new BitfinexWebsocketConfiguration(),
-                new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
+        return newSimpleClient(new BitfinexWebsocketConfiguration());
     }
 
     /**
@@ -26,7 +25,12 @@ public final class BitfinexClientFactory {
      * @return {@link SimpleBitfinexApiBroker} client
      */
     public static BitfinexWebsocketClient newSimpleClient(final BitfinexWebsocketConfiguration config) {
-        return new SimpleBitfinexApiBroker(config, new BitfinexApiCallbackRegistry(), new SequenceNumberAuditor());
+        final BitfinexApiCallbackRegistry callbackRegistry = new BitfinexApiCallbackRegistry();
+		final SequenceNumberAuditor sequenceNumberAuditor = new SequenceNumberAuditor();
+		
+		sequenceNumberAuditor.setErrorPolicy(config.getErrorPolicy());
+		
+		return new SimpleBitfinexApiBroker(config, callbackRegistry, sequenceNumberAuditor);
     }
 
     /**
@@ -36,8 +40,7 @@ public final class BitfinexClientFactory {
      * @return {@link PooledBitfinexApiBroker} client
      */
     public static BitfinexWebsocketClient newPooledClient() {
-        return new PooledBitfinexApiBroker(new BitfinexWebsocketConfiguration(), new BitfinexApiCallbackRegistry(),
-                new SequenceNumberAuditor(), 150);
+        return newPooledClient(new BitfinexWebsocketConfiguration(), 150);
     }
 
     /**
@@ -55,10 +58,12 @@ public final class BitfinexClientFactory {
             throw new IllegalArgumentException("channelsPerConnection must be in range (10, 250)");
         }
     	
-        return new PooledBitfinexApiBroker(config, 
-        		new BitfinexApiCallbackRegistry(), 
-        		new SequenceNumberAuditor(), 
-        		channelsPerConnection);
+        final BitfinexApiCallbackRegistry callbacks = new BitfinexApiCallbackRegistry();
+		final SequenceNumberAuditor sequenceNumberAuditor = new SequenceNumberAuditor();
+		
+		sequenceNumberAuditor.setErrorPolicy(config.getErrorPolicy());
+
+		return new PooledBitfinexApiBroker(config, callbacks, sequenceNumberAuditor, channelsPerConnection);
     }
 
 }

@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
 import com.google.common.util.concurrent.MoreExecutors;
-
+import com.github.jnidzwetzki.bitfinex.v2.SequenceNumberAuditor.ErrorPolicy;
 import com.github.jnidzwetzki.bitfinex.v2.command.AuthCommand;
 
 public class BitfinexWebsocketConfiguration {
@@ -71,6 +71,11 @@ public class BitfinexWebsocketConfiguration {
      * Server will throw 429 on #connect() if too low.
      */
     private int connectionEstablishingDelay = 7_500;
+    
+    /**
+	 * The error handling policy
+	 */
+	private ErrorPolicy errorPolicy = ErrorPolicy.LOG_ONLY;
 
     public BitfinexWebsocketConfiguration() {
 
@@ -86,6 +91,7 @@ public class BitfinexWebsocketConfiguration {
         this.authNonceProducer = copy.authNonceProducer;
         this.executorService = copy.executorService;
         this.connectionEstablishingDelay = copy.connectionEstablishingDelay;
+        this.errorPolicy = copy.errorPolicy;
     }
 
     public void setApiCredentials(final String apiKey, final String apiSecret) {
@@ -157,4 +163,12 @@ public class BitfinexWebsocketConfiguration {
     public void setConnectionEstablishingDelay(int connectionEstablishingDelay) {
         this.connectionEstablishingDelay = connectionEstablishingDelay;
     }
+
+	public ErrorPolicy getErrorPolicy() {
+		return errorPolicy;
+	}
+
+	public void setErrorPolicy(final ErrorPolicy errorPolicy) {
+		this.errorPolicy = errorPolicy;
+	}
 }

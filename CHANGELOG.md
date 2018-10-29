@@ -1,4 +1,5 @@
 # Version 0.7.3 (TBA)
+* Improvement: Made error policy configurable
 * Bugfix: Fixed invalid order group value for new orders
 
 # Version 0.7.2 (08.10.2018)
