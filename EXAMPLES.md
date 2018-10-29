@@ -11,15 +11,15 @@ final String apiKey = "....";
 final String apiSecret = "....";
 
 // For public operations (subscribe ticker, candles)
-BitfinexWebsocketClient client = BitfinexClientFactory.newSingleClient();
+final BitfinexWebsocketClient client = BitfinexClientFactory.newSimpleClient();
 client.connect();
 
 // For public and private operations (executing orders, read wallets)
-BitfinexWebsocketConfiguration config = new BitfinexWebsocketConfiguration();
+final BitfinexWebsocketConfiguration config = new BitfinexWebsocketConfiguration();
 config.setApiCredentials(apiKey, apiSecret);
 
-BitfinexWebsocketClient client = BitfinexClientFactory.newSingleClient(config);
-client.connect();
+final BitfinexWebsocketClient bitfinexClient = BitfinexClientFactory.newSimpleClient(config);
+bitfinexClient.connect();
 ```
 
 ## Provided API key permissions
@@ -65,11 +65,14 @@ PS. _minimalOrderSize_ is not used any way by library - so user may pass 0.0d if
 ## Connection Features
 ```java
 // Enabling package sequence auditing (ensuring all result packages are processed)
-final ConnectionFeatureManager cfManager = bitfinexClient.getConnectionFeatureManager();
 
-final SequenceNumberAuditor sequenceNumberAuditor = bitfinexClient.getSequenceNumberAuditor();
-sequenceNumberAuditor.setErrorPolicy(SequenceNumberAuditor.ErrorPolicy.LOG_ONLY);
+final BitfinexWebsocketConfiguration config = new BitfinexWebsocketConfiguration();
+config.setErrorPolicy(ErrorPolicy.RUNTIME_EXCEPTION);
+[...]
 
+final BitfinexWebsocketClient bitfinexClient = BitfinexClientFactory.newSimpleClient(config);
+
+final ConnectionFeatureManager cfManager = bitfinexClient.getConnectionFeatureManager()
 cfManager.enableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
 ```
 # Channel subscriptions
