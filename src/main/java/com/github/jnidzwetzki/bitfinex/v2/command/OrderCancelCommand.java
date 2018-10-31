@@ -22,28 +22,22 @@ import org.json.JSONObject;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexCommandException;
 
-public class CancelOrderGroupCommand implements BitfinexCommand {
+public class OrderCancelCommand implements BitfinexOrderCommand {
 
 	/**
-	 * The order group
+	 * The cid
 	 */
-	private int orderGroup;
+	private long id;
 
-	public CancelOrderGroupCommand(final int orderGroup) {
-		this.orderGroup = orderGroup;
+	public OrderCancelCommand(final long id) {
+		this.id = id;
 	}
 
 	@Override
-	public String getCommand(BitfinexWebsocketClient client) throws BitfinexCommandException {
+	public String getCommand(final BitfinexWebsocketClient client) throws BitfinexCommandException {
 		final JSONObject cancelJson = new JSONObject();
-		cancelJson.put("gid", orderGroup);
-		
-		final StringBuilder sb = new StringBuilder();
-		sb.append("[0,\"oc_multi\", null, ");
-		sb.append(cancelJson.toString());
-		sb.append("]\n");
-				
-		return sb.toString();
+		cancelJson.put("id", id);
+		return "[0, \"oc\", null, " + cancelJson.toString() + "]";
 	}
 
 }

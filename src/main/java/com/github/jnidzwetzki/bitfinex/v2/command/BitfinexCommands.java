@@ -1,5 +1,7 @@
 package com.github.jnidzwetzki.bitfinex.v2.command;
 
+import java.util.Collection;
+
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
@@ -8,7 +10,7 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexStreamSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
 /**
- * bitfinex commands factorry
+ * bitfinex commands factory
  */
 public final class BitfinexCommands {
 
@@ -16,16 +18,24 @@ public final class BitfinexCommands {
 
     }
 
-    public static OrderCommand newOrder(BitfinexNewOrder order) {
-        return new OrderCommand(order);
+    public static OrderNewCommand newOrder(BitfinexNewOrder order) {
+        return new OrderNewCommand(order);
     }
 
-    public static CancelOrderCommand cancelOrder(long orderId) {
-        return new CancelOrderCommand(orderId);
+    public static OrderCancelCommand cancelOrder(long orderId) {
+        return new OrderCancelCommand(orderId);
     }
 
-    public static CancelOrderGroupCommand cancelOrderGroup(int orderGroupId) {
-        return new CancelOrderGroupCommand(orderGroupId);
+    public static OrderCancelGroupCommand cancelOrderGroup(int orderGroupId) {
+        return new OrderCancelGroupCommand(orderGroupId);
+    }
+
+    public static OrderCancelAllCommand cancelAllOrders() {
+        return new OrderCancelAllCommand();
+    }
+
+    public static OrderMultiCommand orderMulti(Collection<BitfinexOrderCommand> commands) {
+        return new OrderMultiCommand(commands);
     }
 
     public static PingCommand ping() {

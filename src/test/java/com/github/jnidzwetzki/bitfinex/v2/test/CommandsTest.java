@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,9 +16,11 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketConfiguration;
 import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
 import com.github.jnidzwetzki.bitfinex.v2.command.AuthCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommand;
-import com.github.jnidzwetzki.bitfinex.v2.command.CancelOrderCommand;
-import com.github.jnidzwetzki.bitfinex.v2.command.CancelOrderGroupCommand;
-import com.github.jnidzwetzki.bitfinex.v2.command.OrderCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelAllCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelGroupCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderMultiCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderNewCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.PingCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SetConnectionFeaturesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCandlesCommand;
@@ -66,9 +69,9 @@ public class CommandsTest {
 
 		final List<BitfinexCommand> commands = Arrays.asList(
 				new AuthCommand(AuthCommand.AUTH_NONCE_PRODUCER_TIMESTAMP),
-				new CancelOrderCommand(123),
-				new CancelOrderGroupCommand(1),
-				new OrderCommand(order),
+				new OrderCancelCommand(123),
+				new OrderCancelGroupCommand(1),
+				new OrderNewCommand(order),
 				new PingCommand(),
 				new SubscribeCandlesCommand(candleSymbol),
 				new SubscribeTickerCommand(BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BCH","USD"))),
@@ -105,7 +108,7 @@ public class CommandsTest {
 			.withGroupId(4)
 			.build();
 
-		final OrderCommand command = new OrderCommand(order);
+		final OrderNewCommand command = new OrderNewCommand(order);
 
 		final BitfinexWebsocketClient bitfinexApiBroker = buildMockedBitfinexConnection();
 
@@ -115,10 +118,32 @@ public class CommandsTest {
 		Assert.assertTrue(commandValue.contains("\"2.0\""));
 	}
 
-	/**
-	 *  Build the bitfinex connection
-	 * @return
-	 */
+	@Test
+	public void testOrderMultiOperationCommand_ok() throws BitfinexCommandException {
+		// given
+		final BitfinexNewOrder order
+				= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderType.EXCHANGE_STOP, 2)
+				.withOrderFlag(BitfinexOrderFlag.HIDDEN)
+				.withPrice(12)
+				.withPriceAuxLimit(23)
+				.withPriceTrailing(23)
+				.withGroupId(4)
+				.build();
+		order.setClientId(100L);
+
+		OrderCancelCommand c1 = new OrderCancelCommand(1);
+		OrderNewCommand c2 = new OrderNewCommand(order);
+		OrderCancelGroupCommand c3 = new OrderCancelGroupCommand(3);
+		OrderCancelAllCommand c4 = new OrderCancelAllCommand();
+
+        // when
+		OrderMultiCommand multiCommand = new OrderMultiCommand(Lists.newArrayList(c1, c2, c3, c4));
+		String command = multiCommand.getCommand(null);
+
+		// then
+		Assert.assertEquals("[0, \"ox_multi\", null, [[\"oc\", {\"id\":1}],[\"on\", {\"symbol\":\"tBCHUSD\",\"amount\":\"2.0\",\"gid\":4,\"price\":\"12.0\",\"flags\":64,\"price_aux_limit\":\"23.0\",\"type\":\"EXCHANGE STOP\",\"price_trailing\":\"23.0\",\"cid\":100}],[\"oc_multi\", {\"gid\":3}],[\"oc_multi\", {\"all\": 1}]]]", command);
+	}
+
 	private BitfinexWebsocketClient buildMockedBitfinexConnection() {
 		final BitfinexWebsocketClient bitfinexApiBroker = Mockito.mock(SimpleBitfinexApiBroker.class);
 		final BitfinexWebsocketConfiguration config = Mockito.mock(BitfinexWebsocketConfiguration.class);
