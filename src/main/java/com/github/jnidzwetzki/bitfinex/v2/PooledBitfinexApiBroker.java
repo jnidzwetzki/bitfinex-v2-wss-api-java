@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.SetConnectionFeaturesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
@@ -104,6 +105,10 @@ public class PooledBitfinexApiBroker implements BitfinexWebsocketClient {
 
     @Override
     public void sendCommand(BitfinexCommand command) {
+        if (command instanceof SetConnectionFeaturesCommand) {
+            clients.values().forEach(c -> c.sendCommand(command));
+            return;
+        }
         BitfinexWebsocketClient client = clients.get(0);
         if (command instanceof SubscribeCommand) {
             BitfinexStreamSymbol symbol = ((SubscribeCommand) command).getSymbol();
