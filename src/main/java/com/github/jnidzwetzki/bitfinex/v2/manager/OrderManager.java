@@ -341,7 +341,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
         final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
 
         if(! capabilities.isOrderWritePermission()) {
-            throw new BitfinexClientException("Unable to cancel all order - connection has not enough capabilities: " + capabilities);
+            throw new BitfinexClientException("Unable to cancel all orders - connection has not enough capabilities: " + capabilities);
         }
 
         logger.info("Cancel all active orders");
