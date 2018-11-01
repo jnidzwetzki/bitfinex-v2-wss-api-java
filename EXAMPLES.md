@@ -72,7 +72,7 @@ config.setErrorPolicy(ErrorPolicy.RUNTIME_EXCEPTION);
 
 final BitfinexWebsocketClient bitfinexClient = BitfinexClientFactory.newSimpleClient(config);
 
-final ConnectionFeatureManager cfManager = bitfinexClient.getConnectionFeatureManager()
+final ConnectionFeatureManager cfManager = bitfinexClient.getConnectionFeatureManager();
 cfManager.enableConnectionFeature(BitfinexConnectionFeature.SEQ_ALL);
 ```
 # Channel subscriptions
