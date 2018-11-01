@@ -192,7 +192,7 @@ public class BitfinexNewOrder {
 	public int getCombinedFlags() {
 		return orderFlags
 			.stream()
-			.map(o -> o.getFlag())
+			.map(BitfinexOrderFlag::getFlag)
 			.reduce((f1, f2) -> f1 | f2)
 			.orElse(0);
 	}

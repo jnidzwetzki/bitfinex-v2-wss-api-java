@@ -31,9 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
-import com.github.jnidzwetzki.bitfinex.v2.command.CancelOrderCommand;
-import com.github.jnidzwetzki.bitfinex.v2.command.CancelOrderGroupCommand;
-import com.github.jnidzwetzki.bitfinex.v2.command.OrderCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommands;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelAllCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelGroupCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderNewCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
@@ -290,8 +292,8 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 		}
 
 		logger.info("Executing new order {}", order);
-		final OrderCommand orderCommand = new OrderCommand(order);
-		client.sendCommand(orderCommand);
+		final OrderNewCommand orderNewCommand = new OrderNewCommand(order);
+		client.sendCommand(orderNewCommand);
 	}
 
 	/**
@@ -308,7 +310,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 		}
 
 		logger.info("Cancel order with id {}", id);
-		final CancelOrderCommand cancelOrder = new CancelOrderCommand(id);
+		final OrderCancelCommand cancelOrder = new OrderCancelCommand(id);
 		client.sendCommand(cancelOrder);
 	}
 
@@ -326,7 +328,24 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 		}
 
 		logger.info("Cancel order group {}", id);
-		final CancelOrderGroupCommand cancelOrder = new CancelOrderGroupCommand(id);
+		final OrderCancelGroupCommand cancelOrder = new OrderCancelGroupCommand(id);
 		client.sendCommand(cancelOrder);
 	}
+
+    /**
+     * Cancel the given order group
+     * @throws BitfinexClientException
+     */
+    public void cancelAllOrders() throws BitfinexClientException {
+
+        final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
+
+        if(! capabilities.isOrderWritePermission()) {
+            throw new BitfinexClientException("Unable to cancel all orders - connection has not enough capabilities: " + capabilities);
+        }
+
+        logger.info("Cancel all active orders");
+        OrderCancelAllCommand cancelOrders = BitfinexCommands.cancelAllOrders();
+        client.sendCommand(cancelOrders);
+    }
 }
