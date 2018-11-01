@@ -1,6 +1,7 @@
 # Version 0.7.3 (TBA)
 * Improvement: Made error policy configurable
 * Bugfix: Fixed invalid order group value for new orders
+* Bugfix: Connection features are applied to all pooled connections (closes #86)
 
 # Version 0.7.2 (08.10.2018)
 * New Feature: Introduced funding currency symbols
