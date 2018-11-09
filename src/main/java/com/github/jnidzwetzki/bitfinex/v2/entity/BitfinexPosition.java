@@ -24,11 +24,11 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
 public class BitfinexPosition {
 
 	private final BitfinexCurrencyPair currencyPair;
-	private String status;
+	private BitfinexPositionStatus status;
 	private BigDecimal amount;
 	private BigDecimal basePrice;
 	private BigDecimal marginFunding;
-	private int marginFundingType;
+	private BitfinexPositionFundingType marginFundingType;
 	private BigDecimal profitLoss;
 	private BigDecimal profitLossPercent;
 	private BigDecimal priceLiquidation;
@@ -42,11 +42,11 @@ public class BitfinexPosition {
 		return currencyPair;
 	}
 	
-	public String getStatus() {
+	public BitfinexPositionStatus getStatus() {
 		return status;
 	}
 	
-	public void setStatus(final String status) {
+	public void setStatus(final BitfinexPositionStatus status) {
 		this.status = status;
 	}
 	
@@ -74,11 +74,11 @@ public class BitfinexPosition {
 		this.marginFunding = marginFunding;
 	}
 	
-	public int getMarginFundingType() {
+	public BitfinexPositionFundingType getMarginFundingType() {
 		return marginFundingType;
 	}
 	
-	public void setMarginFundingType(final int marginFundingType) {
+	public void setMarginFundingType(final BitfinexPositionFundingType marginFundingType) {
 		this.marginFundingType = marginFundingType;
 	}
 	

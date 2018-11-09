@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.ChannelCallbackHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPositionFundingType;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPositionStatus;
 import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
@@ -91,11 +93,11 @@ public class PositionHandler implements ChannelCallbackHandler {
         final BitfinexCurrencyPair currency = BitfinexCurrencyPair.fromSymbolString(currencyString);
 
         final BitfinexPosition position = new BitfinexPosition(currency);
-        position.setStatus(json.getString(1));
+        position.setStatus(BitfinexPositionStatus.valueOf(json.getString(1)));
         position.setAmount(json.getBigDecimal(2));
         position.setBasePrice(json.getBigDecimal(3));
         position.setMarginFunding(json.getBigDecimal(4));
-        position.setMarginFundingType(json.optInt(5, -1));
+        position.setMarginFundingType(BitfinexPositionFundingType.valueOf(json.optInt(5, -1)));
         position.setProfitLoss(json.optBigDecimal(6, null));
         position.setProfitLossPercent(json.optBigDecimal(7, null));
         position.setPriceLiquidation(json.optBigDecimal(8, null));
