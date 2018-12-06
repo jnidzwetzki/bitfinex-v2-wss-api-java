@@ -1,5 +1,6 @@
 # Version 0.7.3 (TBA)
 * Improvement: Made error policy configurable
+* Improvement: Bump up dependencies
 * Bugfix: Fixed invalid order group value for new orders
 * Bugfix: Connection features are applied to all pooled connections (closes #86)
 
