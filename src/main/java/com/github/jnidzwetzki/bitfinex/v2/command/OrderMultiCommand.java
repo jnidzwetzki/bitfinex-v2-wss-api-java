@@ -17,14 +17,12 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.command;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-import com.google.common.base.Preconditions;
-
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexCommandException;
+import com.google.common.base.Preconditions;
 
 public class OrderMultiCommand implements BitfinexOrderCommand {
 
