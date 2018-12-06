@@ -278,7 +278,7 @@ public class OrderManagerTest {
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 
         final BitfinexNewOrder order
-                = BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH", "USD"), BitfinexOrderType.MARKET, 12).build();
+                = BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BTC", "USD"), BitfinexOrderType.MARKET, 12).build();
 
         orderManager.placeOrderAndWaitUntilActive(order);
     }
@@ -299,7 +299,7 @@ public class OrderManagerTest {
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 
         final BitfinexNewOrder order
-                = BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH", "USD"), BitfinexOrderType.MARKET, 1).build();
+                = BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BTC", "USD"), BitfinexOrderType.MARKET, 1).build();
         BitfinexAccountSymbol symbol = BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "apiKey");
 
         final Runnable r = () -> {

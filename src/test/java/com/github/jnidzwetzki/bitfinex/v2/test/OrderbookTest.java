@@ -43,13 +43,13 @@ public class OrderbookTest {
 	@Test
 	public void testTradingOrderbookEquals() {
 		final BitfinexOrderBookSymbol configuration1 = BitfinexSymbols.orderBook(
-				BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderBookSymbol.Precision.P1, BitfinexOrderBookSymbol.Frequency.F1, 50);
+				BitfinexCurrencyPair.of("BTC","USD"), BitfinexOrderBookSymbol.Precision.P1, BitfinexOrderBookSymbol.Frequency.F1, 50);
 		
 		final BitfinexOrderBookSymbol configuration2 = BitfinexSymbols.orderBook(
-				BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderBookSymbol.Precision.P1, BitfinexOrderBookSymbol.Frequency.F1, 50);
+				BitfinexCurrencyPair.of("BTC","USD"), BitfinexOrderBookSymbol.Precision.P1, BitfinexOrderBookSymbol.Frequency.F1, 50);
 		
 		final BitfinexOrderBookSymbol configuration3 = BitfinexSymbols.orderBook(
-				BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderBookSymbol.Precision.P0, BitfinexOrderBookSymbol.Frequency.F1, 50);
+				BitfinexCurrencyPair.of("BTC","USD"), BitfinexOrderBookSymbol.Precision.P0, BitfinexOrderBookSymbol.Frequency.F1, 50);
 		
 		Assert.assertEquals(configuration1.hashCode(), configuration2.hashCode());
 		Assert.assertEquals(configuration1, configuration2);

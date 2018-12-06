@@ -149,10 +149,10 @@ public class CandlestickHandlerTest {
 	@Test
 	public void testCandlestickSymbolEncoding1() {
 		final BitfinexCandlestickSymbol symbol1 
-			= BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BCH","USD"), BitfinexCandleTimeFrame.MINUTES_15);
+			= BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MINUTES_15);
 		
 		final BitfinexCandlestickSymbol symbol2
-			= BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.MINUTES_15);
+			= BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("ETH","USD"), BitfinexCandleTimeFrame.MINUTES_15);
 	
 		Assert.assertFalse(symbol1.equals(symbol2));
 		
