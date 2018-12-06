@@ -58,11 +58,11 @@ public class CommandsTest {
 
 		final BitfinexNewOrder order
 			= BitfinexOrderBuilder.create(
-					BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderType.EXCHANGE_STOP, 2).build();
+					BitfinexCurrencyPair.of("BTC","USD"), BitfinexOrderType.EXCHANGE_STOP, 2).build();
 
-		final BitfinexCandlestickSymbol candleSymbol = BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BCH","USD"), BitfinexCandleTimeFrame.HOUR_1);
+		final BitfinexCandlestickSymbol candleSymbol = BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.HOUR_1);
 
-		BitfinexOrderBookSymbol orderbookConfiguration = BitfinexSymbols.orderBook(BitfinexCurrencyPair.of("BCH", "USD"), BitfinexOrderBookSymbol.Precision.P0,
+		BitfinexOrderBookSymbol orderbookConfiguration = BitfinexSymbols.orderBook(BitfinexCurrencyPair.of("BTC", "USD"), BitfinexOrderBookSymbol.Precision.P0,
 				BitfinexOrderBookSymbol.Frequency.F0, 50);
 
 		BitfinexOrderBookSymbol rawOrderbookConfiguration = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("BAT", "BTC"));
@@ -74,7 +74,7 @@ public class CommandsTest {
 				new OrderNewCommand(order),
 				new PingCommand(),
 				new SubscribeCandlesCommand(candleSymbol),
-				new SubscribeTickerCommand(BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BCH","USD"))),
+				new SubscribeTickerCommand(BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BTC","USD"))),
 				new SubscribeTradesCommand(BitfinexSymbols.executedTrades(BitfinexCurrencyPair.of("BAT","BTC"))),
 				new SubscribeOrderbookCommand(orderbookConfiguration),
 				new SubscribeOrderbookCommand(rawOrderbookConfiguration),
@@ -100,7 +100,7 @@ public class CommandsTest {
 	@Test
 	public void testOrderCommand() throws BitfinexCommandException {
 		final BitfinexNewOrder order
-			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderType.EXCHANGE_STOP, 2)
+			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BTC","USD"), BitfinexOrderType.EXCHANGE_STOP, 2)
 			.withOrderFlag(BitfinexOrderFlag.HIDDEN)
 			.withPrice(12)
 			.withPriceAuxLimit(23)
@@ -122,7 +122,7 @@ public class CommandsTest {
 	public void testOrderMultiOperationCommand_ok() throws BitfinexCommandException {
 		// given
 		final BitfinexNewOrder order
-				= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BCH","USD"), BitfinexOrderType.EXCHANGE_STOP, 2)
+				= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BTC","USD"), BitfinexOrderType.EXCHANGE_STOP, 2)
 				.withOrderFlag(BitfinexOrderFlag.HIDDEN)
 				.withPrice(12)
 				.withPriceAuxLimit(23)
@@ -141,7 +141,7 @@ public class CommandsTest {
 		String command = multiCommand.getCommand(null);
 
 		// then
-		Assert.assertEquals("[0, \"ox_multi\", null, [[\"oc\", {\"id\":1}],[\"on\", {\"symbol\":\"tBCHUSD\",\"amount\":\"2.0\",\"gid\":4,\"price\":\"12.0\",\"flags\":64,\"price_aux_limit\":\"23.0\",\"type\":\"EXCHANGE STOP\",\"price_trailing\":\"23.0\",\"cid\":100}],[\"oc_multi\", {\"gid\":3}],[\"oc_multi\", {\"all\": 1}]]]", command);
+		Assert.assertEquals("[0, \"ox_multi\", null, [[\"oc\", {\"id\":1}],[\"on\", {\"symbol\":\"tBTCUSD\",\"amount\":\"2.0\",\"gid\":4,\"price\":\"12.0\",\"flags\":64,\"price_aux_limit\":\"23.0\",\"type\":\"EXCHANGE STOP\",\"price_trailing\":\"23.0\",\"cid\":100}],[\"oc_multi\", {\"gid\":3}],[\"oc_multi\", {\"all\": 1}]]]", command);
 	}
 
 	private BitfinexWebsocketClient buildMockedBitfinexConnection() {
