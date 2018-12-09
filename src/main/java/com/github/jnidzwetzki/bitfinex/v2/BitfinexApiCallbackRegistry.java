@@ -36,6 +36,10 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 
 public final class BitfinexApiCallbackRegistry extends BitfinexApiCallbackListeners {
 
+    public void acceptConnectionStateChange(final BitfinexConnectionStateEnum event) {
+        connectionStateConsumers.forEach(consumer -> consumer.accept(event));
+    }
+
     public void acceptSubscribeChannelEvent(final BitfinexStreamSymbol event) {
         subscribeChannelConsumers.forEach(consumer -> consumer.accept(event));
     }

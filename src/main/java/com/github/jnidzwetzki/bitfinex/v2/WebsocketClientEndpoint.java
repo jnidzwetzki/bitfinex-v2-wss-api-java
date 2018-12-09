@@ -48,10 +48,19 @@ public class WebsocketClientEndpoint implements Closeable {
 	private Session userSession = null;
 
 	/**
-	 * The callback consumer
+	 * The message consumer
 	 */
-	private final Consumer<String> messageConsumer;
-	
+	private final Consumer<String> onMessageConsumer;
+
+	/**
+	 * The error consumer
+	 */
+	private final Consumer<Throwable> onErrorConsumer;
+
+	/**
+	 * The close reason consumer
+	 */
+	private final Consumer<CloseReason> onCloseConsumer;
 	/**
 	 * The endpoint URL
 	 */
@@ -67,9 +76,13 @@ public class WebsocketClientEndpoint implements Closeable {
 	 */
 	private CountDownLatch connectLatch = new CountDownLatch(0);
 
-	public WebsocketClientEndpoint(URI bitfinexURI, Consumer<String> consumer) {
+	public WebsocketClientEndpoint(URI bitfinexURI, Consumer<String> onMessageConsumer,
+								   Consumer<CloseReason> onCloseConsumer,
+								   Consumer<Throwable> onErrorConsumer) {
 		this.endpointURI = bitfinexURI;
-		this.messageConsumer = consumer;
+		this.onMessageConsumer = onMessageConsumer;
+		this.onCloseConsumer = onCloseConsumer;
+		this.onErrorConsumer = onErrorConsumer;
 	}
 
 	/**
@@ -95,17 +108,19 @@ public class WebsocketClientEndpoint implements Closeable {
 	@OnClose
 	public void onClose(final Session userSession, final CloseReason reason) {
 		logger.debug("Closing websocket: {}", reason);
+		onCloseConsumer.accept(reason);
 		this.userSession = null;
 	}
 
 	@OnMessage(maxMessageSize=1048576)
 	public void onMessage(final String message) {
-		messageConsumer.accept(message);
+		onMessageConsumer.accept(message);
 	}
 	
 	@OnError
     public void onError(final Session session, final Throwable t) {
-        logger.error("OnError called {}", Throwables.getStackTraceAsString(t));
+		logger.error("OnError called {}", Throwables.getStackTraceAsString(t));
+		onErrorConsumer.accept(t);
 		connectLatch.countDown();
     }
 
