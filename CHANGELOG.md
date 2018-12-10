@@ -1,3 +1,5 @@
+# Version 0.7.4 (TBA)
+
 # Version 0.7.3 (10.12.2018)
 * New Feature: Added callbacks for connection events (thanks to mironbalcerzak / closes #93)
 * Improvement: Made error policy configurable
