@@ -1,4 +1,5 @@
 # Version 0.7.3 (TBA)
+* New Feature: Added callbacks for connection events (thanks to mironbalcerzak / closes #93)
 * Improvement: Made error policy configurable
 * Improvement: Bump up dependencies
 * Bugfix: Fixed invalid order group value for new orders
