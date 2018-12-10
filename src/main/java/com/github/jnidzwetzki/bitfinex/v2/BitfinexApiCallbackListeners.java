@@ -44,6 +44,7 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
  */
 public class BitfinexApiCallbackListeners {
 
+    protected final Queue<Consumer<BitfinexConnectionStateEnum>> connectionStateConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<BitfinexStreamSymbol>> subscribeChannelConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<BitfinexStreamSymbol>> unsubscribeChannelConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexAccountSymbol, BitfinexSubmittedOrder>> newOrderConsumers = new ConcurrentLinkedQueue<>();
@@ -58,6 +59,16 @@ public class BitfinexApiCallbackListeners {
     protected final Queue<BiConsumer<BitfinexTickerSymbol, BitfinexTick>> tickConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<BitfinexAccountSymbol>> authSuccessConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<BitfinexAccountSymbol>> authFailedConsumers = new ConcurrentLinkedQueue<>();
+
+    /**
+     * registers listener for notifications on connection state
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onConnectionStateChange(final Consumer<BitfinexConnectionStateEnum> listener) {
+        connectionStateConsumers.offer(listener);
+        return () -> connectionStateConsumers.remove(listener);
+    }
 
     /**
      * registers listener for subscribe events

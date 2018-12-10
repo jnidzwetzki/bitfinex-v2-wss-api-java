@@ -88,19 +88,36 @@ public class PooledBitfinexApiBroker implements BitfinexWebsocketClient {
         callbackRegistry.onSubscribeChannelEvent(sym -> pendingSubscriptions.forEach((client, symbols) -> symbols.remove(sym)));
         callbackRegistry.onUnsubscribeChannelEvent(sym -> pendingSubscriptions.forEach((client, symbols) -> symbols.remove(sym)));
 
-        SimpleBitfinexApiBroker authClient = new SimpleBitfinexApiBroker(configuration, callbackRegistry, seqNoAuditor);
+        SimpleBitfinexApiBroker authClient = new SimpleBitfinexApiBroker(configuration, callbackRegistry, seqNoAuditor, true);
         clients.put(numberOfClients.getAndIncrement(), authClient);
         pendingSubscriptions.put(authClient, ConcurrentHashMap.newKeySet());
     }
 
     @Override
     public void connect() {
-        clients.values().forEach(BitfinexWebsocketClient::connect);
+        try {
+            callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.CONNECTION_INIT);
+            for (BitfinexWebsocketClient bitfinexWebsocketClient : clients.values()) {
+                bitfinexWebsocketClient.connect();
+            }
+            callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.CONNECTION_SUCCESS);
+        } catch (final Exception ex) {
+            callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.CONNECTION_FAILED);
+        }
+
     }
 
     @Override
     public void close() {
-        clients.values().forEach(BitfinexWebsocketClient::close);
+        try {
+            callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.DISCONNECTION_INIT);
+            for (BitfinexWebsocketClient bitfinexWebsocketClient : clients.values()) {
+                bitfinexWebsocketClient.close();
+            }
+            callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.DISCONNECTION_SUCCESS);
+        } catch (final Exception ex) {
+            callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.DISCONNECTION_FAILED);
+        }
     }
 
     @Override
@@ -140,8 +157,18 @@ public class PooledBitfinexApiBroker implements BitfinexWebsocketClient {
     @Override
     public boolean reconnect() {
         boolean retVal = false;
-        for (BitfinexWebsocketClient client : clients.values()) {
-            retVal |= client.reconnect();
+        try {
+            callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.RECONNECTION_INIT);
+            for (BitfinexWebsocketClient client : clients.values()) {
+                retVal |= client.reconnect();
+            }
+            if (retVal) {
+                callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.RECONNECTION_SUCCESS);
+            } else {
+                callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.RECONNECTION_FAILED);
+            }
+        } catch (final Exception ex) {
+            callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.RECONNECTION_FAILED);
         }
         return retVal;
     }
@@ -230,7 +257,7 @@ public class PooledBitfinexApiBroker implements BitfinexWebsocketClient {
         BitfinexWebsocketConfiguration config = new BitfinexWebsocketConfiguration(configuration);
         config.setAuthenticationEnabled(false);
         config.setManagersActive(false);
-        SimpleBitfinexApiBroker client = new SimpleBitfinexApiBroker(config, callbackRegistry, sequenceNumberAuditor);
+        SimpleBitfinexApiBroker client = new SimpleBitfinexApiBroker(config, callbackRegistry, sequenceNumberAuditor, true);
         clients.put(numberOfClients.getAndIncrement(), client);
         if (connectEventManager.getNumberOfEventsInTimeslot() > 1) {
             try {

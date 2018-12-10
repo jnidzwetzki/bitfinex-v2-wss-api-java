@@ -30,7 +30,7 @@ public final class BitfinexClientFactory {
 		
 		sequenceNumberAuditor.setErrorPolicy(config.getErrorPolicy());
 		
-		return new SimpleBitfinexApiBroker(config, callbackRegistry, sequenceNumberAuditor);
+		return new SimpleBitfinexApiBroker(config, callbackRegistry, sequenceNumberAuditor, false);
     }
 
     /**
