@@ -99,11 +99,13 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
         if (message.toString().contains("ERROR")) {
             logger.error("Got Error message: {}", message.toString());
         }
+        
         final ChannelCallbackHandler handler = channelHandler.get(action);
         if (handler == null) {
-            logger.error("No match found for message {}", message);
+            logger.error("No match found for action {} message {}", action, message);
             return;
         }
+        
         try {
             handler.handleChannelData(action, message);
         } catch (final BitfinexClientException e) {
