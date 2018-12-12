@@ -70,9 +70,20 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
         channelHandler.put("pc", positionHandler); // Position canceled
 
         final ChannelCallbackHandler fundingHandler = new DoNothingHandler();
-        channelHandler.put("fos", fundingHandler); // Founding offers
-        channelHandler.put("fcs", fundingHandler); // Founding credits
-        channelHandler.put("fls", fundingHandler); // Founding loans
+        channelHandler.put("fos", fundingHandler); // Founding offer snapshot
+        channelHandler.put("fon", fundingHandler); // Founding offer notification
+        channelHandler.put("fou", fundingHandler); // Founding offer update
+        channelHandler.put("foc", fundingHandler); // Founding offer cancel
+
+        channelHandler.put("fcs", fundingHandler); // Founding credit snapshot
+        channelHandler.put("fcn", fundingHandler); // Founding credit notification
+        channelHandler.put("fcu", fundingHandler); // Founding credit update
+        channelHandler.put("fcc", fundingHandler); // Founding credit cancel
+
+        channelHandler.put("fls", fundingHandler); // Founding loans snapshot
+        channelHandler.put("fln", fundingHandler); // Founding loans notification
+        channelHandler.put("flu", fundingHandler); // Founding loans update
+        channelHandler.put("flc", fundingHandler); // Founding loans cancel
 
         channelHandler.put("ats", new DoNothingHandler()); // Ats - Unknown
 
