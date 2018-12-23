@@ -79,7 +79,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	/**
 	 * The Logger
 	 */
-	final static Logger logger = LoggerFactory.getLogger(HeartbeatThread.class);
+	private final static Logger logger = LoggerFactory.getLogger(HeartbeatThread.class);
 
 	/**
 	 * @param bitfinexApiBroker
@@ -96,48 +96,37 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 				TimeUnit.MINUTES);
 	}
 
-	@Override
-	public void runThread() {
-
-		try {
-			while(! Thread.interrupted()) {
-
-				Thread.sleep(TimeUnit.SECONDS.toMillis(3));
-
-				if(websocketEndpoint == null) {
-					continue;
-				}
-
-				if(! websocketEndpoint.isConnected()) {
-					logger.error("We are not connected, reconnecting");
-					executeReconnect();
-					continue;
-				}
-
-				sendHeartbeatIfNeeded();
-
-				final boolean tickerUpToDate = checkTickerFreshness();
-
-				if(! tickerUpToDate) {
-					logger.error("Ticker are outdated, reconnecting");
-					executeReconnect();
-					continue;
-				}
-
-				final boolean reconnectNeeded = checkConnectionTimeout();
-
-				if(reconnectNeeded) {
-					logger.error("Global connection heartbeat time out, reconnecting");
-					executeReconnect();
-					continue;
-				}
-			}
-		} catch (final InterruptedException e) {
-			logger.debug("Heartbeat thread was interrupted, exiting");
-			Thread.currentThread().interrupt();
-			return;
-		}
-	}
+    @Override
+    public void runThread() {
+        try {
+            while (!Thread.interrupted()) {
+                Thread.sleep(TimeUnit.SECONDS.toMillis(3));
+                if (websocketEndpoint == null) {
+                    continue;
+                }
+                if (!websocketEndpoint.isConnected()) {
+                    logger.error("We are not connected, reconnecting");
+                    executeReconnect();
+                    continue;
+                }
+                sendHeartbeatIfNeeded();
+                if (!checkTickerFreshness()) {
+                    logger.error("Ticker are outdated, reconnecting");
+                    executeReconnect();
+                    continue;
+                }
+                if (checkConnectionTimeout()) {
+                    logger.error("Global connection heartbeat time out, reconnecting");
+                    executeReconnect();
+                }
+            }
+        } catch (final InterruptedException e) {
+            logger.debug("Heartbeat thread was interrupted, exiting");
+            Thread.currentThread().interrupt();
+        } catch (final Exception e) {
+            logger.error("Exception raised", e);
+        }
+    }
 
 	/**
 	 * Are all tickers up-to-date
@@ -164,7 +153,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 			.collect(Collectors.toList());
 
 		outdatedSymbols.forEach(symbol -> {
-			logger.error("Symbol {} is outdated by {}ms",
+			logger.debug("Symbol {} is outdated by {}ms",
 					symbol, currentTime - heartbeatValues.get(symbol));
 		});
 		return outdatedSymbols.isEmpty();
@@ -187,15 +176,8 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	 * @return
 	 */
 	private boolean checkConnectionTimeout() {
-		final long heartbeatTimeout = lastHeartbeatSupplier.get() + CONNECTION_TIMEOUT;
-
-		if(heartbeatTimeout < System.currentTimeMillis()) {
-			logger.error("Heartbeat timeout reconnecting");
-			return true;
-		}
-
-		return false;
-	}
+        return lastHeartbeatSupplier.get() + CONNECTION_TIMEOUT < System.currentTimeMillis();
+    }
 
 	/**
 	 * Execute the reconnect
