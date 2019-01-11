@@ -90,7 +90,7 @@
 		<dependency>
 			<groupId>org.glassfish.tyrus.bundles</groupId>
 			<artifactId>tyrus-standalone-client-jdk</artifactId>
-			<version>1.14</version>
+			<version>1.15</version>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
