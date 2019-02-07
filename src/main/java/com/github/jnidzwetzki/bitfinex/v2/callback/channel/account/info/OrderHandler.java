@@ -92,7 +92,7 @@ public class OrderHandler implements ChannelCallbackHandler {
         order.setOrderId(json.getLong(0));
         final String gid = json.optString(1, null);
         if (gid != null) {
-            order.setClientGroupId(Integer.parseInt(gid));
+            order.setClientGroupId(Long.parseLong(gid));
         }
         final String cid = json.optString(2, null);
         if (cid != null) {
