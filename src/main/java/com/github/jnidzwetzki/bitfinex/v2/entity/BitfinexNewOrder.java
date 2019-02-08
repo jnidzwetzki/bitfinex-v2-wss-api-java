@@ -39,7 +39,7 @@ public class BitfinexNewOrder {
     /**
      * (optional) Group id for the order
      */
-    private Optional<Integer> clientGroupId = Optional.empty();
+    private Optional<Long> clientGroupId = Optional.empty();
 
     /**
      * currency pair
@@ -94,11 +94,11 @@ public class BitfinexNewOrder {
         this.clientId = clientId;
     }
 
-    public Optional<Integer> getClientGroupId() {
+    public Optional<Long> getClientGroupId() {
         return clientGroupId;
     }
 
-    public void setClientGroupId(final Integer clientGroupId) {
+    public void setClientGroupId(final Long clientGroupId) {
         this.clientGroupId = Optional.of(clientGroupId);
     }
 

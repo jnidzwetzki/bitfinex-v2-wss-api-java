@@ -36,7 +36,7 @@ public class BitfinexOrderBuilder {
 	private BigDecimal priceTrailing;
 	private BigDecimal priceAuxLimit;
 	private Set<BitfinexOrderFlag> orderFlags;
-	private int groupid = -1;
+	private long groupid = -1;
 
 	private BitfinexOrderBuilder(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, 
 			final BigDecimal amount) {

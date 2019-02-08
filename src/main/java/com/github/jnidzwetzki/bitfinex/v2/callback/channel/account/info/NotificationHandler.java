@@ -80,7 +80,7 @@ public class NotificationHandler implements ChannelCallbackHandler {
     private BitfinexSubmittedOrder jsonToBitfinexSubmittedOrder(JSONArray array) {
         final JSONArray orderJson = array.optJSONArray(4);
         final long oid = orderJson.optLong(0, -1);
-        final int gid = orderJson.optInt(1, -1);
+        final long gid = orderJson.optLong(1, -1);
         final long cid = orderJson.optLong(2, -1);
         final String symbol = orderJson.optString(3);
         final String stateValue = array.optString(7);
