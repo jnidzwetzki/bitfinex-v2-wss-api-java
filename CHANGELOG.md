@@ -1,4 +1,5 @@
 # Version 0.7.4 (TBA)
+* Bugfix: Changed clientGroupId from Int to Long (thanks to nschmid / closes #104 and #105)
 
 # Version 0.7.3 (10.12.2018)
 * New Feature: Added callbacks for connection events (thanks to mironbalcerzak / closes #93)
