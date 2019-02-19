@@ -22,7 +22,9 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
+import com.github.jnidzwetzki.bitfinex.v2.command.CalculateCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexInstrument;
 
 public class PositionManager extends SimpleCallbackManager<BitfinexPosition> {
 
@@ -33,8 +35,11 @@ public class PositionManager extends SimpleCallbackManager<BitfinexPosition> {
 
 	public PositionManager(final BitfinexWebsocketClient client, final ExecutorService executorService) {
 		super(executorService, client);
+		
 		this.positions = new ArrayList<>();
-		client.getCallbacks().onMyPositionEvent((account, positions) -> positions.forEach(this::updatePosition));
+		
+		client.getCallbacks().onMyPositionEvent((account, positions) 
+				-> positions.forEach(this::updatePosition));
 	}
 
 	/**
@@ -70,6 +75,15 @@ public class PositionManager extends SimpleCallbackManager<BitfinexPosition> {
 		synchronized (positions) {
 			return positions;
 		}
+	}
+	
+	/**
+	 * Calculate additional position data like P/L
+	 *
+	 * @param symbol
+	 */
+	public void calculateAdditionalPositionData(final BitfinexInstrument symbol) {
+		client.sendCommand(new CalculateCommand("position_" + symbol.toBitfinexString()));
 	}
 	
 }
