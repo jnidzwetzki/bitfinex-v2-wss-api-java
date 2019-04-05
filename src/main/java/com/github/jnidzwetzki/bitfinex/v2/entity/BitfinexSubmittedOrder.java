@@ -57,6 +57,11 @@ public class BitfinexSubmittedOrder extends BitfinexNewOrder {
     private BitfinexSubmittedOrderStatus status;
 
     /**
+     * Order status description
+     */
+    private String statusDescription;
+
+    /**
      * Average price
      */
     private BigDecimal priceAverage;
@@ -129,6 +134,14 @@ public class BitfinexSubmittedOrder extends BitfinexNewOrder {
 
     public void setStatus(BitfinexSubmittedOrderStatus status) {
         this.status = status;
+    }
+
+    public String getStatusDescription() {
+        return statusDescription;
+    }
+
+    public void setStatusDescription(final String statusDescription) {
+        this.statusDescription = statusDescription;
     }
 
     public BigDecimal getPriceAverage() {
@@ -204,6 +217,7 @@ public class BitfinexSubmittedOrder extends BitfinexNewOrder {
                 ", amount=" + amount +
                 ", amountAtCreation=" + amountAtCreation +
                 ", status=" + status +
+                ", statusDescription=" + statusDescription +
                 ", priceAverage=" + priceAverage +
                 ", parentOrderId=" + parentOrderId +
                 ", parentOrderType=" + parentOrderType +
