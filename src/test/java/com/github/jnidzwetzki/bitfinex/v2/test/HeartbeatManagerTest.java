@@ -21,16 +21,13 @@ import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.github.jnidzwetzki.bitfinex.v2.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
-import com.github.jnidzwetzki.bitfinex.v2.HeartbeatThread;
-import com.github.jnidzwetzki.bitfinex.v2.SimpleBitfinexApiBroker;
-import com.github.jnidzwetzki.bitfinex.v2.WebsocketClientEndpoint;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.HeartbeatHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
 import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
@@ -64,6 +61,8 @@ public class HeartbeatManagerTest {
 		};
 
 		final BitfinexWebsocketClient bitfinexApiBroker = Mockito.mock(SimpleBitfinexApiBroker.class);
+		Mockito.when(bitfinexApiBroker.getConfiguration()).thenReturn(new BitfinexWebsocketConfiguration());
+		Mockito.when(bitfinexApiBroker.getCallbacks()).thenReturn(new BitfinexApiCallbackRegistry());
 
 		final WebsocketClientEndpoint websocketClientEndpoint = Mockito.mock(WebsocketClientEndpoint.class);
 		Mockito.when(websocketClientEndpoint.isConnected()).thenReturn(connectLatch.getCount() == 0);

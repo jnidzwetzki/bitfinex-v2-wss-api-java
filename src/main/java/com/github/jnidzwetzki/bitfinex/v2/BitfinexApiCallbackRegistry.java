@@ -38,6 +38,13 @@ public final class BitfinexApiCallbackRegistry extends BitfinexApiCallbackListen
 
     public void acceptConnectionStateChange(final BitfinexConnectionStateEnum event) {
         connectionStateConsumers.forEach(consumer -> consumer.accept(event));
+        if (event == BitfinexConnectionStateEnum.CONNECTION_SUCCESS || event == BitfinexConnectionStateEnum.RECONNECTION_SUCCESS) {
+            connectionSuccessConsumers.forEach(Runnable::run);
+        } else if (event == BitfinexConnectionStateEnum.CONNECTION_FAILED || event == BitfinexConnectionStateEnum.RECONNECTION_FAILED) {
+            connectionFailedConsumers.forEach(Runnable::run);
+        } else if (event == BitfinexConnectionStateEnum.DISCONNECTION_SUCCESS || event == BitfinexConnectionStateEnum.DISCONNECTION_BY_REMOTE) {
+            disconnectionSuccessConsumers.forEach(Runnable::run);
+        }
     }
 
     public void acceptSubscribeChannelEvent(final BitfinexStreamSymbol event) {

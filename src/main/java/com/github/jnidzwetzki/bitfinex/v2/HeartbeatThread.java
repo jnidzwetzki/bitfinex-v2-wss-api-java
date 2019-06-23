@@ -82,11 +82,21 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 	private final static Logger logger = LoggerFactory.getLogger(HeartbeatThread.class);
 
 	/**
-	 * @param bitfinexApiBroker
+	 * callback registry reference
 	 */
-	public HeartbeatThread(final BitfinexWebsocketClient bitfinexApiBroker, final WebsocketClientEndpoint websocketClientEndpoint,
+	private final BitfinexApiCallbackRegistry callbackRegistry;
+
+	/**
+	 * new heartbeat thread constructor
+	 * @param bitfinexApiBroker			- bitfinex api broken
+	 * @param websocketClientEndpoint	- websocket endpoint
+	 * @param lastHeartbeatSupplier     - last heartbeat supplier
+	 */
+	public HeartbeatThread(final BitfinexWebsocketClient bitfinexApiBroker,
+						   final WebsocketClientEndpoint websocketClientEndpoint,
 						   final Supplier<Long> lastHeartbeatSupplier) {
 		this.bitfinexApiBroker = bitfinexApiBroker;
+		this.callbackRegistry = (BitfinexApiCallbackRegistry) bitfinexApiBroker.getCallbacks();
 		this.websocketEndpoint = websocketClientEndpoint;
 		this.lastHeartbeatSupplier = lastHeartbeatSupplier;
 
@@ -105,19 +115,28 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
                     continue;
                 }
                 if (!websocketEndpoint.isConnected()) {
-                    logger.error("We are not connected, reconnecting");
-                    executeReconnect();
+					callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.DISCONNECTION_BY_REMOTE);
+					if (this.bitfinexApiBroker.getConfiguration().isAutoReconnect()) {
+						logger.error("We are not connected, reconnecting");
+						executeReconnect();
+					}
                     continue;
                 }
                 sendHeartbeatIfNeeded();
                 if (!checkTickerFreshness()) {
-                    logger.error("Ticker are outdated, reconnecting");
-                    executeReconnect();
+					callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.DISCONNECTION_BY_REMOTE);
+					if (this.bitfinexApiBroker.getConfiguration().isAutoReconnect()) {
+						logger.error("Ticker are outdated, reconnecting");
+						executeReconnect();
+					}
                     continue;
                 }
                 if (checkConnectionTimeout()) {
-                    logger.error("Global connection heartbeat time out, reconnecting");
-                    executeReconnect();
+					callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.DISCONNECTION_BY_REMOTE);
+					if (this.bitfinexApiBroker.getConfiguration().isAutoReconnect()) {
+						logger.error("Global connection heartbeat time out, reconnecting");
+						executeReconnect();
+					}
                 }
             }
         } catch (final InterruptedException e) {
@@ -187,7 +206,7 @@ public class HeartbeatThread extends ExceptionSafeRunnable {
 		// Close connection
 		websocketEndpoint.close();
 
-		// Store the reconnect time to prevent to much
+		// Store the reconnect time to prevent too much
 		// reconnects in a short timeframe. Otherwise the
 		// rate limit will apply and the reconnects are not successfully
 		logger.info("Wait for next reconnect timeslot");
