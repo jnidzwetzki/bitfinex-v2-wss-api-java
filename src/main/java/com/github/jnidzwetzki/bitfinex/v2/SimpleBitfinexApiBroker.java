@@ -1,29 +1,26 @@
 /*******************************************************************************
  *
  *    Copyright (C) 2015-2018 Jan Kristof Nidzwetzki
- *  
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *  
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License. 
- *    
+ *
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -85,7 +82,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	 * The bitfinex api
 	 */
 	public final static String BITFINEX_URI = "wss://api.bitfinex.com/ws/2";
-	
+
 	/**
 	 * The account info channel id
 	 */
@@ -110,7 +107,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	 * The channel map
 	 */
 	private final Map<Integer, ChannelCallbackHandler> channelIdToHandlerMap;
-	
+
 	/**
 	 * The tick manager
 	 */
@@ -120,37 +117,37 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	 * The trading orderbook manager
 	 */
 	private final OrderbookManager orderbookManager;
-	
+
 	/**
 	 * The trading RAW orderbook manager
 	 */
 	private final RawOrderbookManager rawOrderbookManager;
-	
+
 	/**
 	 * The position manager
 	 */
 	private final PositionManager positionManager;
-	
+
 	/**
 	 * The order manager
 	 */
 	private final OrderManager orderManager;
-	
+
 	/**
 	 * The trade manager
 	 */
 	private final TradeManager tradeManager;
-	
+
 	/**
 	 * The wallet manager
 	 */
 	private final WalletManager walletManager;
-	
+
 	/**
 	 * The connection feature manager
 	 */
 	private final ConnectionFeatureManager connectionFeatureManager;
-	
+
 	/**
 	 * The last heartbeat value
 	 */
@@ -165,7 +162,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	 * The permissions of the connection
 	 */
 	private BitfinexApiKeyPermissions permissions;
-	
+
 	/**
 	 * Is the connection authenticated?
 	 */
@@ -175,7 +172,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	 * The command callbacks
 	 */
 	private Map<String, CommandCallbackHandler> commandCallbacks;
-	
+
 	/**
 	 * The sequence number auditor
 	 */
@@ -285,26 +282,31 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	@Override
 	public void connect() throws BitfinexClientException {
 		logger.debug("connect() called");
+		Closeable authSuccessEventCallback = null;
+		Closeable authFailedCallback = null;
+		Closeable positionInitCallback = null;
+		Closeable walletsInitCallback = null;
+		Closeable orderInitCallback = null;
 		connectionStateChange(BitfinexConnectionStateEnum.CONNECTION_INIT);
 		try {
             sequenceNumberAuditor.reset();
             final CountDownLatch connectionReadyLatch = new CountDownLatch(4);
 
-            final Closeable authSuccessEventCallback = callbackRegistry.onAuthenticationSuccessEvent(c -> {
+            authSuccessEventCallback = callbackRegistry.onAuthenticationSuccessEvent(c -> {
                 permissions = c.getPermissions();
                 authenticated = true;
                 connectionReadyLatch.countDown();
             });
-            final Closeable authFailedCallback = callbackRegistry.onAuthenticationFailedEvent(c -> {
+            authFailedCallback = callbackRegistry.onAuthenticationFailedEvent(c -> {
                 permissions = c.getPermissions();
                 authenticated = false;
                 while (connectionReadyLatch.getCount() != 0) {
                     connectionReadyLatch.countDown();
                 }
             });
-            final Closeable positionInitCallback = callbackRegistry.onMyPositionEvent((a, p) -> connectionReadyLatch.countDown());
-            final Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
-            final Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
+            positionInitCallback = callbackRegistry.onMyPositionEvent((a, p) -> connectionReadyLatch.countDown());
+            walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
+            orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
 
             setupDefaultAccountInfoHandler();
 
@@ -321,12 +323,6 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
                 authenticateAndWait(connectionReadyLatch);
             }
 
-            authSuccessEventCallback.close();
-            authFailedCallback.close();
-            positionInitCallback.close();
-            walletsInitCallback.close();
-            orderInitCallback.close();
-
             if (configuration.isHeartbeatThreadActive()) {
                 heartbeatThread = new Thread(new HeartbeatThread(this, websocketEndpoint, lastHeartbeat::get));
                 heartbeatThread.start();
@@ -335,6 +331,12 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 		} catch (final Exception e) {
 			connectionStateChange(BitfinexConnectionStateEnum.CONNECTION_FAILED);
 			throw new BitfinexClientException(e);
+		} finally {
+			Optional.ofNullable(authSuccessEventCallback).ifPresent(SimpleBitfinexApiBroker::safeClose);
+			Optional.ofNullable(authFailedCallback).ifPresent(SimpleBitfinexApiBroker::safeClose);
+			Optional.ofNullable(positionInitCallback).ifPresent(SimpleBitfinexApiBroker::safeClose);
+			Optional.ofNullable(walletsInitCallback).ifPresent(SimpleBitfinexApiBroker::safeClose);
+			Optional.ofNullable(orderInitCallback).ifPresent(SimpleBitfinexApiBroker::safeClose);
 		}
 	}
 
@@ -399,11 +401,16 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 
 	/**
 	 * Perform a reconnect
-	 * @return
+	 * @return true if reconnect succeeded, false otherwise
 	 */
 	@Override
 	public synchronized boolean reconnect() {
 		logger.debug("reconnect() called");
+		Closeable authSuccessEventCallback = null;
+		Closeable authFailedCallback = null;
+		Closeable positionInitCallback = null;
+		Closeable walletsInitCallback = null;
+		Closeable orderInitCallback = null;
 		try {
 			callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.RECONNECTION_INIT);
 			websocketEndpoint.close();
@@ -420,22 +427,22 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 
 			final CountDownLatch connectionReadyLatch = new CountDownLatch(4);
 
-			final Closeable authSuccessEventCallback = callbackRegistry.onAuthenticationSuccessEvent(c -> {
+			authSuccessEventCallback = callbackRegistry.onAuthenticationSuccessEvent(c -> {
 				permissions = c.getPermissions();
 				authenticated = true;
 				connectionReadyLatch.countDown();
 			});
-			final Closeable authFailedCallback = callbackRegistry.onAuthenticationFailedEvent(c -> {
+			authFailedCallback = callbackRegistry.onAuthenticationFailedEvent(c -> {
 				permissions = c.getPermissions();
 				authenticated = false;
 				while (connectionReadyLatch.getCount() != 0) {
 					connectionReadyLatch.countDown();
 				}
 			});
-			
-			final Closeable positionInitCallback = callbackRegistry.onMyPositionEvent((a, p) -> connectionReadyLatch.countDown());
-			final Closeable walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
-			final Closeable orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
+
+			positionInitCallback = callbackRegistry.onMyPositionEvent((a, p) -> connectionReadyLatch.countDown());
+			walletsInitCallback = callbackRegistry.onMyWalletEvent((a, w) -> connectionReadyLatch.countDown());
+			orderInitCallback = callbackRegistry.onMySubmittedOrderEvent((a, o) -> connectionReadyLatch.countDown());
 
 			// Reset account info handler
 			setupDefaultAccountInfoHandler();
@@ -446,12 +453,6 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			if( configuration.isAuthenticationEnabled()) {
 				authenticateAndWait(connectionReadyLatch);
 			}
-			authSuccessEventCallback.close();
-			authFailedCallback.close();
-			positionInitCallback.close();
-			walletsInitCallback.close();
-			orderInitCallback.close();
-
 			resubscribeChannels();
 
 			updateConnectionHeartbeat();
@@ -462,6 +463,12 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			websocketEndpoint.close();
 			callbackRegistry.acceptConnectionStateChange(BitfinexConnectionStateEnum.RECONNECTION_FAILED);
 			return false;
+		} finally {
+			Optional.ofNullable(authSuccessEventCallback).ifPresent(SimpleBitfinexApiBroker::safeClose);
+			Optional.ofNullable(authFailedCallback).ifPresent(SimpleBitfinexApiBroker::safeClose);
+			Optional.ofNullable(positionInitCallback).ifPresent(SimpleBitfinexApiBroker::safeClose);
+			Optional.ofNullable(walletsInitCallback).ifPresent(SimpleBitfinexApiBroker::safeClose);
+			Optional.ofNullable(orderInitCallback).ifPresent(SimpleBitfinexApiBroker::safeClose);
 		}
 	}
 
@@ -611,7 +618,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 
 	/**
 	 * Re-subscribe the old ticker
-	 * @return 
+	 * @return
 	 * @throws InterruptedException
 	 * @throws BitfinexClientException
 	 */
@@ -622,11 +629,11 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			oldChannelIdSymbolMap.putAll(channelIdToHandlerMap);
 			channelIdToHandlerMap.clear();
 			channelIdToHandlerMap.notifyAll();
-			
+
 			// Implicit channel account info channel
 			channelIdToHandlerMap.put(ACCCOUNT_INFO_CHANNEL, oldChannelIdSymbolMap.get(ACCCOUNT_INFO_CHANNEL));
 		}
-		
+
 		// Resubscribe channels
 		for(final ChannelCallbackHandler handler : oldChannelIdSymbolMap.values()) {
 			final BitfinexStreamSymbol symbol = handler.getSymbol();
@@ -644,52 +651,52 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 				logger.error("Unknown stream symbol: {}", symbol);
 			}
 		}
-		
-		waitForChannelResubscription(oldChannelIdSymbolMap);		
+
+		waitForChannelResubscription(oldChannelIdSymbolMap);
 	}
 
 	/**
 	 * Wait for the successful channel re-subscription
 	 * @param oldChannelIdSymbolMap
-	 * @return 
+	 * @return
 	 * @throws BitfinexClientException
 	 * @throws InterruptedException
 	 */
 	private void waitForChannelResubscription(final Map<Integer, ChannelCallbackHandler> oldChannelIdSymbolMap)
 			throws BitfinexClientException, InterruptedException {
-		
+
 		final Stopwatch stopwatch = Stopwatch.createStarted();
 		final long MAX_WAIT_TIME_IN_MS = TimeUnit.MINUTES.toMillis(3);
 		logger.info("Waiting for streams to resubscribe (max wait time {} msec)", MAX_WAIT_TIME_IN_MS);
 
 		synchronized (channelIdToHandlerMap) {
-			
+
 			while(channelIdToHandlerMap.size() != oldChannelIdSymbolMap.size()) {
-				
+
 				if(stopwatch.elapsed(TimeUnit.MILLISECONDS) > MAX_WAIT_TIME_IN_MS) {
 					// Raise BitfinexClientException
 					handleResubscribeFailed(oldChannelIdSymbolMap);
 				}
-				
+
 				channelIdToHandlerMap.wait(500);
 			}
-			
+
 		}
 	}
 
 	/**
 	 * Handle channel re-subscribe failed
-	 * 
+	 *
 	 * @param oldChannelIdSymbolMap
 	 * @throws BitfinexClientException
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	private void handleResubscribeFailed(final Map<Integer, ChannelCallbackHandler> oldChannelIdSymbolMap)
 			throws BitfinexClientException, InterruptedException {
-		
+
 		final int requiredSymbols = oldChannelIdSymbolMap.size();
 		final int subscribedSymbols = channelIdToHandlerMap.size();
-		
+
 		// Unsubscribe old channels before the symbol map is restored
 		// otherwise we will get a lot of unknown symbol messages
 		unsubscribeAllChannels();
@@ -699,7 +706,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			channelIdToHandlerMap.clear();
 			channelIdToHandlerMap.putAll(oldChannelIdSymbolMap);
 		}
-		
+
 		throw new BitfinexClientException("Subscription of ticker failed: got only "
 				+ subscribedSymbols + " of " + requiredSymbols + " symbols subscribed");
 	}
@@ -759,6 +766,14 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 	private void connectionStateChange(BitfinexConnectionStateEnum state) {
 		if (!skipConnectionStateNotification) {
 			callbackRegistry.acceptConnectionStateChange(state);
+		}
+	}
+
+	private static void safeClose(Closeable closeable) {
+		try {
+			closeable.close();
+		} catch (IOException ignored) {
+
 		}
 	}
 
