@@ -45,6 +45,10 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexTickerSymbol;
 public class BitfinexApiCallbackListeners {
 
     protected final Queue<Consumer<BitfinexConnectionStateEnum>> connectionStateConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<Runnable> connectionSuccessConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<Runnable> connectionFailedConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<Runnable> disconnectionSuccessConsumers = new ConcurrentLinkedQueue<>();
+
     protected final Queue<Consumer<BitfinexStreamSymbol>> subscribeChannelConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<BitfinexStreamSymbol>> unsubscribeChannelConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexAccountSymbol, BitfinexSubmittedOrder>> newOrderConsumers = new ConcurrentLinkedQueue<>();
@@ -68,6 +72,36 @@ public class BitfinexApiCallbackListeners {
     public Closeable onConnectionStateChange(final Consumer<BitfinexConnectionStateEnum> listener) {
         connectionStateConsumers.offer(listener);
         return () -> connectionStateConsumers.remove(listener);
+    }
+
+    /**
+     * registers a listener for connection state change (Connection or Reconnection success)
+     * @param listener of event
+     * @return hook to this listener
+     */
+    public Closeable onConnectionSuccess(final Runnable listener) {
+        connectionSuccessConsumers.offer(listener);
+        return () -> connectionSuccessConsumers.remove(listener);
+    }
+
+    /**
+     * registers a listener for connection state change (Connection or Reconnection fail)
+     * @param listener of event
+     * @return hook to this listener
+     */
+    public Closeable onConnectionFailed(final Runnable listener) {
+        connectionFailedConsumers.offer(listener);
+        return () -> connectionFailedConsumers.remove(listener);
+    }
+
+    /**
+     * registers a listener for connection state change (disconnect or disconnected by remote)
+     * @param listener of event
+     * @return hook to this listener
+     */
+    public Closeable onDisconnect(final Runnable listener) {
+        disconnectionSuccessConsumers.offer(listener);
+        return () -> disconnectionSuccessConsumers.remove(listener);
     }
 
     /**
