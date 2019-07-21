@@ -58,13 +58,23 @@ public class BitfinexCurrencyPair implements BitfinexInstrument {
 				final JSONObject currency = jsonArray.getJSONObject(i);
 				final String pair = currency.getString("pair");
 
-				if(pair.length() != 6) {
+				int idx = pair.indexOf(":"); // some new pairs contain ':' and are longer than 6 chars, e.g. "dusk:usd"
+				if(pair.length() != 6 && idx == -1) {
 					throw new BitfinexClientException("The currency pair is not 6 chars long: " + pair);
 				}
 
 				final double minOrderSize = currency.getDouble("minimum_order_size");
-				final String currency1 = pair.substring(0, 3).toUpperCase();
-				final String currency2 = pair.substring(3, 6).toUpperCase();
+				final String currency1;
+				final String currency2;
+
+				if(idx > -1) {
+					currency1 = pair.substring(0, idx).toUpperCase();
+					currency2 = pair.substring(idx+1).toUpperCase();
+				}
+				else {
+					currency1 = pair.substring(0, 3).toUpperCase();
+					currency2 = pair.substring(3, 6).toUpperCase();
+				}
 				register(currency1, currency2, minOrderSize);
 			}
 
