@@ -40,7 +40,7 @@ public final class BitfinexClientFactory {
      * @return {@link PooledBitfinexApiBroker} client
      */
     public static BitfinexWebsocketClient newPooledClient() {
-        return newPooledClient(new BitfinexWebsocketConfiguration(), 150);
+        return newPooledClient(new BitfinexWebsocketConfiguration(), 30);
     }
 
     /**
@@ -48,14 +48,14 @@ public final class BitfinexClientFactory {
      * spreads amount of subscribed channels across multiple websocket physical connections.
      *
      * @param config                - config
-     * @param channelsPerConnection - channels per client - 25 - 250 (limit by bitfinex exchange)
+     * @param channelsPerWebsocketConnection - channels per websocket connection - 5 - 30 (limit by bitfinex exchange)
      * @return {@link PooledBitfinexApiBroker} client
      */
     public static BitfinexWebsocketClient newPooledClient(final BitfinexWebsocketConfiguration config, 
-    		final int channelsPerConnection) {
+    		final int channelsPerWebsocketConnection) {
     	
-    		if (channelsPerConnection < 10 || channelsPerConnection > 250) {
-            throw new IllegalArgumentException("channelsPerConnection must be in range (10, 250)");
+        if (channelsPerWebsocketConnection < 5 || channelsPerWebsocketConnection > 30) {
+            throw new IllegalArgumentException("'channelsPerWebsocketConnection' must be in range [5, 30)");
         }
     	
         final BitfinexApiCallbackRegistry callbacks = new BitfinexApiCallbackRegistry();
@@ -63,7 +63,7 @@ public final class BitfinexClientFactory {
 		
 		sequenceNumberAuditor.setErrorPolicy(config.getErrorPolicy());
 
-		return new PooledBitfinexApiBroker(config, callbacks, sequenceNumberAuditor, channelsPerConnection);
+		return new PooledBitfinexApiBroker(config, callbacks, sequenceNumberAuditor, channelsPerWebsocketConnection);
     }
 
 }

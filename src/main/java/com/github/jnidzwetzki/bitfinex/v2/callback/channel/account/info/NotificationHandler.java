@@ -97,6 +97,10 @@ public class NotificationHandler implements ChannelCallbackHandler {
             submittedOrder.setClientId(cid);
         }
 
+        if (!Strings.isNullOrEmpty(stateValue)) {
+            submittedOrder.setStatusDescription(stateValue);
+        }
+
         if (!Strings.isNullOrEmpty(symbol)) {
             submittedOrder.setCurrencyPair(BitfinexCurrencyPair.fromSymbolString(symbol));
         }

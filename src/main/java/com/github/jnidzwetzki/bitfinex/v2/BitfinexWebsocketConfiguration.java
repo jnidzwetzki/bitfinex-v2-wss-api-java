@@ -37,7 +37,7 @@ public class BitfinexWebsocketConfiguration {
     private String apiSecret;
 
     /**
-     * false if euthentication should be skipped
+     * false if authentication should be skipped
      */
     private boolean authenticationEnabled = false;
 
@@ -77,6 +77,11 @@ public class BitfinexWebsocketConfiguration {
 	 */
 	private ErrorPolicy errorPolicy = ErrorPolicy.LOG_ONLY;
 
+    /**
+     * automatically tries to reconnect if connection is lost
+     */
+    private boolean autoReconnect = true;
+
     public BitfinexWebsocketConfiguration() {
 
     }
@@ -92,6 +97,7 @@ public class BitfinexWebsocketConfiguration {
         this.executorService = copy.executorService;
         this.connectionEstablishingDelay = copy.connectionEstablishingDelay;
         this.errorPolicy = copy.errorPolicy;
+        this.autoReconnect = copy.autoReconnect;
     }
 
     public void setApiCredentials(final String apiKey, final String apiSecret) {
@@ -171,4 +177,14 @@ public class BitfinexWebsocketConfiguration {
 	public void setErrorPolicy(final ErrorPolicy errorPolicy) {
 		this.errorPolicy = errorPolicy;
 	}
+
+    public boolean isAutoReconnect() {
+        return autoReconnect;
+    }
+
+    public void setAutoReconnect(boolean autoReconnect) {
+        this.autoReconnect = autoReconnect;
+    }
+
+
 }
