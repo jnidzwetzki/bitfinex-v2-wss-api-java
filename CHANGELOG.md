@@ -1,7 +1,7 @@
 # Version 0.7.4 (TBA)
 * New Feature: Allow the calculation of additional position data
 * New Feature: Adapted bitfinex connection limits (thanks to mironbalcerzak)
-* Bugfix: Allow the handling of new currencies 
+* Bugfix: Allow the handling of new currencies (thanks to nschmid)
 * Bugfix: Changed clientGroupId from Int to Long (thanks to nschmid / closes #104 and #105)
 
 # Version 0.7.3 (10.12.2018)
