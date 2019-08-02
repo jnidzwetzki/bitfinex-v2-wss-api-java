@@ -1,3 +1,5 @@
+# Version 0.7.5 (TBA)
+
 # Version 0.7.4 (02.08.2019)
 * New Feature: Allow the calculation of additional position data
 * New Feature: Adapted bitfinex connection limits (thanks to mironbalcerzak)
