@@ -17,6 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.manager;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
@@ -36,6 +37,16 @@ public class WalletManager extends AbstractManager {
 	 */
 	private final Table<BitfinexWallet.Type, String, BitfinexWallet> walletTable;
 
+	/**
+	 * Value of assets under management (not including losses/profits)
+	 */
+	private BigDecimal assetsUnderManagement = BigDecimal.ZERO;
+
+	/**
+	 * Value of assets under management (including losses/profits)
+	 */
+	private BigDecimal assetsUnderManagementNet  = BigDecimal.ZERO;
+
 	public WalletManager(final BitfinexWebsocketClient client, final ExecutorService executorService) {
 		super(client, executorService);
 		this.walletTable = HashBasedTable.create();
@@ -50,6 +61,10 @@ public class WalletManager extends AbstractManager {
                 e.printStackTrace();
             }
         }));
+		client.getCallbacks().onBalanceUpdateEvent((account, balanceUpdate) -> {
+			assetsUnderManagement = balanceUpdate.getAssetsUnderManagement();
+			assetsUnderManagementNet = balanceUpdate.getAssetsUnderManagementNet();
+		});
 	}
 
 	/**
@@ -109,4 +124,19 @@ public class WalletManager extends AbstractManager {
 		client.sendCommand(new CalculateCommand("wallet_funding_" + symbol));
 	}
 
+	/**
+	 * Total Assets Under Management for associated account
+	 * @return assets under management
+	 */
+	public BigDecimal getAssetsUnderManagement() {
+		return assetsUnderManagement;
+	}
+
+	/**
+	 * Net Assets Under Management for associated account
+	 * @return assets under management net
+	 */
+	public BigDecimal getAssetsUnderManagementNet() {
+		return assetsUnderManagementNet;
+	}
 }

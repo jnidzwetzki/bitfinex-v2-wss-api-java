@@ -27,11 +27,13 @@ import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.BalanceInfoHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.MyExecutedTradeHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.NotificationHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.OrderHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.PositionHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.WalletHandler;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexBalanceUpdate;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexPosition;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
@@ -51,6 +53,7 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
 
     private final HeartbeatHandler heartbeatHandler;
     private final PositionHandler positionHandler;
+    private final BalanceInfoHandler balanceInfoHandler;
     private final WalletHandler walletHandler;
     private final OrderHandler orderHandler;
     private final MyExecutedTradeHandler tradeHandler;
@@ -100,6 +103,9 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
         tradeHandler = new MyExecutedTradeHandler(channelId, symbol);
         channelHandler.put("te", tradeHandler); // Trade executed
         channelHandler.put("tu", tradeHandler); // Trade updates
+
+        balanceInfoHandler = new BalanceInfoHandler(channelId, symbol);
+        channelHandler.put("bu", balanceInfoHandler); // balance update
 
         notificationHandler = new NotificationHandler(channelId, symbol);
         channelHandler.put("n", notificationHandler); // General notification
@@ -156,5 +162,9 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
 
     public void onOrderNotification(final BiConsumer<BitfinexAccountSymbol, BitfinexSubmittedOrder> consumer) {
         notificationHandler.onOrderNotification(consumer);
+    }
+
+    public void onBalanceUpdate(final BiConsumer<BitfinexAccountSymbol, BitfinexBalanceUpdate> consumer) {
+        balanceInfoHandler.onBalanceUpdate(consumer);
     }
 }

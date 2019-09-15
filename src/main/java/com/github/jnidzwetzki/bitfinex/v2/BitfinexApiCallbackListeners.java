@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexBalanceUpdate;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
@@ -60,6 +61,7 @@ public class BitfinexApiCallbackListeners {
     protected final Queue<BiConsumer<BitfinexExecutedTradeSymbol, Collection<BitfinexExecutedTrade>>> executedTradesConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>>> orderbookEntryConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>>> rawOrderbookEntryConsumers = new ConcurrentLinkedQueue<>();
+    protected final Queue<BiConsumer<BitfinexAccountSymbol, BitfinexBalanceUpdate>> balanceUpdateConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<BiConsumer<BitfinexTickerSymbol, BitfinexTick>> tickConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<BitfinexAccountSymbol>> authSuccessConsumers = new ConcurrentLinkedQueue<>();
     protected final Queue<Consumer<BitfinexAccountSymbol>> authFailedConsumers = new ConcurrentLinkedQueue<>();
@@ -212,6 +214,16 @@ public class BitfinexApiCallbackListeners {
     public Closeable onRawOrderbookEvent(final BiConsumer<BitfinexOrderBookSymbol, Collection<BitfinexOrderBookEntry>> listener) {
         rawOrderbookEntryConsumers.offer(listener);
         return () -> rawOrderbookEntryConsumers.remove(listener);
+    }
+
+    /**
+     * registers listener for balance update events
+     * @param listener of event
+     * @return hook of this listener
+     */
+    public Closeable onBalanceUpdateEvent(BiConsumer<BitfinexAccountSymbol, BitfinexBalanceUpdate> listener) {
+        balanceUpdateConsumers.offer(listener);
+        return () -> balanceUpdateConsumers.remove(listener);
     }
 
     /**
