@@ -19,6 +19,7 @@ package com.github.jnidzwetzki.bitfinex.v2;
 
 import java.util.Collection;
 
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexBalanceUpdate;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandle;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexExecutedTrade;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexMyExecutedTrade;
@@ -103,4 +104,7 @@ public final class BitfinexApiCallbackRegistry extends BitfinexApiCallbackListen
         authFailedConsumers.forEach(consumer -> consumer.accept(event));
     }
 
+    public void acceptBalanceUpdate(BitfinexAccountSymbol event, BitfinexBalanceUpdate update) {
+        balanceUpdateConsumers.forEach(consumer -> consumer.accept(event, update));
+    }
 }

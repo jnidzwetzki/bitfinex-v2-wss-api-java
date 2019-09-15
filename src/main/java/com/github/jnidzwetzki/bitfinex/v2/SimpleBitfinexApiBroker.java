@@ -256,6 +256,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			handler.onSubmittedOrderEvent(callbackRegistry::acceptMySubmittedOrderEvent);
 			handler.onTradeEvent(callbackRegistry::acceptMyTradeEvent);
 			handler.onOrderNotification(callbackRegistry::acceptMyOrderNotification);
+			handler.onBalanceUpdate(callbackRegistry::acceptBalanceUpdate);
 
 			channelIdToHandlerMap.put(0, handler);
 			callbackRegistry.acceptAuthenticationSuccessEvent(symbol);
