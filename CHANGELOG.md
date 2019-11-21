@@ -1,3 +1,5 @@
+# Version 0.7.6 (TBA)
+
 # Version 0.7.5 (21.11.2019)
 * New Feature: Implement "BU" websocket event (thanks to mironbalcerzak)
 * Improvement: Updated dependencies
