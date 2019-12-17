@@ -87,6 +87,8 @@ public class AccountInfoHandler implements ChannelCallbackHandler {
         channelHandler.put("fln", fundingHandler); // Founding loans notification
         channelHandler.put("flu", fundingHandler); // Founding loans update
         channelHandler.put("flc", fundingHandler); // Founding loans cancel
+        channelHandler.put("fte", fundingHandler); // Founding funding trade executed
+        channelHandler.put("ftu", fundingHandler); // Founding funding trade updated
 
         channelHandler.put("ats", new DoNothingHandler()); // Ats - Unknown
 
