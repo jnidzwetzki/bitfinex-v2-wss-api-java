@@ -141,7 +141,7 @@ public class CommandsTest {
 		String command = multiCommand.getCommand(null);
 
 		// then
-		Assert.assertEquals("[0, \"ox_multi\", null, [[\"oc\", {\"id\":1}],[\"on\", {\"symbol\":\"tBTCUSD\",\"amount\":\"2.0\",\"gid\":4,\"price\":\"12.0\",\"flags\":64,\"price_aux_limit\":\"23.0\",\"type\":\"EXCHANGE STOP\",\"price_trailing\":\"23.0\",\"cid\":100}],[\"oc_multi\", {\"gid\":3}],[\"oc_multi\", {\"all\": 1}]]]", command);
+		Assert.assertEquals("[0, \"ox_multi\", null, [[\"oc\", {\"id\":1}],[\"on\", {\"symbol\":\"tBTCUSD\",\"amount\":\"2.0\",\"gid\":4,\"price\":\"12.0\",\"flags\":64,\"price_aux_limit\":\"23.0\",\"type\":\"EXCHANGE STOP\",\"price_trailing\":\"23.0\",\"cid\":100}],[\"oc_multi\", {\"gid\":[3]}],[\"oc_multi\", {\"all\": 1}]]]", command);
 	}
 
 	private BitfinexWebsocketClient buildMockedBitfinexConnection() {
