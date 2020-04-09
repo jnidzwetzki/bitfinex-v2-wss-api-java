@@ -41,7 +41,7 @@ public class HeartbeatManagerTest {
 	public static void registerDefaultCurrencyPairs() {
 		if(BitfinexCurrencyPair.values().size() < 10) {
 			BitfinexCurrencyPair.unregisterAll();
-			BitfinexCurrencyPair.registerDefaults();	
+			BitfinexCurrencyPair.registerDefaults();
 		}
 	}
 
@@ -113,7 +113,7 @@ public class HeartbeatManagerTest {
 	@Test
 	public void testTickerFreshness2() {
 		final HashMap<BitfinexStreamSymbol, Long> heartbeatValues = new HashMap<>();
-		heartbeatValues.put(BitfinexSymbols.ticker(BitfinexCurrencyPair.of("AGI","ETH")), System.currentTimeMillis());
+		heartbeatValues.put(BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BTC","USD")), System.currentTimeMillis());
 		Assert.assertTrue(HeartbeatThread.checkTickerFreshness(heartbeatValues));
 	}
 
@@ -124,7 +124,7 @@ public class HeartbeatManagerTest {
 	public void testTickerFreshness3() {
 		final HashMap<BitfinexStreamSymbol, Long> heartbeatValues = new HashMap<>();
 		long outdatedTime = System.currentTimeMillis() - HeartbeatThread.TICKER_TIMEOUT - 10;
-		heartbeatValues.put(BitfinexSymbols.ticker(BitfinexCurrencyPair.of("AGI","ETH")), outdatedTime);
+		heartbeatValues.put(BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BTC","USD")), outdatedTime);
 		Assert.assertFalse(HeartbeatThread.checkTickerFreshness(heartbeatValues));
 	}
 }

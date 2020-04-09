@@ -44,7 +44,7 @@ public class RawOrderbookTest {
 	public void testTradingOrderbookEquals() {
 		BitfinexOrderBookSymbol configuration1 = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("BTC","USD"));
 		BitfinexOrderBookSymbol configuration2 = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("BTC","USD"));
-		BitfinexOrderBookSymbol configuration3 = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("AVT","BTC"));
+		BitfinexOrderBookSymbol configuration3 = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("ALG","BTC"));
 		
 		Assert.assertEquals(configuration1.hashCode(), configuration2.hashCode());
 		Assert.assertEquals(configuration1, configuration2);
