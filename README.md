@@ -14,7 +14,7 @@
  <img src="https://api.codeclimate.com/v1/badges/9bb1a95de6767a8c6820/maintainability" />
 </a><a href="https://gitter.im/bitfinex-v2-wss-api-java/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge">
   <img alt="Join the chat at https://gitter.im/bitfinex-v2-wss-api-java/Lobby" src="https://badges.gitter.im/Join%20Chat.svg">
-  </a>
+  </a><a href='https://sourcespy.com/github/bitfinex/' title='SourceSpy Dashboard'><img src='https://sourcespy.com/shield.svg'/></a>
 
 This project provides a Java client library for the [Bitfinex WebSocket API (v2)](https://docs.bitfinex.com/v2/reference). Public and private channels (candles, ticks, executed trades, (raw) orderbooks, orders, and wallets) are implemented.
 
@@ -26,7 +26,7 @@ In contrast to other implementations, this project uses the WSS (_web socket sec
 ## Contact / Stay informed
 * You need help or do you have questions? Join our chat at [gitter](https://gitter.im/bitfinex-v2-wss-api-java/Lobby).
 * For reporting issues, visit our [bug tracking system](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/issues).
-* For contributing, see our [contributing guide](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/CONTRIBUTING.md).
+* For contributing, see our [contributing guide](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/CONTRIBUTING.md). Project architecture outline can be found [here](https://sourcespy.com/github/bitfinex/).
 * If you like the project please star it on GitHub.
 * You are interested in a crypto currency trading bot? See my [crypto-bot](https://github.com/jnidzwetzki/crypto-bot) project.
 
