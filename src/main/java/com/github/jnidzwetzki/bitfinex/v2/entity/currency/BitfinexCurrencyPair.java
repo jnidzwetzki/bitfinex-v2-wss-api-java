@@ -177,9 +177,17 @@ public class BitfinexCurrencyPair implements BitfinexInstrument {
 	 */
 	private double minimumOrderSize;
 
+	/**
+	 *	If the currencypair is one of the derivatives
+	 */
+	private boolean isFuture = false;
+
 	private BitfinexCurrencyPair(final String pair1, final String pair2, final double minimumOrderSize) {
 		this.currency1 = pair1;
 		this.currency2 = pair2;
+		if (currency1.toLowerCase().contains("f") && currency2.toLowerCase().contains("f")) {
+			isFuture = true;
+		}
 		this.minimumOrderSize = minimumOrderSize;
 	}
 
@@ -219,6 +227,9 @@ public class BitfinexCurrencyPair implements BitfinexInstrument {
 	 */
 	@Override
 	public String toBitfinexString() {
+		if (isFuture) {
+			return "t" + currency1 + ":" + currency2;
+		}
 		return "t" + currency1 + currency2;
 	}
 
