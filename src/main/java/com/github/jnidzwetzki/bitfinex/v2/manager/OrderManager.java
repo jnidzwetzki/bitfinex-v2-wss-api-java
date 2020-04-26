@@ -17,6 +17,24 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.manager;
 
+import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
+import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommands;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelAllCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelGroupCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderChangeCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderNewCommand;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
+import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexCommandException;
+import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
+import org.bboxdb.commons.Retryer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,23 +43,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-
-import org.bboxdb.commons.Retryer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
-import com.github.jnidzwetzki.bitfinex.v2.command.BitfinexCommands;
-import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelAllCommand;
-import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelCommand;
-import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelGroupCommand;
-import com.github.jnidzwetzki.bitfinex.v2.command.OrderNewCommand;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
-import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
-import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexAccountSymbol;
 
 public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> {
 
@@ -74,8 +75,8 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	public OrderManager(final BitfinexWebsocketClient client, final ExecutorService executorService) {
 		super(executorService, client);
 		this.orders = new ArrayList<>();
-		client.getCallbacks().onMySubmittedOrderEvent((a, e) -> e.forEach(i -> updateOrder(a, i)));
-		client.getCallbacks().onMyOrderNotification(this::updateOrder);
+		client.getCallbacks().onMySubmittedOrderEvent((a, e) -> e.forEach(i -> updateOrderInList(a, i)));
+		client.getCallbacks().onMyOrderNotification(this::updateOrderInList);
 	}
 
 	/**
@@ -102,7 +103,7 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 	 * Update a exchange order
 	 * @param exchangeOrder
 	 */
-	public void updateOrder(final BitfinexAccountSymbol account, final BitfinexSubmittedOrder exchangeOrder) {
+	public void updateOrderInList(final BitfinexAccountSymbol account, final BitfinexSubmittedOrder exchangeOrder) {
 
 		synchronized (orders) {
 			// Replace order
@@ -181,6 +182,94 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 
 		try {
 			placeOrder(order);
+
+			waitLatch.await(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+
+			if(waitLatch.getCount() != 0) {
+				throw new BitfinexClientException("Timeout while waiting for order");
+			}
+
+			// Check for order error
+			final boolean orderInErrorState = client
+					.getOrderManager()
+					.getOrders()
+					.stream()
+					.filter(o -> o.getClientId() == order.getClientId())
+					.anyMatch(o -> o.getStatus() == BitfinexSubmittedOrderStatus.ERROR);
+
+			if(orderInErrorState) {
+				throw new BitfinexClientException("Unable to place order " + order);
+			}
+
+			return true;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			removeCallback(ordercallback);
+		}
+	}
+
+	/**
+	 * Change an order and retry if Exception occur
+	 * @param order - an existing order with updated fields
+	 * @throws BitfinexClientException
+	 * @throws InterruptedException
+	 */
+	public void changeOrderAndWaitUntilActive(final BitfinexSubmittedOrder order) throws BitfinexClientException, InterruptedException {
+
+		final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
+
+		if(! capabilities.isOrderWritePermission()) {
+			throw new BitfinexClientException("Unable to wait for order " + order + " connection has not enough capabilities: " + capabilities);
+		}
+
+		order.setApiKey(client.getConfiguration().getApiKey());
+
+		final Callable<Boolean> orderCallable = () -> changeOrderOnAPI(order);
+
+		// Bitfinex does not implement a happens-before relationship. Sometimes
+		// canceling a stop-loss order and placing a new stop-loss order results
+		// in an 'ERROR, reason is Invalid order: not enough exchange balance'
+		// error for some seconds. The retryer tries to place the order up to
+		// three times
+		final Retryer<Boolean> retryer = new Retryer<>(ORDER_RETRIES, RETRY_DELAY_IN_MS,
+				TimeUnit.MILLISECONDS, orderCallable);
+		retryer.execute();
+
+		if(retryer.getNeededExecutions() > 1) {
+			logger.info("Nedded {} executions for placing the order", retryer.getNeededExecutions());
+		}
+
+		if(! retryer.isSuccessfully()) {
+			final Exception lastException = retryer.getLastException();
+
+			if(lastException == null) {
+				throw new BitfinexClientException("Unable to execute order");
+			} else {
+				throw new BitfinexClientException(lastException);
+			}
+		}
+	}
+
+	/**
+	 * Execute the change of an existing Order
+	 * @param order
+	 * @return
+	 * @throws Exception
+	 */
+	private boolean changeOrderOnAPI(final BitfinexSubmittedOrder order) throws Exception {
+		final CountDownLatch waitLatch = new CountDownLatch(1);
+
+		final Consumer<BitfinexSubmittedOrder> ordercallback = (o) -> {
+			if(Objects.equals(o.getClientId(), order.getClientId())) {
+				waitLatch.countDown();
+			}
+		};
+
+		registerCallback(ordercallback);
+
+		try {
+			changeOrder(order);
 
 			waitLatch.await(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 
@@ -293,7 +382,29 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 
 		logger.info("Executing new order {}", order);
 		final OrderNewCommand orderNewCommand = new OrderNewCommand(order);
+		try {
+			logger.info("OrderCommand: {}", orderNewCommand.getCommand(null));
+		} catch (BitfinexCommandException e) {
+			e.printStackTrace();
+		}
 		client.sendCommand(orderNewCommand);
+	}
+
+	/**
+	 * Change an existing order
+	 * @throws BitfinexClientException
+	 */
+	public void changeOrder(final BitfinexSubmittedOrder order) throws BitfinexClientException {
+
+		final BitfinexApiKeyPermissions capabilities = client.getApiKeyPermissions();
+
+		if(! capabilities.isOrderWritePermission()) {
+			throw new BitfinexClientException("Unable to change order " + order + " connection has not enough capabilities: " + capabilities);
+		}
+
+		logger.info("Changing order to {}", order);
+		final OrderChangeCommand orderChangeCommand = new OrderChangeCommand(order);
+		client.sendCommand(orderChangeCommand);
 	}
 
 	/**
@@ -329,6 +440,11 @@ public class OrderManager extends SimpleCallbackManager<BitfinexSubmittedOrder> 
 
 		logger.info("Cancel order group {}", id);
 		final OrderCancelGroupCommand cancelOrder = new OrderCancelGroupCommand(id);
+		try {
+			logger.info("Order Command {}", cancelOrder.getCommand(null));
+		} catch (BitfinexCommandException e) {
+			e.printStackTrace();
+		}
 		client.sendCommand(cancelOrder);
 	}
 
