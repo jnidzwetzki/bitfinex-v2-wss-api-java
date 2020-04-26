@@ -1,15 +1,5 @@
 package com.github.jnidzwetzki.bitfinex.v2.test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-
-import com.google.common.collect.Lists;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexOrderBuilder;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketConfiguration;
@@ -38,6 +28,15 @@ import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexSymbols;
 import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexStreamSymbolToChannelIdResolverAware;
+import com.google.common.collect.Lists;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 public class CommandsTest {
 
@@ -45,7 +44,7 @@ public class CommandsTest {
 	public static void registerDefaultCurrencyPairs() {
 		if(BitfinexCurrencyPair.values().size() < 10) {
 			BitfinexCurrencyPair.unregisterAll();
-			BitfinexCurrencyPair.registerDefaults();	
+			BitfinexCurrencyPair.registerDefaults();
 		}
 	}
 
