@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexInstrument;
 import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
+import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyType;
 import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexFundingCurrency;
 import com.github.jnidzwetzki.bitfinex.v2.util.BitfinexCurrencyFactory;
 
@@ -57,7 +58,7 @@ public class BitfinexCurrencyTest {
 		
 	@Test
 	public void testRegister1() {
-		final BitfinexCurrencyPair currency1 = BitfinexCurrencyPair.register("USD", "XYZ", 1.4);
+		final BitfinexCurrencyPair currency1 = BitfinexCurrencyPair.register("USD", "XYZ", BitfinexCurrencyType.CURRENCY, 1.4);
 		Assert.assertTrue(currency1 != null);
 		
 		// Reference equals
@@ -71,7 +72,7 @@ public class BitfinexCurrencyTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testRegister2() {
-		final BitfinexCurrencyPair currency1 = BitfinexCurrencyPair.register("ETH", "USD", 1.4);
+		final BitfinexCurrencyPair currency1 = BitfinexCurrencyPair.register("ETH", "USD", BitfinexCurrencyType.CURRENCY, 1.4);
 		Assert.assertTrue(currency1 != null);
 	}
 	

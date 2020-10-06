@@ -61,21 +61,40 @@ public class BitfinexCurrencyPair implements BitfinexInstrument {
 
                 final Pair<String, String> pairs = parsePair(pair);
                 final double minOrderSize = currency.getDouble("minimum_order_size");
-                register(pairs.getElement1(), pairs.getElement2(), minOrderSize);
+                final BitfinexCurrencyType type = parseCurrencyType(pairs);
+                register(pairs.getElement1(), pairs.getElement2(), type, minOrderSize);
             }
-
+			
         } catch (IOException e) {
             throw new BitfinexClientException(e);
         }
     }
 
-    /**
+	/**
+	 * Parse the currency type
+	 * @param pairs
+	 * @return the type of the currency
+	 */
+    private static BitfinexCurrencyType parseCurrencyType(final Pair<String, String> pairs) {
+    	
+    	final String PERPETUAL_END = "F0".toLowerCase();
+    	
+		if(pairs.getElement1().toLowerCase().endsWith(PERPETUAL_END) 
+				&& pairs.getElement2().toLowerCase().endsWith(PERPETUAL_END)) {
+			return BitfinexCurrencyType.PERPETUAL;
+		}
+    	
+		return BitfinexCurrencyType.CURRENCY;
+	}
+
+	/**
      * Parse the currency pair. Some new pairs contain ':' and are longer than 6 chars, e.g. "dusk:usd".
+     * Pairs with the format *f0:*f0 (e.g. btcf0:ustf0) are 'perpetual contracts'
      * @param pair bitfinex's currency pair.
      * @return A {@link Pair} with currency1 as first and currency2 as second element.
      */
-    private static Pair<String, String> parsePair(String pair) throws BitfinexClientException{
-        int idx = pair.indexOf(":");
+    private static Pair<String, String> parsePair(final String pair) throws BitfinexClientException{
+        final int idx = pair.indexOf(":");
 
         final String currency1;
         final String currency2;
@@ -102,16 +121,17 @@ public class BitfinexCurrencyPair implements BitfinexInstrument {
 	 *
 	 * @param currency         currency (from)
 	 * @param profitCurrency   currency (to)
+	 * @param BitfinexCurrencyType the currency type
 	 * @param minimalOrderSize minimal order size
 	 * @return registered instance of {@link BitfinexCurrencyPair}
 	 */
 	public static BitfinexCurrencyPair register(final String currency,
-			final String profitCurrency, final double minimalOrderSize) {
+			final String profitCurrency, final BitfinexCurrencyType type, final double minimalOrderSize) {
 
 		final String key = buildCacheKey(currency, profitCurrency);
 
 		final BitfinexCurrencyPair newCurrency = new BitfinexCurrencyPair(currency, profitCurrency,
-				minimalOrderSize);
+				type, minimalOrderSize);
 
 		final BitfinexCurrencyPair oldCurrency = instances.putIfAbsent(key, newCurrency);
 
@@ -171,15 +191,23 @@ public class BitfinexCurrencyPair implements BitfinexInstrument {
 	 * The name of the second currency
 	 */
 	private final String currency2;
+	
+	/**
+	 * The currency type
+	 */
+	private final BitfinexCurrencyType currencyType;
 
 	/**
 	 * The minimum order size
 	 */
 	private double minimumOrderSize;
 
-	private BitfinexCurrencyPair(final String pair1, final String pair2, final double minimumOrderSize) {
+	private BitfinexCurrencyPair(final String pair1, final String pair2, 
+			final BitfinexCurrencyType currencyType, final double minimumOrderSize) {
+		
 		this.currency1 = pair1;
 		this.currency2 = pair2;
+		this.currencyType = currencyType;
 		this.minimumOrderSize = minimumOrderSize;
 	}
 
@@ -189,6 +217,14 @@ public class BitfinexCurrencyPair implements BitfinexInstrument {
 	 */
 	public double getMinimumOrderSize() {
 		return minimumOrderSize;
+	}
+	
+	/**
+	 * Get the currency type
+	 * @return
+	 */
+	public BitfinexCurrencyType getCurrencyType() {
+		return currencyType;
 	}
 
 	/**
@@ -214,11 +250,15 @@ public class BitfinexCurrencyPair implements BitfinexInstrument {
 	}
 
 	/**
-	 * Convert to bitfinex string
+	 * Convert to bitfinex string (t means trading pair)
 	 * @return
 	 */
 	@Override
 	public String toBitfinexString() {
+		if(currencyType == BitfinexCurrencyType.PERPETUAL) {
+			return "t" + currency1 + ":" + currency2;
+		}
+		
 		return "t" + currency1 + currency2;
 	}
 
@@ -240,6 +280,8 @@ public class BitfinexCurrencyPair implements BitfinexInstrument {
 
 	@Override
 	public String toString() {
-		return currency1 + ":" + currency2;
+		return "BitfinexCurrencyPair [currency1=" + currency1 + ", currency2=" + currency2 + ", currencyType="
+				+ currencyType + ", minimumOrderSize=" + minimumOrderSize + "]";
 	}
+
 }
