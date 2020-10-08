@@ -2,7 +2,7 @@ package com.github.jnidzwetzki.bitfinex.v2.command;
 
 import java.util.Collection;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexExecutedTradeSymbol;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol;
@@ -18,7 +18,7 @@ public final class BitfinexCommands {
 
     }
 
-    public static OrderNewCommand newOrder(BitfinexNewOrder order) {
+    public static OrderNewCommand newOrder(BitfinexOrder order) {
         return new OrderNewCommand(order);
     }
 

@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * https://docs.bitfinex.com/v2/reference#ws-auth-orders
  */
-public class BitfinexSubmittedOrder extends BitfinexNewOrder {
+public class BitfinexSubmittedOrder extends BitfinexOrder {
 
     /**
      * exchange assigned order id

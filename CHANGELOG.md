@@ -1,5 +1,6 @@
 # Version 0.7.6 (TBA)
 * New Feature: Added support for perpetual contracts
+* New Feature: Added support for updating orders (thanks to BlueDarkGreen)
 * Bugfix: Fixed 	OrderCancelGroupCommand (thanks to Hdgh0g / closes #166)
 
 # Version 0.7.5 (21.11.2019)

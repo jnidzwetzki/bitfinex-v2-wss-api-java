@@ -26,7 +26,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderFlag;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
 import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
@@ -58,14 +58,14 @@ public class BitfinexOrderTest {
 	
 	@Test
 	public void testOrderStatusFlags0() {
-		final BitfinexNewOrder bitfinexNewOrder = new BitfinexNewOrder();
+		final BitfinexOrder bitfinexNewOrder = new BitfinexOrder();
 		Assert.assertTrue(bitfinexNewOrder.getOrderFlags().isEmpty());
 		Assert.assertEquals(0, bitfinexNewOrder.getCombinedFlags());		
 	}
 	
 	@Test
 	public void testOrderStatusFlags1() {
-		final BitfinexNewOrder bitfinexNewOrder = new BitfinexNewOrder();
+		final BitfinexOrder bitfinexNewOrder = new BitfinexOrder();
 		bitfinexNewOrder.setOrderFlags(BitfinexOrderFlag.OCO.getFlag());
 		Assert.assertEquals(BitfinexOrderFlag.OCO.getFlag(), bitfinexNewOrder.getCombinedFlags());
 		Assert.assertTrue(bitfinexNewOrder.getOrderFlags().contains(BitfinexOrderFlag.OCO));
@@ -80,7 +80,7 @@ public class BitfinexOrderTest {
 			// Convert to set
 			final HashSet<BitfinexOrderFlag> orderFlags = new HashSet<>(flags);
 
-			final BitfinexNewOrder bitfinexNewOrder = new BitfinexNewOrder();
+			final BitfinexOrder bitfinexNewOrder = new BitfinexOrder();
 			bitfinexNewOrder.setOrderFlags(orderFlags);
 			Assert.assertEquals(orderFlags, bitfinexNewOrder.getOrderFlags());
 			
@@ -93,10 +93,10 @@ public class BitfinexOrderTest {
 	
 	@Test
 	public void testOrderStatusFlags3() {
-		final BitfinexNewOrder bitfinexNewOrder1 = new BitfinexNewOrder();
+		final BitfinexOrder bitfinexNewOrder1 = new BitfinexOrder();
 		bitfinexNewOrder1.setApiKey("abc");
 		
-		final BitfinexNewOrder bitfinexNewOrder2 = new BitfinexNewOrder();
+		final BitfinexOrder bitfinexNewOrder2 = new BitfinexOrder();
 		bitfinexNewOrder2.setApiKey("def");
 		
 		Assert.assertNotEquals(bitfinexNewOrder1, bitfinexNewOrder2);

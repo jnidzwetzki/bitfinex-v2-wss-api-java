@@ -29,7 +29,7 @@ import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
 /**
  * https://docs.bitfinex.com/v2/reference#ws-input-order-new
  */
-public class BitfinexNewOrder {
+public class BitfinexOrder {
 
     /**
      * Should be unique in the day (UTC) (not enforced)
@@ -231,7 +231,7 @@ public class BitfinexNewOrder {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		BitfinexNewOrder other = (BitfinexNewOrder) obj;
+		BitfinexOrder other = (BitfinexOrder) obj;
 		if (amount == null) {
 			if (other.amount != null)
 				return false;

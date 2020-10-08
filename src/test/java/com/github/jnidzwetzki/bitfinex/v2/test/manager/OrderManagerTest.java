@@ -30,7 +30,7 @@ import com.github.jnidzwetzki.bitfinex.v2.BitfinexWebsocketClient;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.NotificationHandler;
 import com.github.jnidzwetzki.bitfinex.v2.callback.channel.account.info.OrderHandler;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexApiKeyPermissions;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrderStatus;
@@ -73,7 +73,7 @@ public class OrderManagerTest {
         bitfinexApiBroker.getOrderManager().registerCallback(orderCallback);
         final NotificationHandler notificationHandler = new NotificationHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
         notificationHandler.onOrderNotification((a, eo) -> {
-            bitfinexApiBroker.getOrderManager().updateOrder(a, eo);
+            bitfinexApiBroker.getOrderManager().updateOrderCallback(a, eo);
         });
 
         notificationHandler.handleChannelData("n", jsonArray.getJSONArray(2));
@@ -105,7 +105,7 @@ public class OrderManagerTest {
         notificationHandler.handleChannelData("n", jsonArray.getJSONArray(2));
 
         notificationHandler.onOrderNotification((a, eo) -> {
-            bitfinexApiBroker.getOrderManager().updateOrder(a, eo);
+            bitfinexApiBroker.getOrderManager().updateOrderCallback(a, eo);
         });
     }
 
@@ -122,7 +122,7 @@ public class OrderManagerTest {
         final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
         orderHandler.onSubmittedOrderEvent((a, eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
-                bitfinexApiBroker.getOrderManager().updateOrder(a, exchangeOrder);
+                bitfinexApiBroker.getOrderManager().updateOrderCallback(a, exchangeOrder);
             }
         });
 
@@ -148,7 +148,7 @@ public class OrderManagerTest {
         final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
         orderHandler.onSubmittedOrderEvent((a, eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
-                bitfinexApiBroker.getOrderManager().updateOrder(a, exchangeOrder);
+                bitfinexApiBroker.getOrderManager().updateOrderCallback(a, exchangeOrder);
             }
         });
 
@@ -178,7 +178,7 @@ public class OrderManagerTest {
         final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
         orderHandler.onSubmittedOrderEvent((a,eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
-                bitfinexApiBroker.getOrderManager().updateOrder(a, exchangeOrder);
+                bitfinexApiBroker.getOrderManager().updateOrderCallback(a, exchangeOrder);
             }
         });
 
@@ -204,7 +204,7 @@ public class OrderManagerTest {
         final OrderHandler orderHandler = new OrderHandler(0, BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "api-key"));
         orderHandler.onSubmittedOrderEvent((a, eos) -> {
             for (BitfinexSubmittedOrder exchangeOrder : eos) {
-                bitfinexApiBroker.getOrderManager().updateOrder(a, exchangeOrder);
+                bitfinexApiBroker.getOrderManager().updateOrderCallback(a, exchangeOrder);
             }
         });
 
@@ -254,7 +254,7 @@ public class OrderManagerTest {
             final BitfinexSubmittedOrder exchangeOrder = new BitfinexSubmittedOrder();
             exchangeOrder.setOrderId(12L);
             exchangeOrder.setStatus(BitfinexSubmittedOrderStatus.CANCELED);
-            orderManager.updateOrder(symbol, exchangeOrder);
+            orderManager.updateOrderCallback(symbol, exchangeOrder);
         };
 
         // Cancel event
@@ -277,7 +277,7 @@ public class OrderManagerTest {
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 
-        final BitfinexNewOrder order
+        final BitfinexOrder order
                 = BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BTC", "USD"), BitfinexOrderType.MARKET, 12).build();
 
         orderManager.placeOrderAndWaitUntilActive(order);
@@ -298,7 +298,7 @@ public class OrderManagerTest {
 
         final OrderManager orderManager = bitfinexApiBroker.getOrderManager();
 
-        final BitfinexNewOrder order
+        final BitfinexOrder order
                 = BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BTC", "USD"), BitfinexOrderType.MARKET, 1).build();
         BitfinexAccountSymbol symbol = BitfinexSymbols.account(BitfinexApiKeyPermissions.ALL_PERMISSIONS, "apiKey");
 
@@ -311,7 +311,7 @@ public class OrderManagerTest {
             final BitfinexSubmittedOrder exchangeOrder = new BitfinexSubmittedOrder();
             exchangeOrder.setClientId(order.getClientId());
             exchangeOrder.setStatus(BitfinexSubmittedOrderStatus.ACTIVE);
-            orderManager.updateOrder(symbol, exchangeOrder);
+            orderManager.updateOrderCallback(symbol, exchangeOrder);
         };
 
         // Cancel event

@@ -11,6 +11,7 @@ import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.OrderCancelGroupCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.OrderMultiCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.OrderNewCommand;
+import com.github.jnidzwetzki.bitfinex.v2.command.OrderUpdateCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.PingCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SetConnectionFeaturesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeCandlesCommand;
@@ -19,9 +20,10 @@ import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTickerCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.SubscribeTradesCommand;
 import com.github.jnidzwetzki.bitfinex.v2.command.UnsubscribeChannelCommand;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexCandleTimeFrame;
-import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexNewOrder;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderFlag;
 import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexOrderType;
+import com.github.jnidzwetzki.bitfinex.v2.entity.BitfinexSubmittedOrder;
 import com.github.jnidzwetzki.bitfinex.v2.entity.currency.BitfinexCurrencyPair;
 import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexCommandException;
 import com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexCandlestickSymbol;
@@ -55,13 +57,18 @@ public class CommandsTest {
 	@Test
 	public void testCommandsJSON() throws BitfinexCommandException {
 
-		final BitfinexNewOrder order
-			= BitfinexOrderBuilder.create(
-					BitfinexCurrencyPair.of("BTC","USD"), BitfinexOrderType.EXCHANGE_STOP, 2).build();
+		final BitfinexCurrencyPair currencyPair = BitfinexCurrencyPair.of("BTC","USD");
+		
+		final BitfinexOrder order = BitfinexOrderBuilder.create(
+					currencyPair, BitfinexOrderType.EXCHANGE_STOP, 2).build();
+		
+		final BitfinexSubmittedOrder submittedOrder = new BitfinexSubmittedOrder();
+		submittedOrder.setCurrencyPair(currencyPair);
+		submittedOrder.setOrderId(1234L);
 
-		final BitfinexCandlestickSymbol candleSymbol = BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BTC","USD"), BitfinexCandleTimeFrame.HOUR_1);
+		final BitfinexCandlestickSymbol candleSymbol = BitfinexSymbols.candlesticks(currencyPair, BitfinexCandleTimeFrame.HOUR_1);
 
-		BitfinexOrderBookSymbol orderbookConfiguration = BitfinexSymbols.orderBook(BitfinexCurrencyPair.of("BTC", "USD"), BitfinexOrderBookSymbol.Precision.P0,
+		BitfinexOrderBookSymbol orderbookConfiguration = BitfinexSymbols.orderBook(currencyPair, BitfinexOrderBookSymbol.Precision.P0,
 				BitfinexOrderBookSymbol.Frequency.F0, 50);
 
 		BitfinexOrderBookSymbol rawOrderbookConfiguration = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("BAT", "BTC"));
@@ -71,9 +78,10 @@ public class CommandsTest {
 				new OrderCancelCommand(123),
 				new OrderCancelGroupCommand(1),
 				new OrderNewCommand(order),
+				new OrderUpdateCommand(submittedOrder),
 				new PingCommand(),
 				new SubscribeCandlesCommand(candleSymbol),
-				new SubscribeTickerCommand(BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BTC","USD"))),
+				new SubscribeTickerCommand(BitfinexSymbols.ticker(currencyPair)),
 				new SubscribeTradesCommand(BitfinexSymbols.executedTrades(BitfinexCurrencyPair.of("BAT","BTC"))),
 				new SubscribeOrderbookCommand(orderbookConfiguration),
 				new SubscribeOrderbookCommand(rawOrderbookConfiguration),
@@ -98,7 +106,7 @@ public class CommandsTest {
 	 */
 	@Test
 	public void testOrderCommand() throws BitfinexCommandException {
-		final BitfinexNewOrder order
+		final BitfinexOrder order
 			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BTC","USD"), BitfinexOrderType.EXCHANGE_STOP, 2)
 			.withOrderFlag(BitfinexOrderFlag.HIDDEN)
 			.withPrice(12)
@@ -120,7 +128,7 @@ public class CommandsTest {
 	@Test
 	public void testOrderMultiOperationCommand_ok() throws BitfinexCommandException {
 		// given
-		final BitfinexNewOrder order
+		final BitfinexOrder order
 				= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BTC","USD"), BitfinexOrderType.EXCHANGE_STOP, 2)
 				.withOrderFlag(BitfinexOrderFlag.HIDDEN)
 				.withPrice(12)
