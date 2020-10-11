@@ -1,3 +1,5 @@
+# Version 0.7.7 (TBA)
+
 # Version 0.7.6 (11.10.2020)
 * New Feature: Added support for perpetual contracts
 * New Feature: Added support for updating orders (thanks to BlueDarkGreen)
