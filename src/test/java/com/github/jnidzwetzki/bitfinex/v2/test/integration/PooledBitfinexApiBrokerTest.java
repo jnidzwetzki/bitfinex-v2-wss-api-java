@@ -29,7 +29,7 @@ public class PooledBitfinexApiBrokerTest {
     @Test(timeout = 45_000)
     public void testSubscriptions() throws InterruptedException {
         // given
-        final int channelLimit = 22;
+        final int channelLimit = 10;
         final int channelsPerConnection = 12;
 
         final BitfinexWebsocketConfiguration config = new BitfinexWebsocketConfiguration();
