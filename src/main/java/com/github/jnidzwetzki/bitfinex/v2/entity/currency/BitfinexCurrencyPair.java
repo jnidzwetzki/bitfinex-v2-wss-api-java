@@ -255,7 +255,7 @@ public class BitfinexCurrencyPair implements BitfinexInstrument {
 	 */
 	@Override
 	public String toBitfinexString() {
-		if(currencyType == BitfinexCurrencyType.PERPETUAL) {
+		if (currency1.length() > 3 || currency2.length() > 3) {
 			return "t" + currency1 + ":" + currency2;
 		}
 		
