@@ -1,5 +1,6 @@
 # Version 0.7.7 (TBA)
 * Fixed Bitfinex symbol types with more than three chars per currency (thanks to hhanh00 / closes #201)
+* Added UserAgent to BitfinexCurrencyPair.registerDefaults (thanks to hhanh00 / closes #203)
 
 # Version 0.7.6 (11.10.2020)
 * New Feature: Added support for perpetual contracts
