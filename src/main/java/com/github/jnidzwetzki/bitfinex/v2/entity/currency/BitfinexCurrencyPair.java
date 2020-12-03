@@ -18,18 +18,20 @@
 package com.github.jnidzwetzki.bitfinex.v2.entity.currency;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.common.io.ByteSource;
 import org.bboxdb.commons.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.github.jnidzwetzki.bitfinex.v2.exception.BitfinexClientException;
 import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 
 public class BitfinexCurrencyPair implements BitfinexInstrument {
 
@@ -52,7 +54,15 @@ public class BitfinexCurrencyPair implements BitfinexInstrument {
 
 		try {
 			final URL url = new URL(SYMBOL_URL);
-			final String symbolJson = Resources.toString(url, Charsets.UTF_8);
+			final HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+			connection.addRequestProperty("User-Agent", "Mozilla");
+			ByteSource byteSource = new ByteSource() {
+				@Override
+				public InputStream openStream() throws IOException {
+					return connection.getInputStream();
+				}
+			};
+			final String symbolJson = byteSource.asCharSource(Charsets.UTF_8).read();
 			final JSONArray jsonArray = new JSONArray(symbolJson);
 
 			for(int i = 0; i < jsonArray.length(); i++) {
@@ -121,7 +131,7 @@ public class BitfinexCurrencyPair implements BitfinexInstrument {
 	 *
 	 * @param currency         currency (from)
 	 * @param profitCurrency   currency (to)
-	 * @param BitfinexCurrencyType the currency type
+	 * @param type the currency type
 	 * @param minimalOrderSize minimal order size
 	 * @return registered instance of {@link BitfinexCurrencyPair}
 	 */
