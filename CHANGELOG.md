@@ -1,4 +1,4 @@
-# Version 0.7.7 (TBA)
+# Version 0.7.7 (03.12.2020)
 * Fixed Bitfinex symbol types with more than three chars per currency (thanks to hhanh00 / closes #201)
 * Added UserAgent to BitfinexCurrencyPair.registerDefaults (thanks to hhanh00 / closes #203)
 
