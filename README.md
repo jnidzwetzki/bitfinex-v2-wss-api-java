@@ -24,11 +24,13 @@ In contrast to other implementations, this project uses the WSS (_web socket sec
 
 
 ## Contact / Stay informed
+* If you like the project, please star it on GitHub!
 * You need help or do you have questions? Join our chat at [gitter](https://gitter.im/bitfinex-v2-wss-api-java/Lobby).
 * For reporting issues, visit our [bug tracking system](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/issues).
 * For contributing, see our [contributing guide](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/CONTRIBUTING.md). Project architecture outline can be found [here](https://sourcespy.com/github/bitfinex/).
-* If you like the project please star it on GitHub.
 * You are interested in a crypto currency trading bot? See my [crypto-bot](https://github.com/jnidzwetzki/crypto-bot) project.
+* You need a highly available MySQL server for your trading? Have a look at the following project [https://github.com/jnidzwetzki/mysql-ha-cloud](https://github.com/jnidzwetzki/mysql-ha-cloud).
+* For more information see [https://github.com/jnidzwetzki](https://github.com/jnidzwetzki).
 
 # Examples
 You will find some examples [here](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/EXAMPLES.md).
@@ -149,5 +151,4 @@ final Bar bar = new BaseBar(time, tick.getOpen().doubleValue(),
 ```
 
 </details>
-
 
