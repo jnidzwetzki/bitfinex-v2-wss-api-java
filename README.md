@@ -29,7 +29,7 @@ In contrast to other implementations, this project uses the WSS (_web socket sec
 * For reporting issues, visit our [bug tracking system](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/issues).
 * For contributing, see our [contributing guide](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/CONTRIBUTING.md). Project architecture outline can be found [here](https://sourcespy.com/github/bitfinex/).
 * You are interested in a crypto currency trading bot? See my [crypto-bot](https://github.com/jnidzwetzki/crypto-bot) project.
-* You need a highly available MySQL server for your trading? Have a look at the following project [https://github.com/jnidzwetzki/mysql-ha-cloud](https://github.com/jnidzwetzki/mysql-ha-cloud).
+* You need a highly available MySQL server for your trading? Have a look at the following [project](https://github.com/jnidzwetzki/mysql-ha-cloud).
 * For more information see [https://github.com/jnidzwetzki](https://github.com/jnidzwetzki).
 
 # Examples
