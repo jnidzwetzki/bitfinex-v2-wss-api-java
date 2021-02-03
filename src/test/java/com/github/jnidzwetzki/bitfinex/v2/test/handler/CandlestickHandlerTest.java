@@ -154,13 +154,18 @@ public class CandlestickHandlerTest {
 		final BitfinexCandlestickSymbol symbol2
 			= BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("ETH","USD"), BitfinexCandleTimeFrame.MINUTES_15);
 	
+		final BitfinexCandlestickSymbol symbol3
+				= BitfinexSymbols.candlesticks(BitfinexCurrencyPair.of("BTCF0","USTF0"), BitfinexCandleTimeFrame.MINUTES_1);
+		
 		Assert.assertFalse(symbol1.equals(symbol2));
 		
 		final String symbol1String = symbol1.toBifinexCandlestickString();
 		final String symbol2String = symbol2.toBifinexCandlestickString();
+		final String symbol3String = symbol3.toBifinexCandlestickString();
 		
 		Assert.assertEquals(symbol1, BitfinexCandlestickSymbol.fromBitfinexString(symbol1String));
 		Assert.assertEquals(symbol2, BitfinexCandlestickSymbol.fromBitfinexString(symbol2String));
+		Assert.assertEquals(symbol3, BitfinexCandlestickSymbol.fromBitfinexString(symbol3String));
 	}
 		
 	/**
