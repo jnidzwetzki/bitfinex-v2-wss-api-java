@@ -66,12 +66,12 @@ public class BitfinexCandlestickSymbol implements BitfinexStreamSymbol {
 		
 		final String[] splitString = symbol.split(":");
 
-		if(splitString.length != 3) {
+		if(splitString.length != 3 && splitString.length != 4) {
 			throw new IllegalArgumentException("Unable to parse: " + symbol);
 		}
 		
 		final String timeframeString = splitString[1];
-		final String symbolString = splitString[2];
+		final String symbolString = splitString.length == 3 ? splitString[2] : splitString[2] + ":" + splitString[3];
 
 		return BitfinexSymbols.candlesticks(
 				BitfinexCurrencyPair.fromSymbolString(symbolString), 
