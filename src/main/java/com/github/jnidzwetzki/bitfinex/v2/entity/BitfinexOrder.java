@@ -82,6 +82,11 @@ public class BitfinexOrder {
     private Set<BitfinexOrderFlag> orderFlags = new HashSet<>();
 
     /**
+     * The affiliate code (optional)
+     */
+    private String affiliateCode;
+
+    /**
      * The api key
      */
     private String apiKey;
@@ -158,6 +163,14 @@ public class BitfinexOrder {
         this.priceOcoStop = priceOcoStop;
     }
  
+    public String getAffiliateCode() {
+        return affiliateCode;
+    }
+
+    public void setAffiliateCode(String affiliateCode) {
+        this.affiliateCode = affiliateCode;
+    }
+
     public String getApiKey() {
         return apiKey;
     }
@@ -202,7 +215,8 @@ public class BitfinexOrder {
 		return "BitfinexNewOrder [clientId=" + clientId + ", clientGroupId=" + clientGroupId + ", currencyPair="
 				+ currencyPair + ", amount=" + amount + ", orderType=" + orderType + ", price=" + price
 				+ ", priceTrailing=" + priceTrailing + ", priceAuxLimit=" + priceAuxLimit + ", priceOcoStop="
-				+ priceOcoStop + ", orderFlags=" + orderFlags + ", apiKey=" + apiKey + "]";
+				+ priceOcoStop + ", orderFlags=" + orderFlags + ", affiliateCode=" + affiliateCode + ", apiKey="
+				+ apiKey + "]";
 	}
 
 	@Override
@@ -220,6 +234,7 @@ public class BitfinexOrder {
 		result = prime * result + ((priceAuxLimit == null) ? 0 : priceAuxLimit.hashCode());
 		result = prime * result + ((priceOcoStop == null) ? 0 : priceOcoStop.hashCode());
 		result = prime * result + ((priceTrailing == null) ? 0 : priceTrailing.hashCode());
+		result = prime * result + ((affiliateCode == null) ? 0 : affiliateCode.hashCode());
 		return result;
 	}
 
@@ -280,6 +295,11 @@ public class BitfinexOrder {
 			if (other.priceTrailing != null)
 				return false;
 		} else if (!priceTrailing.equals(other.priceTrailing))
+			return false;
+		if (affiliateCode == null) {
+			if (other.affiliateCode != null)
+				return false;
+		} else if (!affiliateCode.equals(other.affiliateCode))
 			return false;
 		return true;
 	}
