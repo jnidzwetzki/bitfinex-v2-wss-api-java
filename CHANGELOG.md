@@ -1,8 +1,10 @@
 # Version 0.7.8 (TBA)
+* New Feature: Affiliate (referral) code support (thanks to wgolyakov / closes #212)
+* Bugfix: Candlestick handling for pairs with colon (thanks to wgolyakov / closes #211)
 
 # Version 0.7.7 (03.12.2020)
-* Fixed Bitfinex symbol types with more than three chars per currency (thanks to hhanh00 / closes #201)
-* Added UserAgent to BitfinexCurrencyPair.registerDefaults (thanks to hhanh00 / closes #203)
+* New Feature: Added UserAgent to BitfinexCurrencyPair.registerDefaults (thanks to hhanh00 / closes #203)
+* Bugfix: Bitfinex symbol types with more than three chars per currency (thanks to hhanh00 / closes #201)
 
 # Version 0.7.6 (11.10.2020)
 * New Feature: Added support for perpetual contracts
