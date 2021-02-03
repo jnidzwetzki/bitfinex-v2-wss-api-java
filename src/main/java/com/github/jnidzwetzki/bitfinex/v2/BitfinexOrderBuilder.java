@@ -37,6 +37,7 @@ public class BitfinexOrderBuilder {
 	private BigDecimal priceAuxLimit;
 	private Set<BitfinexOrderFlag> orderFlags;
 	private long groupid = -1;
+	private String affiliateCode;
 
 	private BitfinexOrderBuilder(final BitfinexCurrencyPair symbol, final BitfinexOrderType type, 
 			final BigDecimal amount) {
@@ -99,6 +100,11 @@ public class BitfinexOrderBuilder {
 		return this;
 	}
 
+	public BitfinexOrderBuilder withAffiliateCode(final String affiliateCode) {
+		this.affiliateCode = affiliateCode;
+		return this;
+	}
+
 	public BitfinexOrder build() {
 		final BitfinexOrder order = new BitfinexOrder();
 		order.setClientId(System.currentTimeMillis());
@@ -109,6 +115,7 @@ public class BitfinexOrderBuilder {
 		order.setPriceTrailing(priceTrailing);
 		order.setPriceAuxLimit(priceAuxLimit);
 		order.setOrderFlags(orderFlags);
+		order.setAffiliateCode(affiliateCode);
 		
 		if(groupid != -1) {
 			order.setClientGroupId(groupid);

@@ -113,6 +113,7 @@ public class CommandsTest {
 			.withPriceAuxLimit(23)
 			.withPriceTrailing(23)
 			.withGroupId(4)
+			.withAffiliateCode("qYpFPFPs")
 			.build();
 
 		final OrderNewCommand command = new OrderNewCommand(order);
@@ -123,6 +124,7 @@ public class CommandsTest {
 		Assert.assertNotNull(commandValue);
 		Assert.assertTrue(commandValue.length() > 10);
 		Assert.assertTrue(commandValue.contains("\"2.0\""));
+		Assert.assertTrue(commandValue.contains("\"aff_code\":\"qYpFPFPs\""));
 	}
 
 	@Test
