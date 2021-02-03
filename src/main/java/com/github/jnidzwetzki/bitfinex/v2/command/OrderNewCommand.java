@@ -55,11 +55,15 @@ public class OrderNewCommand implements BitfinexOrderCommand {
         orderJson.put("cid", bitfinexOrder.getClientId());
         bitfinexOrder.getClientGroupId().ifPresent(groupId -> orderJson.put("gid", bitfinexOrder.getClientGroupId().get()));
         if (bitfinexOrder.getAffiliateCode() != null) {
-            final JSONObject metaJson = new JSONObject();
-            metaJson.put("aff_code", bitfinexOrder.getAffiliateCode());
-            orderJson.put("meta", metaJson);
+            orderJson.put("meta", getMetaJson());
         }
         return "[0, \"on\", null, " + orderJson.toString() + "]";
+    }
+
+    private JSONObject getMetaJson() {
+        final JSONObject metaJson = new JSONObject();
+        metaJson.put("aff_code", bitfinexOrder.getAffiliateCode());
+        return metaJson;
     }
 
 }
