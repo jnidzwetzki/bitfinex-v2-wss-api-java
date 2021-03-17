@@ -36,6 +36,7 @@ In contrast to other implementations, this project uses the WSS (_web socket sec
 You will find some examples [here](https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/blob/master/EXAMPLES.md).
 
 # Usage
+Check for latest version of library at https://mvnrepository.com/artifact/com.github.jnidzwetzki/bitfinex-v2-wss-api
 
 ## Maven
 Add these lines to your ``pom.xml`` file
@@ -44,7 +45,7 @@ Add these lines to your ``pom.xml`` file
 <dependency>
 	<groupId>com.github.jnidzwetzki</groupId>
 	<artifactId>bitfinex-v2-wss-api</artifactId>
-	<version>0.7.5</version>
+	<version>${bitfinex-v2-wss-api.version}</version>
 </dependency>
 ```
 
@@ -52,7 +53,7 @@ Add these lines to your ``pom.xml`` file
 Add these lines to your ``build.gradle`` file
 
 ```groovy
-compile 'com.github.jnidzwetzki:bitfinex-v2-wss-api:0.7.5'
+compile 'com.github.jnidzwetzki:bitfinex-v2-wss-api:${bitfinex-v2-wss-api.version}'
 ```
 
 # Changelog
