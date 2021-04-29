@@ -1,0 +1,12 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: org.glassfish.tyrus.bundles:tyrus-standalone-client-jdk
+    versions:
+    - ">= 2.0.a, < 2.1"
