@@ -33,6 +33,7 @@ public class BitfinexOrderBuilder {
 	private final BigDecimal amount;
 	
 	private BigDecimal price;
+	private int leverage;
 	private BigDecimal priceTrailing;
 	private BigDecimal priceAuxLimit;
 	private Set<BitfinexOrderFlag> orderFlags;
@@ -74,7 +75,12 @@ public class BitfinexOrderBuilder {
 		this.price = price;
 		return this;
 	}
-	
+
+	public BitfinexOrderBuilder withLeverage(final int leverage) {
+		this.leverage = leverage;
+		return this;
+	}
+
 	public BitfinexOrderBuilder withPriceTrailing(final double price) {
 		this.priceTrailing = BigDecimal.valueOf(price);
 		return this;
@@ -111,6 +117,7 @@ public class BitfinexOrderBuilder {
 		order.setCurrencyPair(symbol);
 		order.setOrderType(type);
 		order.setPrice(price);
+		order.setLeverage(leverage);
 		order.setAmount(amount);
 		order.setPriceTrailing(priceTrailing);
 		order.setPriceAuxLimit(priceAuxLimit);

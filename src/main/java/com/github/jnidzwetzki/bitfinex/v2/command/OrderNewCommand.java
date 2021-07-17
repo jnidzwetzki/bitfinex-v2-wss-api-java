@@ -40,6 +40,9 @@ public class OrderNewCommand implements BitfinexOrderCommand {
         if (bitfinexOrder.getPrice() != null) {
             orderJson.put("price", bitfinexOrder.getPrice().toString());
         }
+        if (bitfinexOrder.getLeverage() != 0) {
+            orderJson.put("lev", bitfinexOrder.getLeverage());
+        }
         if (bitfinexOrder.getPriceTrailing() != null) {
             orderJson.put("price_trailing", bitfinexOrder.getPriceTrailing().toString());
         }
