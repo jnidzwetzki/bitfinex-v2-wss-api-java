@@ -62,6 +62,12 @@ public class BitfinexOrder {
     private BigDecimal price;
 
     /**
+     * Leverage for a derivative order. The value should be between 1 and 100 inclusive.
+     * The field is optional, if omitted the default leverage value of 10 will be used.
+     */
+    private int leverage;
+
+    /**
      * The trailing price
      */
     private BigDecimal priceTrailing;
@@ -137,6 +143,14 @@ public class BitfinexOrder {
 
     public void setPrice(final BigDecimal price) {
         this.price = price;
+    }
+
+    public int getLeverage() {
+        return leverage;
+    }
+
+    public void setLeverage(final int leverage) {
+        this.leverage = leverage;
     }
 
     public BigDecimal getPriceTrailing() {
@@ -216,7 +230,7 @@ public class BitfinexOrder {
 				+ currencyPair + ", amount=" + amount + ", orderType=" + orderType + ", price=" + price
 				+ ", priceTrailing=" + priceTrailing + ", priceAuxLimit=" + priceAuxLimit + ", priceOcoStop="
 				+ priceOcoStop + ", orderFlags=" + orderFlags + ", affiliateCode=" + affiliateCode + ", apiKey="
-				+ apiKey + "]";
+				+ apiKey + ", leverage=" + leverage + "]";
 	}
 
 	@Override
@@ -231,6 +245,7 @@ public class BitfinexOrder {
 		result = prime * result + ((orderFlags == null) ? 0 : orderFlags.hashCode());
 		result = prime * result + ((orderType == null) ? 0 : orderType.hashCode());
 		result = prime * result + ((price == null) ? 0 : price.hashCode());
+		result = prime * result + leverage;
 		result = prime * result + ((priceAuxLimit == null) ? 0 : priceAuxLimit.hashCode());
 		result = prime * result + ((priceOcoStop == null) ? 0 : priceOcoStop.hashCode());
 		result = prime * result + ((priceTrailing == null) ? 0 : priceTrailing.hashCode());
@@ -280,6 +295,8 @@ public class BitfinexOrder {
 			if (other.price != null)
 				return false;
 		} else if (!price.equals(other.price))
+			return false;
+		if (leverage != other.leverage)
 			return false;
 		if (priceAuxLimit == null) {
 			if (other.priceAuxLimit != null)
