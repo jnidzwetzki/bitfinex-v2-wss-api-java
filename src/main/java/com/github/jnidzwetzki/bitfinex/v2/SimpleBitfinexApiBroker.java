@@ -576,11 +576,6 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 
 		final int channel = jsonArray.getInt(0);
 		final ChannelCallbackHandler channelCallbackHandler = channelIdToHandlerMap.get(channel);
-		if (channelCallbackHandler == null) {
-			logger.error("Unable to determine symbol for channel {} / data is {} ", channel, jsonArray);
-			reconnect();
-			return;
-		}
 		String action = null;
 		final JSONArray payload;
 		if (jsonArray.get(1) instanceof String) {
@@ -590,7 +585,16 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			payload = jsonArray.optJSONArray(1);
 		}
 		if (Objects.equals(action, "hb")) {
+			if (channelCallbackHandler == null) {
+				// Skipping "hb" if it came before "subscribed" event
+				return;
+			}
 			quoteManager.updateChannelHeartbeat(channelCallbackHandler.getSymbol());
+		}
+		if (channelCallbackHandler == null) {
+			logger.error("Unable to determine symbol for channel {} / data is {} ", channel, jsonArray);
+			reconnect();
+			return;
 		}
 		try {
 			if (payload == null) {
