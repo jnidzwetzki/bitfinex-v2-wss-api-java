@@ -1,6 +1,8 @@
 # Version 0.7.8 (TBA)
 * New Feature: Affiliate (referral) code support (thanks to wgolyakov / closes #212)
+* New Feature: Add leverage to derivative orders (thanks to wgolyakov / closes #235)
 * Bugfix: Candlestick handling for pairs with colon (thanks to wgolyakov / closes #211)
+* Bugfix: Re-Subscription fails sometimes (thanks to wgolyakov / closes #237)
 
 # Version 0.7.7 (03.12.2020)
 * New Feature: Added UserAgent to BitfinexCurrencyPair.registerDefaults (thanks to hhanh00 / closes #203)

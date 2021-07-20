@@ -110,6 +110,7 @@ public class CommandsTest {
 			= BitfinexOrderBuilder.create(BitfinexCurrencyPair.of("BTC","USD"), BitfinexOrderType.EXCHANGE_STOP, 2)
 			.withOrderFlag(BitfinexOrderFlag.HIDDEN)
 			.withPrice(12)
+			.withLeverage(5)
 			.withPriceAuxLimit(23)
 			.withPriceTrailing(23)
 			.withGroupId(4)
@@ -124,6 +125,7 @@ public class CommandsTest {
 		Assert.assertNotNull(commandValue);
 		Assert.assertTrue(commandValue.length() > 10);
 		Assert.assertTrue(commandValue.contains("\"2.0\""));
+		Assert.assertTrue(commandValue.contains("\"lev\":5"));
 		Assert.assertTrue(commandValue.contains("\"aff_code\":\"qYpFPFPs\""));
 	}
 
