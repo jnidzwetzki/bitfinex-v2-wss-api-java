@@ -83,8 +83,7 @@ public class BitfinexCandle implements Comparable<BitfinexCandle>{
 	public BitfinexCandle(final long timestamp, final double open, final double close, 
 			final double high, final double low, final double volume) {
 		
-		this(timestamp, new BigDecimal(open), new BigDecimal(close),  new BigDecimal(high), 
-				new BigDecimal(low), Optional.of(new BigDecimal(volume)));
+		this(timestamp, BigDecimal.valueOf(open), BigDecimal.valueOf(close), BigDecimal.valueOf(high), BigDecimal.valueOf(low), Optional.of(BigDecimal.valueOf(volume)));
 	}
 	
 	public long getTimestamp() {
