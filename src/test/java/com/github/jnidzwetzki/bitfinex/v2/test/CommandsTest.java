@@ -71,7 +71,7 @@ public class CommandsTest {
 		BitfinexOrderBookSymbol orderbookConfiguration = BitfinexSymbols.orderBook(currencyPair, BitfinexOrderBookSymbol.Precision.P0,
 				BitfinexOrderBookSymbol.Frequency.F0, 50);
 
-		BitfinexOrderBookSymbol rawOrderbookConfiguration = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("BAT", "BTC"));
+		BitfinexOrderBookSymbol rawOrderbookConfiguration = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("ETH", "BTC"));
 
 		final List<BitfinexCommand> commands = Arrays.asList(
 				new AuthCommand(AuthCommand.AUTH_NONCE_PRODUCER_TIMESTAMP),
@@ -82,7 +82,7 @@ public class CommandsTest {
 				new PingCommand(),
 				new SubscribeCandlesCommand(candleSymbol),
 				new SubscribeTickerCommand(BitfinexSymbols.ticker(currencyPair)),
-				new SubscribeTradesCommand(BitfinexSymbols.executedTrades(BitfinexCurrencyPair.of("BAT","BTC"))),
+				new SubscribeTradesCommand(BitfinexSymbols.executedTrades(BitfinexCurrencyPair.of("ETH", "BTC"))),
 				new SubscribeOrderbookCommand(orderbookConfiguration),
 				new SubscribeOrderbookCommand(rawOrderbookConfiguration),
 				new UnsubscribeChannelCommand(orderbookConfiguration),
