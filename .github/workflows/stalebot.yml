@@ -28,3 +28,6 @@ jobs:
           
           # Dry run
           # debug-only: true
+          
+          # Exclude assigned issues         
+          exempt-all-assignees: true
