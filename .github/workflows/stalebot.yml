@@ -27,4 +27,4 @@ jobs:
           exempt-issue-labels: 'in-progress'
           
           # Dry run
-          debug-only: true
+          # debug-only: true
