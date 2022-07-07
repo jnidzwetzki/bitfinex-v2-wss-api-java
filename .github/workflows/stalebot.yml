@@ -1,0 +1,29 @@
+name: 'Close stale issues'
+on:
+  schedule:
+    - cron: '30 1 * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v5
+        with:
+          stale-issue-message: 'This issue has been automatically marked as stale due to lack of activity. You can remove the stale label or comment. Otherwise, this issue will be closed in 7 days. Thank you!'
+          close-issue-message: 'We are closing this issue due to lack of activity. Feel free to reopen it if you can provide more information. Thank you!'
+        
+          days-before-stale: -1
+          days-before-issue-stale: 14
+          days-before-issue-close: 7
+          
+          # Add this label after 'exempt-issue-labels' days to mark it as stale
+          stale-issue-label: 'no-issue-activity'
+          
+          # Stale only issues with one of these labels
+          any-of-issue-labels: 'bug,enhancement'
+          
+          # Exclude issues with the 'in-progress' label
+          exempt-issue-labels: 'in-progress'
+          
+          # Dry run
+          debug-only: true
