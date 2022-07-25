@@ -1,4 +1,6 @@
 # Version 0.7.8 (TBA)
+Please note that Java 11 is now required to run this library.
+
 * New Feature: Affiliate (referral) code support (thanks to wgolyakov / closes #212)
 * New Feature: Add leverage to derivative orders (thanks to wgolyakov / closes #235)
 * Bugfix: Candlestick handling for pairs with colon (thanks to wgolyakov / closes #211)
