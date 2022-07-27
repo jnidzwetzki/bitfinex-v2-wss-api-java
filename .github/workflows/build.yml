@@ -26,6 +26,6 @@ jobs:
         working-directory: github-actions-java-maven
         run: mvn test
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@
+        uses: codecov/codecov-action@v3
         with:
            verbose: true
