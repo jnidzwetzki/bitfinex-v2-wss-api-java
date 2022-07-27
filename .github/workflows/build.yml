@@ -20,10 +20,8 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: Compile the Project
-        working-directory: github-actions-java-maven
         run: mvn -B compile
       - name: Test the Project
-        working-directory: github-actions-java-maven
         run: mvn test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
