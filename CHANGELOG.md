@@ -5,6 +5,7 @@ Please note that Java 11 is now required to run this library.
 * New Feature: Add leverage to derivative orders (thanks to wgolyakov / closes #235)
 * Bugfix: Candlestick handling for pairs with colon (thanks to wgolyakov / closes #211)
 * Bugfix: Re-Subscription fails sometimes (thanks to wgolyakov / closes #237)
+* Bugfix: Some small bugfixes found by coverity
 
 # Version 0.7.7 (03.12.2020)
 * New Feature: Added UserAgent to BitfinexCurrencyPair.registerDefaults (thanks to hhanh00 / closes #203)

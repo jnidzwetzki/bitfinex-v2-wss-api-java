@@ -75,12 +75,7 @@ public class SubscribedCallback implements CommandCallbackHandler {
 	}
 
 	private BitfinexStreamSymbol handleBookCallback(final JSONObject jsonObject) {
-		BitfinexStreamSymbol symbol;
-		if("R0".equals(jsonObject.getString("prec"))) {
-			symbol = BitfinexOrderBookSymbol.fromJSON(jsonObject);
-		} else {
-			symbol = BitfinexOrderBookSymbol.fromJSON(jsonObject);
-		}
+		final BitfinexStreamSymbol symbol = BitfinexOrderBookSymbol.fromJSON(jsonObject);
 		return symbol;
 	}
 
