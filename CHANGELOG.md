@@ -1,3 +1,6 @@
+# Version 0.7.9 (TBA)
+
+
 # Version 0.7.8 (31.07.2022)
 Please note that Java 11 is now required to run this library.
 
