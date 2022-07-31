@@ -605,10 +605,6 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 				return;
 			}
 			
-			if(action == null) {
-				throw new IllegalArgumentException("Action is null");
-			}
-			
 			channelCallbackHandler.handleChannelData(action, payload);
 		} catch (final BitfinexClientException e) {
 			logger.error("Got exception while handling callback", e);
