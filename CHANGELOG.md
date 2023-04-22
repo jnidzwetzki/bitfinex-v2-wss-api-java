@@ -1,5 +1,5 @@
 # Version 0.7.9 (TBA)
-
+* Bugfix: Handle insufficient account balance error messages properly (thanks to GeekHare / closes #309)
 
 # Version 0.7.8 (31.07.2022)
 Please note that Java 11 is now required to run this library.
