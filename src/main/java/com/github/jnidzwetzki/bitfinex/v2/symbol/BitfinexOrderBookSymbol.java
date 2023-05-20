@@ -71,7 +71,7 @@ public class BitfinexOrderBookSymbol implements BitfinexStreamSymbol {
 			if(pricePoints == null) {
 				throw new IllegalArgumentException("Price points must be != NULL");
 			}
-			if (Arrays.asList(1, 25, 100, 250).contains(pricePoints)) {
+			if (!Arrays.asList(1, 25, 100, 250).contains(pricePoints)) {
 				throw new IllegalArgumentException("Possible values for Price points are: 1, 25, 100, 250");
 			}
 			this.pricePoints = pricePoints;
