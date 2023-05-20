@@ -17,6 +17,7 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.bitfinex.v2.symbol;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import org.json.JSONObject;
@@ -59,25 +60,24 @@ public class BitfinexOrderBookSymbol implements BitfinexStreamSymbol {
 	private final Integer pricePoints;
 
 
-	BitfinexOrderBookSymbol(final BitfinexCurrencyPair currencyPair, final Precision orderBookPrecision,
-							final Frequency frequency, final Integer pricePoints) {
+	BitfinexOrderBookSymbol(
+			final BitfinexCurrencyPair currencyPair, final com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol.Precision orderBookPrecision,
+			final com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol.Frequency frequency, final Integer pricePoints
+	) {
 		this.currencyPair = currencyPair;
 		this.orderBookPrecision = orderBookPrecision;
-		if (orderBookPrecision != Precision.R0) {
+		if (orderBookPrecision != com.github.jnidzwetzki.bitfinex.v2.symbol.BitfinexOrderBookSymbol.Precision.R0) {
 			this.frequency = frequency;
-			
 			if(pricePoints == null) {
 				throw new IllegalArgumentException("Price points must be != NULL");
 			}
-			
-			if (pricePoints < 25 || pricePoints > 100) {
-				throw new IllegalArgumentException("Price points must be between 25 and 100");
+			if (Arrays.asList(1, 25, 100, 250).contains(pricePoints)) {
+				throw new IllegalArgumentException("Possible values for Price points are: 1, 25, 100, 250");
 			}
 			this.pricePoints = pricePoints;
 		} else {
 			this.frequency = null;
 			this.pricePoints = null;
-
 		}
 	}
 
