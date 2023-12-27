@@ -69,7 +69,7 @@ public class CommandsTest {
 		final BitfinexCandlestickSymbol candleSymbol = BitfinexSymbols.candlesticks(currencyPair, BitfinexCandleTimeFrame.HOUR_1);
 
 		BitfinexOrderBookSymbol orderbookConfiguration = BitfinexSymbols.orderBook(currencyPair, BitfinexOrderBookSymbol.Precision.P0,
-				BitfinexOrderBookSymbol.Frequency.F0, 50);
+				BitfinexOrderBookSymbol.Frequency.F0, 25);
 
 		BitfinexOrderBookSymbol rawOrderbookConfiguration = BitfinexSymbols.rawOrderBook(BitfinexCurrencyPair.of("ETH", "BTC"));
 
