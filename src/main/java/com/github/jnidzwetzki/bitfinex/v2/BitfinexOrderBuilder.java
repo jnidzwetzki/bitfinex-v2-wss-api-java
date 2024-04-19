@@ -36,6 +36,7 @@ public class BitfinexOrderBuilder {
 	private int leverage;
 	private BigDecimal priceTrailing;
 	private BigDecimal priceAuxLimit;
+	private BigDecimal priceOcoStop;
 	private Set<BitfinexOrderFlag> orderFlags;
 	private long groupid = -1;
 	private String affiliateCode;
@@ -101,6 +102,16 @@ public class BitfinexOrderBuilder {
 		return this;
 	}
 	
+	public BitfinexOrderBuilder withPriceOcoStop(final double price) {
+		this.priceOcoStop = BigDecimal.valueOf(price);
+		return this;
+	}
+
+	public BitfinexOrderBuilder withPriceOcoStop(final BigDecimal price) {
+		this.priceOcoStop = price;
+		return this;
+	}
+	
 	public BitfinexOrderBuilder withGroupId(final int groupId) {
 		this.groupid = groupId;
 		return this;
@@ -121,6 +132,7 @@ public class BitfinexOrderBuilder {
 		order.setAmount(amount);
 		order.setPriceTrailing(priceTrailing);
 		order.setPriceAuxLimit(priceAuxLimit);
+		order.setPriceOcoStop(priceOcoStop);
 		order.setOrderFlags(orderFlags);
 		order.setAffiliateCode(affiliateCode);
 		
