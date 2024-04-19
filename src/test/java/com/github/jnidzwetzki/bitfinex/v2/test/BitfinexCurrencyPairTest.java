@@ -24,8 +24,8 @@ public class BitfinexCurrencyPairTest {
         // pair "btcusd"
         Assert.assertEquals(1,
                 pairs.stream().filter(p -> p.getCurrency1().equals("BTC") && p.getCurrency2().equals("USD")).count());
-        // pair "dusk:btc"
+        // pair "testbtc:testusd"
         Assert.assertEquals(1,
-                pairs.stream().filter(p -> p.getCurrency1().equals("DUSK") && p.getCurrency2().equals("BTC")).count());
+                pairs.stream().filter(p -> p.getCurrency1().equals("TESTBTC") && p.getCurrency2().equals("TESTUSD")).count());
     }
 }
