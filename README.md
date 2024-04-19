@@ -1,7 +1,7 @@
 # An unofficial Java implementation of the Bitfinex Websocket (v2) API
 
-<a href="https://travis-ci.org/jnidzwetzki/bitfinex-v2-wss-api-java">
-  <img alt="Build Status" src="https://travis-ci.org/jnidzwetzki/bitfinex-v2-wss-api-java.svg?branch=master">
+<a href="https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/actions/workflows/build.yml">
+  <img alt="Build Status" src="https://github.com/jnidzwetzki/bitfinex-v2-wss-api-java/actions/workflows/build.yml/badge.svg">
 </a><a href="https://repo1.maven.org/maven2/com/github/jnidzwetzki/bitfinex-v2-wss-api/"><img alt="Maven Central Version" src="https://maven-badges.herokuapp.com/maven-central/com.github.jnidzwetzki/bitfinex-v2-wss-api/badge.svg" />
   </a><a href="https://codecov.io/gh/jnidzwetzki/bitfinex-v2-wss-api-java">
   <img src="https://codecov.io/gh/jnidzwetzki/bitfinex-v2-wss-api-java/branch/master/graph/badge.svg" />

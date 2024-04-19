@@ -435,7 +435,7 @@ public class IntegrationTest {
 		final BitfinexTickerSymbol symbol1 = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("BTC","USD"));
 		final BitfinexTickerSymbol symbol2 = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("ETH","USD"));
 		final BitfinexTickerSymbol symbol3 = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("EOS","USD"));
-		final BitfinexTickerSymbol symbol4 = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("DOG","USD"));
+		final BitfinexTickerSymbol symbol4 = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("DOGE","USD"));
 		final BitfinexTickerSymbol symbol5 = BitfinexSymbols.ticker(BitfinexCurrencyPair.of("NEO","USD"));
 
 		final QuoteManager orderbookManager = bitfinexClient.getQuoteManager();

@@ -147,6 +147,11 @@ public class PooledBitfinexApiBroker implements BitfinexWebsocketClient {
                     .filter(c -> c.getSubscribedChannels().contains(symbol))
                     .findFirst().orElseThrow(IllegalStateException::new);
         }
+        
+        if(client == null) {
+        	throw new IllegalArgumentException("Client is null, please init first");
+        }
+        
         client.sendCommand(command);
     }
 

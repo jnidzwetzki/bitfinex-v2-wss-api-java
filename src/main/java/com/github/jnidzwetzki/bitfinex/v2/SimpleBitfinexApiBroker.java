@@ -20,7 +20,11 @@ package com.github.jnidzwetzki.bitfinex.v2;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -600,6 +604,7 @@ public class SimpleBitfinexApiBroker implements Closeable, BitfinexWebsocketClie
 			if (payload == null) {
 				return;
 			}
+			
 			channelCallbackHandler.handleChannelData(action, payload);
 		} catch (final BitfinexClientException e) {
 			logger.error("Got exception while handling callback", e);

@@ -65,6 +65,11 @@ public class BitfinexOrderBookSymbol implements BitfinexStreamSymbol {
 		this.orderBookPrecision = orderBookPrecision;
 		if (orderBookPrecision != Precision.R0) {
 			this.frequency = frequency;
+			
+			if(pricePoints == null) {
+				throw new IllegalArgumentException("Price points must be != NULL");
+			}
+			
 			if (pricePoints < 25 || pricePoints > 100) {
 				throw new IllegalArgumentException("Price points must be between 25 and 100");
 			}

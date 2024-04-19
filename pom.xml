@@ -22,7 +22,7 @@
 	<groupId>com.github.jnidzwetzki</groupId>
 	<artifactId>bitfinex-v2-wss-api</artifactId>
 	<packaging>jar</packaging>
-	<version>0.7.8-snapshot</version>
+	<version>0.7.9-snapshot</version>
 
 	<name>Bitfinex v2 WSS API</name>
 	<description>Implementation of the Bitfinex v2 websocket API</description>
@@ -80,27 +80,27 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.14.1</version>
+			<version>2.20.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>2.14.1</version>
+			<version>2.20.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.tyrus.bundles</groupId>
 			<artifactId>tyrus-standalone-client-jdk</artifactId>
-			<version>1.17</version>
+			<version>2.1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20210307</version>
+			<version>20230227</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>30.1.1-jre</version>
+			<version>32.1.1-jre</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bboxdb</groupId>
@@ -119,7 +119,7 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>3.11.2</version>
+			<version>5.3.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -129,7 +129,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
+				<version>3.11.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -138,7 +138,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.7</version>
+				<version>0.8.10</version>
 				<executions>
 					<execution>
 						<goals>
@@ -181,7 +181,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.3.0</version>
+						<version>3.5.0</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -195,7 +195,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>3.0.1</version>
+						<version>3.1.0</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -210,7 +210,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.22.2</version>
+						<version>3.0.0</version>
 						<configuration>
 							<skipTests>true</skipTests>
 						</configuration>

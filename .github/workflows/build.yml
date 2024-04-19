@@ -1,0 +1,29 @@
+name: Build project
+ 
+on: [push, pull_request]
+ 
+jobs:
+  compile:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        java: [ 12, 13, 14 ]
+    name: Java ${{ matrix.java }} compile
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-package: jdk
+          java-version: ${{ matrix.java }}
+          cache: 'maven'
+      - name: Compile the Project
+        run: mvn -B compile
+      - name: Test the Project
+        run: mvn test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+           verbose: true
