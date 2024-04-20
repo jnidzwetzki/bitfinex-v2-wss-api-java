@@ -113,6 +113,7 @@ public class CommandsTest {
 			.withLeverage(5)
 			.withPriceAuxLimit(23)
 			.withPriceTrailing(23)
+			.withPriceOcoStop(24)
 			.withGroupId(4)
 			.withAffiliateCode("qYpFPFPs")
 			.build();
@@ -126,6 +127,7 @@ public class CommandsTest {
 		Assert.assertTrue(commandValue.length() > 10);
 		Assert.assertTrue(commandValue.contains("\"2.0\""));
 		Assert.assertTrue(commandValue.contains("\"lev\":5"));
+		Assert.assertTrue(commandValue.contains("\"price_oco_stop\":\"24.0\""));
 		Assert.assertTrue(commandValue.contains("\"aff_code\":\"qYpFPFPs\""));
 	}
 
