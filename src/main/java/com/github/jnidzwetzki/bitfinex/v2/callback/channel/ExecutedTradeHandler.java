@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import org.json.JSONArray;
@@ -51,7 +52,7 @@ public class ExecutedTradeHandler implements ChannelCallbackHandler {
         try {
             final List<BitfinexExecutedTrade> trades = new ArrayList<>();
 
-            if( action.equals("tu")) {
+            if(Objects.nonNull(action) && action.equals("tu")) {
                 return; // Ignore tu messages (see issue #13)
             }
 
